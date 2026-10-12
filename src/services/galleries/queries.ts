@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { flaggedItemWhere } from "@/services/ai/photo-flags";
 import {
 	CLIENT_VIEWABLE_PROJECT,
 	isDeliveredToClient,
@@ -39,10 +40,14 @@ async function loadGalleryView(
 		},
 	});
 	if (!gallery) return null;
-	const originals = viewer === "owner" || isDeliveredToClient(gallery.project);
+	const owner = viewer === "owner";
+	const originals = owner || isDeliveredToClient(gallery.project);
+	// Clients never see the assistant's flags, nor filter by them.
+	const view = !owner && filter === "flagged" ? "all" : filter;
 
 	const itemWhere: Prisma.GalleryItemWhereInput = { galleryId: gallery.id };
-	if (filter === "selected") itemWhere.selected = true;
+	if (view === "selected") itemWhere.selected = true;
+	if (view === "flagged") Object.assign(itemWhere, flaggedItemWhere);
 
 	const [total, selectedCount] = await Promise.all([
 		db.galleryItem.count({ where: itemWhere }),
@@ -69,9 +74,11 @@ async function loadGalleryView(
 		selectedCount,
 		shared: Boolean(gallery.sharedAt),
 		submitted: Boolean(gallery.submittedAt),
-		filter,
+		filter: view,
 		originals,
-		items: await Promise.all(rows.map((row) => toGalleryPhoto(row, originals))),
+		items: await Promise.all(
+			rows.map((row) => toGalleryPhoto(row, originals, owner)),
+		),
 	};
 }
 

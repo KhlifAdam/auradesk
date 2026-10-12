@@ -5,10 +5,12 @@ import { getTranslations } from "next-intl/server";
 import { GalleryCard } from "@/components/client-work/gallery-card";
 import { StageTimeline } from "@/components/client-work/stage-timeline";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
+import { InvoiceSection } from "@/components/invoices/invoice-section";
 import { ProjectOverview } from "@/components/portal/project/project-overview";
 import { StudioHeading } from "@/components/portal/studio-heading";
 import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
+import { listClientProjectInvoices } from "@/services/invoices/queries";
 import { getPortalProject } from "@/services/portal/queries";
 
 export default async function PortalProjectPage({
@@ -21,6 +23,7 @@ export default async function PortalProjectPage({
 	const { clientId } = await requireClient();
 	const project = await getPortalProject(clientId, projectId);
 	if (!project) notFound();
+	const invoices = await listClientProjectInvoices(clientId, project.id);
 
 	return (
 		<>
@@ -60,6 +63,7 @@ export default async function PortalProjectPage({
 				</h2>
 				<StageTimeline stage={project.stage} />
 			</section>
+			<InvoiceSection invoices={invoices} hrefBase="/portal/invoices" />
 			<section className="flex flex-col gap-3">
 				<h2 className="text-sm font-semibold">{t("galleries")}</h2>
 				{project.galleries.length === 0 ? (

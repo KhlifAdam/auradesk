@@ -15,6 +15,8 @@ export interface GalleryPhoto {
 	previewUrl: string | null;
 	/** The original; for a client before delivery, the preview (or null). */
 	fullUrl: string | null;
+	/** What the AI assistant flagged; only ever sent to the photographer. */
+	flags: string[];
 }
 
 export interface GallerySummary {
@@ -27,7 +29,8 @@ export interface GallerySummary {
 	coverUrl: string | null;
 }
 
-export type GalleryFilter = "all" | "selected";
+/** `flagged` (photos the AI assistant flagged) is for the photographer only. */
+export type GalleryFilter = "all" | "selected" | "flagged";
 
 export interface GalleryView extends PageMeta {
 	id: string;

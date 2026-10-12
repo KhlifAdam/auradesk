@@ -9,6 +9,8 @@ const r2PublicUrl = process.env.R2_PUBLIC_URL
 	: null;
 
 const nextConfig: NextConfig = {
+	// Resolves its ffmpeg binary from its own folder at runtime: keep it unbundled.
+	serverExternalPackages: ["ffmpeg-static"],
 	images: {
 		remotePatterns: r2PublicUrl
 			? [

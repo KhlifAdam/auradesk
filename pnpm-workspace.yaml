@@ -4,3 +4,4 @@ allowBuilds:
   '@swc/core': false
   prisma: false
   unrs-resolver: false
+  ffmpeg-static: true

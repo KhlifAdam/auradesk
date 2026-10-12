@@ -18,7 +18,7 @@ import type {
 import { SelectionBar } from "./selection-bar";
 import { useSelection } from "./use-selection";
 
-const FILTERS: GalleryFilter[] = ["all", "selected"];
+const FILTERS = ["all", "selected"] as const satisfies GalleryFilter[];
 
 /** Client's view of a shared gallery: browse, pick favourites, comment. */
 export function PortalGallery({ gallery }: { gallery: GalleryView }) {

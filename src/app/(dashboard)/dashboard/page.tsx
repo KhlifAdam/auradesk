@@ -1,6 +1,10 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { z } from "zod";
+import {
+	AssistantCard,
+	AssistantCardSkeleton,
+} from "@/components/dashboard/overview/assistant-card";
 import { LatestUploads } from "@/components/dashboard/overview/latest-uploads";
 import { OverviewHeader } from "@/components/dashboard/overview/overview-header";
 import { SetupChecklist } from "@/components/dashboard/overview/setup-checklist";
@@ -49,6 +53,10 @@ export default async function OverviewPage({
 				userName={session.user.name}
 				hasStudio={studio !== null}
 			/>
+
+			<Suspense fallback={<AssistantCardSkeleton />}>
+				<AssistantCard />
+			</Suspense>
 
 			<section className="flex flex-col gap-3">
 				<div className="flex flex-wrap items-center justify-between gap-2">

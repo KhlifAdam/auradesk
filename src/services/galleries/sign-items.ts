@@ -14,6 +14,7 @@ interface ItemRow {
 	height: number | null;
 	selected: boolean;
 	_count: { comments: number };
+	analysis: { flags: string[] } | null;
 }
 
 export const galleryItemSelect = {
@@ -27,6 +28,7 @@ export const galleryItemSelect = {
 	height: true,
 	selected: true,
 	_count: { select: { comments: true } },
+	analysis: { select: { flags: true } },
 } as const;
 
 /**
@@ -37,6 +39,7 @@ export const galleryItemSelect = {
 export async function toGalleryPhoto(
 	item: ItemRow,
 	originals: boolean,
+	showFlags = false,
 ): Promise<GalleryPhoto> {
 	const [original, preview] = await Promise.all([
 		originals ? getPrivateViewUrl(item.key) : null,
@@ -55,6 +58,7 @@ export async function toGalleryPhoto(
 		commentCount: item._count.comments,
 		previewUrl,
 		fullUrl: original ?? (item.type === "IMAGE" ? previewUrl : null),
+		flags: showFlags ? (item.analysis?.flags ?? []) : [],
 	};
 }
 

@@ -21,11 +21,22 @@ async function hasPendingInvitation(email: string) {
 	return invitation !== null;
 }
 
+/** True when a studio has invited this address to its team. */
+async function hasPendingTeamInvitation(email: string) {
+	const invitation = await db.teamMember.findFirst({
+		where: { email: email.toLowerCase(), status: "PENDING" },
+		select: { id: true },
+	});
+	return invitation !== null;
+}
+
 /**
  * Accounts created from the client sign-up, or for an address with a pending
  * project invitation, get the client role. The invitation is checked on the
  * server so it holds whichever sign-up page was used. Every new account also
- * keeps the language it signed up in (for the emails sent to it).
+ * keeps the language it signed up in (for the emails sent to it). An address
+ * invited to a studio's team (and not signing up as a client) gets the team
+ * role: it lands in the team space rather than opening a studio.
  * User hooks run after the admin plugin's, so this role wins over its default.
  */
 export const clientIntentHooks = {
@@ -39,10 +50,13 @@ export const clientIntentHooks = {
 					// Phone sign-in only exists on the client side.
 					isPhoneEmail(user.email) ||
 					(await hasPendingInvitation(user.email));
+				const isTeam =
+					!isClient && (await hasPendingTeamInvitation(user.email));
 				return {
 					data: {
 						...(isLocale(locale ?? undefined) && { locale }),
 						...(isClient && { role: ROLES.client }),
+						...(isTeam && { role: ROLES.team }),
 					},
 				};
 			},

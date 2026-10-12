@@ -12,6 +12,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { GalleryCard } from "@/components/client-work/gallery-card";
+import { ProjectEquipmentSection } from "@/components/dashboard/equipment/project-equipment-section";
 import { NewGalleryDialog } from "@/components/dashboard/projects/new-gallery-dialog";
 import { ProjectClientCard } from "@/components/dashboard/projects/project-client-card";
 import { ProjectDeleteButton } from "@/components/dashboard/projects/project-delete-button";
@@ -20,13 +21,18 @@ import { ProjectStageControl } from "@/components/dashboard/projects/project-sta
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
+import { ProjectTeamSection } from "@/components/dashboard/team/project-team-section";
+import { InvoiceSection } from "@/components/invoices/invoice-section";
 import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
+import { listProjectEquipment } from "@/services/equipment/queries";
+import { listProjectInvoices } from "@/services/invoices/queries";
 import { getProject } from "@/services/projects/queries";
 import {
 	canClientView,
 	isDeliveredToClient,
 } from "@/services/projects/visibility";
+import { listProjectTeam } from "@/services/team/queries";
 
 export default async function ProjectPage({
 	params,
@@ -38,6 +44,11 @@ export default async function ProjectPage({
 	const { photographerId } = await requirePhotographer();
 	const project = await getProject(photographerId, projectId);
 	if (!project) notFound();
+	const [invoices, gear, crew] = await Promise.all([
+		listProjectInvoices(photographerId, project.id),
+		listProjectEquipment(photographerId, project.id),
+		listProjectTeam(photographerId, project.id),
+	]);
 
 	return (
 		<PageShell>
@@ -82,6 +93,17 @@ export default async function ProjectPage({
 				projectId={project.id}
 				stage={project.stage}
 				payment={project.paymentStatus}
+			/>
+			<ProjectTeamSection projectId={project.id} assignments={crew} />
+			<ProjectEquipmentSection
+				projectId={project.id}
+				eventDate={project.eventDate}
+				bookings={gear}
+			/>
+			<InvoiceSection
+				invoices={invoices}
+				hrefBase="/dashboard/invoices"
+				newHref={`/dashboard/invoices/new?project=${project.id}`}
 			/>
 			<section className="flex flex-col gap-3">
 				<div className="flex items-center justify-between">

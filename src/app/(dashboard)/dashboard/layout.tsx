@@ -19,7 +19,7 @@ export default async function DashboardLayout({
 	]);
 
 	return (
-		<div className="flex h-screen overflow-hidden bg-background">
+		<div className="flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
 			<TimeZoneSync serverTimeZone={timeZone} />
 			<Sidebar
 				studioName={studio?.name ?? "Lumodesk"}
@@ -32,7 +32,7 @@ export default async function DashboardLayout({
 			  Without a positioned ancestor it escapes this scroll container and
 			  stretches the whole document, adding a second, outer scrollbar.
 			*/}
-			<main className="relative flex flex-1 flex-col overflow-y-auto">
+			<main className="relative flex flex-1 flex-col overflow-y-auto print:overflow-visible">
 				{children}
 			</main>
 		</div>

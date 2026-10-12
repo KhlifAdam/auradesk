@@ -16,7 +16,7 @@ import {
 
 export const galleryViewSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),
-	filter: z.enum(["all", "selected"]).catch("all"),
+	filter: z.enum(["all", "selected", "flagged"]).catch("all"),
 });
 
 export const createGallerySchema = z.object({

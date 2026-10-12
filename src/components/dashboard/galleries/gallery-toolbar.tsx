@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { reopenSelection, shareGallery } from "@/services/galleries/actions";
 import type { GalleryFilter, GalleryView } from "@/services/galleries/types";
 
-const FILTERS: GalleryFilter[] = ["all", "selected"];
+const FILTERS: GalleryFilter[] = ["all", "selected", "flagged"];
 
 /** Share switch, selection status and the all/picks filter. */
 export function GalleryToolbar({ gallery }: { gallery: GalleryView }) {

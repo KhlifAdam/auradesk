@@ -29,17 +29,19 @@ export default async function PortalLayout({
 	return (
 		<div className="min-h-screen bg-background">
 			<TimeZoneSync serverTimeZone={timeZone} />
-			<PortalHeader
-				user={{
-					name: session.user.name,
-					// A phone-only account's placeholder email never reaches the browser.
-					email: realEmail(session.user.email) ?? "",
-					phoneNumber: session.user.phoneNumber,
-					image: session.user.image,
-				}}
-				unreadMessages={unreadMessages}
-				isPhotographer={session.user.role === ROLES.photographer}
-			/>
+			<div className="contents print:hidden">
+				<PortalHeader
+					user={{
+						name: session.user.name,
+						// A phone-only account's placeholder email never reaches the browser.
+						email: realEmail(session.user.email) ?? "",
+						phoneNumber: session.user.phoneNumber,
+						image: session.user.image,
+					}}
+					unreadMessages={unreadMessages}
+					isPhotographer={session.user.role === ROLES.photographer}
+				/>
+			</div>
 			<main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:px-6">
 				{children}
 			</main>

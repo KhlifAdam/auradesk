@@ -21,7 +21,7 @@ export function Sidebar({ studioName, unreadMessages, user }: SidebarProps) {
 	const t = useTranslations("Dashboard.Nav");
 
 	return (
-		<aside className="flex h-screen w-56 shrink-0 flex-col border-r border-border bg-card">
+		<aside className="flex h-screen w-56 shrink-0 flex-col border-r border-border bg-card print:hidden">
 			{/* Logo */}
 			<div className="border-b border-border p-3">
 				<SidebarLogo name={studioName} />

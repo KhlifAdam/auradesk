@@ -3,6 +3,7 @@ import "server-only";
 import { getR2PrivateEnv } from "@/lib/env";
 import {
 	deleteKeys,
+	getObjectHead,
 	getObjectStream,
 	head,
 	presignDownload,
@@ -90,6 +91,11 @@ export function abortPrivateMultipart(key: string, uploadId: string) {
 /** A short link that downloads the file under its original name. */
 export function getPrivateDownloadUrl(key: string, filename: string) {
 	return presignDownload(bucket(), key, filename, DOWNLOAD_URL_TTL_SECONDS);
+}
+
+/** The start of a private file, enough for its metadata header. */
+export function readPrivateObjectHead(key: string, bytes: number) {
+	return getObjectHead(bucket(), key, bytes);
 }
 
 export function readPrivateObject(key: string) {

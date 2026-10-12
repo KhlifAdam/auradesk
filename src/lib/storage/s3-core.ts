@@ -103,6 +103,23 @@ export function presignDownload(
 	);
 }
 
+/** The first `bytes` bytes of an object, e.g. to read a file's header. */
+export async function getObjectHead(
+	bucket: string,
+	key: string,
+	bytes: number,
+) {
+	const res = await getClient().send(
+		new GetObjectCommand({
+			Bucket: bucket,
+			Key: key,
+			Range: `bytes=0-${bytes - 1}`,
+		}),
+	);
+	if (!res.Body) throw new Error(`Empty object ${key}`);
+	return Buffer.from(await res.Body.transformToByteArray());
+}
+
 /** The object's bytes as a web stream, for the server to pass along. */
 export async function getObjectStream(bucket: string, key: string) {
 	const res = await getClient().send(

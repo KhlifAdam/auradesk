@@ -16,6 +16,9 @@ export const requirePhotographer = cache(async () => {
 
 	// Client accounts are offered to open a studio with the same login.
 	if (role === ROLES.client) redirect("/start-studio");
+	// Collaborators work from their own space.
+	if (role === ROLES.team) redirect("/team");
+	if (role === ROLES.admin) redirect("/admin");
 	if (role !== ROLES.photographer) redirect("/");
 
 	return { session, photographerId: session.user.id };

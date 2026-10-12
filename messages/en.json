@@ -17,7 +17,10 @@
 			"services": "Services",
 			"siteProfile": "Site profile",
 			"appearance": "Appearance",
-			"projects": "Projects"
+			"projects": "Projects",
+			"invoices": "Invoices",
+			"equipment": "Equipment",
+			"team": "Team"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -196,7 +199,19 @@
 		"uploadCancelled": "Upload cancelled.",
 		"uploadIncomplete": "Some parts of the file are missing. Retry to send them.",
 		"uploadInProgress": "This file is already being sent.",
-		"noGallery": "Choose a gallery first."
+		"noGallery": "Choose a gallery first.",
+		"invoiceLocked": "A paid or cancelled invoice can't be changed.",
+		"invoiceNotDraft": "Only a draft invoice can do this.",
+		"invoiceNotIssued": "Send the invoice first.",
+		"invoiceNotPayable": "Payments can only be added to a sent invoice.",
+		"overpayment": "This is more than what is left to pay.",
+		"equipmentConflict": "This item is already booked on some of these days.",
+		"equipmentUnavailable": "This item is out of order or retired; it can't be booked.",
+		"alreadyInTeam": "This person is already in your team.",
+		"analysisFailed": "The photos couldn't be analysed. Check the storage connection and try again.",
+		"cannotBanSelf": "You can't suspend your own account.",
+		"cannotBanAdmin": "Administrators can't be suspended.",
+		"metadataPending": "Some files are still being read. Wait a moment and try again."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -222,7 +237,8 @@
 		"invalidAmount": "Enter a valid amount.",
 		"advanceTooHigh": "The advance can't exceed the price.",
 		"deliveryBeforeEvent": "The deadline can't be before the date.",
-		"invalidPhone": "Enter a valid phone number."
+		"invalidPhone": "Enter a valid phone number.",
+		"invalidPrefix": "Use letters, digits, dashes or underscores only."
 	},
 	"Media": {
 		"title": "Media library",
@@ -1221,6 +1237,24 @@
 				"accepted": "accepted",
 				"declined": "declined"
 			}
+		},
+		"invoiceSent": {
+			"languageName": "English",
+			"subject": "{studio} sent you invoice {number}",
+			"preheader": "Invoice {number}: {amount}",
+			"heading": "You have a new invoice",
+			"intro": "{studio} sent you the invoice {number} for {amount}. Open it to see the details, print it or save it as a PDF.",
+			"cta": "View the invoice",
+			"text": "{studio} sent you the invoice {number} for {amount}. View it here: {url}"
+		},
+		"teamInvitation": {
+			"languageName": "English",
+			"subject": "{studio} invited you to join their team",
+			"preheader": "Join {studio} on Lumodesk",
+			"heading": "You're invited to a team",
+			"intro": "Hi {name}, {studio} invited you to join their team on Lumodesk. Sign in (or create an account with this email address) to accept and see the projects you're assigned to.",
+			"cta": "See the invitation",
+			"text": "Hi {name}, {studio} invited you to join their team on Lumodesk. Accept it here: {url}"
 		}
 	},
 	"Sms": {
@@ -1688,6 +1722,483 @@
 			"accepted": "The client accepted on {date}. You can confirm."
 		}
 	},
+	"Invoices": {
+		"title": "Invoices",
+		"description": "Bill your clients, record payments and follow what is still owed.",
+		"status": {
+			"DRAFT": "Draft",
+			"SENT": "Sent",
+			"PAID": "Paid",
+			"CANCELLED": "Cancelled",
+			"OVERDUE": "Overdue"
+		},
+		"methods": {
+			"CASH": "Cash",
+			"BANK_TRANSFER": "Bank transfer",
+			"CARD": "Card",
+			"CHEQUE": "Cheque",
+			"OTHER": "Other"
+		},
+		"stats": {
+			"invoiced": "Invoiced",
+			"collected": "Collected",
+			"outstanding": "Still to collect",
+			"overdueCount": "Overdue invoices"
+		},
+		"list": {
+			"new": "New invoice",
+			"search": "Search by number or client…",
+			"all": "All invoices",
+			"filter": "Filter by status",
+			"due": "due {date}",
+			"balance": "{amount} left"
+		},
+		"empty": {
+			"title": "No invoices yet",
+			"description": "Create an invoice from scratch, or from a project to bill its client at its price.",
+			"noMatch": "No invoice matches these filters."
+		},
+		"section": {
+			"title": "Invoices",
+			"new": "New invoice",
+			"none": "No invoice for this project yet."
+		},
+		"form": {
+			"back": "Back",
+			"backToInvoice": "Back to the invoice",
+			"createTitle": "New invoice",
+			"editTitle": "Edit invoice {number}",
+			"description": "The number is given automatically. A draft stays private until you send it.",
+			"cancel": "Cancel",
+			"save": "Save changes",
+			"create": "Create the draft",
+			"created": "Invoice created",
+			"updated": "Invoice updated",
+			"client": {
+				"title": "Client",
+				"hint": "Who is billed. These details are copied onto the invoice.",
+				"project": "Project: {title}",
+				"unlink": "Unlink the project",
+				"name": "Name",
+				"email": "Email",
+				"emailHint": "A client with an account receives it by email and in their space.",
+				"phone": "Phone",
+				"address": "Billing address"
+			},
+			"items": {
+				"title": "Lines",
+				"hint": "Amounts in {currency}.",
+				"description": "Description",
+				"quantity": "Qty",
+				"unitPrice": "Unit price",
+				"remove": "Remove the line",
+				"add": "Add a line",
+				"discount": "Discount",
+				"taxRate": "Tax (%)",
+				"subtotal": "Subtotal",
+				"tax": "Tax",
+				"total": "Total"
+			},
+			"details": {
+				"title": "Dates and notes",
+				"issueDate": "Issue date",
+				"dueDate": "Due date",
+				"notes": "Notes",
+				"notesHint": "Printed at the bottom: payment terms, bank details…"
+			}
+		},
+		"detail": {
+			"back": "Back",
+			"print": "Print / PDF",
+			"send": "Send to client",
+			"sent": "Invoice marked as sent",
+			"sentEmailed": "Invoice sent to the client by email",
+			"cancelled": "Invoice cancelled",
+			"deleteTitle": "Delete this draft?",
+			"deleteDescription": "The draft will be removed for good.",
+			"deleted": "Draft deleted",
+			"cancel": "Cancel invoice",
+			"cancelTitle": "Cancel this invoice?",
+			"cancelDescription": "It stays in your records as cancelled, and its payments no longer count for the project.",
+			"keep": "Keep it",
+			"confirmCancel": "Cancel the invoice",
+			"edit": "Edit",
+			"fromProject": "Project: {title}",
+			"draftHint": "This is a draft: your client can't see it yet. Send it when it's ready."
+		},
+		"payments": {
+			"advanceReference": "Advance",
+			"record": "Record a payment",
+			"title": "Record a payment",
+			"description": "Money received for this invoice. It's marked as paid once fully paid.",
+			"amount": "Amount",
+			"date": "Date",
+			"method": "Method",
+			"reference": "Reference",
+			"referencePlaceholder": "Cheque or transfer number…",
+			"save": "Save the payment",
+			"recorded": "Payment recorded",
+			"history": "Payments",
+			"none": "No payment yet.",
+			"remove": "Remove the payment",
+			"removed": "Payment removed"
+		},
+		"document": {
+			"title": "Invoice",
+			"billTo": "Billed to",
+			"issued": "Issued",
+			"due": "Due",
+			"project": "Project",
+			"description": "Description",
+			"quantity": "Qty",
+			"unitPrice": "Unit price",
+			"amount": "Amount",
+			"subtotal": "Subtotal",
+			"discount": "Discount",
+			"tax": "Tax ({rate} %)",
+			"total": "Total",
+			"paid": "Paid",
+			"balance": "Balance due"
+		}
+	},
+	"Equipment": {
+		"title": "Equipment",
+		"description": "Your gear, where it is today, and when it's booked, rented out or away for repair.",
+		"categories": {
+			"CAMERA": "Camera",
+			"LENS": "Lens",
+			"LIGHTING": "Lighting",
+			"AUDIO": "Audio",
+			"DRONE": "Drone",
+			"SUPPORT": "Tripod & gimbal",
+			"STORAGE": "Storage",
+			"COMPUTER": "Computer",
+			"OTHER": "Other"
+		},
+		"statuses": {
+			"ACTIVE": "In service",
+			"BROKEN": "Out of order",
+			"RETIRED": "Retired"
+		},
+		"ownerships": {
+			"OWNED": "Owned",
+			"HIRED": "Hired from a supplier"
+		},
+		"kinds": {
+			"PROJECT": "Shoot",
+			"RENTAL_OUT": "Rented out",
+			"RENTAL_IN": "Hired in",
+			"MAINTENANCE": "Maintenance"
+		},
+		"availability": {
+			"AVAILABLE": "Available",
+			"IN_USE": "On a shoot",
+			"RENTED_OUT": "Rented out",
+			"IN_MAINTENANCE": "In maintenance",
+			"BROKEN": "Out of order",
+			"RETIRED": "Retired"
+		},
+		"filters": {
+			"AVAILABLE": "Available today",
+			"BUSY": "Busy today",
+			"BROKEN": "Out of order",
+			"RETIRED": "Retired"
+		},
+		"stats": {
+			"total": "Items",
+			"available": "Available today",
+			"busy": "Busy today",
+			"unavailable": "Out of service"
+		},
+		"list": {
+			"new": "Add an item",
+			"search": "Search by name, brand, serial…",
+			"allCategories": "All categories",
+			"category": "Filter by category",
+			"anyAvailability": "Any availability",
+			"availability": "Filter by availability",
+			"hired": "hired"
+		},
+		"empty": {
+			"title": "No equipment yet",
+			"description": "Add your cameras, lenses and lights to know what's free and to plan each shoot's gear.",
+			"noMatch": "No item matches these filters."
+		},
+		"form": {
+			"back": "Back",
+			"backToItem": "Back to the item",
+			"createTitle": "Add an item",
+			"editTitle": "Edit {name}",
+			"description": "Only the name is required.",
+			"cancel": "Cancel",
+			"save": "Save changes",
+			"create": "Add the item",
+			"created": "Item added",
+			"updated": "Item updated",
+			"item": {
+				"title": "Item",
+				"name": "Name",
+				"namePlaceholder": "Main body, 50mm f/1.8…",
+				"category": "Category",
+				"brand": "Brand",
+				"model": "Model",
+				"serialNumber": "Serial number",
+				"status": "Status",
+				"statusHint": "Out of order and retired items can't be booked.",
+				"ownership": "Ownership"
+			},
+			"money": {
+				"title": "Purchase and rental",
+				"hint": "Amounts in {currency}.",
+				"purchaseDate": "Purchase date",
+				"purchasePrice": "Purchase price",
+				"dailyRate": "Daily rate",
+				"dailyRateHint": "When you rent it out.",
+				"notes": "Notes"
+			}
+		},
+		"detail": {
+			"back": "Back",
+			"edit": "Edit",
+			"bookings": "Bookings",
+			"noBookings": "Not booked yet",
+			"noBookingsHint": "Book it for a shoot, a rental or a repair to block those days.",
+			"deleteTitle": "Delete this item?",
+			"deleteDescription": "The item and its booking history will be removed for good.",
+			"deleted": "Item deleted"
+		},
+		"facts": {
+			"category": "Category",
+			"brandModel": "Brand and model",
+			"serialNumber": "Serial number",
+			"ownership": "Ownership",
+			"purchaseDate": "Bought on",
+			"purchasePrice": "Purchase price",
+			"dailyRate": "Daily rate",
+			"rentalIncome": "Rental income"
+		},
+		"booking": {
+			"button": "Book",
+			"title": "Book this item",
+			"addToProject": "Add equipment",
+			"description": "The item is blocked on these days (first and last included).",
+			"kind": "Use",
+			"equipmentId": "Item",
+			"equipmentIdPlaceholder": "Choose an item",
+			"projectId": "Project",
+			"projectIdPlaceholder": "Choose a project",
+			"search": "Search…",
+			"noMatch": "Nothing found.",
+			"startDate": "From",
+			"endDate": "To",
+			"renter": "Rented to",
+			"supplier": "Supplier",
+			"fee": "Fee received",
+			"cost": "Cost",
+			"notes": "Notes",
+			"save": "Save the booking",
+			"saved": "Booking saved",
+			"returned": "returned",
+			"markReturned": "Returned",
+			"markedReturned": "Marked as returned",
+			"remove": "Remove the booking",
+			"removed": "Booking removed"
+		},
+		"project": {
+			"title": "Equipment",
+			"none": "No equipment booked for this project yet."
+		}
+	},
+	"Team": {
+		"title": "Team",
+		"description": "Invite your collaborators and put them on projects. They only see the projects they're assigned to — never prices or private notes.",
+		"stats": {
+			"total": "Members",
+			"active": "Active",
+			"pending": "Invitations waiting"
+		},
+		"list": {
+			"search": "Search by name, email or role…",
+			"projects": "{count, plural, =0 {No project} one {# project} other {# projects}}"
+		},
+		"empty": {
+			"title": "No collaborators yet",
+			"description": "Invite an editor, a second shooter or a drone pilot by email.",
+			"noMatch": "No member matches this search."
+		},
+		"invite": {
+			"button": "Invite a collaborator",
+			"title": "Invite a collaborator",
+			"description": "They get an email and join once they accept with this address.",
+			"name": "Name",
+			"email": "Email",
+			"specialty": "Specialty",
+			"specialtyPlaceholder": "Editor, drone pilot, assistant…",
+			"submit": "Send the invitation",
+			"sent": "Invitation sent",
+			"savedNotEmailed": "Invitation saved, but the email couldn't be sent. Invite again to retry."
+		},
+		"remove": {
+			"button": "Remove",
+			"title": "Remove {name} from your team?",
+			"description": "They lose access to every project they were assigned to.",
+			"done": "Member removed"
+		},
+		"project": {
+			"title": "Team",
+			"none": "Nobody assigned to this project yet.",
+			"assign": "Assign",
+			"assignTitle": "Assign a team member",
+			"assignDescription": "They'll see this project's plan, crew and gear in their team space.",
+			"member": "Member",
+			"memberPlaceholder": "Choose a member",
+			"search": "Search…",
+			"noMatch": "No member found. Invite them from the Team page.",
+			"role": "Role on this project",
+			"rolePlaceholder": "Second shooter, editor…",
+			"save": "Assign",
+			"assigned": "Member assigned",
+			"remove": "Remove from the project",
+			"removed": "Member removed from the project"
+		}
+	},
+	"Ai": {
+		"flags": {
+			"BLURRY": "Blurry",
+			"UNDEREXPOSED": "Too dark",
+			"OVEREXPOSED": "Too bright",
+			"EYES_CLOSED": "Eyes closed",
+			"DUPLICATE": "Near-duplicate"
+		},
+		"assistant": {
+			"title": "AI photo assistant",
+			"analysed": "{count} of {total} photos analysed",
+			"start": "Analyse the photos",
+			"continue": "Analyse {count, plural, one {# new photo} other {# new photos}}",
+			"reset": "Start over",
+			"done": "Analysis complete",
+			"allGood": "Nothing to flag: sharp, well exposed, no near-duplicates.",
+			"review": "Review {count, plural, one {# flagged photo} other {# flagged photos}} →",
+			"noVision": "Blur, exposure and near-duplicates are checked. Add an ANTHROPIC_API_KEY to also detect closed eyes."
+		},
+		"reminders": {
+			"title": "Studio assistant",
+			"allClear": "All clear: nothing urgent in the coming days.",
+			"prepareGear": "{project} {days, plural, =0 {today} one {tomorrow} other {in # days}}: pack {gear}{more, plural, =0 {} other { and # more}}.",
+			"noGear": "{project} {days, plural, =0 {today} one {tomorrow} other {in # days}}: no equipment booked yet.",
+			"brokenGear": "{project}: {gear} is booked but out of order. Swap it.",
+			"noCrew": "{project} {days, plural, =0 {today} one {tomorrow} other {in # days}}: nobody from your team is assigned.",
+			"deadlineMissed": "{project}: delivery is {days, plural, =0 {due today} one {# day late} other {# days late}}.",
+			"deadlineSoon": "{project}: delivery due {days, plural, =0 {today} one {tomorrow} other {in # days}}.",
+			"selectionToReview": "The client sent their selection in “{gallery}”. Time to edit.",
+			"overdueInvoices": "{count, plural, one {# invoice is} other {# invoices are}} overdue. Send a reminder.",
+			"bookingFollowUp": "“{booking}” is past its answer deadline. Follow up.",
+			"rentalReturn": "{gear} should be back from {party}."
+		},
+		"video": {
+			"title": "AI video assistant",
+			"analysed": "{count} of {total} videos analysed",
+			"start": "Analyse {count, plural, one {# video} other {# videos}}",
+			"reset": "Start over",
+			"done": "Video analysis complete",
+			"shots": "{count, plural, one {# shot} other {# shots}}",
+			"silent": "{percent} % silent",
+			"noAudio": "no sound track",
+			"mostlySilent": "Mostly silent: B-roll?",
+			"shotAt": "Shot {index} starts at {time}",
+			"silenceAt": "Silence from {from} to {to}",
+			"noVision": "Shots and silences are detected. Add an ANTHROPIC_API_KEY to also label each clip (ceremony, speech, dance…)."
+		},
+		"videoCategories": {
+			"CEREMONY": "Ceremony",
+			"SPEECH": "Speech",
+			"DANCE": "Dance",
+			"PORTRAIT": "Portrait",
+			"GROUP": "Group",
+			"DETAILS": "Details",
+			"LANDSCAPE": "Landscape",
+			"PRODUCT": "Product",
+			"BEHIND_THE_SCENES": "Behind the scenes",
+			"OTHER": "Other"
+		}
+	},
+	"TeamSpace": {
+		"header": {
+			"title": "Team space"
+		},
+		"home": {
+			"title": "Hello {name}",
+			"description": "The projects studios have assigned to you.",
+			"projects": "My projects",
+			"noProjects": "No project yet",
+			"noProjectsHint": "Projects appear here once a studio assigns you to them."
+		},
+		"invitations": {
+			"from": "{studio} invited you to their team",
+			"as": "As {specialty}",
+			"accept": "Accept",
+			"decline": "Decline",
+			"accepted": "You joined the team",
+			"declined": "Invitation declined"
+		},
+		"project": {
+			"back": "Back",
+			"yourRole": "Your role: {role}",
+			"plan": "The plan",
+			"type": "Type",
+			"date": "Date",
+			"hours": "Hours",
+			"location": "Location",
+			"contact": "On-site contact",
+			"deadline": "Delivery deadline",
+			"brief": "Brief",
+			"crew": "Crew",
+			"gear": "Gear",
+			"noGear": "No gear booked yet."
+		}
+	},
+	"SpaceHeader": {
+		"dashboard": "My studio",
+		"logout": "Sign out"
+	},
+	"Admin": {
+		"title": "Administration",
+		"description": "Accounts and studios on the platform. Studios' clients, projects, files and money stay private.",
+		"stats": {
+			"photographers": "Photographers",
+			"clients": "Clients",
+			"collaborators": "Collaborators",
+			"publishedSites": "Published sites",
+			"newThisMonth": "New this month",
+			"banned": "Suspended"
+		},
+		"roles": {
+			"photographer": "Photographer",
+			"client": "Client",
+			"team": "Collaborator",
+			"admin": "Admin"
+		},
+		"users": {
+			"search": "Search by name, email or studio…",
+			"allRoles": "All roles",
+			"role": "Filter by role",
+			"empty": "No account matches these filters.",
+			"joined": "joined {date}",
+			"suspended": "Suspended",
+			"draft": "draft"
+		},
+		"ban": {
+			"button": "Suspend",
+			"title": "Suspend {name}?",
+			"description": "They're signed out everywhere and can't sign in until the suspension is lifted. Their data is kept.",
+			"reason": "Reason (optional)",
+			"cancel": "Cancel",
+			"confirm": "Suspend the account",
+			"done": "Account suspended",
+			"lift": "Lift suspension",
+			"lifted": "Suspension lifted"
+		}
+	},
 	"Messages": {
 		"title": "Messages",
 		"description": "Talk with your clients, all in one place.",
@@ -1825,7 +2336,8 @@
 			"reopened": "Selection reopened.",
 			"filters": {
 				"all": "All photos",
-				"selected": "Client picks"
+				"selected": "Client picks",
+				"flagged": "To review"
 			},
 			"empty": {
 				"title": "No photos yet",
@@ -1856,6 +2368,25 @@
 		"download": {
 			"all": "Download all",
 			"selected": "{count, plural, one {Download my pick} other {Download my # picks}}"
+		},
+		"organize": {
+			"button": "Organise",
+			"title": "Organise the gallery",
+			"description": "Sort files by when they were shot and give them consistent names. Dates and cameras come from each file's metadata.",
+			"reading": "Reading the files' metadata… {count} of {total}",
+			"range": "Shot from {from} to {to}",
+			"unknownSource": "Unknown device",
+			"undated": "{count, plural, one {# file has} other {# files have}} no capture date: the upload time is used instead.",
+			"sort": "Shooting order",
+			"sortHint": "Put the gallery in the order the files were shot.",
+			"rename": "Rename the files",
+			"renameHint": "Clients and downloads get the new names. The original names are kept and can be restored.",
+			"prefix": "Name prefix",
+			"example": "First file: {name}",
+			"apply": "Organise",
+			"done": "Gallery organised",
+			"restore": "Restore original names",
+			"restored": "Original names restored"
 		}
 	},
 	"Portal": {

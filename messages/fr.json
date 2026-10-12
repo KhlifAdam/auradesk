@@ -17,7 +17,10 @@
 			"services": "Prestations",
 			"siteProfile": "Profil du site",
 			"appearance": "Apparence",
-			"projects": "Projets"
+			"projects": "Projets",
+			"invoices": "Factures",
+			"equipment": "Matériel",
+			"team": "Équipe"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -196,7 +199,19 @@
 		"uploadCancelled": "Envoi annulé.",
 		"uploadIncomplete": "Des morceaux du fichier manquent. Réessayez pour les envoyer.",
 		"uploadInProgress": "Ce fichier est déjà en cours d'envoi.",
-		"noGallery": "Choisissez d'abord une galerie."
+		"noGallery": "Choisissez d'abord une galerie.",
+		"invoiceLocked": "Une facture payée ou annulée ne peut plus être modifiée.",
+		"invoiceNotDraft": "Seul un brouillon de facture le permet.",
+		"invoiceNotIssued": "Envoyez d'abord la facture.",
+		"invoiceNotPayable": "Les paiements ne s'ajoutent qu'à une facture envoyée.",
+		"overpayment": "Ce montant dépasse le reste à payer.",
+		"equipmentConflict": "Cet élément est déjà réservé sur certains de ces jours.",
+		"equipmentUnavailable": "Cet élément est en panne ou retiré : il ne peut pas être réservé.",
+		"alreadyInTeam": "Cette personne fait déjà partie de votre équipe.",
+		"analysisFailed": "Les photos n'ont pas pu être analysées. Vérifiez la connexion au stockage et réessayez.",
+		"cannotBanSelf": "Vous ne pouvez pas suspendre votre propre compte.",
+		"cannotBanAdmin": "Les administrateurs ne peuvent pas être suspendus.",
+		"metadataPending": "Certains fichiers sont encore en cours de lecture. Patientez un instant et réessayez."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -222,7 +237,8 @@
 		"invalidAmount": "Saisissez un montant valide.",
 		"advanceTooHigh": "L'avance ne peut pas dépasser le prix.",
 		"deliveryBeforeEvent": "La date limite ne peut pas précéder la date.",
-		"invalidPhone": "Saisissez un numéro de téléphone valide."
+		"invalidPhone": "Saisissez un numéro de téléphone valide.",
+		"invalidPrefix": "Utilisez uniquement des lettres, chiffres, tirets ou tirets bas."
 	},
 	"Media": {
 		"title": "Médiathèque",
@@ -1221,6 +1237,24 @@
 				"accepted": "a accepté",
 				"declined": "a refusé"
 			}
+		},
+		"invoiceSent": {
+			"languageName": "Français",
+			"subject": "{studio} vous a envoyé la facture {number}",
+			"preheader": "Facture {number} : {amount}",
+			"heading": "Vous avez une nouvelle facture",
+			"intro": "{studio} vous a envoyé la facture {number} d'un montant de {amount}. Ouvrez-la pour voir le détail, l'imprimer ou l'enregistrer en PDF.",
+			"cta": "Voir la facture",
+			"text": "{studio} vous a envoyé la facture {number} d'un montant de {amount}. Consultez-la ici : {url}"
+		},
+		"teamInvitation": {
+			"languageName": "Français",
+			"subject": "{studio} vous invite à rejoindre son équipe",
+			"preheader": "Rejoignez {studio} sur Lumodesk",
+			"heading": "Vous êtes invité dans une équipe",
+			"intro": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur Lumodesk. Connectez-vous (ou créez un compte avec cette adresse) pour accepter et voir les projets qui vous sont confiés.",
+			"cta": "Voir l'invitation",
+			"text": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur Lumodesk. Acceptez ici : {url}"
 		}
 	},
 	"Sms": {
@@ -1688,6 +1722,483 @@
 			"accepted": "Le client a accepté le {date}. Vous pouvez confirmer."
 		}
 	},
+	"Invoices": {
+		"title": "Factures",
+		"description": "Facturez vos clients, enregistrez les paiements et suivez ce qui reste dû.",
+		"status": {
+			"DRAFT": "Brouillon",
+			"SENT": "Envoyée",
+			"PAID": "Payée",
+			"CANCELLED": "Annulée",
+			"OVERDUE": "En retard"
+		},
+		"methods": {
+			"CASH": "Espèces",
+			"BANK_TRANSFER": "Virement",
+			"CARD": "Carte",
+			"CHEQUE": "Chèque",
+			"OTHER": "Autre"
+		},
+		"stats": {
+			"invoiced": "Facturé",
+			"collected": "Encaissé",
+			"outstanding": "Reste à encaisser",
+			"overdueCount": "Factures en retard"
+		},
+		"list": {
+			"new": "Nouvelle facture",
+			"search": "Rechercher par numéro ou client…",
+			"all": "Toutes les factures",
+			"filter": "Filtrer par statut",
+			"due": "échéance {date}",
+			"balance": "reste {amount}"
+		},
+		"empty": {
+			"title": "Aucune facture pour l'instant",
+			"description": "Créez une facture de zéro, ou depuis un projet pour facturer son client à son prix.",
+			"noMatch": "Aucune facture ne correspond à ces filtres."
+		},
+		"section": {
+			"title": "Factures",
+			"new": "Nouvelle facture",
+			"none": "Aucune facture pour ce projet."
+		},
+		"form": {
+			"back": "Retour",
+			"backToInvoice": "Retour à la facture",
+			"createTitle": "Nouvelle facture",
+			"editTitle": "Modifier la facture {number}",
+			"description": "Le numéro est attribué automatiquement. Un brouillon reste privé jusqu'à son envoi.",
+			"cancel": "Annuler",
+			"save": "Enregistrer",
+			"create": "Créer le brouillon",
+			"created": "Facture créée",
+			"updated": "Facture mise à jour",
+			"client": {
+				"title": "Client",
+				"hint": "La personne facturée. Ces informations sont recopiées sur la facture.",
+				"project": "Projet : {title}",
+				"unlink": "Détacher le projet",
+				"name": "Nom",
+				"email": "E-mail",
+				"emailHint": "Un client avec un compte la reçoit par e-mail et dans son espace.",
+				"phone": "Téléphone",
+				"address": "Adresse de facturation"
+			},
+			"items": {
+				"title": "Lignes",
+				"hint": "Montants en {currency}.",
+				"description": "Description",
+				"quantity": "Qté",
+				"unitPrice": "Prix unitaire",
+				"remove": "Supprimer la ligne",
+				"add": "Ajouter une ligne",
+				"discount": "Remise",
+				"taxRate": "TVA (%)",
+				"subtotal": "Sous-total",
+				"tax": "TVA",
+				"total": "Total"
+			},
+			"details": {
+				"title": "Dates et notes",
+				"issueDate": "Date d'émission",
+				"dueDate": "Date d'échéance",
+				"notes": "Notes",
+				"notesHint": "Imprimées en bas : conditions de paiement, RIB…"
+			}
+		},
+		"detail": {
+			"back": "Retour",
+			"print": "Imprimer / PDF",
+			"send": "Envoyer au client",
+			"sent": "Facture marquée comme envoyée",
+			"sentEmailed": "Facture envoyée au client par e-mail",
+			"cancelled": "Facture annulée",
+			"deleteTitle": "Supprimer ce brouillon ?",
+			"deleteDescription": "Le brouillon sera supprimé définitivement.",
+			"deleted": "Brouillon supprimé",
+			"cancel": "Annuler la facture",
+			"cancelTitle": "Annuler cette facture ?",
+			"cancelDescription": "Elle reste dans vos archives comme annulée, et ses paiements ne comptent plus pour le projet.",
+			"keep": "La garder",
+			"confirmCancel": "Annuler la facture",
+			"edit": "Modifier",
+			"fromProject": "Projet : {title}",
+			"draftHint": "Ceci est un brouillon : votre client ne le voit pas encore. Envoyez-le quand il est prêt."
+		},
+		"payments": {
+			"advanceReference": "Acompte",
+			"record": "Enregistrer un paiement",
+			"title": "Enregistrer un paiement",
+			"description": "Argent reçu pour cette facture. Elle passe en payée une fois réglée en totalité.",
+			"amount": "Montant",
+			"date": "Date",
+			"method": "Mode",
+			"reference": "Référence",
+			"referencePlaceholder": "N° de chèque ou de virement…",
+			"save": "Enregistrer le paiement",
+			"recorded": "Paiement enregistré",
+			"history": "Paiements",
+			"none": "Aucun paiement pour l'instant.",
+			"remove": "Supprimer le paiement",
+			"removed": "Paiement supprimé"
+		},
+		"document": {
+			"title": "Facture",
+			"billTo": "Facturé à",
+			"issued": "Émise le",
+			"due": "Échéance",
+			"project": "Projet",
+			"description": "Description",
+			"quantity": "Qté",
+			"unitPrice": "Prix unitaire",
+			"amount": "Montant",
+			"subtotal": "Sous-total",
+			"discount": "Remise",
+			"tax": "TVA ({rate} %)",
+			"total": "Total",
+			"paid": "Déjà payé",
+			"balance": "Reste à payer"
+		}
+	},
+	"Equipment": {
+		"title": "Matériel",
+		"description": "Votre matériel, où il se trouve aujourd'hui, et quand il est réservé, loué ou en réparation.",
+		"categories": {
+			"CAMERA": "Boîtier",
+			"LENS": "Objectif",
+			"LIGHTING": "Éclairage",
+			"AUDIO": "Audio",
+			"DRONE": "Drone",
+			"SUPPORT": "Trépied & stabilisateur",
+			"STORAGE": "Stockage",
+			"COMPUTER": "Ordinateur",
+			"OTHER": "Autre"
+		},
+		"statuses": {
+			"ACTIVE": "En service",
+			"BROKEN": "En panne",
+			"RETIRED": "Retiré"
+		},
+		"ownerships": {
+			"OWNED": "Possédé",
+			"HIRED": "Loué à un fournisseur"
+		},
+		"kinds": {
+			"PROJECT": "Tournage",
+			"RENTAL_OUT": "Mis en location",
+			"RENTAL_IN": "Location fournisseur",
+			"MAINTENANCE": "Maintenance"
+		},
+		"availability": {
+			"AVAILABLE": "Disponible",
+			"IN_USE": "En tournage",
+			"RENTED_OUT": "En location",
+			"IN_MAINTENANCE": "En maintenance",
+			"BROKEN": "En panne",
+			"RETIRED": "Retiré"
+		},
+		"filters": {
+			"AVAILABLE": "Disponible aujourd'hui",
+			"BUSY": "Occupé aujourd'hui",
+			"BROKEN": "En panne",
+			"RETIRED": "Retiré"
+		},
+		"stats": {
+			"total": "Éléments",
+			"available": "Disponibles aujourd'hui",
+			"busy": "Occupés aujourd'hui",
+			"unavailable": "Hors service"
+		},
+		"list": {
+			"new": "Ajouter un élément",
+			"search": "Rechercher par nom, marque, n° de série…",
+			"allCategories": "Toutes les catégories",
+			"category": "Filtrer par catégorie",
+			"anyAvailability": "Toute disponibilité",
+			"availability": "Filtrer par disponibilité",
+			"hired": "loué"
+		},
+		"empty": {
+			"title": "Aucun matériel pour l'instant",
+			"description": "Ajoutez vos boîtiers, objectifs et lumières pour savoir ce qui est libre et préparer le matériel de chaque tournage.",
+			"noMatch": "Aucun élément ne correspond à ces filtres."
+		},
+		"form": {
+			"back": "Retour",
+			"backToItem": "Retour à l'élément",
+			"createTitle": "Ajouter un élément",
+			"editTitle": "Modifier {name}",
+			"description": "Seul le nom est obligatoire.",
+			"cancel": "Annuler",
+			"save": "Enregistrer",
+			"create": "Ajouter l'élément",
+			"created": "Élément ajouté",
+			"updated": "Élément mis à jour",
+			"item": {
+				"title": "Élément",
+				"name": "Nom",
+				"namePlaceholder": "Boîtier principal, 50 mm f/1.8…",
+				"category": "Catégorie",
+				"brand": "Marque",
+				"model": "Modèle",
+				"serialNumber": "N° de série",
+				"status": "Statut",
+				"statusHint": "Un élément en panne ou retiré ne peut pas être réservé.",
+				"ownership": "Propriété"
+			},
+			"money": {
+				"title": "Achat et location",
+				"hint": "Montants en {currency}.",
+				"purchaseDate": "Date d'achat",
+				"purchasePrice": "Prix d'achat",
+				"dailyRate": "Tarif journalier",
+				"dailyRateHint": "Quand vous le louez.",
+				"notes": "Notes"
+			}
+		},
+		"detail": {
+			"back": "Retour",
+			"edit": "Modifier",
+			"bookings": "Réservations",
+			"noBookings": "Pas encore réservé",
+			"noBookingsHint": "Réservez-le pour un tournage, une location ou une réparation pour bloquer ces jours.",
+			"deleteTitle": "Supprimer cet élément ?",
+			"deleteDescription": "L'élément et son historique de réservations seront supprimés définitivement.",
+			"deleted": "Élément supprimé"
+		},
+		"facts": {
+			"category": "Catégorie",
+			"brandModel": "Marque et modèle",
+			"serialNumber": "N° de série",
+			"ownership": "Propriété",
+			"purchaseDate": "Acheté le",
+			"purchasePrice": "Prix d'achat",
+			"dailyRate": "Tarif journalier",
+			"rentalIncome": "Revenus de location"
+		},
+		"booking": {
+			"button": "Réserver",
+			"title": "Réserver cet élément",
+			"addToProject": "Ajouter du matériel",
+			"description": "L'élément est bloqué sur ces jours (premier et dernier inclus).",
+			"kind": "Usage",
+			"equipmentId": "Élément",
+			"equipmentIdPlaceholder": "Choisir un élément",
+			"projectId": "Projet",
+			"projectIdPlaceholder": "Choisir un projet",
+			"search": "Rechercher…",
+			"noMatch": "Aucun résultat.",
+			"startDate": "Du",
+			"endDate": "Au",
+			"renter": "Loué à",
+			"supplier": "Fournisseur",
+			"fee": "Montant reçu",
+			"cost": "Coût",
+			"notes": "Notes",
+			"save": "Enregistrer la réservation",
+			"saved": "Réservation enregistrée",
+			"returned": "rendu",
+			"markReturned": "Rendu",
+			"markedReturned": "Marqué comme rendu",
+			"remove": "Supprimer la réservation",
+			"removed": "Réservation supprimée"
+		},
+		"project": {
+			"title": "Matériel",
+			"none": "Aucun matériel réservé pour ce projet."
+		}
+	},
+	"Team": {
+		"title": "Équipe",
+		"description": "Invitez vos collaborateurs et affectez-les aux projets. Ils ne voient que leurs projets — jamais les prix ni les notes privées.",
+		"stats": {
+			"total": "Membres",
+			"active": "Actifs",
+			"pending": "Invitations en attente"
+		},
+		"list": {
+			"search": "Rechercher par nom, e-mail ou rôle…",
+			"projects": "{count, plural, =0 {Aucun projet} one {# projet} other {# projets}}"
+		},
+		"empty": {
+			"title": "Aucun collaborateur pour l'instant",
+			"description": "Invitez un monteur, un second photographe ou un pilote de drone par e-mail.",
+			"noMatch": "Aucun membre ne correspond à cette recherche."
+		},
+		"invite": {
+			"button": "Inviter un collaborateur",
+			"title": "Inviter un collaborateur",
+			"description": "Il reçoit un e-mail et rejoint l'équipe en acceptant avec cette adresse.",
+			"name": "Nom",
+			"email": "E-mail",
+			"specialty": "Spécialité",
+			"specialtyPlaceholder": "Monteur, pilote de drone, assistant…",
+			"submit": "Envoyer l'invitation",
+			"sent": "Invitation envoyée",
+			"savedNotEmailed": "Invitation enregistrée, mais l'e-mail n'a pas pu être envoyé. Réinvitez pour réessayer."
+		},
+		"remove": {
+			"button": "Retirer",
+			"title": "Retirer {name} de votre équipe ?",
+			"description": "Il perd l'accès à tous les projets qui lui étaient confiés.",
+			"done": "Membre retiré"
+		},
+		"project": {
+			"title": "Équipe",
+			"none": "Personne n'est encore affecté à ce projet.",
+			"assign": "Affecter",
+			"assignTitle": "Affecter un membre",
+			"assignDescription": "Il verra le plan, l'équipe et le matériel de ce projet dans son espace équipe.",
+			"member": "Membre",
+			"memberPlaceholder": "Choisir un membre",
+			"search": "Rechercher…",
+			"noMatch": "Aucun membre trouvé. Invitez-le depuis la page Équipe.",
+			"role": "Rôle sur ce projet",
+			"rolePlaceholder": "Second photographe, monteur…",
+			"save": "Affecter",
+			"assigned": "Membre affecté",
+			"remove": "Retirer du projet",
+			"removed": "Membre retiré du projet"
+		}
+	},
+	"Ai": {
+		"flags": {
+			"BLURRY": "Floue",
+			"UNDEREXPOSED": "Trop sombre",
+			"OVEREXPOSED": "Trop claire",
+			"EYES_CLOSED": "Yeux fermés",
+			"DUPLICATE": "Quasi-doublon"
+		},
+		"assistant": {
+			"title": "Assistant photo IA",
+			"analysed": "{count} photos analysées sur {total}",
+			"start": "Analyser les photos",
+			"continue": "Analyser {count, plural, one {# nouvelle photo} other {# nouvelles photos}}",
+			"reset": "Recommencer",
+			"done": "Analyse terminée",
+			"allGood": "Rien à signaler : photos nettes, bien exposées, sans quasi-doublons.",
+			"review": "Revoir {count, plural, one {# photo signalée} other {# photos signalées}} →",
+			"noVision": "Le flou, l'exposition et les quasi-doublons sont vérifiés. Ajoutez une ANTHROPIC_API_KEY pour détecter aussi les yeux fermés."
+		},
+		"reminders": {
+			"title": "Assistant du studio",
+			"allClear": "Tout est en ordre : rien d'urgent dans les jours à venir.",
+			"prepareGear": "{project} {days, plural, =0 {aujourd'hui} one {demain} other {dans # jours}} : préparez {gear}{more, plural, =0 {} other { et # autres}}.",
+			"noGear": "{project} {days, plural, =0 {aujourd'hui} one {demain} other {dans # jours}} : aucun matériel réservé.",
+			"brokenGear": "{project} : {gear} est réservé mais en panne. Remplacez-le.",
+			"noCrew": "{project} {days, plural, =0 {aujourd'hui} one {demain} other {dans # jours}} : personne de l'équipe n'est affecté.",
+			"deadlineMissed": "{project} : livraison {days, plural, =0 {prévue aujourd'hui} one {en retard de # jour} other {en retard de # jours}}.",
+			"deadlineSoon": "{project} : livraison prévue {days, plural, =0 {aujourd'hui} one {demain} other {dans # jours}}.",
+			"selectionToReview": "Le client a envoyé sa sélection dans « {gallery} ». Place à la retouche.",
+			"overdueInvoices": "{count, plural, one {# facture est} other {# factures sont}} en retard. Envoyez une relance.",
+			"bookingFollowUp": "« {booking} » a dépassé sa date de réponse. Relancez.",
+			"rentalReturn": "{gear} devrait être revenu de chez {party}."
+		},
+		"video": {
+			"title": "Assistant vidéo IA",
+			"analysed": "{count} vidéos analysées sur {total}",
+			"start": "Analyser {count, plural, one {# vidéo} other {# vidéos}}",
+			"reset": "Recommencer",
+			"done": "Analyse des vidéos terminée",
+			"shots": "{count, plural, one {# plan} other {# plans}}",
+			"silent": "{percent} % de silence",
+			"noAudio": "pas de piste son",
+			"mostlySilent": "Surtout silencieuse : plans de coupe ?",
+			"shotAt": "Le plan {index} commence à {time}",
+			"silenceAt": "Silence de {from} à {to}",
+			"noVision": "Les plans et les silences sont détectés. Ajoutez une ANTHROPIC_API_KEY pour aussi classer chaque clip (cérémonie, discours, danse…)."
+		},
+		"videoCategories": {
+			"CEREMONY": "Cérémonie",
+			"SPEECH": "Discours",
+			"DANCE": "Danse",
+			"PORTRAIT": "Portrait",
+			"GROUP": "Groupe",
+			"DETAILS": "Détails",
+			"LANDSCAPE": "Paysage",
+			"PRODUCT": "Produit",
+			"BEHIND_THE_SCENES": "Coulisses",
+			"OTHER": "Autre"
+		}
+	},
+	"TeamSpace": {
+		"header": {
+			"title": "Espace équipe"
+		},
+		"home": {
+			"title": "Bonjour {name}",
+			"description": "Les projets que les studios vous ont confiés.",
+			"projects": "Mes projets",
+			"noProjects": "Aucun projet pour l'instant",
+			"noProjectsHint": "Les projets apparaissent ici dès qu'un studio vous y affecte."
+		},
+		"invitations": {
+			"from": "{studio} vous invite dans son équipe",
+			"as": "En tant que {specialty}",
+			"accept": "Accepter",
+			"decline": "Refuser",
+			"accepted": "Vous avez rejoint l'équipe",
+			"declined": "Invitation refusée"
+		},
+		"project": {
+			"back": "Retour",
+			"yourRole": "Votre rôle : {role}",
+			"plan": "Le plan",
+			"type": "Type",
+			"date": "Date",
+			"hours": "Horaires",
+			"location": "Lieu",
+			"contact": "Contact sur place",
+			"deadline": "Date de livraison",
+			"brief": "Brief",
+			"crew": "Équipe",
+			"gear": "Matériel",
+			"noGear": "Aucun matériel réservé."
+		}
+	},
+	"SpaceHeader": {
+		"dashboard": "Mon studio",
+		"logout": "Se déconnecter"
+	},
+	"Admin": {
+		"title": "Administration",
+		"description": "Les comptes et studios de la plateforme. Les clients, projets, fichiers et finances des studios restent privés.",
+		"stats": {
+			"photographers": "Photographes",
+			"clients": "Clients",
+			"collaborators": "Collaborateurs",
+			"publishedSites": "Sites publiés",
+			"newThisMonth": "Nouveaux ce mois-ci",
+			"banned": "Suspendus"
+		},
+		"roles": {
+			"photographer": "Photographe",
+			"client": "Client",
+			"team": "Collaborateur",
+			"admin": "Admin"
+		},
+		"users": {
+			"search": "Rechercher par nom, e-mail ou studio…",
+			"allRoles": "Tous les rôles",
+			"role": "Filtrer par rôle",
+			"empty": "Aucun compte ne correspond à ces filtres.",
+			"joined": "inscrit le {date}",
+			"suspended": "Suspendu",
+			"draft": "brouillon"
+		},
+		"ban": {
+			"button": "Suspendre",
+			"title": "Suspendre {name} ?",
+			"description": "Il est déconnecté partout et ne peut plus se connecter tant que la suspension n'est pas levée. Ses données sont conservées.",
+			"reason": "Motif (facultatif)",
+			"cancel": "Annuler",
+			"confirm": "Suspendre le compte",
+			"done": "Compte suspendu",
+			"lift": "Lever la suspension",
+			"lifted": "Suspension levée"
+		}
+	},
 	"Messages": {
 		"title": "Messagerie",
 		"description": "Échangez avec vos clients, au même endroit.",
@@ -1825,7 +2336,8 @@
 			"reopened": "Sélection rouverte.",
 			"filters": {
 				"all": "Toutes les photos",
-				"selected": "Choix du client"
+				"selected": "Choix du client",
+				"flagged": "À revoir"
 			},
 			"empty": {
 				"title": "Aucune photo pour l'instant",
@@ -1856,6 +2368,25 @@
 		"download": {
 			"all": "Tout télécharger",
 			"selected": "{count, plural, one {Télécharger ma sélection} other {Télécharger mes # photos choisies}}"
+		},
+		"organize": {
+			"button": "Organiser",
+			"title": "Organiser la galerie",
+			"description": "Triez les fichiers selon leur moment de prise de vue et donnez-leur des noms cohérents. Les dates et appareils viennent des métadonnées de chaque fichier.",
+			"reading": "Lecture des métadonnées… {count} sur {total}",
+			"range": "Prises de vue du {from} au {to}",
+			"unknownSource": "Appareil inconnu",
+			"undated": "{count, plural, one {# fichier n'a} other {# fichiers n'ont}} pas de date de prise de vue : la date d'envoi est utilisée.",
+			"sort": "Ordre de prise de vue",
+			"sortHint": "Classer la galerie dans l'ordre où les fichiers ont été pris.",
+			"rename": "Renommer les fichiers",
+			"renameHint": "Les clients et les téléchargements reçoivent les nouveaux noms. Les noms d'origine sont conservés et peuvent être restaurés.",
+			"prefix": "Préfixe des noms",
+			"example": "Premier fichier : {name}",
+			"apply": "Organiser",
+			"done": "Galerie organisée",
+			"restore": "Restaurer les noms d'origine",
+			"restored": "Noms d'origine restaurés"
 		}
 	},
 	"Portal": {
