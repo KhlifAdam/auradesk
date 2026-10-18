@@ -176,7 +176,9 @@ export function BookingActionsBar({
 								run(
 									() => confirmBooking(bookingId),
 									(data) => {
-										if (data.sent) toast.success(t("confirmed"));
+										if (data.invite === "sent") toast.success(t("confirmed"));
+										else if (data.invite === "none")
+											toast.success(t("confirmedNoContact"));
 										else toast.warning(t("confirmedNoEmail"));
 										router.push(`/dashboard/projects/${data.projectId}`);
 									},

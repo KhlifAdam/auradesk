@@ -28,7 +28,9 @@ function addMinutes(time: string, minutes: number) {
  */
 export async function confirmBooking(
 	input: unknown,
-): Promise<ActionResult<{ projectId: string; sent: boolean }>> {
+): Promise<
+	ActionResult<{ projectId: string; invite: "sent" | "failed" | "none" }>
+> {
 	const { session, photographerId } = await requirePhotographer();
 	const parsed = idSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
@@ -125,7 +127,8 @@ export async function confirmBooking(
 	if (!projectId) return fail("alreadyConfirmed");
 
 	// The project exists either way; a failed invite can be retried from it.
-	let sent = true;
+	// Without an email or phone number there is no one to invite.
+	let invite: "sent" | "failed" | "none" = "none";
 	// By email when there is one, else texted to the phone number.
 	const contact = booking.clientEmail ?? booking.clientPhone;
 	if (contact) {
@@ -134,10 +137,10 @@ export async function confirmBooking(
 			projectId,
 			contact,
 		);
-		sent = invited.ok && invited.data.sent;
+		invite = invited.ok && invited.data.sent ? "sent" : "failed";
 	}
 
 	revalidatePath("/dashboard", "layout");
 	revalidatePath("/portal", "layout");
-	return ok({ projectId, sent });
+	return ok({ projectId, invite });
 }

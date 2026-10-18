@@ -189,6 +189,13 @@
 	}
 }
 
+/* Light/dark switch: one crossfade of the whole page (see theme-transition.ts). */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 450ms;
+	animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @keyframes marquee {
 	to {
 		transform: translateX(-50%);

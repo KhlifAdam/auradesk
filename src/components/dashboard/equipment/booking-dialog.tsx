@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarPlus, Loader2 } from "lucide-react";
+import { CalendarPlus, Loader2, Plus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -97,6 +98,21 @@ export function BookingDialog(fixed: Fixed) {
 						placeholder={t(`${name}Placeholder`)}
 						searchPlaceholder={t("search")}
 						emptyLabel={t("noMatch")}
+						emptyAction={
+							name === "equipmentId" && (
+								<Button
+									asChild
+									size="sm"
+									variant="outline"
+									className="h-7 gap-1.5 text-xs"
+								>
+									<Link href="/dashboard/equipment/new">
+										<Plus className="h-3.5 w-3.5" />
+										{t("addToInventory")}
+									</Link>
+								</Button>
+							)
+						}
 						onPick={(option) => {
 							field.onChange(option.id);
 							setLabels((current) => ({

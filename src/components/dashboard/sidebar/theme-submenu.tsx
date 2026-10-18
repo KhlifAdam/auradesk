@@ -2,7 +2,6 @@
 
 import { Monitor, Moon, Sun, SunMoon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import {
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
@@ -10,6 +9,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSmoothTheme } from "@/hooks/use-smooth-theme";
 
 const THEMES = [
 	{ value: "light", icon: Sun },
@@ -19,7 +19,7 @@ const THEMES = [
 
 export function ThemeSubmenu() {
 	const t = useTranslations("Dashboard.UserMenu");
-	const { theme, setTheme } = useTheme();
+	const { theme, setTheme } = useSmoothTheme();
 
 	return (
 		<DropdownMenuSub>

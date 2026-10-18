@@ -10,6 +10,7 @@ import {
 	useState,
 } from "react";
 import type { ThemeMode } from "@/generated/prisma/client";
+import { withThemeTransition } from "@/lib/theme-transition";
 
 type SiteTheme = "light" | "dark" | "system";
 
@@ -94,7 +95,7 @@ export function SiteShell({
 
 	const toggle = useCallback(() => {
 		const next = isDark ? "light" : "dark";
-		setTheme(next);
+		withThemeTransition(() => setTheme(next));
 		try {
 			localStorage.setItem(storageKey, next);
 		} catch {

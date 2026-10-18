@@ -21,6 +21,8 @@ interface SearchPickerProps {
 	placeholder: string;
 	searchPlaceholder: string;
 	emptyLabel: string;
+	/** Shown under the empty label, e.g. a link to create the first one. */
+	emptyAction?: React.ReactNode;
 	onPick: (option: PickerOption) => void;
 	className?: string;
 }
@@ -34,6 +36,7 @@ export function SearchPicker({
 	placeholder,
 	searchPlaceholder,
 	emptyLabel,
+	emptyAction,
 	onPick,
 	className,
 }: SearchPickerProps) {
@@ -89,8 +92,9 @@ export function SearchPicker({
 						</li>
 					)}
 					{hits?.length === 0 && (
-						<li className="py-4 text-center text-xs text-muted-foreground">
+						<li className="flex flex-col items-center gap-2 py-4 text-center text-xs text-muted-foreground">
 							{emptyLabel}
+							{emptyAction}
 						</li>
 					)}
 					{hits?.map((hit) => (
