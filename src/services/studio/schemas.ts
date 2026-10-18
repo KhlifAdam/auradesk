@@ -32,6 +32,8 @@ const RESERVED_SLUGS = new Set([
 	"dashboard",
 	"login",
 	"register",
+	"auradesk",
+	// The app's former name: still nobody's studio address.
 	"lumodesk",
 	"settings",
 	"www",

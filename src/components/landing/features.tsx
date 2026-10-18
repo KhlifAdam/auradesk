@@ -45,7 +45,7 @@ export function Features() {
 					<div className="absolute -bottom-5 right-[-4%] w-[68%] rounded-lg border border-border bg-background p-4 shadow-xl">
 						<div className="flex items-center gap-3">
 							<Image
-								src="/images/lumodesk-portrait.jpg"
+								src="/images/auradesk-portrait.jpg"
 								alt={t("crm.avatarAlt")}
 								width={1200}
 								height={1504}
@@ -91,7 +91,7 @@ export function Features() {
 							className="absolute left-2 top-2 h-72 w-48 -rotate-6 rounded-md border-[6px] border-card bg-muted shadow-xl"
 						>
 							<Image
-								src="/images/lumodesk-gallery.jpg"
+								src="/images/auradesk-gallery.jpg"
 								alt={t("galleries.weddingAlt")}
 								fill
 								className="rounded-sm object-cover"
@@ -102,7 +102,7 @@ export function Features() {
 							className="absolute left-12 top-24 h-52 w-48 rotate-6 rounded-md border-[6px] border-card bg-muted shadow-xl"
 						>
 							<Image
-								src="/images/lumodesk-editorial.jpg"
+								src="/images/auradesk-editorial.jpg"
 								alt={t("galleries.editorialAlt")}
 								fill
 								className="rounded-sm object-cover"

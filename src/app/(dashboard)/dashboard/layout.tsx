@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
+import { BRAND_NAME } from "@/lib/brand";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { countUnread } from "@/services/messages/queries";
 import { getStudioSummary } from "@/services/studio/queries";
@@ -22,7 +23,7 @@ export default async function DashboardLayout({
 		<div className="flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
 			<TimeZoneSync serverTimeZone={timeZone} />
 			<Sidebar
-				studioName={studio?.name ?? "Lumodesk"}
+				studioName={studio?.name ?? BRAND_NAME}
 				unreadMessages={unreadMessages}
 				user={session.user}
 			/>

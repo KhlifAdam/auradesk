@@ -1,6 +1,6 @@
 {
 	"Metadata": {
-		"title": "Lumodesk",
+		"title": "AuraDesk",
 		"description": "The studio platform for photographers and videographers."
 	},
 	"Dashboard": {
@@ -588,7 +588,7 @@
 		},
 		"footer": {
 			"rights": "© {year} {name}. All rights reserved.",
-			"madeWith": "Made with Lumodesk"
+			"madeWith": "Made with AuraDesk"
 		},
 		"comingSoon": {
 			"title": "{name} is coming soon",
@@ -775,13 +775,13 @@
 			"EMAIL_NOT_VERIFIED": "Confirm your email address first: we've sent you a code.",
 			"INVALID_PASSWORD": "Your current password is incorrect.",
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "This is your only way to sign in: add another one before disconnecting it.",
-			"SOCIAL_ACCOUNT_ALREADY_LINKED": "This account is already connected to another Lumodesk account.",
+			"SOCIAL_ACCOUNT_ALREADY_LINKED": "This account is already connected to another AuraDesk account.",
 			"CREDENTIAL_ACCOUNT_NOT_FOUND": "This account has no password yet."
 		},
 		"backLink": {
 			"photographer": "Photographer space",
 			"client": "Client space",
-			"home": "Lumodesk home"
+			"home": "AuraDesk home"
 		},
 		"audience": {
 			"photographer": "Photographer",
@@ -879,7 +879,7 @@
 			"watchDemo": "Watch demo",
 			"trialNote": "14 days free · No credit card required",
 			"mock": {
-				"path": "lumodesk / overview",
+				"path": "auradesk / overview",
 				"studio": "Studio North",
 				"nav": {
 					"overview": "Overview",
@@ -949,7 +949,7 @@
 			"steps": {
 				"capture": {
 					"title": "Capture every inquiry",
-					"description": "Beautiful lead forms feed directly into your workspace. Lumodesk follows up while the moment is fresh.",
+					"description": "Beautiful lead forms feed directly into your workspace. AuraDesk follows up while the moment is fresh.",
 					"cardTitle": "New inquiry received",
 					"cardMeta": "Sofia & James · October 12"
 				},
@@ -972,7 +972,7 @@
 			"title": "The calm behind the craft.",
 			"items": {
 				"maya": {
-					"quote": "Lumodesk gave me back my Sundays. My clients feel cared for, and I finally feel in control.",
+					"quote": "AuraDesk gave me back my Sundays. My clients feel cared for, and I finally feel in control.",
 					"name": "Maya Chen",
 					"role": "Wedding photographer"
 				},
@@ -1035,7 +1035,7 @@
 			"contactLink": "Talk to our team.",
 			"items": {
 				"trial": {
-					"q": "Can I try Lumodesk before paying?",
+					"q": "Can I try AuraDesk before paying?",
 					"a": "Yes. Every plan begins with a 14-day free trial, with no credit card required."
 				},
 				"migrate": {
@@ -1047,8 +1047,8 @@
 					"a": "Every plan includes beautiful, mobile-ready galleries. Storage limits vary by plan."
 				},
 				"commission": {
-					"q": "Does Lumodesk take a commission?",
-					"a": "Never. Payments go directly to your connected account, with no Lumodesk commission."
+					"q": "Does AuraDesk take a commission?",
+					"a": "Never. Payments go directly to your connected account, with no AuraDesk commission."
 				},
 				"team": {
 					"q": "Can my team use the same workspace?",
@@ -1070,7 +1070,7 @@
 			"instagram": "Instagram",
 			"twitter": "Twitter",
 			"videos": "Videos",
-			"copyright": "© {year} Lumodesk, Inc. Built for the ones who see differently."
+			"copyright": "© {year} AuraDesk, Inc. Built for the ones who see differently."
 		}
 	},
 	"Home": {
@@ -1158,18 +1158,18 @@
 	},
 	"Mail": {
 		"footer": {
-			"reason": "You received this email because a request was made for your Lumodesk account.",
+			"reason": "You received this email because a request was made for your AuraDesk account.",
 			"rights": "All rights reserved."
 		},
 		"passwordReset": {
 			"languageName": "English",
-			"subject": "Your Lumodesk password reset code",
+			"subject": "Your AuraDesk password reset code",
 			"preheader": "Your password reset code is {otp}",
 			"heading": "Reset your password",
-			"intro": "Use the verification code below to choose a new password for your Lumodesk account.",
+			"intro": "Use the verification code below to choose a new password for your AuraDesk account.",
 			"expires": "This code expires in {minutes} minutes.",
 			"ignore": "Didn't ask for this? You can safely ignore this email — your password won't change.",
-			"text": "Your Lumodesk password reset code is {otp}. It expires in {minutes} minutes. If you didn't request this, you can ignore this email."
+			"text": "Your AuraDesk password reset code is {otp}. It expires in {minutes} minutes. If you didn't request this, you can ignore this email."
 		},
 		"galleriesReady": {
 			"languageName": "English",
@@ -1212,19 +1212,19 @@
 			"subject": "{studio} invited you to a project",
 			"preheader": "{studio} invited you to {project}",
 			"heading": "You're invited",
-			"intro": "{studio} invited you to follow the project “{project}” on Lumodesk. Accept it to see its progress and your photo galleries.",
+			"intro": "{studio} invited you to follow the project “{project}” on AuraDesk. Accept it to see its progress and your photo galleries.",
 			"cta": "View the invitation",
-			"text": "{studio} invited you to follow the project “{project}” on Lumodesk. View it here: {url}"
+			"text": "{studio} invited you to follow the project “{project}” on AuraDesk. View it here: {url}"
 		},
 		"emailVerification": {
 			"languageName": "English",
-			"subject": "Your Lumodesk verification code",
+			"subject": "Your AuraDesk verification code",
 			"preheader": "Your verification code is {otp}",
 			"heading": "Verify your email",
-			"intro": "Use the code below to confirm this address on your Lumodesk account.",
+			"intro": "Use the code below to confirm this address on your AuraDesk account.",
 			"expires": "This code expires in {minutes} minutes.",
 			"ignore": "Didn't ask for this? You can safely ignore this email.",
-			"text": "Your Lumodesk verification code is {otp}. It expires in {minutes} minutes."
+			"text": "Your AuraDesk verification code is {otp}. It expires in {minutes} minutes."
 		},
 		"newMessage": {
 			"subject": "{sender} sent you a message",
@@ -1275,20 +1275,20 @@
 		"teamInvitation": {
 			"languageName": "English",
 			"subject": "{studio} invited you to join their team",
-			"preheader": "Join {studio} on Lumodesk",
+			"preheader": "Join {studio} on AuraDesk",
 			"heading": "You're invited to a team",
-			"intro": "Hi {name}, {studio} invited you to join their team on Lumodesk. Sign in (or create an account with this email address) to accept and see the projects you're assigned to.",
+			"intro": "Hi {name}, {studio} invited you to join their team on AuraDesk. Sign in (or create an account with this email address) to accept and see the projects you're assigned to.",
 			"cta": "See the invitation",
-			"text": "Hi {name}, {studio} invited you to join their team on Lumodesk. Accept it here: {url}"
+			"text": "Hi {name}, {studio} invited you to join their team on AuraDesk. Accept it here: {url}"
 		}
 	},
 	"Sms": {
-		"otp": "Lumodesk: your code is {code}. It expires in {minutes} minutes. Don't share it.",
-		"projectInvitation": "{studio} invited you to the project \"{project}\" on Lumodesk. Sign in with this number to accept: {url}",
+		"otp": "AuraDesk: your code is {code}. It expires in {minutes} minutes. Don't share it.",
+		"projectInvitation": "{studio} invited you to the project \"{project}\" on AuraDesk. Sign in with this number to accept: {url}",
 		"galleriesReady": "{studio}: your photos for \"{project}\" are ready to choose from: {url}",
 		"projectDelivered": "{studio} delivered \"{project}\": your files are ready to download: {url}",
 		"galleryShared": "{studio} shared the gallery \"{gallery}\" with you: {url}",
-		"newMessage": "{sender} sent you a message on Lumodesk: {url}",
+		"newMessage": "{sender} sent you a message on AuraDesk: {url}",
 		"bookingSent": "{studio} sent you a booking request \"{booking}\": {url}"
 	},
 	"NotFound": {
@@ -1301,12 +1301,12 @@
 		"studio": {
 			"title": "This studio isn't here",
 			"description": "The link may be wrong, or the studio may have been removed.",
-			"action": "Discover Lumodesk"
+			"action": "Discover AuraDesk"
 		},
 		"shareLink": {
 			"title": "This link no longer works",
 			"description": "It may have expired, or the person who shared it stopped sharing.",
-			"action": "Discover Lumodesk"
+			"action": "Discover AuraDesk"
 		}
 	},
 	"Clients": {
@@ -2234,6 +2234,58 @@
 			"done": "Account suspended",
 			"lift": "Lift suspension",
 			"lifted": "Suspension lifted"
+		},
+		"nav": {
+			"overview": "Overview",
+			"activity": "Activity"
+		},
+		"growth": {
+			"title": "Sign-ups",
+			"hint": "New accounts per month, over the last 12 months.",
+			"photographers": "Photographers",
+			"clients": "Clients",
+			"empty": "No sign-up over this period."
+		},
+		"storage": {
+			"title": "Storage",
+			"finals": "Delivered photos (finals)",
+			"proofs": "Proofs (light copies)",
+			"portfolio": "Portfolios and sites",
+			"top": "Studios using the most",
+			"empty": "Nothing stored yet."
+		},
+		"activity": {
+			"title": "Activity",
+			"description": "What administrators did to accounts, newest first.",
+			"empty": "No admin action yet.",
+			"reason": "Reason: {reason}",
+			"actions": {
+				"BAN": "{actor} suspended <target>account</target>",
+				"UNBAN": "{actor} reactivated <target>account</target>",
+				"GRANT_ADMIN": "{actor} made <target>account</target> an administrator",
+				"REVOKE_ADMIN": "{actor} removed the administrator role from <target>account</target>"
+			}
+		},
+		"detail": {
+			"back": "All accounts",
+			"joined": "Joined",
+			"lastActive": "Last active",
+			"never": "Never signed in",
+			"email": "Email",
+			"phone": "Phone",
+			"studio": "Studio",
+			"noStudio": "No studio created yet",
+			"storage": "Storage used",
+			"history": "Admin history",
+			"privacy": "Counts only: the admin never sees a studio's clients, projects, photos or amounts.",
+			"counts": {
+				"clients": "Clients",
+				"projects": "Projects",
+				"galleries": "Galleries",
+				"photos": "Photos and videos",
+				"bookings": "Bookings",
+				"invoices": "Invoices"
+			}
 		}
 	},
 	"Messages": {

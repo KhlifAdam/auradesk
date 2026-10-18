@@ -22,6 +22,8 @@ export function formatPhone(e164: string): string {
 
 // Accounts created from a phone number have no real email: Better Auth needs
 // one, so they get an address that can never receive mail (`.invalid`).
+// Keeps the app's former name: phone-only accounts already store addresses
+// under it, and they are never shown. Changing it would break those accounts.
 const PHONE_EMAIL_DOMAIN = "phone.lumodesk.invalid";
 
 export const phoneEmail = (e164: string) =>

@@ -1,7 +1,7 @@
 import { ROLES } from "./roles";
 
 /** Set right before a client sign-up, so the new account gets the client role. */
-export const CLIENT_INTENT_COOKIE = "lumodesk_client_intent";
+export const CLIENT_INTENT_COOKIE = "auradesk_client_intent";
 export const CLIENT_INTENT_VALUE = "client";
 export const CLIENT_INTENT_MAX_AGE_SECONDS = 60 * 15;
 

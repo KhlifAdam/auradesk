@@ -175,7 +175,7 @@ export function Hero() {
 										</span>
 									</div>
 									<Image
-										src="/images/lumodesk-editorial.jpg"
+										src="/images/auradesk-editorial.jpg"
 										alt={t("mock.imageAlt")}
 										width={1600}
 										height={1104}

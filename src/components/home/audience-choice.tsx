@@ -18,7 +18,7 @@ export function AudienceChoice() {
 					side="studio"
 					href={AUTH_PATHS.photographer.welcome}
 					icon={Camera}
-					image="/images/lumodesk-portrait.jpg"
+					image="/images/auradesk-portrait.jpg"
 					imageAlt={t("photographer.imageAlt")}
 					label={t("photographer.label")}
 					title={t("photographer.title")}
@@ -30,7 +30,7 @@ export function AudienceChoice() {
 					side="client"
 					href={AUTH_PATHS.client.welcome}
 					icon={UserRound}
-					image="/images/lumodesk-gallery.jpg"
+					image="/images/auradesk-gallery.jpg"
 					imageAlt={t("client.imageAlt")}
 					label={t("client.label")}
 					title={t("client.title")}

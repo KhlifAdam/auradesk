@@ -1,6 +1,6 @@
 {
 	"Metadata": {
-		"title": "Lumodesk",
+		"title": "AuraDesk",
 		"description": "La plateforme studio des photographes et vidéastes."
 	},
 	"Dashboard": {
@@ -588,7 +588,7 @@
 		},
 		"footer": {
 			"rights": "© {year} {name}. Tous droits réservés.",
-			"madeWith": "Créé avec Lumodesk"
+			"madeWith": "Créé avec AuraDesk"
 		},
 		"comingSoon": {
 			"title": "{name} arrive bientôt",
@@ -775,13 +775,13 @@
 			"EMAIL_NOT_VERIFIED": "Confirmez d'abord votre adresse e-mail : nous vous avons envoyé un code.",
 			"INVALID_PASSWORD": "Votre mot de passe actuel est incorrect.",
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "C'est votre seul moyen de connexion : ajoutez-en un autre avant de le déconnecter.",
-			"SOCIAL_ACCOUNT_ALREADY_LINKED": "Ce compte est déjà connecté à un autre compte Lumodesk.",
+			"SOCIAL_ACCOUNT_ALREADY_LINKED": "Ce compte est déjà connecté à un autre compte AuraDesk.",
 			"CREDENTIAL_ACCOUNT_NOT_FOUND": "Ce compte n'a pas encore de mot de passe."
 		},
 		"backLink": {
 			"photographer": "Espace photographe",
 			"client": "Espace client",
-			"home": "Accueil Lumodesk"
+			"home": "Accueil AuraDesk"
 		},
 		"audience": {
 			"photographer": "Photographe",
@@ -879,7 +879,7 @@
 			"watchDemo": "Voir la démo",
 			"trialNote": "14 jours gratuits · Sans carte bancaire",
 			"mock": {
-				"path": "lumodesk / aperçu",
+				"path": "auradesk / aperçu",
 				"studio": "Studio North",
 				"nav": {
 					"overview": "Aperçu",
@@ -949,7 +949,7 @@
 			"steps": {
 				"capture": {
 					"title": "Capturez chaque demande",
-					"description": "De beaux formulaires alimentent directement votre espace. Lumodesk relance tant que le moment est frais.",
+					"description": "De beaux formulaires alimentent directement votre espace. AuraDesk relance tant que le moment est frais.",
 					"cardTitle": "Nouvelle demande reçue",
 					"cardMeta": "Sofia & James · 12 octobre"
 				},
@@ -972,7 +972,7 @@
 			"title": "Le calme derrière l'art.",
 			"items": {
 				"maya": {
-					"quote": "Lumodesk m'a rendu mes dimanches. Mes clients se sentent choyés, et je reprends enfin le contrôle.",
+					"quote": "AuraDesk m'a rendu mes dimanches. Mes clients se sentent choyés, et je reprends enfin le contrôle.",
 					"name": "Maya Chen",
 					"role": "Photographe de mariage"
 				},
@@ -1035,7 +1035,7 @@
 			"contactLink": "Parlez à notre équipe.",
 			"items": {
 				"trial": {
-					"q": "Puis-je essayer Lumodesk avant de payer ?",
+					"q": "Puis-je essayer AuraDesk avant de payer ?",
 					"a": "Oui. Chaque formule commence par 14 jours d'essai gratuit, sans carte bancaire."
 				},
 				"migrate": {
@@ -1047,8 +1047,8 @@
 					"a": "Chaque formule inclut de belles galeries adaptées au mobile. Les limites de stockage varient selon la formule."
 				},
 				"commission": {
-					"q": "Lumodesk prend-il une commission ?",
-					"a": "Jamais. Les paiements vont directement sur votre compte connecté, sans commission Lumodesk."
+					"q": "AuraDesk prend-il une commission ?",
+					"a": "Jamais. Les paiements vont directement sur votre compte connecté, sans commission AuraDesk."
 				},
 				"team": {
 					"q": "Mon équipe peut-elle partager le même espace ?",
@@ -1070,7 +1070,7 @@
 			"instagram": "Instagram",
 			"twitter": "Twitter",
 			"videos": "Vidéos",
-			"copyright": "© {year} Lumodesk, Inc. Conçu pour ceux qui voient autrement."
+			"copyright": "© {year} AuraDesk, Inc. Conçu pour ceux qui voient autrement."
 		}
 	},
 	"Home": {
@@ -1158,18 +1158,18 @@
 	},
 	"Mail": {
 		"footer": {
-			"reason": "Vous recevez cet e-mail suite à une demande concernant votre compte Lumodesk.",
+			"reason": "Vous recevez cet e-mail suite à une demande concernant votre compte AuraDesk.",
 			"rights": "Tous droits réservés."
 		},
 		"passwordReset": {
 			"languageName": "Français",
-			"subject": "Votre code de réinitialisation Lumodesk",
+			"subject": "Votre code de réinitialisation AuraDesk",
 			"preheader": "Votre code de réinitialisation est {otp}",
 			"heading": "Réinitialisez votre mot de passe",
-			"intro": "Saisissez le code de vérification ci-dessous pour choisir un nouveau mot de passe pour votre compte Lumodesk.",
+			"intro": "Saisissez le code de vérification ci-dessous pour choisir un nouveau mot de passe pour votre compte AuraDesk.",
 			"expires": "Ce code expire dans {minutes} minutes.",
 			"ignore": "Vous n'êtes pas à l'origine de cette demande ? Vous pouvez ignorer cet e-mail : votre mot de passe ne changera pas.",
-			"text": "Votre code de réinitialisation Lumodesk est {otp}. Il expire dans {minutes} minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail."
+			"text": "Votre code de réinitialisation AuraDesk est {otp}. Il expire dans {minutes} minutes. Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail."
 		},
 		"galleriesReady": {
 			"languageName": "Français",
@@ -1212,19 +1212,19 @@
 			"subject": "{studio} vous a invité à un projet",
 			"preheader": "{studio} vous a invité à {project}",
 			"heading": "Vous êtes invité",
-			"intro": "{studio} vous invite à suivre le projet « {project} » sur Lumodesk. Acceptez-le pour voir son avancement et vos galeries photo.",
+			"intro": "{studio} vous invite à suivre le projet « {project} » sur AuraDesk. Acceptez-le pour voir son avancement et vos galeries photo.",
 			"cta": "Voir l'invitation",
-			"text": "{studio} vous invite à suivre le projet « {project} » sur Lumodesk. Voir l'invitation : {url}"
+			"text": "{studio} vous invite à suivre le projet « {project} » sur AuraDesk. Voir l'invitation : {url}"
 		},
 		"emailVerification": {
 			"languageName": "Français",
-			"subject": "Votre code de vérification Lumodesk",
+			"subject": "Votre code de vérification AuraDesk",
 			"preheader": "Votre code de vérification est {otp}",
 			"heading": "Vérifiez votre e-mail",
-			"intro": "Utilisez le code ci-dessous pour confirmer cette adresse sur votre compte Lumodesk.",
+			"intro": "Utilisez le code ci-dessous pour confirmer cette adresse sur votre compte AuraDesk.",
 			"expires": "Ce code expire dans {minutes} minutes.",
 			"ignore": "Vous n'avez rien demandé ? Ignorez simplement cet e-mail.",
-			"text": "Votre code de vérification Lumodesk est {otp}. Il expire dans {minutes} minutes."
+			"text": "Votre code de vérification AuraDesk est {otp}. Il expire dans {minutes} minutes."
 		},
 		"newMessage": {
 			"subject": "{sender} vous a envoyé un message",
@@ -1275,20 +1275,20 @@
 		"teamInvitation": {
 			"languageName": "Français",
 			"subject": "{studio} vous invite à rejoindre son équipe",
-			"preheader": "Rejoignez {studio} sur Lumodesk",
+			"preheader": "Rejoignez {studio} sur AuraDesk",
 			"heading": "Vous êtes invité dans une équipe",
-			"intro": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur Lumodesk. Connectez-vous (ou créez un compte avec cette adresse) pour accepter et voir les projets qui vous sont confiés.",
+			"intro": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur AuraDesk. Connectez-vous (ou créez un compte avec cette adresse) pour accepter et voir les projets qui vous sont confiés.",
 			"cta": "Voir l'invitation",
-			"text": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur Lumodesk. Acceptez ici : {url}"
+			"text": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur AuraDesk. Acceptez ici : {url}"
 		}
 	},
 	"Sms": {
-		"otp": "Lumodesk : votre code est {code}. Il expire dans {minutes} minutes. Ne le partagez pas.",
-		"projectInvitation": "{studio} vous invite au projet « {project} » sur Lumodesk. Connectez-vous avec ce numéro pour accepter : {url}",
+		"otp": "AuraDesk : votre code est {code}. Il expire dans {minutes} minutes. Ne le partagez pas.",
+		"projectInvitation": "{studio} vous invite au projet « {project} » sur AuraDesk. Connectez-vous avec ce numéro pour accepter : {url}",
 		"galleriesReady": "{studio} : vos photos de « {project} » sont prêtes pour la sélection : {url}",
 		"projectDelivered": "{studio} a livré « {project} » : vos fichiers sont prêts à télécharger : {url}",
 		"galleryShared": "{studio} a partagé la galerie « {gallery} » avec vous : {url}",
-		"newMessage": "{sender} vous a envoyé un message sur Lumodesk : {url}",
+		"newMessage": "{sender} vous a envoyé un message sur AuraDesk : {url}",
 		"bookingSent": "{studio} vous a envoyé une demande de réservation « {booking} » : {url}"
 	},
 	"NotFound": {
@@ -1301,12 +1301,12 @@
 		"studio": {
 			"title": "Ce studio n'existe pas",
 			"description": "Le lien est peut-être incorrect, ou le studio a été supprimé.",
-			"action": "Découvrir Lumodesk"
+			"action": "Découvrir AuraDesk"
 		},
 		"shareLink": {
 			"title": "Ce lien ne fonctionne plus",
 			"description": "Il a peut-être expiré, ou la personne qui l'a partagé a arrêté le partage.",
-			"action": "Découvrir Lumodesk"
+			"action": "Découvrir AuraDesk"
 		}
 	},
 	"Clients": {
@@ -2234,6 +2234,58 @@
 			"done": "Compte suspendu",
 			"lift": "Lever la suspension",
 			"lifted": "Suspension levée"
+		},
+		"nav": {
+			"overview": "Vue d'ensemble",
+			"activity": "Activité"
+		},
+		"growth": {
+			"title": "Inscriptions",
+			"hint": "Nouveaux comptes par mois, sur les 12 derniers mois.",
+			"photographers": "Photographes",
+			"clients": "Clients",
+			"empty": "Aucune inscription sur cette période."
+		},
+		"storage": {
+			"title": "Stockage",
+			"finals": "Photos livrées (finales)",
+			"proofs": "Épreuves (copies légères)",
+			"portfolio": "Portfolios et sites",
+			"top": "Studios qui stockent le plus",
+			"empty": "Rien n'est encore stocké."
+		},
+		"activity": {
+			"title": "Activité",
+			"description": "Ce que les administrateurs ont fait sur les comptes, du plus récent au plus ancien.",
+			"empty": "Aucune action d'administration pour l'instant.",
+			"reason": "Motif : {reason}",
+			"actions": {
+				"BAN": "{actor} a suspendu <target>compte</target>",
+				"UNBAN": "{actor} a réactivé <target>compte</target>",
+				"GRANT_ADMIN": "{actor} a nommé <target>compte</target> administrateur",
+				"REVOKE_ADMIN": "{actor} a retiré le rôle d'administrateur à <target>compte</target>"
+			}
+		},
+		"detail": {
+			"back": "Tous les comptes",
+			"joined": "Inscription",
+			"lastActive": "Dernière activité",
+			"never": "Jamais connecté",
+			"email": "E-mail",
+			"phone": "Téléphone",
+			"studio": "Studio",
+			"noStudio": "Aucun studio créé pour l'instant",
+			"storage": "Stockage utilisé",
+			"history": "Historique d'administration",
+			"privacy": "Des chiffres seulement : l'administrateur ne voit jamais les clients, projets, photos ni montants d'un studio.",
+			"counts": {
+				"clients": "Clients",
+				"projects": "Projets",
+				"galleries": "Galeries",
+				"photos": "Photos et vidéos",
+				"bookings": "Réservations",
+				"invoices": "Factures"
+			}
 		}
 	},
 	"Messages": {

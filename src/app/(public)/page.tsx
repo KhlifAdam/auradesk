@@ -7,7 +7,7 @@ import { HowItWorks } from "@/components/home/how-it-works";
 import { BRAND_NAME } from "@/lib/brand";
 
 /**
- * Lumodesk's front door, for both sides of the platform. Each card leads to
+ * AuraDesk's front door, for both sides of the platform. Each card leads to
  * that side's own presentation, whose "get started" reaches only its login.
  */
 export default async function HomePage() {

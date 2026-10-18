@@ -1,6 +1,6 @@
 # Agent Guidelines & Tech Stack
 
-This file contains the strict technical rules and architecture for **Lumodesk** (the PFE platform). As an AI Agent, I MUST automatically load and follow these instructions for every task. *(For business logic, refer to `PRD.md`).*
+This file contains the strict technical rules and architecture for **AuraDesk** (the PFE platform). As an AI Agent, I MUST automatically load and follow these instructions for every task. *(For business logic, refer to `PRD.md`).*
 
 ## 1. Core Tech Stack
 - **Framework:** Next.js (App Router)

@@ -12,17 +12,17 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 /** Decorative photos floating around the headline (large screens only). */
 const PHOTOS = [
 	{
-		src: "/images/lumodesk-portrait.jpg",
+		src: "/images/auradesk-portrait.jpg",
 		className: "left-[1%] top-10 h-56 w-44 -rotate-6",
 		delay: 0.25,
 	},
 	{
-		src: "/images/lumodesk-editorial.jpg",
+		src: "/images/auradesk-editorial.jpg",
 		className: "left-[9%] top-72 h-32 w-48 rotate-3",
 		delay: 0.4,
 	},
 	{
-		src: "/images/lumodesk-gallery.jpg",
+		src: "/images/auradesk-gallery.jpg",
 		className: "right-[1%] top-16 h-60 w-48 rotate-6",
 		delay: 0.32,
 	},

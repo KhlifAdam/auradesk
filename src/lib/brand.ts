@@ -1,1 +1,1 @@
-export const BRAND_NAME = "Lumodesk";
+export const BRAND_NAME = "AuraDesk";

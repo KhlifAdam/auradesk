@@ -8,6 +8,7 @@ import { ROLES } from "@/lib/auth/roles";
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
+import { logAdminAction } from "./audit";
 import { banSchema } from "./schemas";
 
 /** Only other, non-admin accounts can be suspended. */
@@ -23,7 +24,7 @@ async function assertBannable(adminId: string, userId: string) {
 
 /** Suspends an account: it's signed out everywhere and can't sign in. */
 export async function banAccount(input: unknown): Promise<ActionResult> {
-	const { adminId } = await requireAdmin();
+	const { adminId, session } = await requireAdmin();
 	const parsed = banSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
 
@@ -35,12 +36,13 @@ export async function banAccount(input: unknown): Promise<ActionResult> {
 		body: { userId, banReason: emptyToNull(reason) ?? undefined },
 		headers: await headers(),
 	});
-	revalidatePath("/admin");
+	await logAdminAction(session.user, "BAN", userId, reason);
+	revalidatePath("/admin", "layout");
 	return ok();
 }
 
 export async function unbanAccount(input: unknown): Promise<ActionResult> {
-	await requireAdmin();
+	const { session } = await requireAdmin();
 	const parsed = idSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
 
@@ -48,6 +50,7 @@ export async function unbanAccount(input: unknown): Promise<ActionResult> {
 		body: { userId: parsed.data },
 		headers: await headers(),
 	});
-	revalidatePath("/admin");
+	await logAdminAction(session.user, "UNBAN", parsed.data);
+	revalidatePath("/admin", "layout");
 	return ok();
 }

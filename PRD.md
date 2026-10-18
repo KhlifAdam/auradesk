@@ -1,11 +1,11 @@
-# Cahier des Charges - Lumodesk (Plateforme Web Photographie & Audiovisuel)
+# Cahier des Charges - AuraDesk (Plateforme Web Photographie & Audiovisuel)
 
 ## 1. Informations Générales
 - **Étudiant :** Khlif Adam
 - **Domaine :** Génie Logiciel
 - **Type de projet :** Projet de Fin d’Études (PFE)
 - **Version :** Version 0 — Cahier des charges fonctionnel
-- **Nom de l'application :** Lumodesk (Conception et développement d’une plateforme web intelligente de présentation et de gestion des activités photographiques et audiovisuelles).
+- **Nom de l'application :** AuraDesk (Conception et développement d’une plateforme web intelligente de présentation et de gestion des activités photographiques et audiovisuelles).
 
 ## 2. Contexte et Problématique
 Les photographes/vidéastes indépendants utilisent de multiples outils dispersés (réseaux sociaux, messageries, calendriers, fichiers locaux, logiciels de montage). Cela rend le suivi difficile. 

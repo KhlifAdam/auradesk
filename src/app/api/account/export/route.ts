@@ -16,7 +16,7 @@ export async function GET() {
 	return new Response(toJson(data), {
 		headers: {
 			"Content-Type": "application/json; charset=utf-8",
-			"Content-Disposition": attachmentHeader(`lumodesk-data-${day}.json`),
+			"Content-Disposition": attachmentHeader(`auradesk-data-${day}.json`),
 			"Cache-Control": "private, no-store",
 		},
 	});

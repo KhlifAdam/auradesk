@@ -38,7 +38,7 @@ export async function StudioWelcome({ site }: { site: SiteData }) {
 		<SiteShell
 			mode={design.themeMode}
 			initialTheme={initialSiteTheme(design.themeMode)}
-			storageKey={`lumodesk-site-theme:${studio.name}`}
+			storageKey={`auradesk-site-theme:${studio.name}`}
 			studioSlug={studio.slug}
 			lang={i18n.locale}
 			style={siteStyle(design, palette)}

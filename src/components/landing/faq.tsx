@@ -17,7 +17,7 @@ const FAQ_ITEMS = [
 	"commission",
 	"team",
 ] as const;
-const CONTACT_EMAIL = "hello@lumodesk.co";
+const CONTACT_EMAIL = "hello@auradesk.co";
 
 export function FAQ() {
 	const t = useTranslations("Landing.faq");

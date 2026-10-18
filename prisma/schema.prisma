@@ -1106,3 +1106,31 @@ model VideoAnalysis {
   @@index([galleryId])
   @@map("video_analyses")
 }
+
+/// What an administrator did to an account.
+enum AdminAction {
+  BAN
+  UNBAN
+  GRANT_ADMIN
+  REVOKE_ADMIN
+
+  @@map("admin_action")
+}
+
+/// Who did what to whom, and why. Names are copied in, so the log still reads
+/// after an account is deleted.
+model AdminAuditLog {
+  id          String      @id @default(cuid())
+  /// Null when done from the server's command line (`pnpm admin:grant`).
+  actorId     String?     @map("actor_id")
+  actorName   String      @map("actor_name")
+  action      AdminAction
+  targetId    String?     @map("target_id")
+  targetName  String      @map("target_name")
+  targetEmail String?     @map("target_email")
+  reason      String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}

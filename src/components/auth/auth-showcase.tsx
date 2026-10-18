@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
 
 const IMAGES: Record<AuthAudience, string> = {
-	photographer: "/images/lumodesk-portrait.jpg",
-	client: "/images/lumodesk-gallery.jpg",
+	photographer: "/images/auradesk-portrait.jpg",
+	client: "/images/auradesk-gallery.jpg",
 };
 
 /** Client auth screens live under /client; everything else is the studio side. */

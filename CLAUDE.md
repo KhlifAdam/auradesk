@@ -1,4 +1,4 @@
-@.agents/rules/lumodesk-guidelines.md
+@.agents/rules/auradesk-guidelines.md
 
 <!-- BEGIN:nextjs-agent-rules -->
 

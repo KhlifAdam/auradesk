@@ -1,6 +1,6 @@
-# Lumodesk
+# AuraDesk
 
-**Lumodesk** is a comprehensive, intelligent web platform designed for the presentation and management of photographic and audiovisual activities. It serves as a dual-purpose platform: a public-facing professional portfolio/booking site, and a private CRM/management workspace for photographers to handle clients, projects, media, and post-production workflows.
+**AuraDesk** is a comprehensive, intelligent web platform designed for the presentation and management of photographic and audiovisual activities. It serves as a dual-purpose platform: a public-facing professional portfolio/booking site, and a private CRM/management workspace for photographers to handle clients, projects, media, and post-production workflows.
 
 ## Tech Stack
 

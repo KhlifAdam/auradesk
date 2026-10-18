@@ -20,7 +20,7 @@ export async function GenericWelcome() {
 	return (
 		<main className="relative isolate flex min-h-screen flex-1 items-center justify-center overflow-hidden bg-background px-4 py-10">
 			<Image
-				src="/images/lumodesk-gallery.jpg"
+				src="/images/auradesk-gallery.jpg"
 				alt=""
 				fill
 				priority

@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 import { reveal } from "./animations";
 
 const ITEMS = [
-	{ id: "maya", image: "/images/lumodesk-gallery.jpg" },
-	{ id: "theo", image: "/images/lumodesk-portrait.jpg" },
-	{ id: "nina", image: "/images/lumodesk-editorial.jpg" },
+	{ id: "maya", image: "/images/auradesk-gallery.jpg" },
+	{ id: "theo", image: "/images/auradesk-portrait.jpg" },
+	{ id: "nina", image: "/images/auradesk-editorial.jpg" },
 ] as const;
 
 const STARS = ["s1", "s2", "s3", "s4", "s5"];
