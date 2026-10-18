@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { DM_Sans, Manrope } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
+import { DevSmsInbox } from "@/components/dev/dev-sms-inbox";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { devInboxEnabled } from "@/lib/sms/dev-inbox";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -46,6 +48,8 @@ export default async function RootLayout({
 					<NextIntlClientProvider>
 						{children}
 						<Toaster richColors closeButton />
+						{/* Development only: texts aren't really sent, they show here. */}
+						{devInboxEnabled() && <DevSmsInbox />}
 					</NextIntlClientProvider>
 				</ThemeProvider>
 			</body>

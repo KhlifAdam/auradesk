@@ -11,6 +11,7 @@ import {
 	Package,
 	Palette,
 	Receipt,
+	ShieldCheck,
 	Store,
 	Users,
 	UsersRound,
@@ -50,6 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
 			{ href: "/dashboard/equipment", labelKey: "equipment", icon: Package },
 			{ href: "/dashboard/team", labelKey: "team", icon: UsersRound },
 			{ href: "/dashboard/messages", labelKey: "messages", icon: Mail },
+			{ href: "/dashboard/privacy", labelKey: "privacy", icon: ShieldCheck },
 		],
 	},
 	{

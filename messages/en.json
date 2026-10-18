@@ -20,7 +20,8 @@
 			"projects": "Projects",
 			"invoices": "Invoices",
 			"equipment": "Equipment",
-			"team": "Team"
+			"team": "Team",
+			"privacy": "Privacy & data"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -211,7 +212,8 @@
 		"analysisFailed": "The photos couldn't be analysed. Check the storage connection and try again.",
 		"cannotBanSelf": "You can't suspend your own account.",
 		"cannotBanAdmin": "Administrators can't be suspended.",
-		"metadataPending": "Some files are still being read. Wait a moment and try again."
+		"metadataPending": "Some files are still being read. Wait a moment and try again.",
+		"forbidden": "You can't do that with this account."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -721,7 +723,7 @@
 			"password": "Password",
 			"confirmPassword": "Confirm password",
 			"submit": "Create account",
-			"success": "Account created successfully!",
+			"success": "Account created. Check your inbox for a code.",
 			"haveAccount": "Already have an account?",
 			"signIn": "Sign in"
 		},
@@ -769,7 +771,12 @@
 			"USER_NOT_FOUND": "We couldn't find that account.",
 			"INVALID_PHONE_NUMBER": "Enter a valid phone number.",
 			"OTP_NOT_FOUND": "No code was sent to this number. Request a new one.",
-			"PHONE_NUMBER_EXIST": "This number is already used by another account."
+			"PHONE_NUMBER_EXIST": "This number is already used by another account.",
+			"EMAIL_NOT_VERIFIED": "Confirm your email address first: we've sent you a code.",
+			"INVALID_PASSWORD": "Your current password is incorrect.",
+			"FAILED_TO_UNLINK_LAST_ACCOUNT": "This is your only way to sign in: add another one before disconnecting it.",
+			"SOCIAL_ACCOUNT_ALREADY_LINKED": "This account is already connected to another Lumodesk account.",
+			"CREDENTIAL_ACCOUNT_NOT_FOUND": "This account has no password yet."
 		},
 		"backLink": {
 			"photographer": "Photographer space",
@@ -832,6 +839,24 @@
 			"useEmail": "Prefer email?",
 			"emailLink": "Sign in with email",
 			"useInstead": "No email? Use your phone number instead"
+		},
+		"oauthErrors": {
+			"generic": "Sign-in with this provider failed. Please try again.",
+			"access_denied": "Sign-in was cancelled.",
+			"unable_to_link_account": "An account already uses this email. Sign in with your password first.",
+			"email_not_found": "This provider didn't share an email address. Make one public or use another method."
+		},
+		"verify": {
+			"required": "Confirm your email address to continue: a code is on its way.",
+			"title": "Confirm your email",
+			"description": "Enter the 6-digit code sent to <strong>{email}</strong>",
+			"code": "Verification code",
+			"submit": "Confirm and continue",
+			"success": "Email confirmed. Welcome!",
+			"resend": "Didn't get a code? Resend",
+			"resending": "Sending…",
+			"resent": "A new code has been sent.",
+			"back": "Back to sign in"
 		}
 	},
 	"Landing": {
@@ -1277,6 +1302,11 @@
 			"title": "This studio isn't here",
 			"description": "The link may be wrong, or the studio may have been removed.",
 			"action": "Discover Lumodesk"
+		},
+		"shareLink": {
+			"title": "This link no longer works",
+			"description": "It may have expired, or the person who shared it stopped sharing.",
+			"action": "Discover Lumodesk"
 		}
 	},
 	"Clients": {
@@ -1512,7 +1542,7 @@
 			"galleryHint": "The files are added to this gallery. Once shared, the client sees previews from the Selection step and the originals once the project is delivered and paid.",
 			"gallery": "Gallery",
 			"chooseGallery": "Choose a gallery",
-			"galleryOption": "{title} ({count, plural, one {# file} other {# files}})",
+			"galleryOption": "{title} · {kind, select, PROOFS {Proofs} other {Final}} ({count, plural, one {# file} other {# files}})",
 			"newGallery": "New gallery",
 			"newGalleryPlaceholder": "Ceremony, Couple session…",
 			"create": "Create",
@@ -1532,7 +1562,8 @@
 				"resume": "Resume",
 				"discard": "Discard",
 				"discarded": "Upload discarded."
-			}
+			},
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Only a light copy (~300 KB) is sent: your originals stay on your computer."
 		}
 	},
 	"Bookings": {
@@ -2081,7 +2112,11 @@
 			"done": "Analysis complete",
 			"allGood": "Nothing to flag: sharp, well exposed, no near-duplicates.",
 			"review": "Review {count, plural, one {# flagged photo} other {# flagged photos}} →",
-			"noVision": "Blur, exposure and near-duplicates are checked. Add an ANTHROPIC_API_KEY to also detect closed eyes."
+			"noVision": "Blur, exposure and near-duplicates are checked. Add an ANTHROPIC_API_KEY to also detect closed eyes.",
+			"removeFlagged": "Remove flagged ({count})",
+			"removeTitle": "Remove the flagged photos?",
+			"removeDescription": "The {count, plural, one {flagged photo leaves} other {# flagged photos leave}} this proofs gallery. Photos already picked are kept, and your originals stay on your computer.",
+			"removed": "{count, plural, =0 {Nothing to remove.} one {# photo removed.} other {# photos removed.}}"
 		},
 		"reminders": {
 			"title": "Studio assistant",
@@ -2298,7 +2333,9 @@
 		"card": {
 			"private": "Private",
 			"submitted": "Selection sent",
-			"photos": "{count, plural, =0 {Empty} one {# photo} other {# photos}}"
+			"photos": "{count, plural, =0 {Empty} one {# photo} other {# photos}}",
+			"proofs": "Proofs",
+			"final": "Finals"
 		},
 		"lightbox": {
 			"title": "Photo",
@@ -2349,7 +2386,15 @@
 			"open": "Open {name}",
 			"comments": "Comments",
 			"remove": "Delete photo",
-			"removed": "Photo deleted."
+			"removed": "Photo deleted.",
+			"descriptionProofs": "Light copies to sort and choose from. Your originals stay on your computer.",
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Only a light copy (~300 KB) is sent: your originals stay on your computer.",
+			"pick": "Pick this photo",
+			"unpick": "Unpick this photo",
+			"linkActive": "Link shared",
+			"setCover": "Set as cover",
+			"cover": "Cover",
+			"coverSet": "Cover photo changed."
 		},
 		"settings": {
 			"button": "Settings",
@@ -2365,11 +2410,17 @@
 			"saved": "Gallery updated.",
 			"deleteTitle": "Delete this gallery?",
 			"deleteDescription": "All its photos, picks and comments are deleted for good.",
-			"deleted": "Gallery deleted."
+			"deleted": "Gallery deleted.",
+			"watermark": "Watermark previews",
+			"watermarkHint": "Until delivery, the client sees your studio name across every photo.",
+			"linkSharing": "Client can share a link",
+			"linkSharingHint": "Your client can open a view-only link for people without an account. Turning this off stops any link at once.",
+			"linkSharingActive": "Your client shared a link to this gallery. Turning this off stops it at once."
 		},
 		"download": {
 			"all": "Download all",
-			"selected": "{count, plural, one {Download my pick} other {Download my # picks}}"
+			"selected": "{count, plural, one {Download my pick} other {Download my # picks}}",
+			"zipPart": "Part {part} of {total}"
 		},
 		"organize": {
 			"button": "Organise",
@@ -2389,6 +2440,61 @@
 			"done": "Gallery organised",
 			"restore": "Restore original names",
 			"restored": "Original names restored"
+		},
+		"kind": {
+			"PROOFS": {
+				"label": "Proofs",
+				"hint": "Light copies to sort with the AI and choose from. Your originals stay on your computer."
+			},
+			"FINAL": {
+				"label": "Finals",
+				"hint": "Your edited photos, in full quality, delivered to the client once paid."
+			}
+		},
+		"collect": {
+			"button": "Collect originals ({count})",
+			"title": "Collect the originals",
+			"description": "First step of post-production: the {count, plural, one {chosen photo is} other {# chosen photos are}} copied from your shoot folder, in full quality, with their RAW files, renamed in shooting order.",
+			"prefix": "Name prefix",
+			"example": "e.g. {name} — copied into the folder \"{folder}\"",
+			"invalidPrefix": "Use letters, digits, dashes or underscores.",
+			"chooseFolder": "Choose the shoot folder",
+			"finished": "{count, plural, one {# original copied} other {# originals copied}}.",
+			"failed": "Copying stopped. Check the folder is still there, then try again.",
+			"report": "{copied, plural, one {# original} other {# originals}} copied, {twins, plural, =0 {no RAW file} one {# RAW or sidecar file} other {# RAW or sidecar files}} with them.",
+			"missing": "{count, plural, one {# photo wasn't} other {# photos weren't}} found in this folder: {names}",
+			"privacy": "Everything happens on your computer: nothing is uploaded or downloaded.",
+			"unsupported": "Your browser can't copy files into a folder (use Chrome or Edge). You can still copy the chosen names, or download the renaming list.",
+			"copyNames": "Copy the names",
+			"namesCopied": "Names copied.",
+			"downloadList": "Download the renaming list (CSV)"
+		},
+		"cover": {
+			"view": "View the gallery",
+			"button": "Cover",
+			"title": "Gallery cover",
+			"description": "The page your client (and anyone with their link) sees first. Pick a layout, then click the photo to choose what stays in frame.",
+			"layout": "Layout",
+			"templates": {
+				"CLASSIC": "Classic",
+				"SPLIT": "Split",
+				"FRAME": "Frame",
+				"NONE": "None"
+			},
+			"focal": "Focal point",
+			"focalHint": "Click the photo: this point stays in frame on every screen.",
+			"noneHint": "No cover: the gallery opens straight on the photos.",
+			"emptyHint": "Add photos to the gallery to make its cover.",
+			"photoHint": "To change the photo, use \"Set as cover\" on a photo of the gallery.",
+			"save": "Save the cover",
+			"saved": "Cover saved."
+		},
+		"deletePhoto": {
+			"title": "Delete this photo?",
+			"proof": "\"{name}\" leaves this proofs gallery, with its picks and comments. Your original stays on your computer.",
+			"final": "\"{name}\" is deleted for good, with its picks and comments. Your client won't be able to see or download it any more.",
+			"cancel": "Cancel",
+			"confirm": "Delete"
 		}
 	},
 	"Portal": {
@@ -2398,7 +2504,9 @@
 			"logout": "Log out",
 			"createStudio": "Create your studio",
 			"messages": "Messages",
-			"account": "My account"
+			"account": "My account",
+			"profile": "Profile",
+			"settings": "Settings"
 		},
 		"projects": {
 			"greeting": "Hello {name}",
@@ -2428,7 +2536,9 @@
 				"paid": "Already paid",
 				"remaining": "Left to pay",
 				"paymentHint": "Files are delivered once the payment is complete."
-			}
+			},
+			"deleteNotice": "These galleries will be deleted on {date, date, long}. Download your files before then.",
+			"galleryHidden": "This gallery isn't available any more: your photographer has made it private for now."
 		},
 		"gallery": {
 			"hint": "Tap the heart to pick your favourites, then send your selection.",
@@ -2444,7 +2554,10 @@
 			"open": "Open {name}",
 			"comments": "Comments",
 			"select": "Add to my picks",
-			"unselect": "Remove from my picks"
+			"unselect": "Remove from my picks",
+			"proofsOnly": "These are proofs to choose from. Your edited photos will come in full quality, in their own gallery.",
+			"selectAll": "Select all ({count})",
+			"clearAll": "Clear my picks"
 		},
 		"selection": {
 			"selected": "selected",
@@ -2582,6 +2695,125 @@
 			"messagePlaceholder": "What would you like to get?",
 			"send": "Send the request",
 			"sent": "Request sent to the studio."
+		},
+		"share": {
+			"button": "Share a link",
+			"buttonActive": "Link shared",
+			"title": "Share this gallery",
+			"description": "Anyone with the link can view the photos, without an account. They can't pick or comment.",
+			"copy": "Copy",
+			"copied": "Copied",
+			"expiresOn": "Works until {date}.",
+			"noExpiry": "Works until you stop sharing.",
+			"expiry": "Link works",
+			"days": "{count, plural, =0 {Until I stop it} one {For # day} other {For # days}}",
+			"downloads": "Let them download the photos",
+			"viewNote": "You can stop the link at any time; it stops working at once.",
+			"previewNote": "They'll see the same previews as you, with the studio's mark. You can stop the link at any time.",
+			"create": "Create the link",
+			"save": "Save",
+			"stop": "Stop sharing",
+			"created": "Link created: copy it and send it.",
+			"updated": "Link updated.",
+			"stopped": "Sharing stopped: the link no longer works."
 		}
+	},
+	"Privacy": {
+		"title": "Privacy & data",
+		"description": "How long client files are kept, what they reveal, and your own data.",
+		"noStudio": "Set up your studio to choose how client galleries are kept.",
+		"settings": {
+			"title": "Client galleries",
+			"description": "Applies to every project of your studio.",
+			"retention": "Delete galleries after delivery",
+			"retentionHint": "Photos and videos are deleted for good once this time has passed since delivery. Clients should download them before.",
+			"keepForever": "Never (keep them)",
+			"months": "{count, plural, one {After # month} other {After # months}}",
+			"stripLocation": "Remove GPS location from photos",
+			"stripLocationHint": "Originals (JPEG) lose where they were taken while uploading; pixels and other details stay untouched. Portfolio photos always lose it, since they are public.",
+			"save": "Save",
+			"saved": "Privacy settings saved."
+		},
+		"data": {
+			"title": "Your data",
+			"description": "Download a copy of everything we hold about your account, or delete it for good.",
+			"export": "Download my data (JSON)",
+			"delete": "Delete my account",
+			"deleteTitle": "Delete your account?",
+			"deleteStudio": "Your studio, website, clients' records, projects, invoices and every file are deleted for good. This can't be undone.",
+			"deleteClient": "Your account, messages and comments are deleted for good. Your photographers keep their invoices and project records, without your account. This can't be undone.",
+			"deleted": "Your account has been deleted."
+		}
+	},
+	"SharedGallery": {
+		"metaTitle": "Shared gallery",
+		"empty": "This gallery is empty for now.",
+		"open": "Open {name}",
+		"viewOnly": "You're viewing previews of this gallery. Downloads aren't part of this link.",
+		"footer": "Shared privately with {brand}"
+	},
+	"Account": {
+		"profile": {
+			"title": "Profile",
+			"description": "Your photo, your name and how to reach you.",
+			"photo": "Profile photo",
+			"photoHint": "Shown to the people you work with. JPEG, PNG or WebP; we shrink it for you.",
+			"addPhoto": "Add a photo",
+			"changePhoto": "Change photo",
+			"removePhoto": "Remove",
+			"photoSaved": "Profile photo updated.",
+			"photoRemoved": "Profile photo removed.",
+			"studioTitle": "Your studio's public profile",
+			"studioHint": "Name, logo, bio and contact shown on your website."
+		},
+		"settings": {
+			"title": "Settings",
+			"description": "Language, theme, sign-in and the devices where you're signed in.",
+			"privacyTitle": "Privacy & data",
+			"privacyHint": "Gallery retention, location data, export or delete your account.",
+			"clientHint": "Language, theme, password, devices and your data."
+		},
+		"preferences": {
+			"title": "Preferences",
+			"language": "Language",
+			"languageHint": "Also used for the emails we send you.",
+			"theme": "Theme"
+		},
+		"password": {
+			"title": "Password",
+			"hint": "Changing it signs you out everywhere else.",
+			"currentPassword": "Current password",
+			"newPassword": "New password",
+			"confirmPassword": "Confirm",
+			"submit": "Change password",
+			"changed": "Password changed. Your other devices were signed out."
+		},
+		"connected": {
+			"title": "Connected accounts",
+			"hint": "Sign in with Google or GitHub as well. You always keep at least one way to sign in.",
+			"linked": "Connected",
+			"link": "Connect",
+			"unlink": "Disconnect",
+			"unlinked": "{provider} disconnected."
+		},
+		"sessions": {
+			"title": "Where you're signed in",
+			"hint": "Sign out a device you don't recognise or no longer use.",
+			"thisDevice": "This device",
+			"lastActive": "Active {when}",
+			"unknownDevice": "Unknown device",
+			"signOut": "Sign out",
+			"signOutOthers": "Sign out everywhere else",
+			"signedOut": "That device was signed out.",
+			"othersSignedOut": "{count, plural, =0 {No other device was signed in.} one {# device signed out.} other {# devices signed out.}}"
+		}
+	},
+	"DevSms": {
+		"title": "Test SMS",
+		"button": "Test SMS ({count})",
+		"hint": "Development only: no real text is sent. Messages land here.",
+		"empty": "No message yet.",
+		"to": "To {phone}",
+		"close": "Close"
 	}
 }

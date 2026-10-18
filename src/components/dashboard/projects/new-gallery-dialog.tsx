@@ -22,10 +22,13 @@ import {
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createGallery } from "@/services/galleries/actions";
+import { galleryKindSchema } from "@/services/galleries/schemas";
 import { requiredText } from "@/services/shared/schemas";
+import { GalleryKindPicker } from "../galleries/gallery-kind-picker";
 
-const schema = z.object({ title: requiredText(120) });
+const schema = z.object({ title: requiredText(120), kind: galleryKindSchema });
 type Values = z.infer<typeof schema>;
+const EMPTY: Values = { title: "", kind: "PROOFS" };
 
 export function NewGalleryDialog({ projectId }: { projectId: string }) {
 	const t = useTranslations("Galleries.create");
@@ -34,12 +37,12 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 	const [open, setOpen] = useState(false);
 	const form = useForm<Values>({
 		resolver: zodResolver(schema),
-		defaultValues: { title: "" },
+		defaultValues: EMPTY,
 	});
 	const { isSubmitting } = form.formState;
 
-	async function onSubmit({ title }: Values) {
-		const result = await createGallery({ projectId, title });
+	async function onSubmit(values: Values) {
+		const result = await createGallery({ projectId, ...values });
 		if (!result.ok) return void toast.error(errorMessage(result.error));
 		setOpen(false);
 		router.push(`/dashboard/projects/${projectId}/galleries/${result.data.id}`);
@@ -50,7 +53,7 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 			open={open}
 			onOpenChange={(next) => {
 				setOpen(next);
-				if (next) form.reset({ title: "" });
+				if (next) form.reset(EMPTY);
 			}}
 		>
 			<DialogTrigger asChild>
@@ -59,7 +62,7 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 					{t("button")}
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-sm">
+			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
 					<DialogTitle>{t("title")}</DialogTitle>
 					<DialogDescription>{t("description")}</DialogDescription>
@@ -73,6 +76,10 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 							name="title"
 							label={t("name")}
 							placeholder={t("placeholder")}
+						/>
+						<GalleryKindPicker
+							value={form.watch("kind")}
+							onChange={(kind) => form.setValue("kind", kind)}
 						/>
 						<DialogFooter>
 							<Button type="submit" size="sm" disabled={isSubmitting}>

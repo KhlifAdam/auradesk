@@ -1,6 +1,7 @@
 import "server-only";
 
 import { z } from "zod";
+import { devInboxEnabled, keepDevSms } from "./dev-inbox";
 
 export interface SmsMessage {
 	/** E.164, e.g. `+21620123456`. */
@@ -16,7 +17,8 @@ const twilioSchema = z.object({
 
 /**
  * Sends a text message with the provider in `SMS_PROVIDER`:
- * - `console` (default): prints it in the server log, for development;
+ * - `console` (default): prints it in the server log and, in development,
+ *   shows it in the on-screen "Test SMS" inbox;
  * - `twilio`: real SMS (needs the `TWILIO_*` variables).
  * Add another provider (a local gateway, WhatsApp) as a new branch here.
  */
@@ -28,6 +30,7 @@ export async function sendSms(message: SmsMessage) {
 		throw new Error(`Unknown SMS_PROVIDER "${provider}"`);
 
 	console.info(`[sms → ${message.to}] ${message.body}`);
+	if (devInboxEnabled()) keepDevSms(message.to, message.body);
 }
 
 async function sendWithTwilio({ to, body }: SmsMessage) {

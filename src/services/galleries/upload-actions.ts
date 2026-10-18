@@ -51,6 +51,8 @@ export async function startGalleryUpload(input: unknown): Promise<
 		totalParts: number;
 		doneParts: number[];
 		previewUploadUrl: string | null;
+		/** The studio removes GPS positions from originals before they leave. */
+		stripLocation: boolean;
 	}>
 > {
 	const { photographerId } = await requirePhotographer();
@@ -61,7 +63,12 @@ export async function startGalleryUpload(input: unknown): Promise<
 
 	const gallery = await db.gallery.findFirst({
 		where: { id: galleryId, photographerId },
-		select: { _count: { select: { items: true } } },
+		select: {
+			_count: { select: { items: true } },
+			photographer: {
+				select: { studio: { select: { stripGalleryLocation: true } } },
+			},
+		},
 	});
 	if (!gallery) return fail("notFound");
 	if (gallery._count.items >= GALLERY_ITEMS_LIMIT) return fail("galleryFull");
@@ -121,6 +128,7 @@ export async function startGalleryUpload(input: unknown): Promise<
 		totalParts: partCount(size, session.partSize),
 		doneParts: done,
 		previewUploadUrl,
+		stripLocation: Boolean(gallery.photographer.studio?.stripGalleryLocation),
 	});
 }
 

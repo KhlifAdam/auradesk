@@ -1,4 +1,4 @@
-import { ArrowLeft, Images, MessageSquare } from "lucide-react";
+import { ArrowLeft, Clock, EyeOff, Images, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -15,11 +15,14 @@ import { getPortalProject } from "@/services/portal/queries";
 
 export default async function PortalProjectPage({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ projectId: string }>;
+	searchParams: Promise<{ notice?: string }>;
 }) {
 	const t = await getTranslations("Portal.project");
 	const { projectId } = await params;
+	const { notice } = await searchParams;
 	const { clientId } = await requireClient();
 	const project = await getPortalProject(clientId, projectId);
 	if (!project) notFound();
@@ -66,6 +69,18 @@ export default async function PortalProjectPage({
 			<InvoiceSection invoices={invoices} hrefBase="/portal/invoices" />
 			<section className="flex flex-col gap-3">
 				<h2 className="text-sm font-semibold">{t("galleries")}</h2>
+				{notice === "galleryHidden" && (
+					<p className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+						<EyeOff className="h-3.5 w-3.5 shrink-0" />
+						{t("galleryHidden")}
+					</p>
+				)}
+				{project.galleriesDeleteAt && project.galleries.length > 0 && (
+					<p className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+						<Clock className="h-3.5 w-3.5 shrink-0" />
+						{t("deleteNotice", { date: new Date(project.galleriesDeleteAt) })}
+					</p>
+				)}
 				{project.galleries.length === 0 ? (
 					<EmptyState
 						icon={Images}

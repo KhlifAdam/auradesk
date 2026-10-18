@@ -18,7 +18,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
-import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
+import {
+	AUTH_PATHS,
+	type AuthAudience,
+	verifyEmailPath,
+} from "@/lib/auth/client-intent";
+import type { SocialProvider } from "@/lib/auth/social-providers";
 import {
 	clearClientIntent,
 	setClientIntent,
@@ -37,12 +42,14 @@ import { useAuthError } from "./use-auth-error";
 
 interface RegisterFormProps {
 	audience: AuthAudience;
+	providers: SocialProvider[];
 	/** Pre-filled from an invitation link. */
 	defaultEmail?: string;
 }
 
 export function RegisterForm({
 	audience,
+	providers,
 	defaultEmail = "",
 }: RegisterFormProps) {
 	const t = useTranslations("Auth");
@@ -72,8 +79,9 @@ export function RegisterForm({
 				name: name || email.split("@")[0] || email,
 			});
 			if (error) return void toast.error(authError.message(error));
+			// No session yet: the account opens once the emailed code is entered.
 			toast.success(t("register.success"));
-			window.location.assign(paths.home);
+			window.location.assign(verifyEmailPath(email, audience));
 		} catch {
 			toast.error(authError.network);
 		}
@@ -183,7 +191,11 @@ export function RegisterForm({
 					</form>
 				</Form>
 
-				<SocialLogin disabled={isSubmitting} audience={audience} />
+				<SocialLogin
+					providers={providers}
+					audience={audience}
+					disabled={isSubmitting}
+				/>
 			</div>
 
 			{isClient && (

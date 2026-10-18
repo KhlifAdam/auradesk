@@ -31,9 +31,10 @@ export default async function ImportPage({
 	]);
 	if (!project) notFound();
 
-	const galleries = project.galleries.map(({ id, title, itemCount }) => ({
+	const galleries = project.galleries.map(({ id, title, kind, itemCount }) => ({
 		id,
 		title,
+		kind,
 		itemCount,
 	}));
 	// The gallery in the URL if it is one of this project's, else the first.

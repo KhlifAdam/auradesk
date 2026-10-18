@@ -8,6 +8,8 @@ const coreSchema = z.object({
 	GITHUB_CLIENT_SECRET: z.string().optional(),
 	GOOGLE_CLIENT_ID: z.string().optional(),
 	GOOGLE_CLIENT_SECRET: z.string().optional(),
+	/** Bearer token the scheduler sends to /api/cron/*; unset disables them. */
+	CRON_SECRET: z.string().min(16).optional(),
 });
 
 const r2CredentialsSchema = z.object({

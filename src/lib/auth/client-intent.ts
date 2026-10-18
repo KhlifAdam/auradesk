@@ -1,3 +1,5 @@
+import { ROLES } from "./roles";
+
 /** Set right before a client sign-up, so the new account gets the client role. */
 export const CLIENT_INTENT_COOKIE = "lumodesk_client_intent";
 export const CLIENT_INTENT_VALUE = "client";
@@ -24,3 +26,16 @@ export const AUTH_PATHS = {
 		home: "/portal",
 	},
 } as const satisfies Record<AuthAudience, Record<string, string>>;
+
+/**
+ * Roles allowed to sign in on each side's page. A photographer can also be a
+ * client of another studio, so the client page takes both.
+ */
+export const AUDIENCE_ROLES: Record<AuthAudience, readonly string[]> = {
+	photographer: [ROLES.photographer, ROLES.admin],
+	client: [ROLES.client, ROLES.photographer],
+};
+
+/** Where an account that still has to prove its email address goes. */
+export const verifyEmailPath = (email: string, audience: AuthAudience) =>
+	`/verify-email?${new URLSearchParams({ email, audience })}`;

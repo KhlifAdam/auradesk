@@ -41,6 +41,8 @@ export function GallerySettingsDialog({ gallery }: { gallery: GalleryView }) {
 		description: gallery.description,
 		selectionEnabled: gallery.selectionEnabled,
 		selectionLimit: gallery.selectionLimit,
+		watermark: gallery.watermark,
+		linkSharing: gallery.linkSharing,
 	};
 	const form = useForm<GallerySettingsValues>({
 		resolver: zodResolver(gallerySettingsSchema),
@@ -103,6 +105,18 @@ export function GallerySettingsDialog({ gallery }: { gallery: GalleryView }) {
 							label={t("limit")}
 							description={t("limitHint")}
 							type="number"
+						/>
+						<SwitchField<GallerySettingsValues>
+							name="watermark"
+							label={t("watermark")}
+							description={t("watermarkHint")}
+						/>
+						<SwitchField<GallerySettingsValues>
+							name="linkSharing"
+							label={t("linkSharing")}
+							description={t(
+								gallery.share ? "linkSharingActive" : "linkSharingHint",
+							)}
 						/>
 						<DialogFooter className="mt-1 flex-row items-center sm:justify-between">
 							<ConfirmDeleteButton

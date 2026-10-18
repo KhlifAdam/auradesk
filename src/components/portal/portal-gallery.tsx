@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart } from "lucide-react";
+import { CheckCheck, Heart, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -9,6 +9,7 @@ import { CommentsSheet } from "@/components/client-work/comments-sheet";
 import { PhotoLightbox } from "@/components/client-work/photo-lightbox";
 import { PhotoTile } from "@/components/client-work/photo-tile";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type {
 	GalleryFilter,
@@ -26,11 +27,26 @@ export function PortalGallery({ gallery }: { gallery: GalleryView }) {
 	const pathname = usePathname();
 	const [openIndex, setOpenIndex] = useState<number | null>(null);
 	const [commentsFor, setCommentsFor] = useState<GalleryPhoto | null>(null);
-	const { items, selectedCount, toggle } = useSelection(
+	const { items, selectedCount, toggle, selectAll } = useSelection(
+		gallery.id,
 		gallery.items,
 		gallery.selectedCount,
 	);
 	const canSelect = gallery.selectionEnabled && !gallery.submitted;
+	const [busy, setBusy] = useState(false);
+	const run = async (selected: boolean) => {
+		setBusy(true);
+		await selectAll(selected);
+		setBusy(false);
+	};
+	// On the unfiltered view `total` is the whole gallery; a limit below it
+	// makes "select all" impossible, so it isn't offered.
+	const limit = gallery.selectionLimit;
+	const canSelectAll =
+		canSelect &&
+		gallery.filter === "all" &&
+		selectedCount < gallery.total &&
+		(limit === null || gallery.total <= limit);
 
 	const heart = (photo: GalleryPhoto, large?: boolean) => (
 		<button
@@ -60,23 +76,49 @@ export function PortalGallery({ gallery }: { gallery: GalleryView }) {
 	return (
 		<div className="flex flex-col gap-4">
 			{gallery.selectionEnabled && (
-				<div className="inline-flex w-fit rounded-lg border border-border bg-card p-0.5">
-					{FILTERS.map((filter) => (
-						<Link
-							key={filter}
-							href={
-								filter === "all" ? pathname : `${pathname}?filter=${filter}`
-							}
-							className={cn(
-								"rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-200",
-								filter === gallery.filter
-									? "bg-primary/10 text-primary"
-									: "text-muted-foreground hover:text-foreground",
-							)}
+				<div className="flex flex-wrap items-center gap-2">
+					<div className="inline-flex w-fit rounded-lg border border-border bg-card p-0.5">
+						{FILTERS.map((filter) => (
+							<Link
+								key={filter}
+								href={
+									filter === "all" ? pathname : `${pathname}?filter=${filter}`
+								}
+								className={cn(
+									"rounded-md px-2.5 py-1 text-xs font-medium transition-all duration-200",
+									filter === gallery.filter
+										? "bg-primary/10 text-primary"
+										: "text-muted-foreground hover:text-foreground",
+								)}
+							>
+								{t(`filters.${filter}`)}
+							</Link>
+						))}
+					</div>
+					{canSelectAll && (
+						<Button
+							size="sm"
+							variant="outline"
+							className="h-7 gap-1.5 text-xs"
+							disabled={busy}
+							onClick={() => run(true)}
 						>
-							{t(`filters.${filter}`)}
-						</Link>
-					))}
+							<CheckCheck className="h-3.5 w-3.5" />
+							{t("selectAll", { count: gallery.total })}
+						</Button>
+					)}
+					{canSelect && selectedCount > 0 && (
+						<Button
+							size="sm"
+							variant="ghost"
+							className="h-7 gap-1.5 text-xs"
+							disabled={busy}
+							onClick={() => run(false)}
+						>
+							<X className="h-3.5 w-3.5" />
+							{t("clearAll")}
+						</Button>
+					)}
 				</div>
 			)}
 			{items.length === 0 ? (

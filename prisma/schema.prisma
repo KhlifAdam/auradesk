@@ -147,32 +147,36 @@ enum MediaType {
 }
 
 model Studio {
-  id             String       @id @default(cuid())
-  photographerId String       @unique @map("photographer_id")
-  slug           String       @unique
-  name           String
-  tagline        String?
-  bio            String?
-  email          String?
-  phone          String?
-  city           String?
-  country        String?
+  id                     String       @id @default(cuid())
+  photographerId         String       @unique @map("photographer_id")
+  slug                   String       @unique
+  name                   String
+  tagline                String?
+  bio                    String?
+  email                  String?
+  phone                  String?
+  city                   String?
+  country                String?
   /// { instagram?, facebook?, youtube?, vimeo?, tiktok?, website? }
-  socials        Json         @default("{}")
-  logoMediaId    String?      @map("logo_media_id")
-  coverMediaId   String?      @map("cover_media_id")
-  template       SiteTemplate @default(MINIMAL)
-  accentColor    String       @default("#c8a96e") @map("accent_color")
-  fontPair       FontPair     @default(MODERN) @map("font_pair")
+  socials                Json         @default("{}")
+  logoMediaId            String?      @map("logo_media_id")
+  coverMediaId           String?      @map("cover_media_id")
+  template               SiteTemplate @default(MINIMAL)
+  accentColor            String       @default("#c8a96e") @map("accent_color")
+  fontPair               FontPair     @default(MODERN) @map("font_pair")
   /// LIGHT / DARK forces one palette; BOTH follows the visitor (with a toggle).
-  themeMode      ThemeMode    @default(BOTH) @map("theme_mode")
+  themeMode              ThemeMode    @default(BOTH) @map("theme_mode")
   /// Languages the public site is offered in (subset of the app locales).
-  locales        String[]     @default(["en"])
-  defaultLocale  String       @default("en") @map("default_locale")
-  published      Boolean      @default(false)
-  bookingEnabled Boolean      @default(true) @map("booking_enabled")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  locales                String[]     @default(["en"])
+  defaultLocale          String       @default("en") @map("default_locale")
+  published              Boolean      @default(false)
+  bookingEnabled         Boolean      @default(true) @map("booking_enabled")
+  /// Galleries are deleted this many months after delivery; null keeps them.
+  galleryRetentionMonths Int?         @map("gallery_retention_months")
+  /// Removes GPS position from JPEG originals while they upload.
+  stripGalleryLocation   Boolean      @default(false) @map("strip_gallery_location")
+  createdAt              DateTime     @default(now()) @map("created_at")
+  updatedAt              DateTime     @updatedAt @map("updated_at")
 
   photographer User   @relation(fields: [photographerId], references: [id], onDelete: Cascade)
   logo         Media? @relation("StudioLogo", fields: [logoMediaId], references: [id], onDelete: SetNull)
@@ -414,19 +418,54 @@ model Project {
   @@map("projects")
 }
 
+/// PROOFS: light copies for choosing (the originals stay on the photographer's
+/// disk). FINAL: the edited photos, delivered in full quality.
+enum GalleryKind {
+  PROOFS
+  FINAL
+
+  @@map("gallery_kind")
+}
+
+/// Layout of the cover page at the top of a gallery (client view and link).
+enum CoverTemplate {
+  CLASSIC
+  SPLIT
+  FRAME
+  NONE
+
+  @@map("cover_template")
+}
+
 model Gallery {
-  id               String    @id @default(cuid())
-  photographerId   String    @map("photographer_id")
-  projectId        String    @map("project_id")
+  id               String        @id @default(cuid())
+  photographerId   String        @map("photographer_id")
+  projectId        String        @map("project_id")
   title            String
   description      String?
-  position         Int       @default(0)
-  selectionEnabled Boolean   @default(true) @map("selection_enabled")
-  selectionLimit   Int?      @map("selection_limit")
-  sharedAt         DateTime? @map("shared_at")
-  submittedAt      DateTime? @map("submitted_at")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  kind             GalleryKind   @default(FINAL)
+  position         Int           @default(0)
+  selectionEnabled Boolean       @default(true) @map("selection_enabled")
+  selectionLimit   Int?          @map("selection_limit")
+  /// Previews shown to the client before delivery carry the studio's mark.
+  watermark        Boolean       @default(true)
+  /// The photographer lets the client open a view-only link to the gallery.
+  linkSharing      Boolean       @default(true) @map("link_sharing")
+  coverTemplate    CoverTemplate @default(CLASSIC) @map("cover_template")
+  /// Photo shown on the cover; null (or deleted) falls back to the first one.
+  coverItemId      String?       @map("cover_item_id")
+  /// Point of the photo kept in frame when the cover crops it (0 to 1).
+  coverFocalX      Float         @default(0.5) @map("cover_focal_x")
+  coverFocalY      Float         @default(0.5) @map("cover_focal_y")
+  /// Secret of the client's "anyone with the link" URL; null when not shared.
+  shareToken       String?       @unique @map("share_token")
+  /// Link visitors may download the originals (once delivered and paid).
+  shareDownloads   Boolean       @default(false) @map("share_downloads")
+  shareExpiresAt   DateTime?     @map("share_expires_at")
+  sharedAt         DateTime?     @map("shared_at")
+  submittedAt      DateTime?     @map("submitted_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
 
   photographer   User            @relation(fields: [photographerId], references: [id], onDelete: Cascade)
   project        Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -440,34 +479,38 @@ model Gallery {
 }
 
 model GalleryItem {
-  id               String    @id @default(cuid())
-  galleryId        String    @map("gallery_id")
-  photographerId   String    @map("photographer_id")
+  id                 String    @id @default(cuid())
+  galleryId          String    @map("gallery_id")
+  photographerId     String    @map("photographer_id")
   /// Object key in the private R2 bucket.
-  key              String    @unique
-  previewKey       String?   @map("preview_key")
-  filename         String
-  mimeType         String    @map("mime_type")
+  key                String    @unique
+  previewKey         String?   @map("preview_key")
+  filename           String
+  mimeType           String    @map("mime_type")
   /// Bytes; BigInt because videos can pass 2 GB.
-  size             BigInt
-  type             MediaType @default(IMAGE)
+  size               BigInt
+  type               MediaType @default(IMAGE)
   /// Seconds, for videos.
-  durationSec      Float?    @map("duration_sec")
-  width            Int?
-  height           Int?
-  position         Int       @default(0)
-  selected         Boolean   @default(false)
+  durationSec        Float?    @map("duration_sec")
+  width              Int?
+  height             Int?
+  position           Int       @default(0)
+  selected           Boolean   @default(false)
   /// Google Drive file this was imported from; stops the same file entering a gallery twice.
-  driveFileId      String?   @map("drive_file_id")
+  driveFileId        String?   @map("drive_file_id")
   /// When the photo or video was taken (EXIF / container metadata), for chronological order.
-  capturedAt       DateTime? @map("captured_at")
+  capturedAt         DateTime? @map("captured_at")
   /// The device it came from, e.g. "SONY ILCE-7M4": the media's source.
-  camera           String?
+  camera             String?
   /// Set once the file's metadata was read (even if it had none).
-  metadataReadAt   DateTime? @map("metadata_read_at")
+  metadataReadAt     DateTime? @map("metadata_read_at")
   /// The name it was uploaded with, kept when the gallery is renamed (to restore it).
-  originalFilename String?   @map("original_filename")
-  createdAt        DateTime  @default(now()) @map("created_at")
+  originalFilename   String?   @map("original_filename")
+  /// Proofs only: size and date of the original left on the photographer's
+  /// disk, so it can be found again among the shoot's files.
+  originalSize       BigInt?   @map("original_size")
+  originalModifiedAt DateTime? @map("original_modified_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
 
   gallery       Gallery          @relation(fields: [galleryId], references: [id], onDelete: Cascade)
   photographer  User             @relation(fields: [photographerId], references: [id], onDelete: Cascade)

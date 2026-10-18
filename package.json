@@ -13,7 +13,9 @@
     "fix": "pnpm format && pnpm lint && pnpm organize",
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev"
+    "db:migrate": "prisma migrate dev",
+    "admin:grant": "node scripts/set-admin.mjs grant",
+    "admin:revoke": "node scripts/set-admin.mjs revoke"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",

@@ -1,6 +1,8 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { AvatarEditor } from "@/components/account/avatar-editor";
+import { LinkCard } from "@/components/account/link-card";
 import {
 	EmailContact,
 	PhoneContact,
@@ -9,9 +11,10 @@ import { AccountNameForm } from "@/components/portal/account/account-name-form";
 import { requireClient } from "@/lib/auth/require-client";
 import { realEmail } from "@/lib/phone";
 
-/** Name, email and phone number of the signed-in account, in one place. */
+/** The client's profile: photo, name, and the ways to reach them. */
 export default async function AccountPage() {
 	const t = await getTranslations("Portal.account");
+	const tAccount = await getTranslations("Account");
 	const { session } = await requireClient();
 	const { user } = session;
 
@@ -26,11 +29,12 @@ export default async function AccountPage() {
 					{t("back")}
 				</Link>
 				<h1 className="font-display text-2xl font-bold tracking-tight">
-					{t("title")}
+					{tAccount("profile.title")}
 				</h1>
 				<p className="text-sm text-muted-foreground">{t("description")}</p>
 			</div>
 			<div className="flex max-w-2xl flex-col gap-3">
+				<AvatarEditor name={user.name} image={user.image ?? null} />
 				<AccountNameForm name={user.name} />
 				<EmailContact
 					email={realEmail(user.email)}
@@ -39,6 +43,12 @@ export default async function AccountPage() {
 				<PhoneContact
 					phone={user.phoneNumber ?? null}
 					verified={Boolean(user.phoneNumberVerified)}
+				/>
+				<LinkCard
+					href="/portal/settings"
+					icon={Settings}
+					title={tAccount("settings.title")}
+					description={tAccount("settings.clientHint")}
 				/>
 			</div>
 		</>

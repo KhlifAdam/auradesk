@@ -15,6 +15,8 @@ interface PhotoLightboxProps {
 	renderActions?: (photo: GalleryPhoto) => ReactNode;
 	/** False while the client is choosing: previews only, no video, no download. */
 	originals?: boolean;
+	/** Share-link token, so a visitor without an account can download. */
+	token?: string;
 }
 
 const arrowClass =
@@ -26,6 +28,7 @@ export function PhotoLightbox({
 	index,
 	onIndexChange,
 	renderActions,
+	token,
 	originals = true,
 }: PhotoLightboxProps) {
 	const t = useTranslations("Galleries.lightbox");
@@ -109,7 +112,7 @@ export function PhotoLightbox({
 								{renderActions?.(photo)}
 								{originals && (
 									<a
-										href={`/api/galleries/items/${photo.id}/download`}
+										href={`/api/galleries/items/${photo.id}/download${token ? `?t=${token}` : ""}`}
 										aria-label={t("download")}
 										title={t("download")}
 										className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/25"

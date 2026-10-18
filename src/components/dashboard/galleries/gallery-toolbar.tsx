@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, LockOpen } from "lucide-react";
+import { Heart, Link2, LockOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -68,6 +68,12 @@ export function GalleryToolbar({ gallery }: { gallery: GalleryView }) {
 								{t("submitted")}
 							</span>
 						)}
+					</span>
+				)}
+				{gallery.share && (
+					<span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+						<Link2 className="h-3 w-3" />
+						{t("linkActive")}
 					</span>
 				)}
 				{gallery.submitted && (

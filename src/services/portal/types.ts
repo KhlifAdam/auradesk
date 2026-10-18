@@ -35,6 +35,8 @@ export interface PortalProjectDetail extends PortalProject {
 	paymentStatus: PaymentStatus;
 	/** Delivered and paid: the files are visible and can be downloaded. */
 	delivered: boolean;
+	/** When the studio's retention deletes the galleries; null if never. */
+	galleriesDeleteAt: string | null;
 	galleries: GallerySummary[];
 }
 

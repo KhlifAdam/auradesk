@@ -20,7 +20,8 @@
 			"projects": "Projets",
 			"invoices": "Factures",
 			"equipment": "Matériel",
-			"team": "Équipe"
+			"team": "Équipe",
+			"privacy": "Confidentialité"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -211,7 +212,8 @@
 		"analysisFailed": "Les photos n'ont pas pu être analysées. Vérifiez la connexion au stockage et réessayez.",
 		"cannotBanSelf": "Vous ne pouvez pas suspendre votre propre compte.",
 		"cannotBanAdmin": "Les administrateurs ne peuvent pas être suspendus.",
-		"metadataPending": "Certains fichiers sont encore en cours de lecture. Patientez un instant et réessayez."
+		"metadataPending": "Certains fichiers sont encore en cours de lecture. Patientez un instant et réessayez.",
+		"forbidden": "Ce compte ne peut pas effectuer cette action."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -721,7 +723,7 @@
 			"password": "Mot de passe",
 			"confirmPassword": "Confirmer le mot de passe",
 			"submit": "Créer le compte",
-			"success": "Compte créé avec succès !",
+			"success": "Compte créé. Un code vous attend dans votre boîte mail.",
 			"haveAccount": "Vous avez déjà un compte ?",
 			"signIn": "Se connecter"
 		},
@@ -769,7 +771,12 @@
 			"USER_NOT_FOUND": "Nous n'avons pas trouvé ce compte.",
 			"INVALID_PHONE_NUMBER": "Saisissez un numéro de téléphone valide.",
 			"OTP_NOT_FOUND": "Aucun code n'a été envoyé à ce numéro. Demandez-en un nouveau.",
-			"PHONE_NUMBER_EXIST": "Ce numéro est déjà utilisé par un autre compte."
+			"PHONE_NUMBER_EXIST": "Ce numéro est déjà utilisé par un autre compte.",
+			"EMAIL_NOT_VERIFIED": "Confirmez d'abord votre adresse e-mail : nous vous avons envoyé un code.",
+			"INVALID_PASSWORD": "Votre mot de passe actuel est incorrect.",
+			"FAILED_TO_UNLINK_LAST_ACCOUNT": "C'est votre seul moyen de connexion : ajoutez-en un autre avant de le déconnecter.",
+			"SOCIAL_ACCOUNT_ALREADY_LINKED": "Ce compte est déjà connecté à un autre compte Lumodesk.",
+			"CREDENTIAL_ACCOUNT_NOT_FOUND": "Ce compte n'a pas encore de mot de passe."
 		},
 		"backLink": {
 			"photographer": "Espace photographe",
@@ -832,6 +839,24 @@
 			"useEmail": "Vous préférez l'e-mail ?",
 			"emailLink": "Se connecter par e-mail",
 			"useInstead": "Pas d'e-mail ? Utilisez votre numéro de téléphone"
+		},
+		"oauthErrors": {
+			"generic": "La connexion avec ce fournisseur a échoué. Veuillez réessayer.",
+			"access_denied": "La connexion a été annulée.",
+			"unable_to_link_account": "Un compte utilise déjà cet e-mail. Connectez-vous d'abord avec votre mot de passe.",
+			"email_not_found": "Ce fournisseur n'a pas partagé d'adresse e-mail. Rendez-la publique ou utilisez une autre méthode."
+		},
+		"verify": {
+			"required": "Confirmez votre adresse e-mail pour continuer : un code est en route.",
+			"title": "Confirmez votre e-mail",
+			"description": "Saisissez le code à 6 chiffres envoyé à <strong>{email}</strong>",
+			"code": "Code de vérification",
+			"submit": "Confirmer et continuer",
+			"success": "E-mail confirmé. Bienvenue !",
+			"resend": "Vous n'avez pas reçu de code ? Renvoyer",
+			"resending": "Envoi…",
+			"resent": "Un nouveau code a été envoyé.",
+			"back": "Retour à la connexion"
 		}
 	},
 	"Landing": {
@@ -1277,6 +1302,11 @@
 			"title": "Ce studio n'existe pas",
 			"description": "Le lien est peut-être incorrect, ou le studio a été supprimé.",
 			"action": "Découvrir Lumodesk"
+		},
+		"shareLink": {
+			"title": "Ce lien ne fonctionne plus",
+			"description": "Il a peut-être expiré, ou la personne qui l'a partagé a arrêté le partage.",
+			"action": "Découvrir Lumodesk"
 		}
 	},
 	"Clients": {
@@ -1512,7 +1542,7 @@
 			"galleryHint": "Les fichiers sont ajoutés à cette galerie. Une fois partagée, le client voit des aperçus dès l'étape Sélection, et les originaux une fois le projet livré et payé.",
 			"gallery": "Galerie",
 			"chooseGallery": "Choisir une galerie",
-			"galleryOption": "{title} ({count, plural, one {# fichier} other {# fichiers}})",
+			"galleryOption": "{title} · {kind, select, PROOFS {Épreuves} other {Finales}} ({count, plural, one {# fichier} other {# fichiers}})",
 			"newGallery": "Nouvelle galerie",
 			"newGalleryPlaceholder": "Cérémonie, Séance couple…",
 			"create": "Créer",
@@ -1532,7 +1562,8 @@
 				"resume": "Reprendre",
 				"discard": "Abandonner",
 				"discarded": "Envoi abandonné."
-			}
+			},
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Seule une copie légère (~300 Ko) est envoyée : vos originaux restent sur votre ordinateur."
 		}
 	},
 	"Bookings": {
@@ -2081,7 +2112,11 @@
 			"done": "Analyse terminée",
 			"allGood": "Rien à signaler : photos nettes, bien exposées, sans quasi-doublons.",
 			"review": "Revoir {count, plural, one {# photo signalée} other {# photos signalées}} →",
-			"noVision": "Le flou, l'exposition et les quasi-doublons sont vérifiés. Ajoutez une ANTHROPIC_API_KEY pour détecter aussi les yeux fermés."
+			"noVision": "Le flou, l'exposition et les quasi-doublons sont vérifiés. Ajoutez une ANTHROPIC_API_KEY pour détecter aussi les yeux fermés.",
+			"removeFlagged": "Retirer les signalées ({count})",
+			"removeTitle": "Retirer les photos signalées ?",
+			"removeDescription": "{count, plural, one {La photo signalée quitte} other {Les # photos signalées quittent}} cette galerie d'épreuves. Les photos déjà choisies sont gardées, et vos originaux restent sur votre ordinateur.",
+			"removed": "{count, plural, =0 {Rien à retirer.} one {# photo retirée.} other {# photos retirées.}}"
 		},
 		"reminders": {
 			"title": "Assistant du studio",
@@ -2298,7 +2333,9 @@
 		"card": {
 			"private": "Privée",
 			"submitted": "Sélection envoyée",
-			"photos": "{count, plural, =0 {Vide} one {# photo} other {# photos}}"
+			"photos": "{count, plural, =0 {Vide} one {# photo} other {# photos}}",
+			"proofs": "Épreuves",
+			"final": "Finales"
 		},
 		"lightbox": {
 			"title": "Photo",
@@ -2349,7 +2386,15 @@
 			"open": "Ouvrir {name}",
 			"comments": "Commentaires",
 			"remove": "Supprimer la photo",
-			"removed": "Photo supprimée."
+			"removed": "Photo supprimée.",
+			"descriptionProofs": "Copies légères à trier et à choisir. Vos originaux restent sur votre ordinateur.",
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Seule une copie légère (~300 Ko) est envoyée : vos originaux restent sur votre ordinateur.",
+			"pick": "Choisir cette photo",
+			"unpick": "Retirer de la sélection",
+			"linkActive": "Lien partagé",
+			"setCover": "Mettre en couverture",
+			"cover": "Couverture",
+			"coverSet": "Photo de couverture changée."
 		},
 		"settings": {
 			"button": "Réglages",
@@ -2365,11 +2410,17 @@
 			"saved": "Galerie mise à jour.",
 			"deleteTitle": "Supprimer cette galerie ?",
 			"deleteDescription": "Toutes ses photos, sélections et commentaires seront définitivement supprimés.",
-			"deleted": "Galerie supprimée."
+			"deleted": "Galerie supprimée.",
+			"watermark": "Filigraner les aperçus",
+			"watermarkHint": "Jusqu'à la livraison, le client voit le nom de votre studio sur chaque photo.",
+			"linkSharing": "Le client peut partager un lien",
+			"linkSharingHint": "Votre client peut ouvrir un lien en lecture seule pour des personnes sans compte. Le désactiver coupe immédiatement tout lien.",
+			"linkSharingActive": "Votre client a partagé un lien vers cette galerie. Le désactiver le coupe immédiatement."
 		},
 		"download": {
 			"all": "Tout télécharger",
-			"selected": "{count, plural, one {Télécharger ma sélection} other {Télécharger mes # photos choisies}}"
+			"selected": "{count, plural, one {Télécharger ma sélection} other {Télécharger mes # photos choisies}}",
+			"zipPart": "Partie {part} sur {total}"
 		},
 		"organize": {
 			"button": "Organiser",
@@ -2389,6 +2440,61 @@
 			"done": "Galerie organisée",
 			"restore": "Restaurer les noms d'origine",
 			"restored": "Noms d'origine restaurés"
+		},
+		"kind": {
+			"PROOFS": {
+				"label": "Épreuves",
+				"hint": "Copies légères à trier avec l'IA et à choisir. Vos originaux restent sur votre ordinateur."
+			},
+			"FINAL": {
+				"label": "Finales",
+				"hint": "Vos photos retouchées, en pleine qualité, livrées au client une fois payées."
+			}
+		},
+		"collect": {
+			"button": "Récupérer les originaux ({count})",
+			"title": "Récupérer les originaux",
+			"description": "Première étape de la post-production : {count, plural, one {la photo choisie est copiée} other {les # photos choisies sont copiées}} depuis votre dossier de shooting, en pleine qualité, avec leurs fichiers RAW, renommées dans l'ordre de prise de vue.",
+			"prefix": "Préfixe des noms",
+			"example": "ex. {name} — copiées dans le dossier « {folder} »",
+			"invalidPrefix": "Utilisez des lettres, chiffres, tirets ou underscores.",
+			"chooseFolder": "Choisir le dossier du shooting",
+			"finished": "{count, plural, one {# original copié} other {# originaux copiés}}.",
+			"failed": "La copie s'est arrêtée. Vérifiez que le dossier est toujours là, puis réessayez.",
+			"report": "{copied, plural, one {# original copié} other {# originaux copiés}}, avec {twins, plural, =0 {aucun fichier RAW} one {# fichier RAW ou annexe} other {# fichiers RAW ou annexes}}.",
+			"missing": "{count, plural, one {# photo introuvable} other {# photos introuvables}} dans ce dossier : {names}",
+			"privacy": "Tout se passe sur votre ordinateur : rien n'est envoyé ni téléchargé.",
+			"unsupported": "Votre navigateur ne peut pas copier de fichiers dans un dossier (utilisez Chrome ou Edge). Vous pouvez quand même copier les noms choisis ou télécharger la liste de renommage.",
+			"copyNames": "Copier les noms",
+			"namesCopied": "Noms copiés.",
+			"downloadList": "Télécharger la liste de renommage (CSV)"
+		},
+		"cover": {
+			"view": "Voir la galerie",
+			"button": "Couverture",
+			"title": "Couverture de la galerie",
+			"description": "La page que votre client (et toute personne disposant de son lien) voit en premier. Choisissez une mise en page, puis cliquez sur la photo pour choisir ce qui reste dans le cadre.",
+			"layout": "Mise en page",
+			"templates": {
+				"CLASSIC": "Classique",
+				"SPLIT": "Divisée",
+				"FRAME": "Cadre",
+				"NONE": "Aucune"
+			},
+			"focal": "Point focal",
+			"focalHint": "Cliquez sur la photo : ce point reste dans le cadre sur tous les écrans.",
+			"noneHint": "Pas de couverture : la galerie s'ouvre directement sur les photos.",
+			"emptyHint": "Ajoutez des photos à la galerie pour créer sa couverture.",
+			"photoHint": "Pour changer de photo, utilisez « Mettre en couverture » sur une photo de la galerie.",
+			"save": "Enregistrer la couverture",
+			"saved": "Couverture enregistrée."
+		},
+		"deletePhoto": {
+			"title": "Supprimer cette photo ?",
+			"proof": "« {name} » quitte cette galerie d'épreuves, avec ses sélections et commentaires. Votre original reste sur votre ordinateur.",
+			"final": "« {name} » est supprimée définitivement, avec ses sélections et commentaires. Votre client ne pourra plus la voir ni la télécharger.",
+			"cancel": "Annuler",
+			"confirm": "Supprimer"
 		}
 	},
 	"Portal": {
@@ -2398,7 +2504,9 @@
 			"logout": "Se déconnecter",
 			"createStudio": "Créer votre studio",
 			"messages": "Messagerie",
-			"account": "Mon compte"
+			"account": "Mon compte",
+			"profile": "Profil",
+			"settings": "Paramètres"
 		},
 		"projects": {
 			"greeting": "Bonjour {name}",
@@ -2428,7 +2536,9 @@
 				"paid": "Déjà payé",
 				"remaining": "Reste à payer",
 				"paymentHint": "Les fichiers sont livrés une fois le paiement complet."
-			}
+			},
+			"deleteNotice": "Ces galeries seront supprimées le {date, date, long}. Téléchargez vos fichiers d'ici là.",
+			"galleryHidden": "Cette galerie n'est plus disponible : votre photographe l'a rendue privée pour le moment."
 		},
 		"gallery": {
 			"hint": "Touchez le cœur pour choisir vos favorites, puis envoyez votre sélection.",
@@ -2444,7 +2554,10 @@
 			"open": "Ouvrir {name}",
 			"comments": "Commentaires",
 			"select": "Ajouter à mes choix",
-			"unselect": "Retirer de mes choix"
+			"unselect": "Retirer de mes choix",
+			"proofsOnly": "Ce sont des épreuves pour faire votre choix. Vos photos retouchées arriveront en pleine qualité, dans leur propre galerie.",
+			"selectAll": "Tout sélectionner ({count})",
+			"clearAll": "Effacer ma sélection"
 		},
 		"selection": {
 			"selected": "sélectionnées",
@@ -2582,6 +2695,125 @@
 			"messagePlaceholder": "Que souhaitez-vous obtenir ?",
 			"send": "Envoyer la demande",
 			"sent": "Demande envoyée au studio."
+		},
+		"share": {
+			"button": "Partager un lien",
+			"buttonActive": "Lien partagé",
+			"title": "Partager cette galerie",
+			"description": "Toute personne disposant du lien peut voir les photos, sans compte. Elle ne peut ni choisir ni commenter.",
+			"copy": "Copier",
+			"copied": "Copié",
+			"expiresOn": "Valable jusqu'au {date}.",
+			"noExpiry": "Valable jusqu'à ce que vous arrêtiez le partage.",
+			"expiry": "Durée du lien",
+			"days": "{count, plural, =0 {Jusqu'à ce que je l'arrête} one {Pendant # jour} other {Pendant # jours}}",
+			"downloads": "Autoriser le téléchargement des photos",
+			"viewNote": "Vous pouvez arrêter le lien à tout moment ; il cesse aussitôt de fonctionner.",
+			"previewNote": "Ils verront les mêmes aperçus que vous, avec la marque du studio. Vous pouvez arrêter le lien à tout moment.",
+			"create": "Créer le lien",
+			"save": "Enregistrer",
+			"stop": "Arrêter le partage",
+			"created": "Lien créé : copiez-le et envoyez-le.",
+			"updated": "Lien mis à jour.",
+			"stopped": "Partage arrêté : le lien ne fonctionne plus."
 		}
+	},
+	"Privacy": {
+		"title": "Confidentialité et données",
+		"description": "Combien de temps les fichiers clients sont conservés, ce qu'ils révèlent, et vos propres données.",
+		"noStudio": "Créez votre studio pour choisir la conservation des galeries clients.",
+		"settings": {
+			"title": "Galeries clients",
+			"description": "S'applique à tous les projets de votre studio.",
+			"retention": "Supprimer les galeries après la livraison",
+			"retentionHint": "Les photos et vidéos sont supprimées définitivement une fois ce délai écoulé depuis la livraison. Les clients doivent les télécharger avant.",
+			"keepForever": "Jamais (les conserver)",
+			"months": "{count, plural, one {Après # mois} other {Après # mois}}",
+			"stripLocation": "Retirer la position GPS des photos",
+			"stripLocationHint": "Les originaux (JPEG) perdent le lieu de prise de vue pendant l'envoi ; les pixels et les autres informations restent intacts. Les photos du portfolio la perdent toujours, car elles sont publiques.",
+			"save": "Enregistrer",
+			"saved": "Paramètres de confidentialité enregistrés."
+		},
+		"data": {
+			"title": "Vos données",
+			"description": "Téléchargez une copie de tout ce que nous conservons sur votre compte, ou supprimez-le définitivement.",
+			"export": "Télécharger mes données (JSON)",
+			"delete": "Supprimer mon compte",
+			"deleteTitle": "Supprimer votre compte ?",
+			"deleteStudio": "Votre studio, votre site, les fiches clients, projets, factures et tous les fichiers sont supprimés définitivement. Cette action est irréversible.",
+			"deleteClient": "Votre compte, vos messages et commentaires sont supprimés définitivement. Vos photographes conservent leurs factures et projets, sans lien avec votre compte. Cette action est irréversible.",
+			"deleted": "Votre compte a été supprimé."
+		}
+	},
+	"SharedGallery": {
+		"metaTitle": "Galerie partagée",
+		"empty": "Cette galerie est vide pour le moment.",
+		"open": "Ouvrir {name}",
+		"viewOnly": "Vous consultez des aperçus de cette galerie. Ce lien ne permet pas le téléchargement.",
+		"footer": "Partagé en privé avec {brand}"
+	},
+	"Account": {
+		"profile": {
+			"title": "Profil",
+			"description": "Votre photo, votre nom et comment vous joindre.",
+			"photo": "Photo de profil",
+			"photoHint": "Visible par les personnes avec qui vous travaillez. JPEG, PNG ou WebP ; nous la réduisons pour vous.",
+			"addPhoto": "Ajouter une photo",
+			"changePhoto": "Changer la photo",
+			"removePhoto": "Retirer",
+			"photoSaved": "Photo de profil mise à jour.",
+			"photoRemoved": "Photo de profil retirée.",
+			"studioTitle": "Le profil public de votre studio",
+			"studioHint": "Nom, logo, bio et coordonnées affichés sur votre site."
+		},
+		"settings": {
+			"title": "Paramètres",
+			"description": "Langue, thème, connexion et appareils où vous êtes connecté.",
+			"privacyTitle": "Confidentialité et données",
+			"privacyHint": "Conservation des galeries, localisation, export ou suppression du compte.",
+			"clientHint": "Langue, thème, mot de passe, appareils et vos données."
+		},
+		"preferences": {
+			"title": "Préférences",
+			"language": "Langue",
+			"languageHint": "Utilisée aussi pour les e-mails que nous vous envoyons.",
+			"theme": "Thème"
+		},
+		"password": {
+			"title": "Mot de passe",
+			"hint": "Le changer vous déconnecte de tous vos autres appareils.",
+			"currentPassword": "Mot de passe actuel",
+			"newPassword": "Nouveau mot de passe",
+			"confirmPassword": "Confirmer",
+			"submit": "Changer le mot de passe",
+			"changed": "Mot de passe changé. Vos autres appareils ont été déconnectés."
+		},
+		"connected": {
+			"title": "Comptes connectés",
+			"hint": "Connectez-vous aussi avec Google ou GitHub. Vous gardez toujours au moins un moyen de connexion.",
+			"linked": "Connecté",
+			"link": "Connecter",
+			"unlink": "Déconnecter",
+			"unlinked": "{provider} déconnecté."
+		},
+		"sessions": {
+			"title": "Où vous êtes connecté",
+			"hint": "Déconnectez un appareil que vous ne reconnaissez pas ou n'utilisez plus.",
+			"thisDevice": "Cet appareil",
+			"lastActive": "Actif {when}",
+			"unknownDevice": "Appareil inconnu",
+			"signOut": "Déconnecter",
+			"signOutOthers": "Déconnecter tous les autres",
+			"signedOut": "Cet appareil a été déconnecté.",
+			"othersSignedOut": "{count, plural, =0 {Aucun autre appareil n'était connecté.} one {# appareil déconnecté.} other {# appareils déconnectés.}}"
+		}
+	},
+	"DevSms": {
+		"title": "SMS de test",
+		"button": "SMS de test ({count})",
+		"hint": "Développement uniquement : aucun vrai SMS n'est envoyé. Les messages arrivent ici.",
+		"empty": "Aucun message pour l'instant.",
+		"to": "À {phone}",
+		"close": "Fermer"
 	}
 }

@@ -12,19 +12,23 @@ import {
 	putWithProgress,
 	readMediaMetadata,
 } from "@/lib/media/read-media-metadata";
+import { withoutLocation } from "@/lib/media/strip-location";
 import {
 	galleryMaxSize,
 	isGalleryMime,
 	isGalleryVideo,
+	isProofMime,
 	PART_URLS_PER_REQUEST,
 	PREVIEW_MAX_EDGE,
 } from "@/services/galleries/constants";
+import type { GalleryKind } from "@/services/galleries/types";
 import {
 	abortGalleryUpload,
 	completeGalleryUpload,
 	signUploadParts,
 	startGalleryUpload,
 } from "@/services/galleries/upload-actions";
+import { uploadProof } from "./upload-proof";
 
 /** Large files go one or two at a time; each already sends parts in parallel. */
 const FILES_AT_ONCE = 2;
@@ -32,6 +36,12 @@ const FILES_AT_ONCE = 2;
 function precheck(file: File): string | undefined {
 	if (!isGalleryMime(file.type)) return "unsupportedType";
 	if (file.size > galleryMaxSize(file.type)) return "tooLarge";
+}
+
+/** Proofs take photos only; the size limit is the original's. */
+function precheckProof(file: File): string | undefined {
+	if (!isProofMime(file.type)) return "unsupportedType";
+	return precheck(file);
 }
 
 interface FileInfo {
@@ -57,11 +67,13 @@ async function describe(file: File): Promise<FileInfo> {
 
 /**
  * Preview made in the browser → the file sent in parts (resumable) → the
- * server assembles it and adds it to the gallery. `galleryId` null disables it.
+ * server assembles it and adds it to the gallery. A proofs gallery only gets
+ * the light copy. `galleryId` null disables it.
  */
 export function useGalleryUpload(
 	galleryId: string | null,
 	onUploaded: () => void,
+	kind: GalleryKind = "FINAL",
 ) {
 	const upload = useCallback(
 		async (
@@ -70,6 +82,7 @@ export function useGalleryUpload(
 			signal: AbortSignal,
 		) => {
 			if (!galleryId) throw new Error("noGallery");
+			if (kind === "PROOFS") return uploadProof(galleryId, file, onProgress);
 			const info = await describe(file);
 			const previewSize = info.blob?.size ?? null;
 
@@ -82,13 +95,16 @@ export function useGalleryUpload(
 				previewSize,
 			});
 			if (!started.ok) throw new Error(started.error);
-			const { sessionId, previewUploadUrl, ...plan } = started.data;
+			const { sessionId, previewUploadUrl, stripLocation, ...plan } =
+				started.data;
+			// Same size with or without the position, so resuming still matches.
+			const source = stripLocation ? await withoutLocation(file) : file;
 
 			try {
 				if (info.blob && previewUploadUrl)
 					await putWithProgress(previewUploadUrl, info.blob, () => {});
 				await uploadParts({
-					file,
+					file: source,
 					...plan,
 					signBatch: PART_URLS_PER_REQUEST,
 					sign: async (partNumbers) => {
@@ -115,11 +131,11 @@ export function useGalleryUpload(
 			});
 			if (!completed.ok) throw new Error(completed.error);
 		},
-		[galleryId],
+		[galleryId, kind],
 	);
 
 	return useUploadQueue({
-		precheck,
+		precheck: kind === "PROOFS" ? precheckProof : precheck,
 		upload,
 		onUploaded,
 		concurrency: FILES_AT_ONCE,

@@ -62,7 +62,9 @@ export function PhotoTile({
 			</button>
 			{photo.type === "VIDEO" && <VideoBadge durationSec={photo.durationSec} />}
 			<PhotoFlags flags={photo.flags} />
-			{badge && <div className="absolute left-1.5 top-1.5">{badge}</div>}
+			{badge && (
+				<div className="absolute left-1.5 top-1.5 flex gap-1">{badge}</div>
+			)}
 			{actions && (
 				<div className="absolute right-1.5 top-1.5 flex gap-1">{actions}</div>
 			)}

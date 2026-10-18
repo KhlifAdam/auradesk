@@ -24,6 +24,18 @@ export const PREVIEW_MAX_EDGE = 1600;
 export const PREVIEW_MAX_FILE_SIZE = 5 * MB;
 export const PREVIEW_MIME_TYPE = "image/jpeg";
 
+/**
+ * Largest ZIP made in one request. At ~4 MB/s it streams within the 300 s the
+ * download route may run (its `maxDuration`); bigger galleries come in several parts.
+ */
+export const ZIP_PART_MAX_BYTES = GB;
+
+/** How photos are listed: the photographer's order, then a stable tie-break. */
+export const GALLERY_ITEM_ORDER = [
+	{ position: "asc" as const },
+	{ id: "asc" as const },
+];
+
 export const GALLERY_PAGE_SIZE = 48;
 export const GALLERY_ITEMS_LIMIT = 2000;
 export const GALLERIES_PER_PROJECT_LIMIT = 30;
@@ -41,6 +53,11 @@ export const GALLERY_EXTENSION_BY_MIME: Record<string, string> = {
 
 export function isGalleryMime(type: string) {
 	return (GALLERY_MIME_TYPES as readonly string[]).includes(type);
+}
+
+/** Proofs galleries hold photos only: a video can't be chosen from a frame. */
+export function isProofMime(type: string) {
+	return (GALLERY_IMAGE_TYPES as readonly string[]).includes(type);
 }
 
 export function isGalleryVideo(type: string) {

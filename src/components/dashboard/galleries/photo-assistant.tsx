@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { ConfirmDeleteButton } from "@/components/dashboard/shared/confirm-delete-button";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useErrorMessage } from "@/hooks/use-error-message";
@@ -15,17 +16,22 @@ import {
 	resetGalleryAnalysis,
 } from "@/services/ai/photo-actions";
 import type { GalleryInsights } from "@/services/ai/photo-queries";
+import { removeFlaggedProofs } from "@/services/galleries/item-actions";
 
 /**
  * The AI photo assistant: runs the analysis in small batches (with progress),
- * then sums up what needs a look and links to the flagged photos.
+ * then sums up what needs a look and links to the flagged photos. In a
+ * proofs gallery the flagged ones can be dropped in one go (the originals
+ * stay on disk).
  */
 export function PhotoAssistant({
 	galleryId,
 	insights,
+	proofs,
 }: {
 	galleryId: string;
 	insights: GalleryInsights;
+	proofs: boolean;
 }) {
 	const t = useTranslations("Ai.assistant");
 	const tFlag = useTranslations("Ai.flags");
@@ -62,6 +68,13 @@ export function PhotoAssistant({
 			if (!result.ok) return void toast.error(errorMessage(result.error));
 			router.refresh();
 		});
+
+	const removeFlagged = async () => {
+		const result = await removeFlaggedProofs(galleryId);
+		if (!result.ok) return void toast.error(errorMessage(result.error));
+		toast.success(t("removed", { count: result.data.removed }));
+		router.refresh();
+	};
 
 	if (insights.photos === 0) return null;
 	const running = progress !== null;
@@ -132,12 +145,24 @@ export function PhotoAssistant({
 					{insights.flagged === 0 ? (
 						<span className="text-muted-foreground">{t("allGood")}</span>
 					) : (
-						<Link
-							href={`${pathname}?filter=flagged`}
-							className="font-medium text-primary hover:underline"
-						>
-							{t("review", { count: insights.flagged })}
-						</Link>
+						<>
+							<Link
+								href={`${pathname}?filter=flagged`}
+								className="font-medium text-primary hover:underline"
+							>
+								{t("review", { count: insights.flagged })}
+							</Link>
+							{proofs && !running && (
+								<ConfirmDeleteButton
+									label={t("removeFlagged", { count: insights.flagged })}
+									title={t("removeTitle")}
+									description={t("removeDescription", {
+										count: insights.flagged,
+									})}
+									onConfirm={removeFlagged}
+								/>
+							)}
+						</>
 					)}
 				</div>
 			)}

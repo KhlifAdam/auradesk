@@ -11,16 +11,24 @@ import { MediaDropzone } from "@/components/dashboard/media/media-dropzone";
 import { UploadQueue } from "@/components/dashboard/media/upload-queue";
 import { Button } from "@/components/ui/button";
 import {
+	GALLERY_IMAGE_TYPES,
 	GALLERY_MIME_TYPES,
 	isGalleryMime,
+	isProofMime,
 } from "@/services/galleries/constants";
+import type { GalleryKind } from "@/services/galleries/types";
 import type { InterruptedUpload } from "@/services/galleries/upload-queries";
 import { GalleryPicker } from "./gallery-picker";
 import { InterruptedUploads } from "./interrupted-uploads";
 
 interface ProjectImporterProps {
 	projectId: string;
-	galleries: { id: string; title: string; itemCount: number }[];
+	galleries: {
+		id: string;
+		title: string;
+		kind: GalleryKind;
+		itemCount: number;
+	}[];
 	galleryId: string | null;
 	interrupted: InterruptedUpload[];
 }
@@ -40,8 +48,9 @@ export function ProjectImporter({
 	const fileInput = useRef<HTMLInputElement>(null);
 
 	const refresh = useCallback(() => router.refresh(), [router]);
+	const kind = galleries.find((g) => g.id === galleryId)?.kind ?? "FINAL";
 	const { tasks, addFiles, retry, cancel, clearFinished, isUploading } =
-		useGalleryUpload(galleryId, refresh);
+		useGalleryUpload(galleryId, refresh, kind);
 
 	const selectGallery = useCallback(
 		(id: string) => {
@@ -52,9 +61,13 @@ export function ProjectImporter({
 		[pathname, router, searchParams],
 	);
 
-	// A folder holds more than photos and videos: keep those, say what was left.
+	const accepts = kind === "PROOFS" ? isProofMime : isGalleryMime;
+	const accept = kind === "PROOFS" ? GALLERY_IMAGE_TYPES : GALLERY_MIME_TYPES;
+
+	// A folder holds more than photos and videos (RAW files, sidecars): keep
+	// what the gallery takes, say what was left.
 	const addFolder = (files: File[]) => {
-		const media = files.filter((file) => isGalleryMime(file.type));
+		const media = files.filter((file) => accepts(file.type));
 		const skipped = files.length - media.length;
 		if (skipped > 0) toast.info(t("skipped", { count: skipped }));
 		if (media.length > 0) addFiles(media);
@@ -74,6 +87,11 @@ export function ProjectImporter({
 	}, [isUploading]);
 
 	const finished = tasks.filter((task) => task.status === "done").length;
+	// The gallery's own count (refreshed after each upload) keeps the link
+	// once the finished uploads are cleared from the list.
+	const hasFiles =
+		finished > 0 ||
+		(galleries.find((g) => g.id === galleryId)?.itemCount ?? 0) > 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">
@@ -103,8 +121,8 @@ export function ProjectImporter({
 					<div className="flex flex-col gap-2 sm:flex-row">
 						<MediaDropzone
 							onFiles={addFiles}
-							accept={GALLERY_MIME_TYPES}
-							hint={t("dropHint")}
+							accept={accept}
+							hint={t(kind === "PROOFS" ? "dropHintProofs" : "dropHint")}
 							className="flex-1"
 						/>
 						<Button
@@ -131,7 +149,7 @@ export function ProjectImporter({
 						ref={fileInput}
 						type="file"
 						hidden
-						accept={GALLERY_MIME_TYPES.join(",")}
+						accept={accept.join(",")}
 						onChange={(event) => {
 							if (event.target.files) addFiles(Array.from(event.target.files));
 							event.target.value = "";
@@ -143,7 +161,7 @@ export function ProjectImporter({
 						onCancel={cancel}
 						onClear={clearFinished}
 					/>
-					{finished > 0 && !isUploading && (
+					{hasFiles && !isUploading && (
 						<Button asChild size="sm" className="w-fit gap-1.5 text-xs">
 							<Link
 								href={`/dashboard/projects/${projectId}/galleries/${galleryId}`}

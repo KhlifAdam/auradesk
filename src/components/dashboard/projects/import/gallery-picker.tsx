@@ -15,10 +15,17 @@ import {
 } from "@/components/ui/select";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createGallery } from "@/services/galleries/actions";
+import type { GalleryKind } from "@/services/galleries/types";
+import { GalleryKindPicker } from "../../galleries/gallery-kind-picker";
 
 interface GalleryPickerProps {
 	projectId: string;
-	galleries: { id: string; title: string; itemCount: number }[];
+	galleries: {
+		id: string;
+		title: string;
+		kind: GalleryKind;
+		itemCount: number;
+	}[];
 	value: string | null;
 	onChange: (galleryId: string) => void;
 	/** Locked while files are being sent, so none land in the wrong gallery. */
@@ -37,11 +44,13 @@ export function GalleryPicker({
 	const errorMessage = useErrorMessage();
 	const [creating, setCreating] = useState(galleries.length === 0);
 	const [title, setTitle] = useState("");
+	// Importing a shoot: light proofs by default, the originals stay on disk.
+	const [kind, setKind] = useState<GalleryKind>("PROOFS");
 	const [isPending, startTransition] = useTransition();
 
 	const create = () =>
 		startTransition(async () => {
-			const result = await createGallery({ projectId, title });
+			const result = await createGallery({ projectId, title, kind });
 			if (!result.ok) return void toast.error(errorMessage(result.error));
 			toast.success(t("galleryCreated"));
 			setCreating(false);
@@ -52,41 +61,46 @@ export function GalleryPicker({
 	if (creating) {
 		return (
 			<form
-				className="flex flex-wrap items-center gap-2"
+				className="flex max-w-xl flex-col gap-2"
 				onSubmit={(event) => {
 					event.preventDefault();
 					if (title.trim()) create();
 				}}
 			>
-				<Input
-					autoFocus
-					value={title}
-					onChange={(event) => setTitle(event.target.value)}
-					placeholder={t("newGalleryPlaceholder")}
-					aria-label={t("newGallery")}
-					maxLength={120}
-					className="h-8 w-64 text-sm"
-				/>
-				<Button
-					type="submit"
-					size="sm"
-					className="h-8 text-xs"
-					disabled={isPending || !title.trim()}
-				>
-					{isPending && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
-					{t("create")}
-				</Button>
-				{galleries.length > 0 && (
+				<GalleryKindPicker value={kind} onChange={setKind} />
+				<div className="flex flex-wrap items-center gap-2">
+					<Input
+						autoFocus
+						value={title}
+						onChange={(event) => setTitle(event.target.value)}
+						placeholder={t("newGalleryPlaceholder")}
+						aria-label={t("newGallery")}
+						maxLength={120}
+						className="h-8 w-64 text-sm"
+					/>
 					<Button
-						type="button"
-						variant="ghost"
+						type="submit"
 						size="sm"
 						className="h-8 text-xs"
-						onClick={() => setCreating(false)}
+						disabled={isPending || !title.trim()}
 					>
-						{t("cancel")}
+						{isPending && (
+							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+						)}
+						{t("create")}
 					</Button>
-				)}
+					{galleries.length > 0 && (
+						<Button
+							type="button"
+							variant="ghost"
+							size="sm"
+							className="h-8 text-xs"
+							onClick={() => setCreating(false)}
+						>
+							{t("cancel")}
+						</Button>
+					)}
+				</div>
 			</form>
 		);
 	}
@@ -107,6 +121,7 @@ export function GalleryPicker({
 							{t("galleryOption", {
 								title: gallery.title,
 								count: gallery.itemCount,
+								kind: gallery.kind,
 							})}
 						</SelectItem>
 					))}

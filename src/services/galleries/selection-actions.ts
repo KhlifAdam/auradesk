@@ -6,18 +6,10 @@ import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendSelectionSubmittedEmail } from "@/lib/mail/send-client-notices";
 import { revalidateClientWork } from "@/services/projects/revalidate";
-import { CLIENT_VIEWABLE_PROJECT } from "@/services/projects/visibility";
 import { lockGallery } from "@/services/shared/lock-rows";
 import { idSchema } from "@/services/shared/schemas";
-import { toggleSelectionSchema } from "./schemas";
-
-/** A shared gallery the client may choose from (the project reached Selection). */
-function clientGalleryWhere(clientId: string) {
-	return {
-		sharedAt: { not: null },
-		project: { clientId, ...CLIENT_VIEWABLE_PROJECT },
-	};
-}
+import { clientGalleryWhere } from "./access";
+import { selectAllSchema, toggleSelectionSchema } from "./schemas";
 
 export async function toggleSelection(
 	input: unknown,
@@ -121,4 +113,49 @@ export async function submitSelection(input: unknown): Promise<ActionResult> {
 
 	revalidateClientWork();
 	return ok();
+}
+
+/**
+ * Picks (or unpicks) every photo of the gallery, on all its pages. Refused
+ * when the gallery has more photos than the photographer's limit allows.
+ */
+export async function selectAllInGallery(
+	input: unknown,
+): Promise<ActionResult<{ selectedCount: number }>> {
+	const { clientId } = await requireClient();
+	const parsed = selectAllSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const { galleryId, selected } = parsed.data;
+
+	const result = await db.$transaction(async (tx) => {
+		await lockGallery(tx, galleryId);
+		const gallery = await tx.gallery.findFirst({
+			where: { id: galleryId, ...clientGalleryWhere(clientId) },
+			select: {
+				selectionEnabled: true,
+				selectionLimit: true,
+				submittedAt: true,
+				_count: { select: { items: true } },
+			},
+		});
+		if (!gallery) return fail("notFound");
+		if (!gallery.selectionEnabled || gallery.submittedAt)
+			return fail("selectionLocked");
+		const total = gallery._count.items;
+		if (
+			selected &&
+			gallery.selectionLimit !== null &&
+			total > gallery.selectionLimit
+		)
+			return fail("selectionLimitReached");
+
+		await tx.galleryItem.updateMany({
+			where: { galleryId, selected: !selected },
+			data: { selected },
+		});
+		return ok({ selectedCount: selected ? total : 0 });
+	});
+
+	if (result.ok) revalidateClientWork();
+	return result;
 }

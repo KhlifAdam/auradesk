@@ -5,6 +5,7 @@ import {
 	putWithProgress,
 	readMediaMetadata,
 } from "@/lib/media/read-media-metadata";
+import { withoutLocation } from "@/lib/media/strip-location";
 import { confirmUpload, requestUpload } from "@/services/media/actions";
 import { MEDIA_LIMITS, mediaKindOf } from "@/services/media/constants";
 import type { MediaItem } from "@/services/media/types";
@@ -15,11 +16,15 @@ function precheck(file: File): string | undefined {
 	if (file.size > MEDIA_LIMITS[kind].maxSize) return "tooLarge";
 }
 
-/** Presign → direct PUT to R2 → confirm. */
+/**
+ * Presign → direct PUT to R2 → confirm. The bucket is public, so a photo's
+ * GPS position is removed first: anyone could read where it was taken.
+ */
 async function uploadMedia(
-	file: File,
+	original: File,
 	onProgress: (percent: number) => void,
 ): Promise<MediaItem> {
+	const file = await withoutLocation(original);
 	const fileInfo = {
 		filename: file.name,
 		mimeType: file.type,

@@ -92,13 +92,17 @@ export function UserMenu({ user }: UserMenuProps) {
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuItem className="cursor-pointer">
-						<UserIcon className="mr-2 h-4 w-4" />
-						<span>{t("profile")}</span>
+					<DropdownMenuItem asChild className="cursor-pointer">
+						<Link href="/dashboard/profile">
+							<UserIcon className="mr-2 h-4 w-4" />
+							<span>{t("profile")}</span>
+						</Link>
 					</DropdownMenuItem>
-					<DropdownMenuItem className="cursor-pointer">
-						<Settings className="mr-2 h-4 w-4" />
-						<span>{t("settings")}</span>
+					<DropdownMenuItem asChild className="cursor-pointer">
+						<Link href="/dashboard/settings">
+							<Settings className="mr-2 h-4 w-4" />
+							<span>{t("settings")}</span>
+						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild className="cursor-pointer">
 						<Link href="/portal">

@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { securityHeaders } from "./src/lib/security-headers";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
@@ -11,6 +12,9 @@ const r2PublicUrl = process.env.R2_PUBLIC_URL
 const nextConfig: NextConfig = {
 	// Resolves its ffmpeg binary from its own folder at runtime: keep it unbundled.
 	serverExternalPackages: ["ffmpeg-static"],
+	async headers() {
+		return [{ source: "/(.*)", headers: securityHeaders }];
+	},
 	images: {
 		remotePatterns: r2PublicUrl
 			? [

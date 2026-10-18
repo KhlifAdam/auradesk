@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { studioBrandSelect, toStudioBrand } from "@/services/clients/branding";
 import { listGallerySummaries } from "@/services/galleries/summaries";
+import { addMonths } from "@/services/privacy/purge";
 import {
 	canClientView,
 	isDeliveredToClient,
@@ -61,6 +62,20 @@ export async function listPortalProjects(
 	return { ...meta, items: rows.map(toPortalProject) };
 }
 
+/** Delivered projects of a studio with a retention lose their galleries. */
+async function galleriesDeleteAt(row: {
+	photographerId: string;
+	deliveredAt: Date | null;
+}) {
+	if (!row.deliveredAt) return null;
+	const studio = await db.studio.findUnique({
+		where: { photographerId: row.photographerId },
+		select: { galleryRetentionMonths: true },
+	});
+	const months = studio?.galleryRetentionMonths;
+	return months ? addMonths(row.deliveredAt, months).toISOString() : null;
+}
+
 export async function getPortalProject(
 	clientId: string,
 	id: string,
@@ -84,11 +99,12 @@ export async function getPortalProject(
 		advance: row.advance.toNumber(),
 		paymentStatus: row.paymentStatus,
 		delivered: isDeliveredToClient(row),
+		galleriesDeleteAt: await galleriesDeleteAt(row),
 		galleries: canClientView(row)
-			? await listGallerySummaries({
-					projectId: id,
-					sharedAt: { not: null },
-				})
+			? await listGallerySummaries(
+					{ projectId: id, sharedAt: { not: null } },
+					{ delivered: isDeliveredToClient(row) },
+				)
 			: [],
 	};
 }

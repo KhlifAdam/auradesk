@@ -5,6 +5,7 @@ import {
 	LayoutDashboard,
 	LogOut,
 	MessageSquare,
+	Settings,
 	UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -101,7 +102,13 @@ export function PortalHeader({
 							<DropdownMenuItem asChild className="cursor-pointer">
 								<Link href="/portal/account">
 									<UserRound className="mr-2 h-4 w-4" />
-									{t("account")}
+									{t("profile")}
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild className="cursor-pointer">
+								<Link href="/portal/settings">
+									<Settings className="mr-2 h-4 w-4" />
+									{t("settings")}
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild className="cursor-pointer">

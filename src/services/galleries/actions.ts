@@ -29,7 +29,7 @@ export async function createGallery(
 	const { photographerId } = await requirePhotographer();
 	const parsed = createGallerySchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
-	const { projectId, title } = parsed.data;
+	const { projectId, title, kind } = parsed.data;
 
 	const result = await db.$transaction(async (tx) => {
 		await lockPhotographer(tx, photographerId);
@@ -41,7 +41,7 @@ export async function createGallery(
 		const count = project._count.galleries;
 		if (count >= GALLERIES_PER_PROJECT_LIMIT) return fail("galleryLimit");
 		const gallery = await tx.gallery.create({
-			data: { photographerId, projectId, title, position: count },
+			data: { photographerId, projectId, title, kind, position: count },
 			select: { id: true },
 		});
 		return ok(gallery);
@@ -72,7 +72,13 @@ export async function updateGallery(input: unknown): Promise<ActionResult> {
 		}
 		await tx.gallery.update({
 			where: { id },
-			data: { ...rest, selectionLimit, description: emptyToNull(description) },
+			data: {
+				...rest,
+				selectionLimit,
+				description: emptyToNull(description),
+				// No more links: the client's active one stops working at once.
+				...(!rest.linkSharing && { shareToken: null }),
+			},
 		});
 		return ok();
 	});

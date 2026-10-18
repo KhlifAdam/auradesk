@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { GalleryDownloads } from "@/components/client-work/gallery-downloads";
+import { CollectOriginalsDialog } from "@/components/dashboard/galleries/collect/collect-originals-dialog";
+import { CoverDialog } from "@/components/dashboard/galleries/cover-dialog";
 import { GalleryPhotoGrid } from "@/components/dashboard/galleries/gallery-photo-grid";
 import { GallerySettingsDialog } from "@/components/dashboard/galleries/gallery-settings-dialog";
 import { GalleryToolbar } from "@/components/dashboard/galleries/gallery-toolbar";
@@ -15,6 +17,8 @@ import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { getGalleryInsights } from "@/services/ai/photo-queries";
 import { getVideoInsights } from "@/services/ai/video-queries";
+import { listPicksToCollect } from "@/services/galleries/collect-queries";
+import { prefixFromTitle } from "@/services/galleries/organize";
 import { getOrganizeSummary } from "@/services/galleries/organize-queries";
 import { getOwnedGallery } from "@/services/galleries/queries";
 import { galleryViewSchema } from "@/services/galleries/schemas";
@@ -34,7 +38,8 @@ export default async function GalleryManagerPage({
 	const { photographerId } = await requirePhotographer();
 	const gallery = await getOwnedGallery(photographerId, galleryId, view);
 	if (!gallery || gallery.projectId !== projectId) notFound();
-	const [insights, videoInsights, organize] = await Promise.all([
+	const proofs = gallery.kind === "PROOFS";
+	const [insights, videoInsights, organize, picks] = await Promise.all([
 		getGalleryInsights(photographerId, gallery.id),
 		getVideoInsights(
 			photographerId,
@@ -44,6 +49,7 @@ export default async function GalleryManagerPage({
 				.map((item) => item.id),
 		),
 		getOrganizeSummary(photographerId, gallery.id, gallery.projectTitle),
+		proofs ? listPicksToCollect(photographerId, gallery.id) : [],
 	]);
 
 	return (
@@ -57,10 +63,19 @@ export default async function GalleryManagerPage({
 			</Link>
 			<PageHeader
 				title={gallery.title}
-				description={gallery.description || t("description")}
+				description={
+					gallery.description || t(proofs ? "descriptionProofs" : "description")
+				}
 				actions={
 					<>
-						{gallery.total > 0 && (
+						{picks.length > 0 && (
+							<CollectOriginalsDialog
+								picks={picks}
+								defaultPrefix={prefixFromTitle(gallery.projectTitle)}
+							/>
+						)}
+						{/* Proofs are light copies: nothing worth downloading. */}
+						{gallery.total > 0 && !proofs && (
 							<GalleryDownloads
 								galleryId={gallery.id}
 								selectedCount={gallery.selectedCount}
@@ -69,14 +84,19 @@ export default async function GalleryManagerPage({
 						{gallery.total > 0 && (
 							<OrganizeDialog galleryId={gallery.id} summary={organize} />
 						)}
+						{gallery.total > 0 && <CoverDialog gallery={gallery} />}
 						<GallerySettingsDialog gallery={gallery} />
 					</>
 				}
 			/>
 			<GalleryToolbar gallery={gallery} />
-			<PhotoAssistant galleryId={gallery.id} insights={insights} />
+			<PhotoAssistant
+				galleryId={gallery.id}
+				insights={insights}
+				proofs={proofs}
+			/>
 			<VideoAssistant galleryId={gallery.id} insights={videoInsights} />
-			<GalleryUploader galleryId={gallery.id} />
+			<GalleryUploader galleryId={gallery.id} kind={gallery.kind} />
 			<GalleryPhotoGrid
 				key={`${gallery.filter}-${gallery.page}`}
 				gallery={gallery}

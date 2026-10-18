@@ -4,14 +4,21 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useErrorMessage } from "@/hooks/use-error-message";
-import { toggleSelection } from "@/services/galleries/selection-actions";
+import {
+	selectAllInGallery,
+	toggleSelection,
+} from "@/services/galleries/selection-actions";
 import type { GalleryPhoto } from "@/services/galleries/types";
 
 /**
  * Client picks with instant feedback: the heart flips at once and is rolled
  * back if the server refuses (limit reached, selection closed).
  */
-export function useSelection(serverItems: GalleryPhoto[], serverCount: number) {
+export function useSelection(
+	galleryId: string,
+	serverItems: GalleryPhoto[],
+	serverCount: number,
+) {
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
 	const [items, setItems] = useState(serverItems);
@@ -49,5 +56,20 @@ export function useSelection(serverItems: GalleryPhoto[], serverCount: number) {
 		router.refresh();
 	};
 
-	return { items, selectedCount, toggle };
+	/** Every photo of the gallery, not only this page's. */
+	const selectAll = async (selected: boolean) => {
+		const before = { items, selectedCount };
+		setItems((prev) => prev.map((item) => ({ ...item, selected })));
+		const result = await selectAllInGallery({ galleryId, selected });
+		if (result.ok) {
+			setSelectedCount(result.data.selectedCount);
+		} else {
+			setItems(before.items);
+			setSelectedCount(before.selectedCount);
+			toast.error(errorMessage(result.error));
+		}
+		router.refresh();
+	};
+
+	return { items, selectedCount, toggle, selectAll };
 }

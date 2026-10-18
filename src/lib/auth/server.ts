@@ -4,8 +4,8 @@ import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 import { LOCALE_COOKIE } from "@/i18n/config";
 import { clientIntentHooks } from "@/lib/auth/client-intent-hooks";
 import { ROLES } from "@/lib/auth/roles";
+import { socialProvidersConfig } from "@/lib/auth/social-providers";
 import { db } from "@/lib/db";
-import { env } from "@/lib/env";
 import { sendEmailVerificationOtp } from "@/lib/mail/send-email-verification-otp";
 import { sendPasswordResetOtp } from "@/lib/mail/send-password-reset-otp";
 import { phoneEmail, toE164 } from "@/lib/phone";
@@ -51,6 +51,16 @@ export const auth = betterAuth({
 	},
 	emailAndPassword: {
 		enabled: true,
+		// No session until the address is proven: nobody signs up with
+		// someone else's email, and invoices and invitations reach a real inbox.
+		requireEmailVerification: true,
+	},
+	emailVerification: {
+		// The 6-digit code (email OTP plugin below) goes out on sign-up, and
+		// again when an unverified account tries to sign in.
+		sendOnSignUp: true,
+		sendOnSignIn: true,
+		autoSignInAfterVerification: true,
 	},
 	rateLimit: {
 		enabled: true,
@@ -60,16 +70,7 @@ export const auth = betterAuth({
 			"/phone-number/verify": { window: 600, max: 10 },
 		},
 	},
-	socialProviders: {
-		github: {
-			clientId: env.GITHUB_CLIENT_ID as string,
-			clientSecret: env.GITHUB_CLIENT_SECRET as string,
-		},
-		google: {
-			clientId: env.GOOGLE_CLIENT_ID as string,
-			clientSecret: env.GOOGLE_CLIENT_SECRET as string,
-		},
-	},
+	socialProviders: socialProvidersConfig,
 	plugins: [
 		phoneNumber({
 			otpLength: 6,
@@ -109,6 +110,8 @@ export const auth = betterAuth({
 			// A phone-only account adds its first email this way; the code goes to
 			// the new address (the current one is a placeholder).
 			changeEmail: { enabled: true },
+			// Verification uses a code rather than a link, like every other flow.
+			overrideDefaultEmailVerification: true,
 			otpLength: 6,
 			expiresIn: OTP_EXPIRES_IN_SECONDS,
 			allowedAttempts: 3,

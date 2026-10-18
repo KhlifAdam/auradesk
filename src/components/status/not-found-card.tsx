@@ -5,14 +5,14 @@ import { cn } from "@/lib/utils";
 
 /**
  * Shared "not found" screen for the landing site and public studio sites.
- * `namespace` points at the messages (`NotFound.page` or `NotFound.studio`).
+ * `namespace` points at the messages (`NotFound.page`, `.studio`, `.shareLink`).
  */
 export async function NotFoundCard({
 	namespace,
 	href,
 	className,
 }: {
-	namespace: "NotFound.page" | "NotFound.studio";
+	namespace: "NotFound.page" | "NotFound.studio" | "NotFound.shareLink";
 	href: string;
 	className?: string;
 }) {

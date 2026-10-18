@@ -1,5 +1,8 @@
 import type { PageMeta } from "@/services/shared/pagination";
 
+/** PROOFS: light copies to choose from. FINAL: the delivered photos. */
+export type GalleryKind = "PROOFS" | "FINAL";
+
 /** A gallery photo or video with short-lived signed URLs. */
 export interface GalleryPhoto {
 	id: string;
@@ -22,6 +25,9 @@ export interface GalleryPhoto {
 export interface GallerySummary {
 	id: string;
 	title: string;
+	kind: GalleryKind;
+	/** Its cover, drawn small on the card in the chosen layout. */
+	cover: GalleryCoverData;
 	itemCount: number;
 	selectedCount: number;
 	shared: boolean;
@@ -40,6 +46,15 @@ export interface GalleryView extends PageMeta {
 	description: string;
 	selectionEnabled: boolean;
 	selectionLimit: number | null;
+	kind: GalleryKind;
+	/** Proofing previews carry the studio's mark. */
+	watermark: boolean;
+	studioName: string | null;
+	cover: GalleryCoverData;
+	/** The photographer lets the client share a view-only link. */
+	linkSharing: boolean;
+	/** The client's active share link; never sent to link visitors. */
+	share: GalleryShare | null;
 	selectedCount: number;
 	shared: boolean;
 	submitted: boolean;
@@ -47,6 +62,28 @@ export interface GalleryView extends PageMeta {
 	/** Full-quality files and downloads; otherwise previews only. */
 	originals: boolean;
 	items: GalleryPhoto[];
+}
+
+export type CoverTemplate = "CLASSIC" | "SPLIT" | "FRAME" | "NONE";
+
+/** The cover page at the top of the gallery, as the viewer gets it. */
+export interface GalleryCoverData {
+	template: CoverTemplate;
+	/** The photo used (chosen, or the first one); null for an empty gallery. */
+	itemId: string | null;
+	imageUrl: string | null;
+	/** Point kept in frame when the photo is cropped, 0 to 1. */
+	focalX: number;
+	focalY: number;
+	/** The project's event date (ISO), shown under the title. */
+	date: string | null;
+}
+
+export interface GalleryShare {
+	token: string;
+	/** Link visitors may download (once delivered and paid). */
+	downloads: boolean;
+	expiresAt: string | null;
 }
 
 export interface GalleryComment {

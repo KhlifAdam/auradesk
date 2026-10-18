@@ -2,25 +2,24 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
-import { signPreview } from "./sign-items";
+import { coverImageUrl, coverItemOf } from "./cover";
 import type { GallerySummary } from "./types";
 
-/** Gallery cards for a project. Callers scope `where` to the viewer. */
+/**
+ * Gallery cards for a project, each with its cover photo. Callers scope
+ * `where` to the viewer; a client passes `client`, and gets the app's copy of
+ * the cover until the originals are theirs.
+ */
 export async function listGallerySummaries(
 	where: Prisma.GalleryWhereInput,
+	client?: { delivered: boolean },
 ): Promise<GallerySummary[]> {
 	const galleries = await db.gallery.findMany({
 		where,
 		orderBy: [{ position: "asc" }, { createdAt: "asc" }],
 		include: {
-			items: {
-				// A video without a poster has nothing an <img> can show.
-				where: { OR: [{ type: "IMAGE" }, { previewKey: { not: null } }] },
-				orderBy: [{ position: "asc" }, { id: "asc" }],
-				take: 1,
-				select: { key: true, previewKey: true },
-			},
 			_count: { select: { items: true } },
+			project: { select: { eventDate: true } },
 		},
 	});
 	if (galleries.length === 0) return [];
@@ -33,14 +32,28 @@ export async function listGallerySummaries(
 	const selectedBy = new Map(selected.map((s) => [s.galleryId, s._count._all]));
 
 	return Promise.all(
-		galleries.map(async (gallery) => ({
-			id: gallery.id,
-			title: gallery.title,
-			itemCount: gallery._count.items,
-			selectedCount: selectedBy.get(gallery.id) ?? 0,
-			shared: Boolean(gallery.sharedAt),
-			submitted: Boolean(gallery.submittedAt),
-			coverUrl: gallery.items[0] ? await signPreview(gallery.items[0]) : null,
-		})),
+		galleries.map(async (gallery) => {
+			const cover = await coverItemOf(gallery);
+			const signed = !client || (client.delivered && gallery.kind === "FINAL");
+			const imageUrl = cover ? await coverImageUrl(cover, signed) : null;
+			return {
+				id: gallery.id,
+				title: gallery.title,
+				kind: gallery.kind,
+				itemCount: gallery._count.items,
+				selectedCount: selectedBy.get(gallery.id) ?? 0,
+				shared: Boolean(gallery.sharedAt),
+				submitted: Boolean(gallery.submittedAt),
+				coverUrl: imageUrl,
+				cover: {
+					template: gallery.coverTemplate,
+					itemId: cover?.id ?? null,
+					imageUrl,
+					focalX: gallery.coverFocalX,
+					focalY: gallery.coverFocalY,
+					date: gallery.project.eventDate?.toISOString() ?? null,
+				},
+			};
+		}),
 	);
 }

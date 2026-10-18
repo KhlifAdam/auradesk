@@ -1,23 +1,19 @@
 import { NextResponse } from "next/server";
-import { getApiUser } from "@/lib/auth/api-session";
 import { db } from "@/lib/db";
 import { getPrivateDownloadUrl } from "@/lib/storage/r2-private";
-import { getItemAccess } from "@/services/galleries/access";
+import { requestItemAccess } from "@/services/galleries/access";
 
 /**
  * One original, under its own name: redirects to a short signed link, so the
  * bytes come straight from the bucket. Same access rule as the gallery.
  */
 export async function GET(
-	_request: Request,
+	request: Request,
 	{ params }: { params: Promise<{ itemId: string }> },
 ) {
-	const user = await getApiUser();
-	if (!user)
-		return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
 	const { itemId } = await params;
-	const access = await getItemAccess(itemId, user.id);
+	// The signed-in viewer, or anyone holding the client's share link.
+	const access = await requestItemAccess(request, itemId);
 	if (!access) return NextResponse.json({ error: "notFound" }, { status: 404 });
 	// Choosing happens on previews; the originals wait for delivery and payment.
 	if (!access.originals)

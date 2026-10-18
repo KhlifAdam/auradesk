@@ -18,26 +18,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
-import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
-import { ROLES } from "@/lib/auth/roles";
+import {
+	AUDIENCE_ROLES,
+	AUTH_PATHS,
+	verifyEmailPath,
+} from "@/lib/auth/client-intent";
 import { AudienceBadge } from "./audience-badge";
 import { AuthBackLink } from "./auth-back-link";
 import { AuthHeading } from "./auth-heading";
 import { PasswordInput } from "./password-input";
 import { type LoginValues, loginSchema } from "./schemas";
-import { SocialLogin } from "./social-login";
+import { SocialLogin, type SocialLoginProps } from "./social-login";
 import { useAuthError } from "./use-auth-error";
 
-/**
- * Roles allowed to sign in on each side's page. A photographer can also be a
- * client of another studio, so the client page takes both.
- */
-const AUDIENCE_ROLES: Record<AuthAudience, string[]> = {
-	photographer: [ROLES.photographer, ROLES.admin],
-	client: [ROLES.client, ROLES.photographer],
-};
+type LoginFormProps = Pick<
+	SocialLoginProps,
+	"audience" | "providers" | "oauthError"
+>;
 
-export function LoginForm({ audience }: { audience: AuthAudience }) {
+export function LoginForm({ audience, providers, oauthError }: LoginFormProps) {
 	const t = useTranslations("Auth");
 	const isClient = audience === "client";
 	const paths = AUTH_PATHS[audience];
@@ -52,6 +51,11 @@ export function LoginForm({ audience }: { audience: AuthAudience }) {
 	async function onSubmit(values: LoginValues) {
 		try {
 			const { data, error } = await authClient.signIn.email(values);
+			// Unproven address: the server has just sent a fresh code for it.
+			if (error?.code === "EMAIL_NOT_VERIFIED") {
+				toast.info(t("verify.required"));
+				return window.location.assign(verifyEmailPath(values.email, audience));
+			}
 			if (error) return void toast.error(authError.message(error));
 			// Each side only takes its own accounts: sign back out and point the
 			// person to the right page.
@@ -139,7 +143,12 @@ export function LoginForm({ audience }: { audience: AuthAudience }) {
 					</form>
 				</Form>
 
-				<SocialLogin disabled={isSubmitting} audience={audience} />
+				<SocialLogin
+					providers={providers}
+					audience={audience}
+					oauthError={oauthError}
+					disabled={isSubmitting}
+				/>
 			</div>
 
 			{isClient && (

@@ -1,42 +1,75 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/client";
 import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
+import type { SocialProvider } from "@/lib/auth/social-providers";
 import {
 	clearClientIntent,
 	setClientIntent,
 } from "@/services/auth/intent-actions";
 import { GithubIcon, GoogleIcon } from "./brand-icons";
 
-const PROVIDERS = [
-	{ id: "github", icon: GithubIcon },
-	{ id: "google", icon: GoogleIcon },
+const ICONS = { github: GithubIcon, google: GoogleIcon } as const;
+
+/** Codes Better Auth puts in `?error=` when the provider round trip fails. */
+const OAUTH_ERRORS = [
+	"access_denied",
+	"unable_to_link_account",
+	"email_not_found",
 ] as const;
+
+export interface SocialLoginProps {
+	/** Providers set up on the server; nothing renders without any. */
+	providers: SocialProvider[];
+	audience: AuthAudience;
+	disabled?: boolean;
+	/** `?error=` from a failed provider round trip, shown once. */
+	oauthError?: string;
+}
 
 /** "Or continue with" divider + provider buttons. */
 export function SocialLogin({
-	disabled,
+	providers,
 	audience,
-}: {
-	disabled?: boolean;
-	audience: AuthAudience;
-}) {
+	disabled,
+	oauthError,
+}: SocialLoginProps) {
 	const t = useTranslations("Auth.shared");
-	const [pending, setPending] = useState(false);
+	const tError = useTranslations("Auth.oauthErrors");
+	const [pending, setPending] = useState<SocialProvider | null>(null);
 
-	async function signIn(provider: (typeof PROVIDERS)[number]["id"]) {
-		setPending(true);
-		// The intent decides the role if OAuth creates a new account.
-		await (audience === "client" ? setClientIntent() : clearClientIntent());
-		const callbackURL = AUTH_PATHS[audience].home;
-		await authClient.signIn.social({
-			provider,
-			callbackURL,
-			newUserCallbackURL: callbackURL,
-		});
+	useEffect(() => {
+		if (!oauthError) return;
+		const known = OAUTH_ERRORS.find((code) => code === oauthError);
+		toast.error(tError(known ?? "generic"));
+	}, [oauthError, tError]);
+
+	if (providers.length === 0) return null;
+
+	async function signIn(provider: SocialProvider) {
+		setPending(provider);
+		try {
+			// The intent decides the role if OAuth creates a new account.
+			await (audience === "client" ? setClientIntent() : clearClientIntent());
+			const paths = AUTH_PATHS[audience];
+			const { error } = await authClient.signIn.social({
+				provider,
+				callbackURL: paths.home,
+				newUserCallbackURL: paths.home,
+				// Failures come back to this page, not to Better Auth's error page.
+				errorCallbackURL: paths.login,
+			});
+			// On success the browser is already leaving for the provider.
+			if (error) throw error;
+		} catch {
+			toast.error(tError("generic"));
+			setPending(null);
+		}
 	}
 
 	return (
@@ -52,19 +85,26 @@ export function SocialLogin({
 				</div>
 			</div>
 
-			<div className="grid grid-cols-2 gap-4">
-				{PROVIDERS.map(({ id, icon: Icon }) => (
-					<Button
-						key={id}
-						variant="outline"
-						type="button"
-						disabled={disabled || pending}
-						onClick={() => signIn(id)}
-					>
-						<Icon className="mr-2 h-4 w-4" />
-						{t(id)}
-					</Button>
-				))}
+			<div className={providers.length > 1 ? "grid grid-cols-2 gap-4" : "grid"}>
+				{providers.map((id) => {
+					const Icon = ICONS[id];
+					return (
+						<Button
+							key={id}
+							variant="outline"
+							type="button"
+							disabled={disabled || pending !== null}
+							onClick={() => signIn(id)}
+						>
+							{pending === id ? (
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							) : (
+								<Icon className="mr-2 h-4 w-4" />
+							)}
+							{t(id)}
+						</Button>
+					);
+				})}
 			</div>
 		</>
 	);
