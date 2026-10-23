@@ -49,6 +49,8 @@ export interface PortalBookingSummary {
 
 export interface PortalBookingDetail extends PortalBookingSummary {
 	photographerId: string;
+	clientName: string;
+	clientPhone: string;
 	mediaType: MediaType;
 	description: string;
 	startTime: string;
@@ -116,6 +118,8 @@ export async function getPortalBooking(
 	return {
 		...toSummary(row),
 		photographerId: row.photographerId,
+		clientName: row.clientName,
+		clientPhone: row.clientPhone ?? "",
 		mediaType: row.mediaType,
 		description: row.description ?? "",
 		startTime: row.startTime ?? "",

@@ -213,7 +213,8 @@
 		"cannotBanSelf": "Vous ne pouvez pas suspendre votre propre compte.",
 		"cannotBanAdmin": "Les administrateurs ne peuvent pas être suspendus.",
 		"metadataPending": "Certains fichiers sont encore en cours de lecture. Patientez un instant et réessayez.",
-		"forbidden": "Ce compte ne peut pas effectuer cette action."
+		"forbidden": "Ce compte ne peut pas effectuer cette action.",
+		"bookingNotAccepted": "Le client n'a pas encore accepté cette demande."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -1690,7 +1691,9 @@
 			"sendAgain": "Renvoyer",
 			"sendNoContact": "Ajoutez d'abord l'e-mail ou le téléphone du client.",
 			"sentToClient": "Envoyée au client.",
-			"sentNotNotified": "Enregistré et visible par le client, mais la notification n'a pas pu être envoyée."
+			"sentNotNotified": "Enregistré et visible par le client, mais la notification n'a pas pu être envoyée.",
+			"confirmNotAccepted": "Le client n'a pas encore consulté ni accepté cette demande. Envoyez-la-lui d'abord, ou confirmez quand même si vous vous êtes mis d'accord hors de l'application (par téléphone ou en personne).",
+			"confirmWithoutClient": "Confirmer sans l'accord du client"
 		},
 		"activity": {
 			"title": "Historique",
@@ -1708,8 +1711,13 @@
 				"startTime": "heure de début",
 				"durationMinutes": "durée",
 				"location": "lieu",
-				"clientBudget": "budget"
-			}
+				"clientBudget": "budget",
+				"clientName": "nom",
+				"clientPhone": "téléphone",
+				"serviceType": "prestation",
+				"mediaType": "média"
+			},
+			"confirmedWithoutClient": "Confirmée sans l'accord du client"
 		},
 		"facts": {
 			"client": "Client",
@@ -1749,7 +1757,7 @@
 			}
 		},
 		"clientStatus": {
-			"notSent": "Pas encore envoyée au client",
+			"notSent": "Pas encore envoyée au client. Il doit la consulter et l'accepter avant que vous confirmiez.",
 			"waiting": "Envoyée au client le {date}. En attente de sa réponse.",
 			"accepted": "Le client a accepté le {date}. Vous pouvez confirmer."
 		}
@@ -2679,7 +2687,7 @@
 			},
 			"form": {
 				"title": "Vos informations",
-				"hint": "Renseignez ou corrigez ce qui vous concerne. Le studio est prévenu quand vous enregistrez.",
+				"hint": "Vérifiez la demande, puis complétez ou corrigez ce qui vous concerne. Le studio est prévenu à l'enregistrement.",
 				"description": "Votre besoin",
 				"descriptionHint": "Décrivez ce que vous souhaitez obtenir.",
 				"date": "Date",
@@ -2691,7 +2699,11 @@
 				"budget": "Votre budget",
 				"budgetHint": "Facultatif, en TND.",
 				"save": "Enregistrer mes informations",
-				"saved": "Vos informations sont enregistrées."
+				"saved": "Vos informations sont enregistrées.",
+				"name": "Votre nom",
+				"phone": "Téléphone",
+				"serviceType": "Prestation",
+				"mediaType": "Média"
 			},
 			"answer": {
 				"title": "Votre réponse",
@@ -2717,7 +2729,9 @@
 				"description": "Votre besoin",
 				"budget": "Votre budget",
 				"openMap": "Ouvrir la carte",
-				"notSet": "Non renseigné"
+				"notSet": "Non renseigné",
+				"name": "Nom",
+				"phone": "Téléphone"
 			}
 		},
 		"home": {

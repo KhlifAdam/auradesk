@@ -135,11 +135,34 @@ export async function updateProjectPayment(
 	if (!parsed.success) return failFromZod(parsed.error);
 
 	const { id, paymentStatus } = parsed.data;
-	const { count } = await db.project.updateMany({
+	const project = await db.project.findFirst({
 		where: { id, photographerId },
-		data: { paymentStatus },
+		select: {
+			price: true,
+			_count: {
+				select: { invoices: { where: { payments: { some: {} } } } },
+			},
+		},
 	});
-	if (count === 0) return fail("notFound");
+	if (!project) return fail("notFound");
+
+	// Set by hand, the status carries the amount with it, so "Paid" never sits
+	// next to "Already paid: 0". Recorded invoice payments stay the truth for
+	// the amount: then only the status changes.
+	const byHand = project._count.invoices === 0;
+	const advance =
+		paymentStatus === "PAID" && project.price
+			? project.price
+			: paymentStatus === "UNPAID"
+				? 0
+				: undefined;
+	await db.project.update({
+		where: { id },
+		data: {
+			paymentStatus,
+			...(byHand && advance !== undefined && { advance }),
+		},
+	});
 
 	revalidateClientWork();
 	return ok();

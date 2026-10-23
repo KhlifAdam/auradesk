@@ -40,6 +40,7 @@ export function MediaGrid({ items }: { items: MediaItem[] }) {
 					>
 						<MediaThumb
 							media={media}
+							eager={index < 8}
 							className="transition-transform duration-500 group-hover:scale-[1.03]"
 						/>
 						<p className="truncate px-2 py-1 text-[11px] text-muted-foreground">

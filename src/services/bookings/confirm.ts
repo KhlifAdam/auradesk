@@ -7,8 +7,9 @@ import { db } from "@/lib/db";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { dayKeyIn, zonedToIso } from "@/services/calendar/dates";
 import { inviteToProject } from "@/services/projects/invitations";
-import { idSchema } from "@/services/shared/schemas";
 import { bookingCompleteness } from "./completeness";
+import { CONFIRMED_WITHOUT_CLIENT } from "./options";
+import { confirmBookingSchema } from "./schemas";
 
 const DEFAULT_SHOOT_MINUTES = 120;
 const MINUTES_PER_DAY = 24 * 60;
@@ -32,9 +33,9 @@ export async function confirmBooking(
 	ActionResult<{ projectId: string; invite: "sent" | "failed" | "none" }>
 > {
 	const { session, photographerId } = await requirePhotographer();
-	const parsed = idSchema.safeParse(input);
+	const parsed = confirmBookingSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
-	const id = parsed.data;
+	const { id, withoutClient } = parsed.data;
 
 	const booking = await db.booking.findFirst({
 		where: { id, photographerId },
@@ -45,6 +46,10 @@ export async function confirmBooking(
 	// Enough to run the job: when, and what was agreed.
 	if (bookingCompleteness(booking).required.length > 0)
 		return fail("bookingIncomplete");
+	// The client reviews and accepts the request first, unless the
+	// photographer explicitly confirms without them.
+	const accepted = booking.clientAcceptedAt !== null;
+	if (!accepted && !withoutClient) return fail("bookingNotAccepted");
 	const { desiredDate } = booking;
 	if (!desiredDate) return fail("bookingIncomplete");
 
@@ -120,6 +125,7 @@ export async function confirmBooking(
 				kind: "STATUS",
 				fromStatus: booking.status,
 				toStatus: "CONFIRMED",
+				body: accepted ? null : CONFIRMED_WITHOUT_CLIENT,
 			},
 		});
 		return project.id;

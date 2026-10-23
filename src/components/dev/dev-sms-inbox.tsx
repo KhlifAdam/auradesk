@@ -14,7 +14,8 @@ interface DevSms {
 	at: string;
 }
 
-const POLL_MS = 2000;
+/** A code is read within seconds; checking more often only adds noise. */
+const POLL_MS = 5000;
 /** The one-time code in a message, if it has one. */
 const CODE = /\b\d{6}\b/;
 
@@ -27,9 +28,16 @@ const fetchInbox = (url: string) =>
  */
 export function DevSmsInbox() {
 	const t = useTranslations("DevSms");
-	const { data } = useSWR<{ messages: DevSms[] }>("/api/dev/sms", fetchInbox, {
-		refreshInterval: POLL_MS,
-	});
+	// Pages shown inside a frame (the site preview) leave it to the page around,
+	// and don't poll at all. Unknown until mounted, so it starts off.
+	const [inFrame, setInFrame] = useState(true);
+	useEffect(() => setInFrame(window.self !== window.top), []);
+	// SWR already pauses while the tab is hidden.
+	const { data } = useSWR<{ messages: DevSms[] }>(
+		inFrame ? null : "/api/dev/sms",
+		fetchInbox,
+		{ refreshInterval: POLL_MS },
+	);
 	const messages = data?.messages ?? [];
 	const [open, setOpen] = useState(false);
 	const [copied, setCopied] = useState<number | null>(null);
@@ -43,6 +51,8 @@ export function DevSmsInbox() {
 		lastSeen.current = latest;
 	}, [latest]);
 
+	if (inFrame) return null;
+
 	const copy = async (message: DevSms, code: string) => {
 		await navigator.clipboard.writeText(code);
 		setCopied(message.id);
@@ -50,7 +60,7 @@ export function DevSmsInbox() {
 	};
 
 	return (
-		<div className="fixed bottom-4 left-4 z-50 flex flex-col items-start gap-2">
+		<div className="fixed bottom-4 right-16 z-50 flex flex-col items-end gap-2">
 			{open && (
 				<section className="w-80 overflow-hidden rounded-2xl border border-border bg-background/95 shadow-luminous-lg backdrop-blur-xl">
 					<header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">

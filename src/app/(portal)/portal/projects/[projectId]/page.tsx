@@ -89,9 +89,10 @@ export default async function PortalProjectPage({
 					/>
 				) : (
 					<div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-						{project.galleries.map((gallery) => (
+						{project.galleries.map((gallery, index) => (
 							<GalleryCard
 								key={gallery.id}
+								eager={index < 3}
 								gallery={gallery}
 								href={`/portal/galleries/${gallery.id}`}
 							/>

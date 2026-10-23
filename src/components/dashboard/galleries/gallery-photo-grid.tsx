@@ -91,6 +91,7 @@ export function GalleryPhotoGrid({ gallery }: { gallery: GalleryView }) {
 		<PhotoTile
 			photo={photo}
 			openLabel={t("open", { name: photo.filename })}
+			eager={items.indexOf(photo) < 6}
 			onOpen={() => setOpenIndex(items.findIndex((i) => i.id === photo.id))}
 			onComments={() => setCommentsFor(photo)}
 			commentsLabel={t("comments")}

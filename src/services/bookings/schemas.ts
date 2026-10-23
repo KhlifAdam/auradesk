@@ -69,6 +69,10 @@ export const bookingSchema = baseSchema.superRefine(checkBookingRules);
 /** The details a client can fill in or correct on a request sent to them. */
 export const clientEditSchema = baseSchema
 	.pick({
+		clientName: true,
+		clientPhone: true,
+		serviceType: true,
+		mediaType: true,
 		description: true,
 		desiredDate: true,
 		startTime: true,
@@ -77,6 +81,12 @@ export const clientEditSchema = baseSchema
 		clientBudget: true,
 	})
 	.extend({ id: idSchema });
+
+/** Confirming before the client accepted needs the photographer to say so. */
+export const confirmBookingSchema = z.object({
+	id: idSchema,
+	withoutClient: z.boolean(),
+});
 
 export const clientAnswerSchema = z.object({
 	id: idSchema,

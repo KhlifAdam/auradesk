@@ -8,6 +8,8 @@ interface MediaThumbProps {
 	media: MediaItem;
 	sizes?: string;
 	className?: string;
+	/** One of the first thumbnails, visible at once: load it without waiting. */
+	eager?: boolean;
 }
 
 /** Square preview for an image or video (first frame + duration badge). */
@@ -15,6 +17,7 @@ export function MediaThumb({
 	media,
 	sizes = "(min-width: 1280px) 12vw, (min-width: 768px) 20vw, 33vw",
 	className,
+	eager,
 }: MediaThumbProps) {
 	return (
 		<div
@@ -29,6 +32,7 @@ export function MediaThumb({
 					alt={media.alt ?? media.filename}
 					fill
 					sizes={sizes}
+					loading={eager ? "eager" : "lazy"}
 					className="object-cover"
 				/>
 			) : (

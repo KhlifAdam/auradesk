@@ -23,7 +23,7 @@ export async function GalleryDownloads({
 	const base = `/api/galleries/${galleryId}/download${token ? `?t=${token}` : ""}`;
 
 	return (
-		<div className="flex flex-col gap-2">
+		<div className="flex flex-wrap items-center gap-2">
 			<ZipLinks
 				href={base}
 				parts={parts.all}

@@ -34,6 +34,7 @@ export function SharedGallery({
 						photo={photo}
 						openLabel={t("open", { name: photo.filename })}
 						onOpen={() => setOpenIndex(index)}
+						eager={index < 6}
 					/>
 				))}
 			</div>

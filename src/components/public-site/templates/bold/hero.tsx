@@ -33,7 +33,8 @@ export async function BoldHero({ site }: { site: SiteData }) {
 						src={cover.url}
 						alt={cover.alt}
 						fill
-						priority
+						loading="eager"
+						fetchPriority="high"
 						sizes="100vw"
 						className="animate-kenburns object-cover opacity-80"
 					/>

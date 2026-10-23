@@ -58,14 +58,16 @@ export async function BookingReadonly({
 	return (
 		<>
 			<Card title={t("proposal")}>
-				<Fact label={t("service")}>{tService(booking.serviceType)}</Fact>
-				<Fact label={t("media")}>{tMedia(booking.mediaType)}</Fact>
 				<Fact label={t("price")}>{money(booking.proposedPrice)}</Fact>
 				<Fact label={t("advance")}>{money(booking.plannedAdvance)}</Fact>
 				<Fact label={t("deadline")}>{date(booking.responseDeadline)}</Fact>
 			</Card>
 			{showClientPart && (
 				<Card title={t("yourDetails")}>
+					<Fact label={t("name")}>{booking.clientName}</Fact>
+					<Fact label={t("phone")}>{booking.clientPhone}</Fact>
+					<Fact label={t("service")}>{tService(booking.serviceType)}</Fact>
+					<Fact label={t("media")}>{tMedia(booking.mediaType)}</Fact>
 					<Fact label={t("date")}>
 						{[date(booking.desiredDate), booking.startTime]
 							.filter(Boolean)

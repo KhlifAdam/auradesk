@@ -12,6 +12,9 @@ const r2PublicUrl = process.env.R2_PUBLIC_URL
 const nextConfig: NextConfig = {
 	// Resolves its ffmpeg binary from its own folder at runtime: keep it unbundled.
 	serverExternalPackages: ["ffmpeg-static"],
+	// Development only: the test SMS inbox polls; its requests would drown the
+	// rest of the terminal.
+	logging: { incomingRequests: { ignore: [/\/api\/dev\/sms/] } },
 	async headers() {
 		return [{ source: "/(.*)", headers: securityHeaders }];
 	},

@@ -9,6 +9,7 @@ import {
 	type BookingReplyKind,
 	sendBookingClientReplyEmail,
 } from "@/lib/mail/send-client-notices";
+import { toE164 } from "@/lib/phone";
 import { clientBookingWhere } from "@/services/portal/booking-queries";
 import { emptyToNull } from "@/services/shared/schemas";
 import { bookingCompleteness } from "./completeness";
@@ -68,7 +69,7 @@ function changedFields(
 	return Object.keys(next).filter((key) => current[key] !== next[key]);
 }
 
-/** The client fills in or corrects their part: location, date, description… */
+/** The client fills in or corrects their part: contact, need, date, place… */
 export async function updateBookingAsClient(
 	input: unknown,
 ): Promise<ActionResult> {
@@ -82,6 +83,11 @@ export async function updateBookingAsClient(
 	const { booking } = found;
 
 	const next = {
+		clientName: values.clientName,
+		// Stored as E.164 once it parses, like the photographer's form does.
+		clientPhone: emptyToNull(toE164(values.clientPhone) ?? values.clientPhone),
+		serviceType: values.serviceType,
+		mediaType: values.mediaType,
 		description: emptyToNull(values.description),
 		desiredDate: values.desiredDate
 			? new Date(values.desiredDate).toISOString()
@@ -93,6 +99,10 @@ export async function updateBookingAsClient(
 	};
 	const changed = changedFields(
 		{
+			clientName: booking.clientName,
+			clientPhone: booking.clientPhone,
+			serviceType: booking.serviceType,
+			mediaType: booking.mediaType,
 			description: booking.description,
 			desiredDate: booking.desiredDate?.toISOString() ?? null,
 			startTime: booking.startTime,
@@ -110,7 +120,8 @@ export async function updateBookingAsClient(
 			data: {
 				...next,
 				desiredDate: next.desiredDate ? new Date(next.desiredDate) : null,
-				// The first time they open it, their account is linked.
+				// The first time they save, their account is linked: they keep
+				// access even after changing the phone number it was sent to.
 				clientId: booking.clientId ?? clientId,
 			},
 		}),

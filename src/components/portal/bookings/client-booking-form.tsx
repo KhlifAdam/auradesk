@@ -7,31 +7,41 @@ import { useTranslations } from "next-intl";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
-import { TextField } from "@/components/dashboard/shared/form-fields";
+import {
+	SelectField,
+	TextField,
+} from "@/components/dashboard/shared/form-fields";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { updateBookingAsClient } from "@/services/bookings/client-actions";
 import { clientEditSchema } from "@/services/bookings/schemas";
 import type { PortalBookingDetail } from "@/services/portal/booking-queries";
+import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
 
 const formSchema = clientEditSchema.omit({ id: true });
 type FormValues = z.infer<typeof formSchema>;
 
 const isUrl = (value: string) => /^https?:\/\//i.test(value);
 
-/** The client's part of the request: when, where and what they need. */
+/** The client's part of the request: who they are, what, when and where. */
 export function ClientBookingForm({
 	booking,
 }: {
 	booking: PortalBookingDetail;
 }) {
 	const t = useTranslations("Portal.bookings.form");
+	const tService = useTranslations("Projects.serviceTypes");
+	const tMedia = useTranslations("Projects.mediaTypes");
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
+			clientName: booking.clientName,
+			clientPhone: booking.clientPhone,
+			serviceType: booking.serviceType,
+			mediaType: booking.mediaType,
 			description: booking.description,
 			desiredDate: booking.desiredDate?.slice(0, 10) ?? "",
 			startTime: booking.startTime,
@@ -62,6 +72,31 @@ export function ClientBookingForm({
 				<div>
 					<h2 className="text-sm font-semibold">{t("title")}</h2>
 					<p className="text-xs text-muted-foreground">{t("hint")}</p>
+				</div>
+				<div className="grid gap-3 sm:grid-cols-2">
+					<TextField<FormValues> name="clientName" label={t("name")} />
+					<TextField<FormValues>
+						name="clientPhone"
+						label={t("phone")}
+						type="tel"
+						placeholder="+216 …"
+					/>
+					<SelectField<FormValues>
+						name="serviceType"
+						label={t("serviceType")}
+						options={SERVICE_TYPES.map((value) => ({
+							value,
+							label: tService(value),
+						}))}
+					/>
+					<SelectField<FormValues>
+						name="mediaType"
+						label={t("mediaType")}
+						options={MEDIA_TYPES.map((value) => ({
+							value,
+							label: tMedia(value),
+						}))}
+					/>
 				</div>
 				<TextField<FormValues>
 					name="description"

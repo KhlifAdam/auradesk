@@ -23,8 +23,13 @@ export async function SiteRenderer({ site }: { site: SiteData }) {
 	return (
 		<NextIntlClientProvider
 			locale={i18n.locale}
-			// Client parts of the site only need the public-site strings.
-			messages={{ PublicSite: messages.PublicSite }}
+			// Client parts of the site only get what they use: the public-site
+			// strings, plus the booking form's service types and field errors.
+			messages={{
+				PublicSite: messages.PublicSite,
+				Validation: messages.Validation,
+				Projects: { serviceTypes: messages.Projects.serviceTypes },
+			}}
 		>
 			<SiteShell
 				mode={design.themeMode}

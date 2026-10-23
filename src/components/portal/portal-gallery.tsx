@@ -133,6 +133,7 @@ export function PortalGallery({ gallery }: { gallery: GalleryView }) {
 							photo={photo}
 							openLabel={t("open", { name: photo.filename })}
 							onOpen={() => setOpenIndex(index)}
+							eager={index < 6}
 							onComments={() => setCommentsFor(photo)}
 							commentsLabel={t("comments")}
 							actions={heart(photo)}

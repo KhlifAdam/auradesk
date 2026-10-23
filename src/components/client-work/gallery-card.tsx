@@ -16,10 +16,13 @@ export function GalleryCard({
 	gallery,
 	href,
 	showShareState,
+	eager,
 }: {
 	gallery: GallerySummary;
 	href: string;
 	showShareState?: boolean;
+	/** One of the first cards, visible at once: load its cover first. */
+	eager?: boolean;
 }) {
 	const t = useTranslations("Galleries.card");
 	const styled =
@@ -36,6 +39,7 @@ export function GalleryCard({
 					<div className="pointer-events-none [&>section]:rounded-none [&>section]:border-0">
 						<GalleryCover
 							preview
+							eager={eager}
 							cover={gallery.cover}
 							title={gallery.title}
 							studioName={null}
@@ -47,6 +51,7 @@ export function GalleryCard({
 						alt={gallery.title}
 						fill
 						unoptimized
+						loading={eager ? "eager" : "lazy"}
 						className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
 					/>
 				) : (

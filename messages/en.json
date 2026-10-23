@@ -213,7 +213,8 @@
 		"cannotBanSelf": "You can't suspend your own account.",
 		"cannotBanAdmin": "Administrators can't be suspended.",
 		"metadataPending": "Some files are still being read. Wait a moment and try again.",
-		"forbidden": "You can't do that with this account."
+		"forbidden": "You can't do that with this account.",
+		"bookingNotAccepted": "The client hasn't accepted this request yet."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -1690,7 +1691,9 @@
 			"sendAgain": "Send again",
 			"sendNoContact": "Add the client's email or phone number first.",
 			"sentToClient": "Sent to the client.",
-			"sentNotNotified": "Saved and visible to the client, but the notification couldn't be sent."
+			"sentNotNotified": "Saved and visible to the client, but the notification couldn't be sent.",
+			"confirmNotAccepted": "The client hasn't reviewed and accepted this request yet. Send it to them first, or confirm anyway if you agreed outside the app (by phone or in person).",
+			"confirmWithoutClient": "Confirm without the client's approval"
 		},
 		"activity": {
 			"title": "History",
@@ -1708,8 +1711,13 @@
 				"startTime": "start time",
 				"durationMinutes": "duration",
 				"location": "location",
-				"clientBudget": "budget"
-			}
+				"clientBudget": "budget",
+				"clientName": "name",
+				"clientPhone": "phone",
+				"serviceType": "service",
+				"mediaType": "media"
+			},
+			"confirmedWithoutClient": "Confirmed without the client's approval"
 		},
 		"facts": {
 			"client": "Client",
@@ -1749,7 +1757,7 @@
 			}
 		},
 		"clientStatus": {
-			"notSent": "Not sent to the client yet",
+			"notSent": "Not sent to the client yet. They need to review and accept it before you confirm.",
 			"waiting": "Sent to the client on {date}. Waiting for their answer.",
 			"accepted": "The client accepted on {date}. You can confirm."
 		}
@@ -2679,7 +2687,7 @@
 			},
 			"form": {
 				"title": "Your details",
-				"hint": "Fill in or correct what concerns you. The studio is told when you save.",
+				"hint": "Check the request, then fill in or correct what concerns you. The studio is told when you save.",
 				"description": "What you need",
 				"descriptionHint": "Describe what you would like to get.",
 				"date": "Date",
@@ -2691,7 +2699,11 @@
 				"budget": "Your budget",
 				"budgetHint": "Optional, in TND.",
 				"save": "Save my details",
-				"saved": "Your details were saved."
+				"saved": "Your details were saved.",
+				"name": "Your name",
+				"phone": "Phone",
+				"serviceType": "Service",
+				"mediaType": "Media"
 			},
 			"answer": {
 				"title": "Your answer",
@@ -2717,7 +2729,9 @@
 				"description": "What you need",
 				"budget": "Your budget",
 				"openMap": "Open the map",
-				"notSet": "Not set"
+				"notSet": "Not set",
+				"name": "Name",
+				"phone": "Phone"
 			}
 		},
 		"home": {

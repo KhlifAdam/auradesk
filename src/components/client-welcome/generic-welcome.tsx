@@ -23,7 +23,8 @@ export async function GenericWelcome() {
 				src="/images/auradesk-gallery.jpg"
 				alt=""
 				fill
-				priority
+				loading="eager"
+				fetchPriority="high"
 				sizes="100vw"
 				className="-z-20 object-cover"
 			/>

@@ -52,6 +52,8 @@ export function HomeHero() {
 							alt=""
 							fill
 							sizes="12rem"
+							loading="eager"
+							fetchPriority="high"
 							className="object-cover"
 						/>
 					</motion.div>

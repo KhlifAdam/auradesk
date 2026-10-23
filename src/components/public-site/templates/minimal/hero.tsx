@@ -13,12 +13,13 @@ import {
 function Frame({
 	media,
 	className,
-	priority,
+	eager,
 	sizes,
 }: {
 	media: SiteMedia | undefined | null;
 	className: string;
-	priority?: boolean;
+	/** The main photo: fetched before the others. */
+	eager?: boolean;
 	sizes: string;
 }) {
 	return (
@@ -33,7 +34,9 @@ function Frame({
 					src={media.url}
 					alt={media.alt}
 					fill
-					priority={priority}
+					// The collage is the top of the page: never wait to load it.
+					loading="eager"
+					fetchPriority={eager ? "high" : "auto"}
 					sizes={sizes}
 					className="object-cover"
 				/>
@@ -102,20 +105,29 @@ export async function MinimalHero({ site }: { site: SiteData }) {
 			</Reveal>
 
 			<div className="mx-auto mt-16 grid max-w-6xl grid-cols-12 items-start gap-4 md:gap-6">
-				<Reveal delay={0.25} className="col-span-3 mt-24 hidden md:block">
-					<Frame media={left} className="aspect-[3/4]" sizes="25vw" />
-				</Reveal>
-				<Reveal delay={0.1} className="col-span-12 md:col-span-6">
+				{/* Side photos come from the albums: without them, no empty frames,
+				    and the cover stays centred. */}
+				{left && (
+					<Reveal delay={0.25} className="col-span-3 mt-24 hidden md:block">
+						<Frame media={left} className="aspect-[3/4]" sizes="25vw" />
+					</Reveal>
+				)}
+				<Reveal
+					delay={0.1}
+					className={cn("col-span-12 md:col-span-6", !left && "md:col-start-4")}
+				>
 					<Frame
 						media={getHeroCover(site)}
 						className="aspect-[4/5] md:aspect-[4/5]"
-						priority
+						eager
 						sizes="(min-width: 768px) 50vw, 100vw"
 					/>
 				</Reveal>
-				<Reveal delay={0.35} className="col-span-3 mt-12 hidden md:block">
-					<Frame media={right} className="aspect-[3/4]" sizes="25vw" />
-				</Reveal>
+				{right && (
+					<Reveal delay={0.35} className="col-span-3 mt-12 hidden md:block">
+						<Frame media={right} className="aspect-[3/4]" sizes="25vw" />
+					</Reveal>
+				)}
 			</div>
 		</section>
 	);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, RotateCcw, Send } from "lucide-react";
+import { Check, Loader2, RotateCcw, Send, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
@@ -45,6 +45,8 @@ interface BookingActionsBarProps {
 	sentToClient: boolean;
 	/** There is an email or a phone number to send it to. */
 	canSend: boolean;
+	/** The client reviewed the request and accepted it. */
+	clientAccepted: boolean;
 }
 
 /** Moves the request along its commercial steps, then confirms or closes it. */
@@ -55,6 +57,7 @@ export function BookingActionsBar({
 	blocked,
 	sentToClient,
 	canSend,
+	clientAccepted,
 }: BookingActionsBarProps) {
 	const t = useTranslations("Bookings.actions");
 	const tStatus = useTranslations("Bookings.status");
@@ -169,12 +172,22 @@ export function BookingActionsBar({
 							{t("confirmDescription")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
+					{!clientAccepted && (
+						<p className="flex gap-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-xs">
+							<TriangleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
+							{t("confirmNotAccepted")}
+						</p>
+					)}
 					<AlertDialogFooter>
 						<AlertDialogCancel>{t("back")}</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={() =>
 								run(
-									() => confirmBooking(bookingId),
+									() =>
+										confirmBooking({
+											id: bookingId,
+											withoutClient: !clientAccepted,
+										}),
 									(data) => {
 										if (data.invite === "sent") toast.success(t("confirmed"));
 										else if (data.invite === "none")
@@ -186,7 +199,7 @@ export function BookingActionsBar({
 							}
 						>
 							{isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-							{t("confirmAction")}
+							{clientAccepted ? t("confirmAction") : t("confirmWithoutClient")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

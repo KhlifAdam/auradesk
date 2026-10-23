@@ -66,7 +66,8 @@ export async function EditorialHero({ site }: { site: SiteData }) {
 								src={cover.url}
 								alt={cover.alt}
 								fill
-								priority
+								loading="eager"
+								fetchPriority="high"
 								sizes="(min-width: 768px) 58vw, 100vw"
 								className="object-cover"
 							/>

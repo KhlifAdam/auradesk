@@ -31,3 +31,9 @@ export type OpenStatus = (typeof OPEN_STATUSES)[number];
 
 export const isOpenStatus = (status: BookingStatus): status is OpenStatus =>
 	(OPEN_STATUSES as readonly string[]).includes(status);
+
+/**
+ * Body of the status activity of a booking confirmed before the client
+ * accepted it (a phone or walk-in client, say): the history says so.
+ */
+export const CONFIRMED_WITHOUT_CLIENT = "withoutClient";

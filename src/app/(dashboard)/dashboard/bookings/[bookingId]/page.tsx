@@ -69,6 +69,7 @@ export default async function BookingPage({
 				blocked={completeness.required.length > 0}
 				sentToClient={Boolean(booking.sentToClientAt)}
 				canSend={Boolean(booking.clientEmail || booking.clientPhone)}
+				clientAccepted={Boolean(booking.clientAcceptedAt)}
 			/>
 			{isOpen && (
 				<BookingClientStatus

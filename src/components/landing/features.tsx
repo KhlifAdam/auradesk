@@ -94,6 +94,7 @@ export function Features() {
 								src="/images/auradesk-gallery.jpg"
 								alt={t("galleries.weddingAlt")}
 								fill
+								sizes="12rem"
 								className="rounded-sm object-cover"
 							/>
 						</motion.div>
@@ -105,6 +106,7 @@ export function Features() {
 								src="/images/auradesk-editorial.jpg"
 								alt={t("galleries.editorialAlt")}
 								fill
+								sizes="12rem"
 								className="rounded-sm object-cover"
 							/>
 						</motion.div>

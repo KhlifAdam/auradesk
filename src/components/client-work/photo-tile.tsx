@@ -17,6 +17,8 @@ interface PhotoTileProps {
 	onComments?: () => void;
 	commentsLabel?: string;
 	className?: string;
+	/** One of the first tiles, visible at once: load it without waiting. */
+	eager?: boolean;
 }
 
 /** Square private photo or video (signed URL, so not optimized) with overlay controls. */
@@ -29,6 +31,7 @@ export function PhotoTile({
 	onComments,
 	commentsLabel,
 	className,
+	eager,
 }: PhotoTileProps) {
 	return (
 		<div
@@ -49,6 +52,7 @@ export function PhotoTile({
 						alt={photo.filename}
 						fill
 						unoptimized
+						loading={eager ? "eager" : "lazy"}
 						className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
 					/>
 				) : (

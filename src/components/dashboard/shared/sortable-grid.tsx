@@ -17,7 +17,7 @@ import {
 	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { cn } from "@/lib/utils";
 
 interface SortableGridProps<T extends { id: string }> {
@@ -39,6 +39,9 @@ export function SortableGrid<T extends { id: string }>({
 	className,
 	disabled,
 }: SortableGridProps<T>) {
+	// dnd-kit numbers its accessibility ids with a counter that differs between
+	// the server and the browser; React's id is the same on both.
+	const dndId = useId();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
 		useSensor(KeyboardSensor, {
@@ -55,6 +58,7 @@ export function SortableGrid<T extends { id: string }>({
 
 	return (
 		<DndContext
+			id={dndId}
 			sensors={sensors}
 			collisionDetection={closestCenter}
 			onDragEnd={handleDragEnd}

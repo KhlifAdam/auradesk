@@ -11,6 +11,8 @@ interface GalleryCoverProps {
 	studioName: string | null;
 	/** Drawn small (editor preview, gallery cards): no scroll link, shorter. */
 	preview?: boolean;
+	/** A small copy that is still above the fold (the first gallery cards). */
+	eager?: boolean;
 }
 
 /**
@@ -24,6 +26,7 @@ export function GalleryCover({
 	title,
 	studioName,
 	preview,
+	eager,
 }: GalleryCoverProps) {
 	const t = useTranslations("Galleries.cover");
 	const format = useFormatter();
@@ -41,7 +44,7 @@ export function GalleryCover({
 			alt={title}
 			fill
 			unoptimized
-			priority={!preview}
+			loading={preview && !eager ? "lazy" : "eager"}
 			className="object-cover"
 			style={{
 				objectPosition: `${cover.focalX * 100}% ${cover.focalY * 100}%`,

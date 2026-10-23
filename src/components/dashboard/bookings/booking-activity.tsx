@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
+import { CONFIRMED_WITHOUT_CLIENT } from "@/services/bookings/options";
 import type { BookingActivityItem } from "@/services/bookings/types";
 import { BookingNoteForm } from "./booking-note-form";
 
@@ -36,14 +37,19 @@ export async function BookingActivity({
 						.join(", "),
 				});
 			default:
+				if (activity.body === CONFIRMED_WITHOUT_CLIENT)
+					return t("confirmedWithoutClient");
 				return t("statusChanged", {
 					status: activity.toStatus ? tStatus(activity.toStatus) : "",
 				});
 		}
 	};
-	// The body of a client edit only lists field names: no free text to show.
+	// These bodies are markers or field names, not free text to show.
 	const text = (activity: BookingActivityItem) =>
-		activity.kind === "CLIENT_EDIT" ? "" : activity.body;
+		activity.kind === "CLIENT_EDIT" ||
+		activity.body === CONFIRMED_WITHOUT_CLIENT
+			? ""
+			: activity.body;
 
 	return (
 		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3">

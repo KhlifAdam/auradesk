@@ -34,7 +34,8 @@ export function AuthShowcase() {
 					fill
 					sizes="(min-width: 768px) 28rem, 0px"
 					className="h-full w-full animate-in fade-in object-cover duration-700"
-					priority
+					loading="eager"
+					fetchPriority="high"
 				/>
 				<div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
 				<div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-white/10" />
