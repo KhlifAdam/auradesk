@@ -21,7 +21,7 @@ const HEADING: Record<SiteVariant, string> = {
 const TITLE: Record<SiteVariant, string> = {
 	minimal: "text-4xl tracking-tight md:text-5xl",
 	editorial: "text-5xl tracking-tight md:text-7xl",
-	bold: "text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-7xl",
+	bold: "pt-[0.12em] text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-7xl",
 };
 
 const EYEBROW: Record<SiteVariant, string> = {

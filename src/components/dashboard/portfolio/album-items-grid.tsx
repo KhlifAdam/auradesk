@@ -1,12 +1,11 @@
 "use client";
 
-import { ImagePlus, Star, X } from "lucide-react";
+import { Star, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { toast } from "sonner";
 import { MediaThumb } from "@/components/dashboard/media/media-thumb";
-import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { SortableGrid } from "@/components/dashboard/shared/sortable-grid";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { Button } from "@/components/ui/button";
@@ -41,15 +40,8 @@ export function AlbumItemsGrid({ album }: { album: AlbumDetail }) {
 		router.refresh();
 	};
 
-	if (album.itemCount === 0) {
-		return (
-			<EmptyState
-				icon={ImagePlus}
-				title={t("empty.title")}
-				description={t("empty.description")}
-			/>
-		);
-	}
+	// The drop area above stands in for an empty album.
+	if (album.itemCount === 0) return null;
 
 	return (
 		<div className="flex flex-col gap-4">

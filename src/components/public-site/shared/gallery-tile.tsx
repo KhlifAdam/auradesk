@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 import type { SiteMedia } from "@/services/public-site/types";
+import { orientationOf } from "./photo-layout";
 
 interface GalleryTileProps {
 	media: SiteMedia;
@@ -50,7 +51,11 @@ export function GalleryTile({
 					alt={media.alt}
 					fill
 					sizes={sizes}
-					className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
+					className={cn(
+						"object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]",
+						// A cropped portrait keeps its upper part, where faces usually are.
+						orientationOf(media) === "portrait" && "object-[50%_30%]",
+					)}
 				/>
 			) : (
 				<video

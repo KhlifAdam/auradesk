@@ -569,10 +569,6 @@
 			"coverCleared": "Couverture retirée",
 			"remove": "Retirer de l'album",
 			"removed": "Retiré de l'album",
-			"empty": {
-				"title": "Cet album est vide",
-				"description": "Déposez des photos ci-dessus, ou choisissez-en parmi celles déjà envoyées avec « Depuis vos fichiers ». Glissez pour réordonner."
-			},
 			"fromLibrary": "Depuis vos fichiers",
 			"uploadHint": "Les photos et vidéos arrivent dans cet album et sont aussi conservées dans Tous les fichiers, prêtes à être réutilisées."
 		},

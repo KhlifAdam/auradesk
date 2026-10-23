@@ -44,13 +44,15 @@ export function MinimalPortfolio({ albums }: { albums: SiteAlbum[] }) {
 					inactiveClassName="site-muted hover:text-[var(--s-fg)]"
 				/>
 
-				<div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+				{/* Masonry: every photo keeps its own shape, portrait or landscape. */}
+				<div className="columns-2 gap-3 md:columns-3 md:gap-5">
 					{visible.map((media, index) => (
 						<GalleryTile
 							key={media.id}
 							media={media}
+							shape="natural"
 							caption={media.alt}
-							className="rounded-xl"
+							className="mb-3 break-inside-avoid rounded-xl md:mb-5"
 							sizes="(min-width: 768px) 33vw, 50vw"
 							onClick={() => gallery.setLightbox(index)}
 						/>

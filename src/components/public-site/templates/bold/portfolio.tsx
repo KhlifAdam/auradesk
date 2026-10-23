@@ -3,19 +3,24 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { SiteAlbum } from "@/services/public-site/types";
+import type { SiteAlbum, SiteMedia } from "@/services/public-site/types";
 import { GalleryTile } from "../../shared/gallery-tile";
 import { Lightbox } from "../../shared/lightbox";
+import { orientationOf } from "../../shared/photo-layout";
 import { PortfolioTabs } from "../../shared/portfolio-tabs";
 import { Reveal } from "../../shared/reveal";
 import { usePortfolioGallery } from "../../shared/use-portfolio-gallery";
 
 const PAGE = 12;
 
-/** Bento rhythm: every sixth tile is big, every fourth is tall. */
-function bentoSpan(index: number) {
+/**
+ * Bento tiles shaped by the photo: portraits stand tall (one column, two
+ * rows), landscapes sit in one cell, and every sixth landscape is featured
+ * big. One cell is landscape-shaped, so nothing is cropped much.
+ */
+function bentoSpan(media: SiteMedia, index: number) {
+	if (orientationOf(media) === "portrait") return "row-span-2";
 	if (index % 6 === 0) return "col-span-2 row-span-2";
-	if (index % 6 === 3) return "md:row-span-2";
 	return "";
 }
 
@@ -33,7 +38,7 @@ export function BoldPortfolio({ albums }: { albums: SiteAlbum[] }) {
 					<span className="site-accent-text text-xs font-bold uppercase tracking-[0.35em]">
 						{t("eyebrow")}
 					</span>
-					<h2 className="site-heading text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-8xl">
+					<h2 className="site-heading pt-[0.12em] text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-8xl">
 						{t("title")}
 					</h2>
 				</div>
@@ -51,14 +56,14 @@ export function BoldPortfolio({ albums }: { albums: SiteAlbum[] }) {
 				/>
 			</Reveal>
 
-			<div className="grid grid-flow-dense auto-rows-[160px] grid-cols-2 gap-2 md:auto-rows-[260px] md:grid-cols-4">
+			<div className="grid grid-flow-dense auto-rows-[120px] grid-cols-2 gap-2 md:auto-rows-[260px] md:grid-cols-4">
 				{visible.map((media, index) => (
 					<GalleryTile
 						key={media.id}
 						media={media}
 						shape="fill"
 						caption={media.alt}
-						className={cn(bentoSpan(index))}
+						className={cn(bentoSpan(media, index))}
 						sizes="(min-width: 768px) 50vw, 100vw"
 						onClick={() => gallery.setLightbox(index)}
 					/>

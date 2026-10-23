@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { SiteAlbum } from "@/services/public-site/types";
 import { GalleryTile } from "../../shared/gallery-tile";
 import { Lightbox } from "../../shared/lightbox";
+import { mostlyPortrait } from "../../shared/photo-layout";
 import { Reveal } from "../../shared/reveal";
 
 // Five-photo spreads on a 6-column grid; odd chapters mirror the layout.
@@ -24,6 +25,28 @@ const MIRRORED = [
 	"md:col-span-3 md:row-span-2",
 	"md:col-span-3 md:row-span-2",
 ];
+
+// For albums of mostly portraits: two tall frames beside two smaller ones.
+const PORTRAIT_SPREAD = [
+	"row-span-2 md:col-span-2 md:row-span-4",
+	"row-span-2 md:col-span-2 md:row-span-4",
+	"md:col-span-2 md:row-span-2",
+	"md:col-span-2 md:row-span-2",
+];
+const PORTRAIT_MIRRORED = [
+	"md:col-span-2 md:row-span-2",
+	"row-span-2 md:col-span-2 md:row-span-4",
+	"row-span-2 md:col-span-2 md:row-span-4",
+	"md:col-span-2 md:row-span-2",
+];
+
+/** The spread that suits the album's photos, mirrored on odd chapters. */
+function spreadFor(album: SiteAlbum, index: number) {
+	const mirrored = index % 2 === 1;
+	if (mostlyPortrait(album.items.slice(0, SPREAD.length)))
+		return mirrored ? PORTRAIT_MIRRORED : PORTRAIT_SPREAD;
+	return mirrored ? MIRRORED : SPREAD;
+}
 
 /** Each album is a numbered chapter with an asymmetric photo spread. */
 export function EditorialPortfolio({ albums }: { albums: SiteAlbum[] }) {
@@ -43,7 +66,7 @@ export function EditorialPortfolio({ albums }: { albums: SiteAlbum[] }) {
 				</Reveal>
 
 				{albums.map((album, albumIndex) => {
-					const spread = albumIndex % 2 === 0 ? SPREAD : MIRRORED;
+					const spread = spreadFor(album, albumIndex);
 					return (
 						<article key={album.id} className="flex flex-col gap-8">
 							<Reveal className="grid gap-4 md:grid-cols-12 md:items-end">

@@ -569,10 +569,6 @@
 			"coverCleared": "Cover cleared",
 			"remove": "Remove from album",
 			"removed": "Removed from album",
-			"empty": {
-				"title": "This album is empty",
-				"description": "Drop photos above, or pick ones you already uploaded with “From your files”. Drag to reorder."
-			},
 			"fromLibrary": "From your files",
 			"uploadHint": "Photos and videos land in this album and are also kept in All files, ready to reuse."
 		},

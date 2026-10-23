@@ -17,7 +17,7 @@ export async function BoldServices({ site }: { site: SiteData }) {
 				<span className="site-accent-text text-xs font-bold uppercase tracking-[0.35em]">
 					{t("eyebrow")}
 				</span>
-				<h2 className="site-heading text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-8xl">
+				<h2 className="site-heading pt-[0.12em] text-5xl font-bold uppercase leading-[0.9] tracking-tighter md:text-8xl">
 					{t("title")}
 				</h2>
 			</Reveal>

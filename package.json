@@ -18,7 +18,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "admin:grant": "node scripts/set-admin.mjs grant",
-    "admin:revoke": "node scripts/set-admin.mjs revoke"
+    "admin:revoke": "node scripts/set-admin.mjs revoke",
+    "media:shrink": "node scripts/shrink-public-media.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.133.0",

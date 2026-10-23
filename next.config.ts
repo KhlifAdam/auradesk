@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
 	// Development only: the test SMS inbox polls; its requests would drown the
 	// rest of the terminal.
 	logging: { incomingRequests: { ignore: [/\/api\/dev\/sms/] } },
+	experimental: {
+		// Photos uploaded before web resizing can be 24 MP: decoding several at
+		// once overruns the default 7 s and the image fails to load.
+		imgOptTimeoutInSeconds: 30,
+	},
 	async headers() {
 		return [{ source: "/(.*)", headers: securityHeaders }];
 	},

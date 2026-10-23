@@ -23,7 +23,7 @@ export default async function AlbumPage({
 	return (
 		<PageShell>
 			<AlbumDetailHeader album={album} />
-			<AlbumUploader albumId={album.id} />
+			<AlbumUploader albumId={album.id} empty={album.itemCount === 0} />
 			<AlbumItemsGrid album={album} />
 		</PageShell>
 	);
