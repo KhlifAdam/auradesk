@@ -14,7 +14,7 @@ export function LatestUploads({ items }: { items: MediaItem[] }) {
 				<h2 className="text-sm font-semibold">{t("title")}</h2>
 				{items.length > 0 && (
 					<Link
-						href="/dashboard/media"
+						href="/dashboard/portfolio/files"
 						className="text-xs text-muted-foreground transition-colors hover:text-primary"
 					>
 						{t("viewAll")}
@@ -26,7 +26,7 @@ export function LatestUploads({ items }: { items: MediaItem[] }) {
 					<ImageOff className="h-5 w-5 text-muted-foreground" />
 					<p className="text-xs text-muted-foreground">{t("empty")}</p>
 					<Button asChild size="sm" className="h-7 text-xs">
-						<Link href="/dashboard/media">{t("upload")}</Link>
+						<Link href="/dashboard/portfolio/files">{t("upload")}</Link>
 					</Button>
 				</div>
 			) : (
@@ -34,7 +34,7 @@ export function LatestUploads({ items }: { items: MediaItem[] }) {
 					{items.map((media) => (
 						<Link
 							key={media.id}
-							href="/dashboard/media"
+							href="/dashboard/portfolio/files"
 							className="overflow-hidden rounded-lg border border-border transition-colors hover:border-primary/60"
 						>
 							<MediaThumb media={media} sizes="12vw" />

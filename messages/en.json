@@ -12,7 +12,6 @@
 			"bookings": "Bookings",
 			"clients": "Clients",
 			"messages": "Messages",
-			"media": "Media library",
 			"portfolio": "Portfolio",
 			"services": "Services",
 			"siteProfile": "Site profile",
@@ -245,8 +244,7 @@
 		"invalidVideoUrl": "Paste a YouTube or Vimeo link."
 	},
 	"Media": {
-		"title": "Media library",
-		"description": "Every photo and video you upload, ready to use across your site.",
+		"description": "Every photo and video on your public site, stored once and reusable anywhere. You can also upload straight into an album. Client photos go in Projects → Import.",
 		"dropzone": {
 			"title": "Drag files here or click to browse",
 			"drop": "Drop to upload",
@@ -559,11 +557,10 @@
 			"updated": "Album updated",
 			"deleted": "Album deleted",
 			"deleteTitle": "Delete this album?",
-			"deleteDescription": "The album is removed. Its photos and videos stay in your media library."
+			"deleteDescription": "The album is removed. Its photos and videos stay in Portfolio → All files."
 		},
 		"album": {
 			"edit": "Edit",
-			"addMedia": "Add media",
 			"added": "{count, plural, one {# item added} other {# items added}}",
 			"cover": "Cover",
 			"setCover": "Set as cover",
@@ -574,8 +571,14 @@
 			"removed": "Removed from album",
 			"empty": {
 				"title": "This album is empty",
-				"description": "Add photos and videos from your library. Drag to reorder."
-			}
+				"description": "Drop photos above, or pick ones you already uploaded with “From your files”. Drag to reorder."
+			},
+			"fromLibrary": "From your files",
+			"uploadHint": "Photos and videos land in this album and are also kept in All files, ready to reuse."
+		},
+		"tabs": {
+			"albums": "Albums",
+			"files": "All files"
 		}
 	},
 	"Services": {
@@ -622,7 +625,6 @@
 	},
 	"Preview": {
 		"back": "Appearance",
-		"frameTitle": "Site preview",
 		"mine": "My content",
 		"demo": "Demo content",
 		"device": {

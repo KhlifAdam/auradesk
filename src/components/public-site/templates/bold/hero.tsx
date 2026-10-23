@@ -28,7 +28,7 @@ export async function BoldHero({ site }: { site: SiteData }) {
 				id="top"
 				className="relative flex min-h-[100svh] items-end overflow-hidden bg-black text-white"
 			>
-				{cover && (
+				{cover ? (
 					<Image
 						src={cover.url}
 						alt={cover.alt}
@@ -38,6 +38,9 @@ export async function BoldHero({ site }: { site: SiteData }) {
 						sizes="100vw"
 						className="animate-kenburns object-cover opacity-80"
 					/>
+				) : (
+					// No photo yet: a soft glow of the accent instead of a flat void.
+					<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_15%,var(--s-accent),transparent_60%)] opacity-35" />
 				)}
 				<div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/50" />
 				<div className="relative w-full px-6 pb-12 md:px-12 md:pb-16">

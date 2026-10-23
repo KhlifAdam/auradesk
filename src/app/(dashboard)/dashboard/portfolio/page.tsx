@@ -3,6 +3,7 @@ import {
 	AlbumList,
 	NewAlbumButton,
 } from "@/components/dashboard/portfolio/album-list";
+import { PortfolioTabs } from "@/components/dashboard/portfolio/portfolio-tabs";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
@@ -26,6 +27,7 @@ export default async function PortfolioPage({
 				description={t("description")}
 				actions={<NewAlbumButton />}
 			/>
+			<PortfolioTabs />
 			<AlbumList albums={albums} />
 		</PageShell>
 	);

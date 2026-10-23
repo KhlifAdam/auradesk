@@ -1,39 +1,29 @@
 "use client";
 
-import {
-	ArrowLeft,
-	Check,
-	Info,
-	Loader2,
-	Monitor,
-	Smartphone,
-	Tablet,
-} from "lucide-react";
+import { ArrowLeft, Check, Info, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { SegmentedControl } from "@/components/dashboard/shared/segmented-control";
+import { LiveSitePreview } from "@/components/dashboard/website/appearance/live-site-preview";
 import { Button } from "@/components/ui/button";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { SITE_TEMPLATE_IDS } from "@/lib/public-site/design";
-import { cn } from "@/lib/utils";
 import {
 	type PreviewData,
+	type PreviewParams,
 	previewQuery,
 } from "@/services/preview/preview-params";
 import { updateSiteDesign } from "@/services/studio/actions";
 import { type SiteDesign, THEME_MODES } from "@/services/studio/schemas";
-
-const DEVICES = {
-	desktop: { width: "100%", icon: Monitor },
-	tablet: { width: "820px", icon: Tablet },
-	mobile: { width: "390px", icon: Smartphone },
-} as const;
-type Device = keyof typeof DEVICES;
+import { DeviceSwitch } from "./device-switch";
+import type { Device } from "./devices";
 
 interface PreviewShellProps {
+	/** What the page was opened with (language, unsaved sections, screen…). */
+	params: PreviewParams;
 	initialData: PreviewData;
 	design: SiteDesign;
 	savedDesign: SiteDesign | null;
@@ -43,6 +33,7 @@ interface PreviewShellProps {
 
 /** Toolbar + iframe: pick a template, real vs demo content, and device width. */
 export function PreviewShell({
+	params,
 	initialData,
 	design,
 	savedDesign,
@@ -57,7 +48,7 @@ export function PreviewShell({
 	const [data, setData] = useState<PreviewData>(initialData);
 	const [template, setTemplate] = useState(design.template);
 	const [themeMode, setThemeMode] = useState(design.themeMode);
-	const [device, setDevice] = useState<Device>("desktop");
+	const [device, setDevice] = useState<Device>(params.device ?? "desktop");
 	const [saved, setSaved] = useState(savedDesign);
 	const [isApplying, startTransition] = useTransition();
 
@@ -73,6 +64,8 @@ export function PreviewShell({
 		accent: design.accentColor,
 		font: design.fontPair,
 		mode: themeMode,
+		lang: params.lang,
+		draft: params.draft,
 	})}`;
 
 	const apply = () =>
@@ -126,18 +119,7 @@ export function PreviewShell({
 							{ value: "demo", label: t("demo") },
 						]}
 					/>
-					<SegmentedControl
-						value={device}
-						onChange={setDevice}
-						options={(Object.keys(DEVICES) as Device[]).map((id) => {
-							const Icon = DEVICES[id].icon;
-							return {
-								value: id,
-								label: <Icon className="h-3.5 w-3.5" />,
-								ariaLabel: t(`device.${id}`),
-							};
-						})}
-					/>
+					<DeviceSwitch value={device} onChange={setDevice} />
 				</div>
 
 				<Button
@@ -166,15 +148,13 @@ export function PreviewShell({
 				</div>
 			)}
 
-			<div className="flex min-h-0 flex-1 justify-center overflow-auto bg-muted/40 p-3">
-				<iframe
-					key={src}
-					title={t("frameTitle")}
+			<div className="min-h-0 flex-1 p-3">
+				<LiveSitePreview
 					src={src}
-					style={{ width: DEVICES[device].width }}
-					className={cn(
-						"h-full max-w-full rounded-lg border border-border bg-background shadow-luminous transition-[width] duration-300",
-					)}
+					device={device}
+					focus={params.focus}
+					interactive
+					className="h-full"
 				/>
 			</div>
 		</div>

@@ -19,7 +19,7 @@ export async function BoldContact({ site }: { site: SiteData }) {
 				<span className="site-accent-text text-xs font-bold uppercase tracking-[0.35em]">
 					{t("eyebrow")}
 				</span>
-				<h2 className="site-heading text-6xl font-bold uppercase leading-[0.85] tracking-tighter md:text-[9vw]">
+				<h2 className="site-heading text-5xl font-bold uppercase leading-[0.85] tracking-tighter sm:text-6xl md:text-[9vw]">
 					{t("title")}
 				</h2>
 				<div className="site-border flex flex-col justify-between gap-10 border-t pt-10 md:flex-row md:items-end">

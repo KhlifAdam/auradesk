@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Library, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -83,13 +83,14 @@ export function AlbumDetailHeader({ album }: { album: AlbumDetail }) {
 					{t("album.edit")}
 				</Button>
 				<Button
+					variant="outline"
 					size="sm"
 					className="h-8 gap-1.5"
 					onClick={() => setPickerOpen(true)}
 					disabled={isPending}
 				>
-					<Plus className="h-3.5 w-3.5" />
-					{t("album.addMedia")}
+					<Library className="h-3.5 w-3.5" />
+					{t("album.fromLibrary")}
 				</Button>
 			</div>
 			<AlbumFormDialog
@@ -101,7 +102,7 @@ export function AlbumDetailHeader({ album }: { album: AlbumDetail }) {
 				open={pickerOpen}
 				onOpenChange={setPickerOpen}
 				multiple
-				title={t("album.addMedia")}
+				title={t("album.fromLibrary")}
 				onConfirm={(media) => addItems(media.map((m) => m.id))}
 			/>
 		</div>

@@ -12,7 +12,6 @@
 			"bookings": "Réservations",
 			"clients": "Clients",
 			"messages": "Messages",
-			"media": "Médiathèque",
 			"portfolio": "Portfolio",
 			"services": "Prestations",
 			"siteProfile": "Profil du site",
@@ -245,8 +244,7 @@
 		"invalidVideoUrl": "Collez un lien YouTube ou Vimeo."
 	},
 	"Media": {
-		"title": "Médiathèque",
-		"description": "Toutes vos photos et vidéos, prêtes à être utilisées sur votre site.",
+		"description": "Toutes les photos et vidéos de votre site public, enregistrées une fois et réutilisables partout. Vous pouvez aussi envoyer directement dans un album. Les photos clients vont dans Projets → Import.",
 		"dropzone": {
 			"title": "Glissez vos fichiers ici ou cliquez pour parcourir",
 			"drop": "Déposez pour envoyer",
@@ -559,11 +557,10 @@
 			"updated": "Album mis à jour",
 			"deleted": "Album supprimé",
 			"deleteTitle": "Supprimer cet album ?",
-			"deleteDescription": "L'album est supprimé. Ses photos et vidéos restent dans votre médiathèque."
+			"deleteDescription": "L'album est supprimé. Ses photos et vidéos restent dans Portfolio → Tous les fichiers."
 		},
 		"album": {
 			"edit": "Modifier",
-			"addMedia": "Ajouter des médias",
 			"added": "{count, plural, one {# élément ajouté} other {# éléments ajoutés}}",
 			"cover": "Couverture",
 			"setCover": "Définir comme couverture",
@@ -574,8 +571,14 @@
 			"removed": "Retiré de l'album",
 			"empty": {
 				"title": "Cet album est vide",
-				"description": "Ajoutez des photos et vidéos depuis votre médiathèque. Glissez pour réordonner."
-			}
+				"description": "Déposez des photos ci-dessus, ou choisissez-en parmi celles déjà envoyées avec « Depuis vos fichiers ». Glissez pour réordonner."
+			},
+			"fromLibrary": "Depuis vos fichiers",
+			"uploadHint": "Les photos et vidéos arrivent dans cet album et sont aussi conservées dans Tous les fichiers, prêtes à être réutilisées."
+		},
+		"tabs": {
+			"albums": "Albums",
+			"files": "Tous les fichiers"
 		}
 	},
 	"Services": {
@@ -622,7 +625,6 @@
 	},
 	"Preview": {
 		"back": "Apparence",
-		"frameTitle": "Aperçu du site",
 		"mine": "Mon contenu",
 		"demo": "Contenu de démo",
 		"device": {

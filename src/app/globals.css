@@ -308,6 +308,10 @@
 }
 @utility site-heading {
 	font-family: var(--s-heading);
+	/* Big display type must never run off a phone screen: long words
+	   (e.g. French, in capitals) hyphenate in the site's language, or break. */
+	overflow-wrap: break-word;
+	hyphens: auto;
 }
 @utility site-body {
 	font-family: var(--s-body);

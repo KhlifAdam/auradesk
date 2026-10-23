@@ -104,7 +104,7 @@ export async function StatisticsSection({
 					versus={[versus, formatBytes(stats.files.bytes, locale)]
 						.filter(Boolean)
 						.join(" · ")}
-					href="/dashboard/media"
+					href="/dashboard/portfolio/files"
 				/>
 				<KpiCard
 					label={t("kpi.shootsNextWeek")}

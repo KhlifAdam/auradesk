@@ -5,7 +5,6 @@ import {
 	FolderKanban,
 	Images,
 	LayoutGrid,
-	Library,
 	type LucideIcon,
 	Mail,
 	Package,
@@ -57,7 +56,6 @@ export const NAV_GROUPS: NavGroup[] = [
 	{
 		labelKey: "website",
 		items: [
-			{ href: "/dashboard/media", labelKey: "media", icon: Library },
 			{ href: "/dashboard/portfolio", labelKey: "portfolio", icon: Images },
 			{ href: "/dashboard/services", labelKey: "services", icon: Briefcase },
 			{

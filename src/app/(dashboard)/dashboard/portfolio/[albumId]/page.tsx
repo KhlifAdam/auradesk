@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { AlbumDetailHeader } from "@/components/dashboard/portfolio/album-detail-header";
 import { AlbumItemsGrid } from "@/components/dashboard/portfolio/album-items-grid";
+import { AlbumUploader } from "@/components/dashboard/portfolio/album-uploader";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { getAlbum } from "@/services/portfolio/queries";
@@ -22,6 +23,7 @@ export default async function AlbumPage({
 	return (
 		<PageShell>
 			<AlbumDetailHeader album={album} />
+			<AlbumUploader albumId={album.id} />
 			<AlbumItemsGrid album={album} />
 		</PageShell>
 	);

@@ -3,29 +3,39 @@
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	DEVICES,
+	type Device,
+	fitDevice,
+} from "@/components/dashboard/preview/devices";
 import { cn } from "@/lib/utils";
 
-/** The site is rendered at this desktop width, then scaled to fit the panel. */
-const SITE_WIDTH = 1440;
 const DEBOUNCE_MS = 400;
 
 /**
- * Miniature of the real site (an iframe of /preview/frame), so the panel shows
- * exactly what visitors get instead of an approximation.
+ * The real site (an iframe of /preview/frame) on a desktop, tablet or phone,
+ * scaled to fit its box, so the preview shows exactly what visitors get.
  */
 export function LiveSitePreview({
 	src,
+	device = "desktop",
 	focus,
+	interactive = false,
+	className,
 }: {
 	src: string;
+	device?: Device;
 	/** Id of a section to scroll the site to (e.g. the one being edited). */
 	focus?: string;
+	/** Lets the visitor scroll and click inside (the full preview). */
+	interactive?: boolean;
+	/** Sizes the box; a miniature by default. */
+	className?: string;
 }) {
 	const t = useTranslations("Site.appearance.preview");
 	const containerRef = useRef<HTMLDivElement>(null);
 	const frameRef = useRef<HTMLIFrameElement>(null);
-	const [scale, setScale] = useState(0.3);
-	const [height, setHeight] = useState(0);
+	const [box, setBox] = useState({ width: 0, height: 0 });
 	const [debouncedSrc, setDebouncedSrc] = useState(src);
 	const [loading, setLoading] = useState(true);
 
@@ -54,39 +64,74 @@ export function LiveSitePreview({
 	useEffect(() => {
 		const element = containerRef.current;
 		if (!element) return;
-		const observer = new ResizeObserver(([entry]) => {
-			setScale(entry.contentRect.width / SITE_WIDTH);
-			setHeight(entry.contentRect.height);
-		});
+		const observer = new ResizeObserver(([entry]) =>
+			setBox({
+				width: entry.contentRect.width,
+				height: entry.contentRect.height,
+			}),
+		);
 		observer.observe(element);
 		return () => observer.disconnect();
 	}, []);
 
+	const layout = fitDevice(device, box, interactive ? 16 : 8);
+	const isDesktop = DEVICES[device].height === null;
+
 	return (
 		<div
 			ref={containerRef}
-			className="relative aspect-[4/5] w-full overflow-hidden rounded-xl border border-border bg-muted/40"
+			className={cn(
+				"relative flex w-full items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/40",
+				className ?? "aspect-[4/5]",
+			)}
 		>
-			<iframe
-				ref={frameRef}
-				key={debouncedSrc}
-				src={debouncedSrc}
-				title={t("title")}
-				tabIndex={-1}
-				onLoad={() => {
-					scrollToFocus("instant");
-					setLoading(false);
-				}}
+			<div
 				className={cn(
-					"pointer-events-none absolute left-0 top-0 origin-top-left border-0 transition-opacity duration-300",
-					loading ? "opacity-0" : "opacity-100",
+					"shrink-0 overflow-hidden transition-all duration-300",
+					isDesktop
+						? "absolute inset-0"
+						: "border border-border bg-card shadow-luminous",
 				)}
-				style={{
-					width: SITE_WIDTH,
-					height: scale > 0 ? height / scale : 0,
-					transform: `scale(${scale})`,
-				}}
-			/>
+				style={
+					isDesktop
+						? undefined
+						: {
+								padding: layout.bezel,
+								borderRadius: layout.radius + layout.bezel,
+							}
+				}
+			>
+				<div
+					className="relative overflow-hidden bg-background"
+					style={{
+						width: layout.width * layout.scale,
+						height: layout.height * layout.scale,
+						borderRadius: isDesktop ? 0 : layout.radius,
+					}}
+				>
+					<iframe
+						ref={frameRef}
+						key={debouncedSrc}
+						src={debouncedSrc}
+						title={t("title")}
+						tabIndex={interactive ? undefined : -1}
+						onLoad={() => {
+							scrollToFocus("instant");
+							setLoading(false);
+						}}
+						className={cn(
+							"absolute left-0 top-0 origin-top-left border-0 transition-opacity duration-300",
+							!interactive && "pointer-events-none",
+							loading ? "opacity-0" : "opacity-100",
+						)}
+						style={{
+							width: layout.width,
+							height: layout.height,
+							transform: `scale(${layout.scale})`,
+						}}
+					/>
+				</div>
+			</div>
 			{loading && (
 				<div className="absolute inset-0 flex items-center justify-center">
 					<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

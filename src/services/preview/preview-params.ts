@@ -10,6 +10,9 @@ import {
 export const PREVIEW_DATA = ["mine", "demo"] as const;
 export type PreviewData = (typeof PREVIEW_DATA)[number];
 
+export const PREVIEW_DEVICES = ["desktop", "tablet", "mobile"] as const;
+export type PreviewDevice = (typeof PREVIEW_DEVICES)[number];
+
 // Every param is optional and falls back to undefined on bad input,
 // so a mangled URL never breaks the preview.
 export const previewParamsSchema = z.object({
@@ -29,6 +32,8 @@ export const previewParamsSchema = z.object({
 		.regex(/^d{1,15}$/)
 		.optional()
 		.catch(undefined),
+	/** The screen the full preview opens on. */
+	device: z.enum(PREVIEW_DEVICES).optional().catch(undefined),
 	/** A section to scroll the preview to, e.g. the one being edited. */
 	focus: z.enum(SECTION_KINDS).optional().catch(undefined),
 });

@@ -8,11 +8,12 @@ export default async function PreviewPage({
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
 	const { photographerId } = await requirePhotographer();
-	const { data, design, savedDesign, hasStudio, hasContent } =
+	const { params, data, design, savedDesign, hasStudio, hasContent } =
 		await resolvePreview(photographerId, await searchParams);
 
 	return (
 		<PreviewShell
+			params={params}
 			initialData={data}
 			design={design}
 			savedDesign={savedDesign}

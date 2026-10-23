@@ -53,6 +53,7 @@ export async function resolvePreview(
 	const site: SiteData = draft ? { ...shown, sections: draft } : shown;
 
 	return {
+		params,
 		site,
 		data: useReal ? ("mine" as const) : ("demo" as const),
 		design,

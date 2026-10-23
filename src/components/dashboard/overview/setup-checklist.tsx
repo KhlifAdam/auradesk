@@ -8,7 +8,7 @@ import type { Overview } from "@/services/overview/queries";
 function getSteps({ studio, counts }: Overview) {
 	return [
 		{ id: "studio", done: studio !== null, href: "/dashboard/site" },
-		{ id: "media", done: counts.media > 0, href: "/dashboard/media" },
+		{ id: "media", done: counts.media > 0, href: "/dashboard/portfolio/files" },
 		{ id: "album", done: counts.albums > 0, href: "/dashboard/portfolio" },
 		{ id: "package", done: counts.packages > 0, href: "/dashboard/services" },
 		{

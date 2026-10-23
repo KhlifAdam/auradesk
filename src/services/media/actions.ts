@@ -19,7 +19,7 @@ import {
 } from "./schemas";
 import type { MediaItem, MediaPage } from "./types";
 
-const MEDIA_PATH = "/dashboard/media";
+const MEDIA_PATH = "/dashboard/portfolio/files";
 
 export async function requestUpload(
 	input: unknown,
