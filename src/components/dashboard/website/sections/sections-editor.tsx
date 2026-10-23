@@ -1,13 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { FormSaveBar } from "@/components/dashboard/shared/form-save-bar";
 import { SortableList } from "@/components/dashboard/shared/sortable-list";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { saveSiteSections } from "@/services/site-sections/actions";
@@ -18,15 +17,16 @@ import {
 } from "@/services/site-sections/schemas";
 import { SectionMediaContext } from "./media-form-field";
 import { SectionRow } from "./section-row";
+import { type SectionsDraft, useSectionsDraft } from "./use-sections-draft";
 
 /** Order, show or hide, and fill the sections of the public site. */
 export function SectionsEditor({
 	data,
-	siteUrl,
+	onDraft,
 }: {
 	data: SectionsEditorData;
-	/** The live site, when it is published. */
-	siteUrl: string | null;
+	/** Receives the unsaved sections' state, for the live preview. */
+	onDraft: (draft: SectionsDraft) => void;
 }) {
 	const t = useTranslations("Site.sections");
 	const router = useRouter();
@@ -40,6 +40,7 @@ export function SectionsEditor({
 		name: "sections",
 	});
 	const { isSubmitting, isDirty } = form.formState;
+	const { focusOn } = useSectionsDraft(form, onDraft);
 
 	async function onSubmit(values: SectionsValues) {
 		const result = await saveSiteSections(values);
@@ -56,43 +57,25 @@ export function SectionsEditor({
 					onSubmit={form.handleSubmit(onSubmit, () =>
 						toast.error(t("invalid")),
 					)}
-					className="flex max-w-3xl flex-col gap-4"
+					className="flex flex-col gap-4"
 				>
 					<p className="text-xs text-muted-foreground">{t("orderHint")}</p>
 					<SortableList
 						items={fields}
-						onMove={move}
+						onMove={(from, to) => {
+							focusOn(fields[from].kind);
+							move(from, to);
+						}}
 						className="flex flex-col gap-2"
 						renderItem={(field, index, handle) => (
 							<SectionRow index={index} kind={field.kind} handle={handle} />
 						)}
 					/>
-					<div className="sticky bottom-4 z-10 flex items-center justify-end gap-2 rounded-xl border border-border bg-background/80 p-2 backdrop-blur-xl">
-						{siteUrl && (
-							<Button
-								asChild
-								variant="ghost"
-								size="sm"
-								className="h-8 gap-1.5 text-xs"
-							>
-								<a href={siteUrl} target="_blank" rel="noopener noreferrer">
-									<ExternalLink className="h-3.5 w-3.5" />
-									{t("viewSite")}
-								</a>
-							</Button>
-						)}
-						<Button
-							type="submit"
-							size="sm"
-							className="h-8 text-xs"
-							disabled={isSubmitting || !isDirty}
-						>
-							{isSubmitting && (
-								<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-							)}
-							{t("save")}
-						</Button>
-					</div>
+					<FormSaveBar
+						visible={isDirty}
+						isSubmitting={isSubmitting}
+						onReset={() => form.reset()}
+					/>
 				</form>
 			</Form>
 		</SectionMediaContext.Provider>

@@ -1,6 +1,25 @@
+import "server-only";
+
+import { db } from "@/lib/db";
+import { sectionMediaIds } from "@/services/site-sections/normalize";
 import type { SiteSectionConfig } from "@/services/site-sections/schemas";
 import { toVideoEmbed } from "@/services/site-sections/video-embed";
+import { toSiteMedia } from "./site-media";
 import type { SiteBlock, SiteMedia } from "./types";
+
+/** The sections ready to render, with the photographer's own media loaded. */
+export async function loadSiteBlocks(
+	photographerId: string,
+	sections: SiteSectionConfig[],
+): Promise<SiteBlock[]> {
+	const media = await db.media.findMany({
+		where: { id: { in: sectionMediaIds(sections) }, photographerId },
+	});
+	return resolveSiteSections(
+		sections,
+		new Map(media.map((item) => [item.id, toSiteMedia(item)])),
+	);
+}
 
 /**
  * The enabled sections, in order, with their media resolved. Entries whose

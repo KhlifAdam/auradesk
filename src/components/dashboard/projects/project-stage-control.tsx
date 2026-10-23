@@ -10,16 +10,20 @@ import { updateProjectStage } from "@/services/projects/actions";
 import type { PaymentStatus } from "@/services/projects/options";
 import type { ProjectStage } from "@/services/projects/stages";
 import { PAYMENT_GATED_STAGE } from "@/services/projects/visibility";
+import { AutoStageSwitch } from "./auto-stage-switch";
 
 /** Clickable workflow; the new stage shows at once and rolls back on error. */
 export function ProjectStageControl({
 	projectId,
 	stage,
 	payment,
+	autoAdvance,
 }: {
 	projectId: string;
 	stage: ProjectStage;
 	payment: PaymentStatus;
+	/** The studio lets projects move forward on their own. */
+	autoAdvance: boolean;
 }) {
 	const t = useTranslations("Projects.detail");
 	const router = useRouter();
@@ -38,9 +42,12 @@ export function ProjectStageControl({
 
 	return (
 		<section className="rounded-xl border border-border bg-card p-3">
-			<h2 className="mb-2 text-xs font-medium text-muted-foreground">
-				{t("workflow")}
-			</h2>
+			<div className="mb-2 flex items-center justify-between gap-2">
+				<h2 className="text-xs font-medium text-muted-foreground">
+					{t("workflow")}
+				</h2>
+				<AutoStageSwitch enabled={autoAdvance} />
+			</div>
 			<StageTimeline
 				stage={optimistic}
 				onSelect={select}
@@ -51,6 +58,11 @@ export function ProjectStageControl({
 						: { stage: PAYMENT_GATED_STAGE, reason: t("unpaidLocked") }
 				}
 			/>
+			{autoAdvance && (
+				<p className="mt-2 text-[11px] text-muted-foreground">
+					{t("auto.hint")}
+				</p>
+			)}
 			{payment !== "PAID" && (
 				<p className="mt-2 text-xs text-destructive">{t("unpaidHint")}</p>
 			)}

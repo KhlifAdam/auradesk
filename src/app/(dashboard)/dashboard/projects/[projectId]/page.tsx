@@ -27,6 +27,10 @@ import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { listProjectEquipment } from "@/services/equipment/queries";
 import { listProjectInvoices } from "@/services/invoices/queries";
+import {
+	advanceShootDays,
+	isAutoAdvanceOn,
+} from "@/services/projects/auto-stage";
 import { getProject } from "@/services/projects/queries";
 import {
 	canClientView,
@@ -42,12 +46,14 @@ export default async function ProjectPage({
 	const t = await getTranslations("Projects.detail");
 	const { projectId } = await params;
 	const { photographerId } = await requirePhotographer();
+	await advanceShootDays(photographerId);
 	const project = await getProject(photographerId, projectId);
 	if (!project) notFound();
-	const [invoices, gear, crew] = await Promise.all([
+	const [invoices, gear, crew, autoAdvance] = await Promise.all([
 		listProjectInvoices(photographerId, project.id),
 		listProjectEquipment(photographerId, project.id),
 		listProjectTeam(photographerId, project.id),
+		isAutoAdvanceOn(photographerId),
 	]);
 
 	return (
@@ -93,6 +99,7 @@ export default async function ProjectPage({
 				projectId={project.id}
 				stage={project.stage}
 				payment={project.paymentStatus}
+				autoAdvance={autoAdvance}
 			/>
 			<ProjectTeamSection projectId={project.id} assignments={crew} />
 			<ProjectEquipmentSection

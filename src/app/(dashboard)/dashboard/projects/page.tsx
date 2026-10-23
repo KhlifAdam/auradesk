@@ -12,6 +12,7 @@ import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { UrlSearch } from "@/components/dashboard/shared/url-search";
 import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
+import { advanceShootDays } from "@/services/projects/auto-stage";
 import { listProjects } from "@/services/projects/queries";
 import {
 	type ListProjectsParams,
@@ -59,6 +60,8 @@ export default async function ProjectsPage({
 async function ProjectList({ params }: { params: ListProjectsParams }) {
 	const t = await getTranslations("Projects.empty");
 	const { photographerId } = await requirePhotographer();
+	// Shoot days reached since the last daily run show up as Shooting now.
+	await advanceShootDays(photographerId);
 	const { items, page, pageCount } = await listProjects(photographerId, params);
 	const filtered = Boolean(params.q || params.stage);
 

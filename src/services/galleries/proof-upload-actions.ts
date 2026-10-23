@@ -9,6 +9,7 @@ import {
 	getPrivateUploadUrl,
 	headPrivateObject,
 } from "@/lib/storage/r2-private";
+import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
 import {
@@ -121,6 +122,9 @@ export async function completeProofUpload(
 			throw error;
 		});
 
-	if (result.ok) revalidateClientWork();
+	if (result.ok) {
+		await advanceForGallery(galleryId, "uploaded");
+		revalidateClientWork();
+	}
 	return result;
 }

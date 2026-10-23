@@ -7,6 +7,7 @@ import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendGallerySharedEmail } from "@/lib/mail/send-client-notices";
 import { realEmail } from "@/lib/phone";
 import { sendGallerySharedSms } from "@/lib/sms/send-client-sms";
+import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { canClientView } from "@/services/projects/visibility";
 import { lockGallery, lockPhotographer } from "@/services/shared/lock-rows";
@@ -119,6 +120,10 @@ export async function shareGallery(input: unknown): Promise<ActionResult> {
 		where: { id },
 		data: { sharedAt: shared ? (gallery.sharedAt ?? new Date()) : null },
 	});
+	// Sharing proofs starts the client's selection; sharing finals, their
+	// approval. When that first opens the galleries, the stage notice tells
+	// the client, and the share notice below stays silent (old stage).
+	if (shared && !gallery.sharedAt) await advanceForGallery(id, "shared");
 
 	// Nobody to notify before the invitation is accepted, and the link only
 	// works once the project reaches the Selection step.

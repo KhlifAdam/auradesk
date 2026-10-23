@@ -14,6 +14,7 @@ import {
 	signPrivatePart,
 	startPrivateMultipart,
 } from "@/lib/storage/r2-private";
+import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
 import { idSchema } from "@/services/shared/schemas";
@@ -215,7 +216,10 @@ export async function completeGalleryUpload(
 		return ok();
 	});
 
-	if (result.ok) revalidateClientWork();
+	if (result.ok) {
+		await advanceForGallery(session.galleryId, "uploaded");
+		revalidateClientWork();
+	}
 	return result;
 }
 

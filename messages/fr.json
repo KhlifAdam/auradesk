@@ -21,8 +21,7 @@
 			"invoices": "Factures",
 			"equipment": "Matériel",
 			"team": "Équipe",
-			"privacy": "Confidentialité",
-			"sections": "Sections"
+			"privacy": "Confidentialité"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -436,16 +435,17 @@
 				"description": "Les visiteurs peuvent passer d'une langue activée à l'autre.",
 				"isDefault": "Par défaut",
 				"makeDefault": "Définir par défaut"
-			}
+			},
+			"tabs": {
+				"style": "Style",
+				"sections": "Sections"
+			},
+			"viewSite": "Voir le site"
 		},
 		"sections": {
-			"title": "Sections",
-			"description": "Choisissez les sections affichées sur votre site, leur ordre, et remplissez les nouvelles.",
 			"orderHint": "Faites glisser la poignée pour réordonner. Une section vide reste masquée sur le site tant qu'elle n'a pas de contenu.",
 			"saved": "Sections enregistrées.",
 			"invalid": "Certains champs sont à corriger : les sections concernées sont ouvertes.",
-			"save": "Enregistrer",
-			"viewSite": "Voir le site",
 			"editContent": "Modifier le contenu",
 			"show": "Afficher sur le site",
 			"edit": "Modifier",
@@ -1630,7 +1630,14 @@
 			"filesProofing": "Le client voit les galeries partagées en aperçu pour faire son choix. Originaux et téléchargements à la livraison, une fois payé.",
 			"filesDelivered": "Livré : le client peut voir et télécharger les originaux.",
 			"fromBooking": "Issu d'une réservation",
-			"importFiles": "Importer des fichiers"
+			"importFiles": "Importer des fichiers",
+			"auto": {
+				"label": "Automatique",
+				"scope": "S’applique à tous vos projets",
+				"enabled": "Les projets avancent désormais tout seuls.",
+				"disabled": "Les projets n’avancent désormais que lorsque vous changez l’étape.",
+				"hint": "Avance tout seul : réservation confirmée → Préparation, jour du shooting → Shooting, fichiers envoyés → Import, galerie organisée → Organisation, épreuves partagées → Sélection, sélection envoyée → Post-production, finales envoyées → Export, finales partagées → Validation. La livraison reste manuelle."
+			}
 		},
 		"invite": {
 			"prompt": "Inviter le client par e-mail ou téléphone :",
@@ -1730,7 +1737,8 @@
 				"discard": "Abandonner",
 				"discarded": "Envoi abandonné."
 			},
-			"dropHintProofs": "Photos (JPEG, PNG, WebP). Seule une copie légère (~300 Ko) est envoyée : vos originaux restent sur votre ordinateur."
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Seule une copie légère (~300 Ko) est envoyée : vos originaux restent sur votre ordinateur.",
+			"stageAutoHint": "Le projet passe à l’étape Import dès l’arrivée du premier fichier."
 		}
 	},
 	"Bookings": {

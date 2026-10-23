@@ -6,6 +6,7 @@ import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { dayKeyIn, zonedToIso } from "@/services/calendar/dates";
+import { advanceProjectStage } from "@/services/projects/auto-stage";
 import { inviteToProject } from "@/services/projects/invitations";
 import { bookingCompleteness } from "./completeness";
 import { CONFIRMED_WITHOUT_CLIENT } from "./options";
@@ -131,6 +132,8 @@ export async function confirmBooking(
 		return project.id;
 	});
 	if (!projectId) return fail("alreadyConfirmed");
+	// The booking is settled: the project starts at preparation.
+	await advanceProjectStage(projectId, "PREP");
 
 	// The project exists either way; a failed invite can be retried from it.
 	// Without an email or phone number there is no one to invite.

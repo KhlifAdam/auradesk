@@ -12,6 +12,7 @@ import {
 	getPrivateViewUrl,
 	readPrivateObjectHead,
 } from "@/lib/storage/r2-private";
+import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
 import { idSchema } from "@/services/shared/schemas";
@@ -143,6 +144,7 @@ export async function organizeGallery(input: unknown): Promise<ActionResult> {
 	});
 	if (error) return fail(error);
 
+	await advanceForGallery(galleryId, "organized");
 	revalidateClientWork();
 	return ok();
 }

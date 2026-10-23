@@ -3,29 +3,21 @@
 import { Eye } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { previewQuery } from "@/services/preview/preview-params";
-import { type AppearanceValues, designSchema } from "@/services/studio/schemas";
-import type { StudioData } from "@/services/studio/types";
+import type { SectionKind } from "@/services/site-sections/schemas";
 import { LiveSitePreview } from "./live-site-preview";
 
 /** Live miniature of the site with the current (unsaved) choices. */
-export function AppearancePreviewPanel({ studio }: { studio: StudioData }) {
+export function AppearancePreviewPanel({
+	query,
+	focus,
+}: {
+	/** Preview query string: unsaved style and, while editing, the draft. */
+	query: string;
+	/** The section to bring into view. */
+	focus?: SectionKind;
+}) {
 	const t = useTranslations("Site.appearance.preview");
-	const values = useFormContext<AppearanceValues>().watch();
-	const accent = designSchema.shape.accentColor.safeParse(values.accentColor)
-		.success
-		? values.accentColor
-		: studio.accentColor;
-
-	const query = previewQuery({
-		template: values.template,
-		accent,
-		font: values.fontPair,
-		mode: values.themeMode,
-		lang: values.defaultLocale,
-	});
 
 	return (
 		<div className="flex flex-col gap-2 xl:sticky xl:top-5 xl:self-start">
@@ -45,7 +37,7 @@ export function AppearancePreviewPanel({ studio }: { studio: StudioData }) {
 					</Link>
 				</Button>
 			</div>
-			<LiveSitePreview src={`/preview/frame?${query}`} />
+			<LiveSitePreview src={`/preview/frame?${query}`} focus={focus} />
 			<p className="text-[11px] text-muted-foreground">{t("hint")}</p>
 		</div>
 	);

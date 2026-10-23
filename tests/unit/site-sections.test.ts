@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	normalizeDraftSections,
 	normalizeSections,
 	sectionMediaIds,
 } from "@/services/site-sections/normalize";
@@ -72,6 +73,55 @@ describe("sectionMediaIds", () => {
 			},
 		]);
 		expect(sectionMediaIds(sections).sort()).toEqual(["m1", "m2"]);
+	});
+});
+
+describe("normalizeDraftSections", () => {
+	const find = <K extends string>(raw: unknown, kind: K) =>
+		normalizeDraftSections(raw).find((section) => section.kind === kind);
+
+	it("keeps the finished items of a half-edited list", () => {
+		const faq = find(
+			[
+				{
+					kind: "faq",
+					enabled: true,
+					title: "",
+					items: [
+						{ question: "Do you travel?", answer: "Yes" },
+						{ question: "Still typing", answer: "" },
+					],
+				},
+			],
+			"faq",
+		);
+		expect(faq && "items" in faq && faq.items).toEqual([
+			{ question: "Do you travel?", answer: "Yes" },
+		]);
+	});
+
+	it("blanks an unfinished video link instead of dropping the section", () => {
+		const showreel = find(
+			[
+				{
+					kind: "showreel",
+					enabled: false,
+					title: "Reel",
+					mediaId: null,
+					videoUrl: "https://you",
+				},
+			],
+			"showreel",
+		);
+		expect(showreel).toMatchObject({
+			enabled: false,
+			title: "Reel",
+			videoUrl: "",
+		});
+	});
+
+	it("still returns the full layout for junk", () => {
+		expect(normalizeDraftSections("junk")).toHaveLength(SECTION_KINDS.length);
 	});
 });
 

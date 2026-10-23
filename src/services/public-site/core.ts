@@ -4,29 +4,13 @@ import { unstable_cache } from "next/cache";
 import type { Media } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { PUBLIC_SITE_TAG } from "@/lib/public-site/cache";
-import { publicUrl } from "@/lib/storage/r2";
 import { MAX_PACKAGES } from "@/services/packages/schemas";
 import { MAX_ALBUMS } from "@/services/portfolio/schemas";
-import {
-	normalizeSections,
-	sectionMediaIds,
-} from "@/services/site-sections/normalize";
+import { normalizeSections } from "@/services/site-sections/normalize";
 import { toSocials } from "@/services/studio/queries";
-import { resolveSiteSections } from "./sections";
-import type { SiteAlbum, SiteData, SiteMedia, SitePackage } from "./types";
-
-const FALLBACK_SIZE = { width: 1500, height: 1000 };
-
-function toSiteMedia(media: Media): SiteMedia {
-	return {
-		id: media.id,
-		type: media.type,
-		url: publicUrl(media.key),
-		alt: media.alt ?? "",
-		width: media.width ?? FALLBACK_SIZE.width,
-		height: media.height ?? FALLBACK_SIZE.height,
-	};
-}
+import { loadSiteBlocks } from "./sections";
+import { toSiteMedia } from "./site-media";
+import type { SiteAlbum, SiteData, SitePackage } from "./types";
 
 const orNull = (media: Media | null) => (media ? toSiteMedia(media) : null);
 
@@ -50,7 +34,7 @@ export const fetchSiteCore = unstable_cache(
 		if (!studio) return null;
 
 		const sections = normalizeSections(studio.sections);
-		const [albums, packages, sectionMedia] = await Promise.all([
+		const [albums, packages, blocks] = await Promise.all([
 			db.album.findMany({
 				where: { photographerId, published: true },
 				orderBy: { position: "asc" },
@@ -66,9 +50,7 @@ export const fetchSiteCore = unstable_cache(
 				take: MAX_PACKAGES,
 				include: { cover: true },
 			}),
-			db.media.findMany({
-				where: { id: { in: sectionMediaIds(sections) }, photographerId },
-			}),
+			loadSiteBlocks(photographerId, sections),
 		]);
 
 		const siteAlbums: SiteAlbum[] = albums
@@ -118,10 +100,7 @@ export const fetchSiteCore = unstable_cache(
 			},
 			albums: siteAlbums,
 			packages: sitePackages,
-			sections: resolveSiteSections(
-				sections,
-				new Map(sectionMedia.map((media) => [media.id, toSiteMedia(media)])),
-			),
+			sections: blocks,
 			locales: studio.locales,
 			defaultLocale: studio.defaultLocale,
 		};

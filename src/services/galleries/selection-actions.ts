@@ -5,6 +5,7 @@ import { requireClient } from "@/lib/auth/require-client";
 import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendSelectionSubmittedEmail } from "@/lib/mail/send-client-notices";
+import { advanceProjectStage } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
 import { idSchema } from "@/services/shared/schemas";
@@ -110,6 +111,8 @@ export async function submitSelection(input: unknown): Promise<ActionResult> {
 	}).catch((error) =>
 		console.error("Failed to send selection submitted email:", error),
 	);
+	// The client has chosen: editing can start.
+	await advanceProjectStage(project.id, "POST_PRODUCTION");
 
 	revalidateClientWork();
 	return ok();

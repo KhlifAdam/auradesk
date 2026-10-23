@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LOCALES } from "@/i18n/config";
+import { SECTION_KINDS } from "@/services/site-sections/schemas";
 import {
 	FONT_PAIRS,
 	SITE_TEMPLATES,
@@ -22,6 +23,14 @@ export const previewParamsSchema = z.object({
 	font: z.enum(FONT_PAIRS).optional().catch(undefined),
 	mode: z.enum(THEME_MODES).optional().catch(undefined),
 	lang: z.enum(LOCALES).optional().catch(undefined),
+	/** Set while sections are being edited: show the stored draft. */
+	draft: z
+		.string()
+		.regex(/^d{1,15}$/)
+		.optional()
+		.catch(undefined),
+	/** A section to scroll the preview to, e.g. the one being edited. */
+	focus: z.enum(SECTION_KINDS).optional().catch(undefined),
 });
 
 export type PreviewParams = z.infer<typeof previewParamsSchema>;

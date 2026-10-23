@@ -175,10 +175,16 @@ model Studio {
   galleryRetentionMonths Int?         @map("gallery_retention_months")
   /// Removes GPS position from JPEG originals while they upload.
   stripGalleryLocation   Boolean      @default(false) @map("strip_gallery_location")
+  /// Projects move forward through the workflow on their own as work happens
+  /// (photos imported, gallery shared, selection sent…). See projects/auto-stage.
+  autoAdvanceStages      Boolean      @default(true) @map("auto_advance_stages")
   /// Order, visibility and content of the public site's sections (clients,
   /// testimonials, stats, showreel, FAQ…). Validated by services/site-sections.
   sections               Json         @default("[]")
-  createdAt              DateTime     @default(now()) @map("created_at")
+  /// Unsaved sections being edited, shown only in the dashboard's live
+  /// preview. Cleared when the sections are saved.
+  sectionsDraft          Json?        @map("sections_draft")
+  createdAt             DateTime     @default(now()) @map("created_at")
   updatedAt              DateTime     @updatedAt @map("updated_at")
 
   photographer User   @relation(fields: [photographerId], references: [id], onDelete: Cascade)

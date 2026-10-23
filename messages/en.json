@@ -21,8 +21,7 @@
 			"invoices": "Invoices",
 			"equipment": "Equipment",
 			"team": "Team",
-			"privacy": "Privacy & data",
-			"sections": "Sections"
+			"privacy": "Privacy & data"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -436,16 +435,17 @@
 				"description": "Visitors can switch between the languages you enable.",
 				"isDefault": "Default",
 				"makeDefault": "Make default"
-			}
+			},
+			"tabs": {
+				"style": "Style",
+				"sections": "Sections"
+			},
+			"viewSite": "View site"
 		},
 		"sections": {
-			"title": "Sections",
-			"description": "Choose which sections your site shows, in which order, and fill the new ones.",
 			"orderHint": "Drag the grip to reorder. Empty sections stay hidden on the site until they have content.",
 			"saved": "Sections saved.",
 			"invalid": "Some fields need attention: the sections concerned are open.",
-			"save": "Save",
-			"viewSite": "View site",
 			"editContent": "Edit content",
 			"show": "Show on the site",
 			"edit": "Edit",
@@ -1630,7 +1630,14 @@
 			"filesProofing": "The client sees shared galleries as previews to choose from. Originals and downloads open once delivered and paid.",
 			"filesDelivered": "Delivered: the client can view and download the originals.",
 			"fromBooking": "From a booking",
-			"importFiles": "Import files"
+			"importFiles": "Import files",
+			"auto": {
+				"label": "Automatic",
+				"scope": "Applies to all your projects",
+				"enabled": "Projects now move forward on their own.",
+				"disabled": "Projects now only move when you change the stage.",
+				"hint": "Moves forward on its own: confirmed booking → Prep, shoot day → Shooting, files uploaded → Import, gallery organized → Organization, proofs shared → Selection, selection sent → Post-production, finals uploaded → Export, finals shared → Validation. Delivery stays manual."
+			}
 		},
 		"invite": {
 			"prompt": "Invite the client by email or phone:",
@@ -1730,7 +1737,8 @@
 				"discard": "Discard",
 				"discarded": "Upload discarded."
 			},
-			"dropHintProofs": "Photos (JPEG, PNG, WebP). Only a light copy (~300 KB) is sent: your originals stay on your computer."
+			"dropHintProofs": "Photos (JPEG, PNG, WebP). Only a light copy (~300 KB) is sent: your originals stay on your computer.",
+			"stageAutoHint": "The project moves to the Import step as soon as the first file arrives."
 		}
 	},
 	"Bookings": {

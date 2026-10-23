@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { listInterruptedUploads } from "@/services/galleries/upload-queries";
+import { isAutoAdvanceOn } from "@/services/projects/auto-stage";
 import { getProject } from "@/services/projects/queries";
 import { stageIndex } from "@/services/projects/stages";
 
@@ -25,9 +26,10 @@ export default async function ImportPage({
 	const { projectId } = await params;
 	const { gallery } = await searchParams;
 	const { photographerId } = await requirePhotographer();
-	const [project, interrupted] = await Promise.all([
+	const [project, interrupted, autoAdvance] = await Promise.all([
 		getProject(photographerId, projectId),
 		listInterruptedUploads(photographerId, projectId),
+		isAutoAdvanceOn(photographerId),
 	]);
 	if (!project) notFound();
 
@@ -52,7 +54,7 @@ export default async function ImportPage({
 			</Link>
 			<PageHeader title={t("title")} description={project.title} />
 			{stageIndex(project.stage) < stageIndex("IMPORT") && (
-				<ImportStageHint projectId={project.id} />
+				<ImportStageHint projectId={project.id} auto={autoAdvance} />
 			)}
 			<ProjectImporter
 				projectId={project.id}

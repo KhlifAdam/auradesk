@@ -53,6 +53,36 @@ export function normalizeSections(raw: unknown): SiteSectionConfig[] {
 	return sections;
 }
 
+const isValid = (entry: unknown) => sectionSchema.safeParse(entry).success;
+
+/**
+ * Keeps as much of a half-edited section as is valid: a bad heading or video
+ * link is blanked and unfinished items are left out, instead of losing the
+ * whole section.
+ */
+function salvageSection(raw: unknown): unknown {
+	if (!raw || typeof raw !== "object") return raw;
+	const { items, ...rest } = raw as Record<string, unknown>;
+	const entry: Record<string, unknown> = Array.isArray(items)
+		? { ...rest, items: [] }
+		: rest;
+	const parsed = sectionSchema.safeParse(entry);
+	for (const issue of parsed.error?.issues ?? []) {
+		const field = issue.path[0];
+		if (field === "title" || field === "videoUrl") entry[field] = "";
+	}
+	if (!Array.isArray(items)) return entry;
+	return {
+		...entry,
+		items: items.filter((item) => isValid({ ...entry, items: [item] })),
+	};
+}
+
+/** Like `normalizeSections`, for an unsaved draft shown in the live preview. */
+export function normalizeDraftSections(raw: unknown): SiteSectionConfig[] {
+	return normalizeSections(Array.isArray(raw) ? raw.map(salvageSection) : raw);
+}
+
 /** Every media id the sections point to (logos, photos, video). */
 export function sectionMediaIds(sections: SiteSectionConfig[]): string[] {
 	const ids = sections.flatMap((section) => {

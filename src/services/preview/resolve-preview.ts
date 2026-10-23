@@ -6,6 +6,7 @@ import type { SiteDesign } from "@/services/studio/schemas";
 import { buildDemoSite } from "../public-site/demo";
 import { hasSiteContent, loadSiteData } from "../public-site/queries";
 import type { SiteData } from "../public-site/types";
+import { loadDraftBlocks } from "./draft-sections";
 import { type PreviewParams, previewParamsSchema } from "./preview-params";
 
 const DEFAULT_DESIGN: SiteDesign = {
@@ -38,7 +39,7 @@ export async function resolvePreview(
 	const data = params.data ?? (hasContent ? "mine" : "demo");
 	const useReal = data === "mine" && real !== null;
 
-	const site: SiteData = useReal
+	const shown: SiteData = useReal
 		? { ...real, design }
 		: await buildDemoSite(design, {
 				// The demo speaks every language, starting with the dashboard's.
@@ -46,6 +47,10 @@ export async function resolvePreview(
 				locales: [...LOCALES],
 				defaultLocale: await getLocale(),
 			});
+
+	// Unsaved sections replace the saved ones while they are being edited.
+	const draft = params.draft ? await loadDraftBlocks(photographerId) : null;
+	const site: SiteData = draft ? { ...shown, sections: draft } : shown;
 
 	return {
 		site,
