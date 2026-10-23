@@ -2,6 +2,7 @@
 
 import {
 	Camera,
+	Contact,
 	LayoutDashboard,
 	LogOut,
 	MessageSquare,
@@ -67,6 +68,13 @@ export function PortalHeader({
 					<span className="text-sm font-semibold">{t("title")}</span>
 				</Link>
 				<div className="flex items-center gap-3">
+					<Link
+						href="/portal/studios"
+						className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+					>
+						<Contact className="h-4 w-4" />
+						<span className="hidden sm:inline">{t("studios")}</span>
+					</Link>
 					<Link
 						href="/portal/messages"
 						className="flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"

@@ -1,5 +1,6 @@
+import { SiteSections } from "../../sections/site-sections";
 import { SiteFooter } from "../../shared/site-footer";
-import { getSiteSections, hasBio } from "../../shared/site-helpers";
+import { getSiteSections } from "../../shared/site-helpers";
 import { getNavLinks } from "../../shared/site-nav";
 import type { TemplateProps } from "../types";
 import { BoldAbout } from "./about";
@@ -17,10 +18,16 @@ export async function BoldTemplate({ site }: TemplateProps) {
 		<>
 			<BoldHeader site={site} links={links} />
 			<BoldHero site={site} />
-			{site.albums.length > 0 && <BoldPortfolio albums={site.albums} />}
-			{site.packages.length > 0 && <BoldServices site={site} />}
-			{hasBio(site.studio) && <BoldAbout site={site} />}
-			<BoldContact site={site} />
+			<SiteSections
+				site={site}
+				variant="bold"
+				builtIn={{
+					portfolio: () => <BoldPortfolio albums={site.albums} />,
+					services: () => <BoldServices site={site} />,
+					about: () => <BoldAbout site={site} />,
+					contact: () => <BoldContact site={site} />,
+				}}
+			/>
 			<SiteFooter
 				site={site}
 				links={links}

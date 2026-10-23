@@ -1,25 +1,53 @@
 import type {
+	SiteBlock,
 	SiteData,
 	SiteMedia,
 	SiteStudio,
 } from "@/services/public-site/types";
 
-export type SiteSection = "portfolio" | "services" | "about" | "contact";
+/** Sections that get a link in the site's navigation. */
+const NAV_SECTIONS = [
+	"portfolio",
+	"services",
+	"about",
+	"faq",
+	"contact",
+] as const;
+
+export type SiteSection = (typeof NAV_SECTIONS)[number];
 
 export const hasBio = (studio: SiteStudio) => studio.bio.trim().length > 0;
 
-/** Sections that have content, in page order (used for nav links). */
-export function getSiteSections({
-	studio,
-	albums,
-	packages,
-}: SiteData): SiteSection[] {
-	return [
-		...(albums.length > 0 ? (["portfolio"] as const) : []),
-		...(packages.length > 0 ? (["services"] as const) : []),
-		...(hasBio(studio) ? (["about"] as const) : []),
-		"contact",
-	];
+/** Whether a section has something to show; empty ones are left out. */
+export function isShown(site: SiteData, block: SiteBlock): boolean {
+	switch (block.kind) {
+		case "portfolio":
+			return site.albums.length > 0;
+		case "services":
+			return site.packages.length > 0;
+		case "about":
+			return hasBio(site.studio);
+		case "contact":
+			return true;
+		case "showreel":
+			return Boolean(block.video || block.embedUrl);
+		default:
+			return block.items.length > 0;
+	}
+}
+
+/** The sections shown, in the photographer's order. */
+export const getShownBlocks = (site: SiteData) =>
+	site.sections.filter((block) => isShown(site, block));
+
+const isNavSection = (kind: string): kind is SiteSection =>
+	(NAV_SECTIONS as readonly string[]).includes(kind);
+
+/** Sections with a nav link, in page order. */
+export function getSiteSections(site: SiteData): SiteSection[] {
+	return getShownBlocks(site)
+		.map((block) => block.kind)
+		.filter(isNavSection);
 }
 
 export const formatLocation = ({ city, country }: SiteStudio) =>

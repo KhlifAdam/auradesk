@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { clientBookingWhere } from "@/services/portal/booking-queries";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import { CONVERSATION_PAGE_SIZE, MESSAGE_PAGE_SIZE } from "./constants";
 import type {
@@ -18,7 +19,7 @@ const partnerSelect = {
 	id: true,
 	name: true,
 	image: true,
-	studio: { select: { name: true } },
+	studio: { select: { name: true, slug: true, published: true } },
 } satisfies Prisma.UserSelect;
 
 const conversationInclude = {
@@ -36,17 +37,37 @@ const toPartner = (row: PartnerRow): Partner => ({
 	name: row.name,
 	image: row.image,
 	studioName: row.studio?.name ?? null,
+	siteSlug: row.studio?.published ? row.studio.slug : null,
 });
 
 const partnerOf = (row: ConversationRow, viewer: Viewer) =>
 	toPartner(viewer.role === "photographer" ? row.client : row.photographer);
 
-/** Whether this pair shares an accepted project: the rule for starting a chat. */
+/**
+ * Whether this pair may start a chat: they share a project, or a booking the
+ * client can see (sent to them, or asked for by them), so the details can be
+ * discussed before anything is confirmed.
+ */
 export async function canConverse(photographerId: string, clientId: string) {
 	const shared = await db.project.count({
 		where: { photographerId, clientId },
 	});
-	return shared > 0;
+	if (shared > 0) return true;
+	const client = await db.user.findUnique({
+		where: { id: clientId },
+		select: {
+			id: true,
+			email: true,
+			emailVerified: true,
+			phoneNumber: true,
+			phoneNumberVerified: true,
+		},
+	});
+	if (!client) return false;
+	const bookings = await db.booking.count({
+		where: { photographerId, ...clientBookingWhere(client) },
+	});
+	return bookings > 0;
 }
 
 /** The person to write to, if the viewer may start a chat with them. */

@@ -1,5 +1,6 @@
+import { SiteSections } from "../../sections/site-sections";
 import { SiteFooter } from "../../shared/site-footer";
-import { getSiteSections, hasBio } from "../../shared/site-helpers";
+import { getSiteSections } from "../../shared/site-helpers";
 import { getNavLinks } from "../../shared/site-nav";
 import type { TemplateProps } from "../types";
 import { MinimalAbout } from "./about";
@@ -17,10 +18,16 @@ export async function MinimalTemplate({ site }: TemplateProps) {
 		<>
 			<MinimalHeader site={site} links={links} />
 			<MinimalHero site={site} />
-			{site.albums.length > 0 && <MinimalPortfolio albums={site.albums} />}
-			{site.packages.length > 0 && <MinimalServices site={site} />}
-			{hasBio(site.studio) && <MinimalAbout site={site} />}
-			<MinimalContact site={site} />
+			<SiteSections
+				site={site}
+				variant="minimal"
+				builtIn={{
+					portfolio: () => <MinimalPortfolio albums={site.albums} />,
+					services: () => <MinimalServices site={site} />,
+					about: () => <MinimalAbout site={site} />,
+					contact: () => <MinimalContact site={site} />,
+				}}
+			/>
 			<SiteFooter site={site} links={links} />
 		</>
 	);

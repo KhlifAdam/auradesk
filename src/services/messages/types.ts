@@ -7,6 +7,8 @@ export interface Partner {
 	image: string | null;
 	/** Studio name, when the partner is a photographer. */
 	studioName: string | null;
+	/** Their public site's slug, when it is published. */
+	siteSlug: string | null;
 }
 
 export interface ChatMessage {

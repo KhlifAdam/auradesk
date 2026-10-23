@@ -4,6 +4,7 @@ import { ArrowLeft, Loader2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { Fragment, useLayoutEffect, useRef } from "react";
+import { PortfolioLink } from "@/components/portal/portfolio-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { dayKeyIn } from "@/services/calendar/dates";
@@ -67,7 +68,7 @@ export function MessageThread({
 					</Link>
 				</Button>
 				<PartnerAvatar partner={partner} />
-				<div className="min-w-0">
+				<div className="min-w-0 flex-1">
 					<p className="truncate text-sm font-medium">
 						{partner.studioName ?? partner.name}
 					</p>
@@ -77,6 +78,9 @@ export function MessageThread({
 						</p>
 					)}
 				</div>
+				{partner.siteSlug && (
+					<PortfolioLink slug={partner.siteSlug} className="h-7 shrink-0" />
+				)}
 			</header>
 			<div
 				ref={scroller}

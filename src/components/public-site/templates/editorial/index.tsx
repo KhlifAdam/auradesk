@@ -1,5 +1,6 @@
+import { SiteSections } from "../../sections/site-sections";
 import { SiteFooter } from "../../shared/site-footer";
-import { getSiteSections, hasBio } from "../../shared/site-helpers";
+import { getSiteSections } from "../../shared/site-helpers";
 import { getNavLinks } from "../../shared/site-nav";
 import type { TemplateProps } from "../types";
 import { EditorialAbout } from "./about";
@@ -17,10 +18,16 @@ export async function EditorialTemplate({ site }: TemplateProps) {
 		<>
 			<EditorialHeader site={site} links={links} />
 			<EditorialHero site={site} />
-			{site.albums.length > 0 && <EditorialPortfolio albums={site.albums} />}
-			{site.packages.length > 0 && <EditorialServices site={site} />}
-			{hasBio(site.studio) && <EditorialAbout site={site} />}
-			<EditorialContact site={site} />
+			<SiteSections
+				site={site}
+				variant="editorial"
+				builtIn={{
+					portfolio: () => <EditorialPortfolio albums={site.albums} />,
+					services: () => <EditorialServices site={site} />,
+					about: () => <EditorialAbout site={site} />,
+					contact: () => <EditorialContact site={site} />,
+				}}
+			/>
 			<SiteFooter site={site} links={links} brandClassName="text-2xl italic" />
 		</>
 	);

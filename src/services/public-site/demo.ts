@@ -139,5 +139,37 @@ export async function buildDemoSite(
 		i18n,
 		albums,
 		packages,
+		sections: [
+			{ kind: "portfolio", title: "" },
+			{
+				kind: "stats",
+				title: "",
+				items: (["s1", "s2", "s3", "s4"] as const).map((key) => ({
+					value: t(`stats.${key}.value`),
+					label: t(`stats.${key}.label`),
+				})),
+			},
+			{ kind: "services", title: "" },
+			{
+				kind: "testimonials",
+				title: "",
+				items: (["t1", "t2", "t3"] as const).map((key, index) => ({
+					quote: t(`testimonials.${key}.quote`),
+					author: t(`testimonials.${key}.author`),
+					role: t(`testimonials.${key}.role`),
+					photo: photo("portraits", index, t(`testimonials.${key}.author`)),
+				})),
+			},
+			{ kind: "about", title: "" },
+			{
+				kind: "faq",
+				title: "",
+				items: (["f1", "f2", "f3"] as const).map((key) => ({
+					question: t(`faq.${key}.question`),
+					answer: t(`faq.${key}.answer`),
+				})),
+			},
+			{ kind: "contact", title: "" },
+		],
 	};
 }

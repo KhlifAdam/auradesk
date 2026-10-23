@@ -175,6 +175,9 @@ model Studio {
   galleryRetentionMonths Int?         @map("gallery_retention_months")
   /// Removes GPS position from JPEG originals while they upload.
   stripGalleryLocation   Boolean      @default(false) @map("strip_gallery_location")
+  /// Order, visibility and content of the public site's sections (clients,
+  /// testimonials, stats, showreel, FAQ…). Validated by services/site-sections.
+  sections               Json         @default("[]")
   createdAt              DateTime     @default(now()) @map("created_at")
   updatedAt              DateTime     @updatedAt @map("updated_at")
 

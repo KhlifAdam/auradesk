@@ -7,7 +7,12 @@ import { PUBLIC_SITE_TAG } from "@/lib/public-site/cache";
 import { publicUrl } from "@/lib/storage/r2";
 import { MAX_PACKAGES } from "@/services/packages/schemas";
 import { MAX_ALBUMS } from "@/services/portfolio/schemas";
+import {
+	normalizeSections,
+	sectionMediaIds,
+} from "@/services/site-sections/normalize";
 import { toSocials } from "@/services/studio/queries";
+import { resolveSiteSections } from "./sections";
 import type { SiteAlbum, SiteData, SiteMedia, SitePackage } from "./types";
 
 const FALLBACK_SIZE = { width: 1500, height: 1000 };
@@ -44,7 +49,8 @@ export const fetchSiteCore = unstable_cache(
 		});
 		if (!studio) return null;
 
-		const [albums, packages] = await Promise.all([
+		const sections = normalizeSections(studio.sections);
+		const [albums, packages, sectionMedia] = await Promise.all([
 			db.album.findMany({
 				where: { photographerId, published: true },
 				orderBy: { position: "asc" },
@@ -59,6 +65,9 @@ export const fetchSiteCore = unstable_cache(
 				orderBy: { position: "asc" },
 				take: MAX_PACKAGES,
 				include: { cover: true },
+			}),
+			db.media.findMany({
+				where: { id: { in: sectionMediaIds(sections) }, photographerId },
 			}),
 		]);
 
@@ -109,11 +118,15 @@ export const fetchSiteCore = unstable_cache(
 			},
 			albums: siteAlbums,
 			packages: sitePackages,
+			sections: resolveSiteSections(
+				sections,
+				new Map(sectionMedia.map((media) => [media.id, toSiteMedia(media)])),
+			),
 			locales: studio.locales,
 			defaultLocale: studio.defaultLocale,
 		};
 	},
 	// Bump when the cached shape changes, so old entries are never reused.
-	["public-site-core-v2"],
+	["public-site-core-v3"],
 	{ tags: [PUBLIC_SITE_TAG] },
 );

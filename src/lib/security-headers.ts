@@ -1,6 +1,8 @@
 // HTTP security headers sent with every response (see next.config.ts).
 // Plain module, no aliases: next.config.ts loads it before the app's paths.
 
+import { VIDEO_EMBED_ORIGINS } from "../services/site-sections/video-embed";
+
 const isDev = process.env.NODE_ENV === "development";
 
 /** The public media bucket (portfolio, logos). */
@@ -29,7 +31,8 @@ const contentSecurityPolicy = [
 	"font-src 'self' data:",
 	`connect-src 'self' ${storage}${isDev ? " ws: wss:" : ""}`,
 	"worker-src 'self' blob:",
-	"frame-src 'self'",
+	// Showreels may embed a YouTube or Vimeo player.
+	`frame-src 'self' ${VIDEO_EMBED_ORIGINS.join(" ")}`,
 	"object-src 'none'",
 	"base-uri 'self'",
 	"form-action 'self'",

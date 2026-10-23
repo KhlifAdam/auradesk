@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -6,6 +6,8 @@ import { BookingReadonly } from "@/components/portal/bookings/booking-readonly";
 import { requestState } from "@/components/portal/bookings/booking-request-card";
 import { ClientBookingAnswer } from "@/components/portal/bookings/client-booking-answer";
 import { ClientBookingForm } from "@/components/portal/bookings/client-booking-form";
+import { PortfolioLink } from "@/components/portal/portfolio-link";
+import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
 import { cn } from "@/lib/utils";
 import { bookingCompleteness } from "@/services/bookings/completeness";
@@ -17,6 +19,7 @@ export default async function PortalBookingPage({
 	params: Promise<{ bookingId: string }>;
 }) {
 	const t = await getTranslations("Portal.bookings");
+	const tStudios = await getTranslations("Portal.studios");
 	const { bookingId } = await params;
 	const { session } = await requireClient();
 	const booking = await getPortalBooking(session.user, bookingId);
@@ -51,6 +54,20 @@ export default async function PortalBookingPage({
 				>
 					{t(`state.${state.key}`)}
 				</p>
+			</div>
+			<div className="flex flex-wrap gap-2">
+				{booking.siteSlug && <PortfolioLink slug={booking.siteSlug} />}
+				<Button
+					asChild
+					variant="outline"
+					size="sm"
+					className="h-8 gap-1.5 text-xs"
+				>
+					<Link href={`/portal/messages?studio=${booking.photographerId}`}>
+						<MessageSquare className="h-3.5 w-3.5" />
+						{tStudios("message")}
+					</Link>
+				</Button>
 			</div>
 			{booking.status === "DECLINED" && booking.statusReason && (
 				<p className="max-w-3xl rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm">

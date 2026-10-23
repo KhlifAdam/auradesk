@@ -21,7 +21,8 @@
 			"invoices": "Factures",
 			"equipment": "Matériel",
 			"team": "Équipe",
-			"privacy": "Confidentialité"
+			"privacy": "Confidentialité",
+			"sections": "Sections"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -241,7 +242,8 @@
 		"advanceTooHigh": "L'avance ne peut pas dépasser le prix.",
 		"deliveryBeforeEvent": "La date limite ne peut pas précéder la date.",
 		"invalidPhone": "Saisissez un numéro de téléphone valide.",
-		"invalidPrefix": "Utilisez uniquement des lettres, chiffres, tirets ou tirets bas."
+		"invalidPrefix": "Utilisez uniquement des lettres, chiffres, tirets ou tirets bas.",
+		"invalidVideoUrl": "Collez un lien YouTube ou Vimeo."
 	},
 	"Media": {
 		"title": "Médiathèque",
@@ -435,6 +437,97 @@
 				"isDefault": "Par défaut",
 				"makeDefault": "Définir par défaut"
 			}
+		},
+		"sections": {
+			"title": "Sections",
+			"description": "Choisissez les sections affichées sur votre site, leur ordre, et remplissez les nouvelles.",
+			"orderHint": "Faites glisser la poignée pour réordonner. Une section vide reste masquée sur le site tant qu'elle n'a pas de contenu.",
+			"saved": "Sections enregistrées.",
+			"invalid": "Certains champs sont à corriger : les sections concernées sont ouvertes.",
+			"save": "Enregistrer",
+			"viewSite": "Voir le site",
+			"editContent": "Modifier le contenu",
+			"show": "Afficher sur le site",
+			"edit": "Modifier",
+			"items": {
+				"up": "Monter",
+				"down": "Descendre",
+				"remove": "Supprimer",
+				"count": "{count} / {max}"
+			},
+			"fields": {
+				"title": "Titre",
+				"titleHint": "Laissez vide pour garder le titre par défaut.",
+				"logo": "Logo",
+				"clientName": "Nom du client",
+				"clientUrl": "Site web (facultatif)",
+				"quote": "Citation",
+				"author": "Nom",
+				"role": "Rôle ou occasion (facultatif)",
+				"rolePlaceholder": "Mariés à Tunis",
+				"photo": "Photo (facultatif)",
+				"value": "Chiffre",
+				"label": "Libellé",
+				"labelPlaceholder": "Mariages",
+				"question": "Question",
+				"answer": "Réponse",
+				"video": "Vidéo de votre médiathèque",
+				"videoUrl": "Ou un lien YouTube / Vimeo",
+				"videoUrlHint": "Utilisé si aucune vidéo de la médiathèque n'est choisie.",
+				"add": {
+					"clients": "Ajouter un client",
+					"testimonials": "Ajouter un témoignage",
+					"stats": "Ajouter un chiffre",
+					"faq": "Ajouter une question"
+				}
+			},
+			"kinds": {
+				"portfolio": {
+					"name": "Portfolio",
+					"hint": "Vos albums",
+					"title": "Portfolio"
+				},
+				"clients": {
+					"name": "Clients de confiance",
+					"hint": "Logos de marques en bandeau défilant",
+					"title": "Ils me font confiance"
+				},
+				"services": {
+					"name": "Prestations",
+					"hint": "Vos formules",
+					"title": "Prestations"
+				},
+				"stats": {
+					"name": "Chiffres clés",
+					"hint": "Grands chiffres : mariages, années, pays…",
+					"title": "Quelques chiffres"
+				},
+				"testimonials": {
+					"name": "Témoignages",
+					"hint": "Ce que disent vos clients",
+					"title": "Ce qu'en disent mes clients"
+				},
+				"showreel": {
+					"name": "Showreel",
+					"hint": "Une vidéo pleine largeur",
+					"title": "Le travail en mouvement"
+				},
+				"about": {
+					"name": "À propos",
+					"hint": "Votre bio, depuis le profil du site",
+					"title": "À propos"
+				},
+				"faq": {
+					"name": "FAQ",
+					"hint": "Questions et réponses",
+					"title": "Questions fréquentes"
+				},
+				"contact": {
+					"name": "Contact",
+					"hint": "Coordonnées et formulaire de réservation",
+					"title": "Contact"
+				}
+			}
 		}
 	},
 	"Portfolio": {
@@ -549,7 +642,8 @@
 			"portfolio": "Portfolio",
 			"services": "Prestations",
 			"about": "À propos",
-			"contact": "Contact"
+			"contact": "Contact",
+			"faq": "FAQ"
 		},
 		"hero": {
 			"cta": "Réserver une séance",
@@ -660,6 +754,55 @@
 					"d3": "Musique sous licence",
 					"d4": "Teaser pour les réseaux"
 				}
+			},
+			"stats": {
+				"s1": {
+					"value": "350+",
+					"label": "Mariages"
+				},
+				"s2": {
+					"value": "12",
+					"label": "Années derrière l'objectif"
+				},
+				"s3": {
+					"value": "18",
+					"label": "Pays"
+				},
+				"s4": {
+					"value": "4,9/5",
+					"label": "Note des clients"
+				}
+			},
+			"testimonials": {
+				"t1": {
+					"quote": "Nous revivons notre mariage à chaque fois que nous ouvrons l'album. Toutes les émotions sont là, même celles que nous n'avions pas vues ce jour-là.",
+					"author": "Sarah & Karim",
+					"role": "Mariés à Hammamet"
+				},
+				"t2": {
+					"quote": "Calme, discret et incroyablement créatif. Les portraits de notre nouvelle collection ont dépassé tout ce que nous imaginions.",
+					"author": "Leïla Ben Salah",
+					"role": "Directrice artistique"
+				},
+				"t3": {
+					"quote": "Livré à temps, parfaitement organisé, et les photos de famille ont fait pleurer de joie ma grand-mère.",
+					"author": "Youssef Trabelsi",
+					"role": "Séance en famille"
+				}
+			},
+			"faq": {
+				"f1": {
+					"question": "Combien de temps à l'avance faut-il réserver ?",
+					"answer": "Les mariages se réservent en général 6 à 12 mois à l'avance. Portraits et événements peuvent souvent être organisés en quelques semaines."
+				},
+				"f2": {
+					"question": "Quand vais-je recevoir mes photos ?",
+					"answer": "Un aperçu sous une semaine, et la galerie privée complète sous 4 à 6 semaines, prête à télécharger en haute résolution."
+				},
+				"f3": {
+					"question": "Vous déplacez-vous ?",
+					"answer": "Oui, partout dans le pays et à l'étranger. Les frais de déplacement figurent dans un devis clair avant la réservation."
+				}
 			}
 		},
 		"controls": {
@@ -686,6 +829,29 @@
 			"sentTitle": "Merci !",
 			"failed": "Nous n'avons pas pu envoyer votre demande. Réessayez.",
 			"close": "Fermer"
+		},
+		"sections": {
+			"clients": {
+				"eyebrow": "Références",
+				"title": "Ils me font confiance"
+			},
+			"stats": {
+				"eyebrow": "En chiffres",
+				"title": "Quelques chiffres"
+			},
+			"testimonials": {
+				"eyebrow": "Témoignages",
+				"title": "Ce qu'en disent mes clients"
+			},
+			"showreel": {
+				"eyebrow": "Showreel",
+				"title": "Le travail en mouvement"
+			},
+			"faq": {
+				"eyebrow": "FAQ",
+				"title": "Questions fréquentes",
+				"subtitle": "Tout ce que vous voudrez savoir avant de travailler ensemble."
+			}
 		}
 	},
 	"Auth": {
@@ -2566,7 +2732,8 @@
 			"messages": "Messagerie",
 			"account": "Mon compte",
 			"profile": "Profil",
-			"settings": "Paramètres"
+			"settings": "Paramètres",
+			"studios": "Mes photographes"
 		},
 		"projects": {
 			"greeting": "Bonjour {name}",
@@ -2782,6 +2949,19 @@
 			"created": "Lien créé : copiez-le et envoyez-le.",
 			"updated": "Lien mis à jour.",
 			"stopped": "Partage arrêté : le lien ne fonctionne plus."
+		},
+		"studios": {
+			"title": "Mes photographes",
+			"description": "Les studios avec qui vous travaillez ou à qui vous avez demandé une réservation. Consultez leur portfolio, écrivez-leur ou demandez une nouvelle prestation.",
+			"back": "Retour à mon espace",
+			"portfolio": "Voir le portfolio",
+			"message": "Écrire",
+			"counts": "{projects, plural, =0 {Aucun projet} one {# projet} other {# projets}} · {bookings, plural, =0 {aucune demande} one {# demande} other {# demandes}}",
+			"lastActivity": "Dernière activité le {date}",
+			"empty": {
+				"title": "Aucun photographe pour l'instant",
+				"description": "Les studios apparaissent ici dès que vous leur envoyez une demande depuis leur site, ou qu'ils vous envoient une réservation ou vous invitent à un projet."
+			}
 		}
 	},
 	"Privacy": {

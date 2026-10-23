@@ -44,6 +44,7 @@ export async function getPortalHome(user: ClientIdentity) {
 			db.booking.count({
 				where: {
 					...clientBookingWhere(user),
+					sentToClientAt: { not: null },
 					status: { in: [...OPEN_STATUSES] },
 					clientAcceptedAt: null,
 					source: { not: "PORTAL" },

@@ -312,3 +312,32 @@
 @utility site-body {
 	font-family: var(--s-body);
 }
+
+/* Endless logo strip: the track holds the list twice and slides by half. */
+@keyframes site-marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+@utility site-marquee {
+	animation: site-marquee var(--marquee-duration, 40s) linear infinite;
+	&:hover {
+		animation-play-state: paused;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+/* Fades the strip's ends into the page. */
+@utility site-marquee-mask {
+	mask-image: linear-gradient(
+		to right,
+		transparent,
+		black 8%,
+		black 92%,
+		transparent
+	);
+}

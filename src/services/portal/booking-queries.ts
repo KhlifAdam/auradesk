@@ -16,20 +16,33 @@ export interface ClientIdentity {
 	phoneNumberVerified?: boolean | null;
 }
 
+/** Requests the client made themselves, from the public site or the portal. */
+const CLIENT_SOURCES = ["WEBSITE", "PORTAL"] as const;
+
 /**
- * Bookings a client may open: those sent to them, linked to their account or
- * addressed to an email or phone number they have verified.
+ * Bookings a client may open: those the studio sent them and those they asked
+ * for themselves, linked to their account or addressed to an email or phone
+ * number they have verified.
  */
 export function clientBookingWhere(
 	user: ClientIdentity,
 ): Prisma.BookingWhereInput {
 	const { email, phone } = verifiedContact(user);
 	return {
-		sentToClientAt: { not: null },
-		OR: [
-			{ clientId: user.id },
-			...(email ? [{ clientEmail: email.toLowerCase() }] : []),
-			...(phone ? [{ clientPhone: phone }] : []),
+		AND: [
+			{
+				OR: [
+					{ sentToClientAt: { not: null } },
+					{ source: { in: [...CLIENT_SOURCES] } },
+				],
+			},
+			{
+				OR: [
+					{ clientId: user.id },
+					...(email ? [{ clientEmail: email.toLowerCase() }] : []),
+					...(phone ? [{ clientPhone: phone }] : []),
+				],
+			},
 		],
 	};
 }
@@ -43,12 +56,14 @@ export interface PortalBookingSummary {
 	desiredDate: string | null;
 	proposedPrice: number | null;
 	accepted: boolean;
-	/** Asked by the client from their space, not sent by the studio. */
+	/** Asked by the client (public site or portal), not sent by the studio. */
 	requestedByClient: boolean;
 }
 
 export interface PortalBookingDetail extends PortalBookingSummary {
 	photographerId: string;
+	/** The studio's public site, when it is published. */
+	siteSlug: string | null;
 	clientName: string;
 	clientPhone: string;
 	mediaType: MediaType;
@@ -67,7 +82,12 @@ export interface PortalBookingDetail extends PortalBookingSummary {
 }
 
 const include = {
-	photographer: { select: { name: true, studio: { select: { name: true } } } },
+	photographer: {
+		select: {
+			name: true,
+			studio: { select: { name: true, slug: true, published: true } },
+		},
+	},
 	project: { select: { id: true, clientId: true } },
 } satisfies Prisma.BookingInclude;
 
@@ -86,20 +106,22 @@ function toSummary(row: Row): PortalBookingSummary {
 		desiredDate: row.desiredDate?.toISOString() ?? null,
 		proposedPrice: toNumber(row.proposedPrice),
 		accepted: row.clientAcceptedAt !== null,
-		requestedByClient: row.source === "PORTAL",
+		requestedByClient: (CLIENT_SOURCES as readonly string[]).includes(
+			row.source,
+		),
 	};
 }
 
 const BOOKINGS_LIMIT = 20;
 
-/** The requests waiting for this client, most recently sent first. */
+/** The client's requests, most recently changed first. */
 export async function listPortalBookings(
 	user: ClientIdentity,
 ): Promise<PortalBookingSummary[]> {
 	const rows = await db.booking.findMany({
 		where: clientBookingWhere(user),
 		include,
-		orderBy: [{ sentToClientAt: "desc" }, { id: "asc" }],
+		orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
 		take: BOOKINGS_LIMIT,
 	});
 	return rows.map(toSummary);
@@ -118,6 +140,9 @@ export async function getPortalBooking(
 	return {
 		...toSummary(row),
 		photographerId: row.photographerId,
+		siteSlug: row.photographer.studio?.published
+			? row.photographer.studio.slug
+			: null,
 		clientName: row.clientName,
 		clientPhone: row.clientPhone ?? "",
 		mediaType: row.mediaType,
