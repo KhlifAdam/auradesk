@@ -1040,9 +1040,9 @@
 			"titleStart": "Toute votre activité photo,",
 			"titleAccent": "au même endroit.",
 			"subtitle": "Gérez vos réservations, livrez de superbes galeries à vos clients et automatisez votre flux de travail grâce à l'IA.",
-			"startTrial": "Essai gratuit",
-			"watchDemo": "Voir la démo",
-			"trialNote": "14 jours gratuits · Sans carte bancaire",
+			"startTrial": "Commencer le mois offert",
+			"watchDemo": "Voir un site de démo",
+			"trialNote": "Premier mois offert · Sans carte bancaire",
 			"mock": {
 				"path": "auradesk / aperçu",
 				"studio": "Studio North",
@@ -1101,7 +1101,7 @@
 			},
 			"invoicing": {
 				"label": "Facturation automatisée",
-				"amount": "48,2 k$",
+				"amount": "48,2 k DT",
 				"caption": "Encaissé cette année",
 				"growth": "+18,4 %",
 				"chartLabel": "Graphique de facturation automatisée"
@@ -1161,9 +1161,9 @@
 			"yearlyDiscount": "−20 %",
 			"mostPopular": "Le plus populaire",
 			"perMonth": "/ mois",
-			"billedAnnually": "Facturé annuellement",
-			"billedMonthly": "Facturé mensuellement",
-			"cta": "Essai gratuit",
+			"billedAnnually": "Après votre mois offert, {total} DT facturés par an",
+			"billedMonthly": "Après votre mois offert, facturé chaque mois",
+			"cta": "Commencer le mois offert",
 			"plans": {
 				"starter": {
 					"name": "Starter",
@@ -1191,7 +1191,9 @@
 						"Image de marque personnalisée"
 					]
 				}
-			}
+			},
+			"price": "{amount} DT",
+			"trialBanner": "Premier mois offert sur toutes les formules · Sans carte bancaire"
 		},
 		"faq": {
 			"eyebrow": "Questions, réponses",
@@ -1201,7 +1203,7 @@
 			"items": {
 				"trial": {
 					"q": "Puis-je essayer AuraDesk avant de payer ?",
-					"a": "Oui. Chaque formule commence par 14 jours d'essai gratuit, sans carte bancaire."
+					"a": "Oui. Chaque formule commence par un premier mois offert, sans carte bancaire. Ensuite, les formules démarrent à 19 DT par mois."
 				},
 				"migrate": {
 					"q": "Puis-je migrer mes clients existants ?",
@@ -1224,7 +1226,7 @@
 		"cta": {
 			"title": "Prêt à passer à la vitesse supérieure ?",
 			"subtitle": "Rejoignez des milliers de photographes qui gèrent leur activité plus sereinement et plus rentablement.",
-			"button": "Démarrer l'essai gratuit"
+			"button": "Commencer le mois offert"
 		},
 		"footer": {
 			"features": "Fonctionnalités",
@@ -1236,6 +1238,13 @@
 			"twitter": "Twitter",
 			"videos": "Vidéos",
 			"copyright": "© {year} AuraDesk, Inc. Conçu pour ceux qui voient autrement."
+		},
+		"demo": {
+			"label": "Site de démo",
+			"back": "Retour à AuraDesk",
+			"cta": "Commencer le mois offert",
+			"metaTitle": "Site de démo",
+			"ctaShort": "Essai gratuit"
 		}
 	},
 	"Home": {
@@ -3067,5 +3076,161 @@
 		"empty": "Aucun message pour l'instant.",
 		"to": "À {phone}",
 		"close": "Fermer"
+	},
+	"Legal": {
+		"back": "Retour à AuraDesk",
+		"updated": "Dernière mise à jour : 23 octobre 2026",
+		"privacy": {
+			"title": "Politique de confidentialité",
+			"intro": "AuraDesk aide les photographes à gérer leur studio : réservations, clients, projets, galeries, factures et site public. Cette politique explique quelles données personnelles nous traitons, pourquoi, et les choix dont vous disposez. Elle s’applique aux photographes qui utilisent AuraDesk, à leurs clients et aux visiteurs des sites créés avec AuraDesk.",
+			"sections": [
+				{
+					"title": "Qui est responsable",
+					"paragraphs": [
+						"Pour les comptes des photographes et pour ce site, AuraDesk est responsable des données (responsable du traitement).",
+						"Pour les données qu’un photographe conserve sur ses propres clients (coordonnées, réservations, galeries, factures), c’est le photographe qui est responsable ; AuraDesk les traite uniquement pour son compte et selon ses instructions."
+					]
+				},
+				{
+					"title": "Ce que nous collectons",
+					"items": [
+						"Données de compte : nom, adresse e-mail, numéro de téléphone, mot de passe (conservé uniquement sous forme chiffrée) et langue.",
+						"Données du studio : nom du studio, ville, contenu du site, formules et prix.",
+						"Travail client : les coordonnées, réservations, projets, messages, factures et paiements enregistrés par le photographe.",
+						"Photos et vidéos envoyées dans les galeries et sur les sites, avec leurs informations techniques (taille, dimensions, date de prise de vue, appareil).",
+						"Données de sécurité : sessions de connexion, adresse IP et type de navigateur."
+					]
+				},
+				{
+					"title": "Pourquoi nous les utilisons",
+					"items": [
+						"Pour fournir le service : comptes, sites, galeries, réservations et facturation.",
+						"Pour envoyer les messages attendus, par e-mail ou SMS : invitations, confirmations de réservation, avis de galerie et de livraison.",
+						"Pour sécuriser le service et prévenir les abus.",
+						"Pour répondre à vos questions et demandes d’assistance."
+					],
+					"paragraphs": [
+						"Nous ne vendons jamais de données personnelles et ne les utilisons jamais à des fins publicitaires."
+					]
+				},
+				{
+					"title": "Photos et localisation",
+					"paragraphs": [
+						"Les photos affichées sur les sites publics sont stockées de façon à être visibles par tous. Leur position GPS est supprimée dans votre navigateur avant l’envoi, et les grandes photos sont ramenées à une taille adaptée au web.",
+						"Les galeries clients sont privées : seul le client invité peut les ouvrir, ou les personnes avec qui le photographe choisit de partager un lien. Les photographes peuvent aussi retirer la localisation des photos de galerie."
+					]
+				},
+				{
+					"title": "Où les données sont conservées",
+					"paragraphs": [
+						"Les données sont conservées dans une base de données sécurisée et les fichiers dans le stockage Cloudflare R2. Les e-mails et SMS passent par des prestataires d’envoi qui ne reçoivent que ce qui est nécessaire à l’envoi.",
+						"Certains prestataires peuvent être situés hors de Tunisie. Nous ne faisons appel qu’à des prestataires qui protègent les données par contrat."
+					]
+				},
+				{
+					"title": "Durée de conservation",
+					"paragraphs": [
+						"Les données de compte sont conservées tant que le compte est ouvert. Les photographes choisissent combien de temps les galeries livrées sont conservées, depuis leur page Confidentialité et données, et les épreuves des projets livrés sont supprimées automatiquement.",
+						"À la suppression d’un compte, ses données et fichiers sont effacés, sauf les factures que la loi oblige le photographe à conserver."
+					]
+				},
+				{
+					"title": "Vos droits",
+					"paragraphs": [
+						"Conformément à la loi organique n° 2004-63 relative à la protection des données à caractère personnel, et au RGPD lorsqu’il s’applique, vous pouvez accéder à vos données, les rectifier, les exporter, les supprimer et vous opposer à leur utilisation.",
+						"Les utilisateurs connectés peuvent exporter leurs données ou supprimer leur compte à tout moment depuis la page Confidentialité et données. Les clients d’un photographe peuvent aussi s’adresser directement à lui. Vous pouvez saisir l’INPDP (Instance Nationale de Protection des Données Personnelles)."
+					]
+				},
+				{
+					"title": "Cookies",
+					"paragraphs": [
+						"Nous n’utilisons que les cookies nécessaires au service : votre session de connexion, votre langue et votre thème. Aucun cookie publicitaire ni de suivi par des tiers."
+					]
+				},
+				{
+					"title": "Modifications de cette politique",
+					"paragraphs": [
+						"Si nous modifions cette politique de façon importante, les utilisateurs connectés en sont informés par e-mail ou dans l’application avant que le changement ne s’applique."
+					]
+				}
+			]
+		},
+		"terms": {
+			"title": "Conditions d’utilisation",
+			"intro": "Ces conditions fixent les règles d’utilisation d’AuraDesk. En créant un compte, vous les acceptez. Lisez aussi notre politique de confidentialité, qui explique comment les données sont traitées.",
+			"sections": [
+				{
+					"title": "Le service",
+					"paragraphs": [
+						"AuraDesk fournit aux photographes des outils pour gérer réservations, clients, projets, galeries, factures et site public. Leurs clients l’utilisent pour suivre leurs projets, choisir leurs photos et télécharger leurs fichiers."
+					]
+				},
+				{
+					"title": "Votre compte",
+					"paragraphs": [
+						"Fournissez des informations exactes et gardez votre mot de passe en sécurité. Vous êtes responsable de ce qui se passe dans votre compte, y compris des actions des membres d’équipe que vous invitez. Il faut avoir au moins 18 ans pour ouvrir un compte photographe."
+					]
+				},
+				{
+					"title": "Mois offert et formules",
+					"paragraphs": [
+						"Chaque formule commence par un premier mois offert, sans carte bancaire. Ensuite, la formule choisie est facturée en dinars tunisiens (DT), au mois ou à l’année, au prix affiché sur la page des tarifs.",
+						"Vous pouvez résilier à tout moment : votre formule reste active jusqu’à la fin de la période déjà payée. Tout changement de prix est annoncé au moins 30 jours à l’avance."
+					]
+				},
+				{
+					"title": "Votre contenu",
+					"paragraphs": [
+						"Vous conservez tous les droits sur vos photos, vidéos et textes. Vous accordez seulement à AuraDesk l’autorisation nécessaire pour les stocker, les traiter et les afficher afin de fournir le service, par exemple pour redimensionner une photo ou l’afficher sur votre site.",
+						"Vous confirmez disposer des droits et autorisations nécessaires, y compris de la part des personnes photographiées."
+					]
+				},
+				{
+					"title": "Usage acceptable",
+					"items": [
+						"Aucun contenu illégal, haineux ou violent, et aucun contenu sexuel impliquant des mineurs.",
+						"Aucun contenu sur lequel vous n’avez pas de droits.",
+						"Aucun spam, ni message envoyé à des personnes qui n’ont pas accepté de le recevoir.",
+						"Aucune tentative de casser, surcharger ou pénétrer le service ou d’autres comptes."
+					]
+				},
+				{
+					"title": "Les données de vos clients",
+					"paragraphs": [
+						"Lorsque vous ajoutez les informations de vos clients, vous devez avoir une raison légitime de les utiliser et les informer de leur usage. AuraDesk les traite uniquement pour votre compte, comme décrit dans la politique de confidentialité."
+					]
+				},
+				{
+					"title": "Disponibilité",
+					"paragraphs": [
+						"Nous faisons le nécessaire pour qu’AuraDesk reste disponible et que vos données soient protégées, mais le service est fourni en l’état, sans garantie qu’il ne sera jamais interrompu. Gardez vos propres copies des fichiers importants."
+					]
+				},
+				{
+					"title": "Suspension et clôture",
+					"paragraphs": [
+						"Vous pouvez supprimer votre compte à tout moment depuis la page Confidentialité et données. Nous pouvons suspendre un compte qui enfreint gravement ou de façon répétée ces conditions, après un avertissement lorsque c’est possible."
+					]
+				},
+				{
+					"title": "Responsabilité",
+					"paragraphs": [
+						"Dans la mesure permise par la loi, AuraDesk n’est pas responsable des pertes indirectes, comme un manque à gagner ou des réservations perdues. Notre responsabilité totale est limitée aux montants que vous avez payés au cours des 12 mois précédant l’événement."
+					]
+				},
+				{
+					"title": "Droit applicable",
+					"paragraphs": [
+						"Ces conditions sont régies par le droit tunisien. Nous chercherons d’abord à régler tout litige à l’amiable ; à défaut, les tribunaux de Tunis sont compétents."
+					]
+				},
+				{
+					"title": "Modifications de ces conditions",
+					"paragraphs": [
+						"Nous pouvons mettre à jour ces conditions. Les changements importants sont annoncés au moins 30 jours avant leur entrée en vigueur."
+					]
+				}
+			]
+		}
 	}
 }

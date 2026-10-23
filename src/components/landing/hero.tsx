@@ -76,8 +76,10 @@ export function Hero() {
 							{t("startTrial")} <ArrowRight />
 						</Link>
 					</Button>
-					<Button variant="glass" size="xl">
-						<CirclePlay /> {t("watchDemo")}
+					<Button variant="glass" size="xl" asChild>
+						<Link href="/demo">
+							<CirclePlay /> {t("watchDemo")}
+						</Link>
 					</Button>
 				</div>
 				<p className="mt-4 text-xs text-muted-foreground">{t("trialNote")}</p>

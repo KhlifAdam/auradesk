@@ -3,32 +3,29 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { reveal } from "./animations";
 
+/** Monthly prices, in Tunisian dinars. Every plan starts with a free month. */
 const PLANS = [
 	{ id: "starter", price: 19 },
-	{ id: "pro", price: 39 },
+	{ id: "pro", price: 36 },
 	{ id: "studio", price: 79 },
 ] as const;
 const POPULAR_PLAN = "pro";
-/** Yearly billing is 20% cheaper, i.e. monthly = yearly / 0.8. */
-const MONTHLY_MULTIPLIER = 1.25;
+/** Paying for the year costs 20% less per month. */
+const YEARLY_FACTOR = 0.8;
+
+/** What a month costs on the chosen billing, in whole dinars. */
+const monthlyPrice = (price: number, yearly: boolean) =>
+	yearly ? Math.round(price * YEARLY_FACTOR) : price;
 
 export function Pricing() {
 	const t = useTranslations("Landing.pricing");
-	const format = useFormatter();
-	const [yearly, setYearly] = useState(true);
-
-	const money = (amount: number) =>
-		format.number(amount, {
-			style: "currency",
-			currency: "USD",
-			maximumFractionDigits: 0,
-		});
+	const [yearly, setYearly] = useState(false);
 
 	const toggleClass = (active: boolean) =>
 		cn(
@@ -63,10 +60,14 @@ export function Pricing() {
 							<span className="text-primary">{t("yearlyDiscount")}</span>
 						</button>
 					</div>
+					<p className="mt-4 text-sm font-medium text-primary">
+						{t("trialBanner")}
+					</p>
 				</motion.div>
 				<div className="mt-12 grid items-center gap-4 md:grid-cols-3">
 					{PLANS.map(({ id, price }) => {
 						const popular = id === POPULAR_PLAN;
+						const perMonth = monthlyPrice(price, yearly);
 						const features = t.raw(`plans.${id}.features`) as string[];
 						return (
 							<motion.article
@@ -90,16 +91,16 @@ export function Pricing() {
 								</h3>
 								<div className="mt-5 flex items-end gap-1">
 									<span className="text-4xl font-bold">
-										{money(
-											yearly ? price : Math.round(price * MONTHLY_MULTIPLIER),
-										)}
+										{t("price", { amount: perMonth })}
 									</span>
 									<span className="pb-1 text-sm text-muted-foreground">
 										{t("perMonth")}
 									</span>
 								</div>
 								<p className="mt-2 text-xs text-muted-foreground">
-									{yearly ? t("billedAnnually") : t("billedMonthly")}
+									{yearly
+										? t("billedAnnually", { total: perMonth * 12 })
+										: t("billedMonthly")}
 								</p>
 								<Button
 									variant={popular ? "luminous" : "outline"}

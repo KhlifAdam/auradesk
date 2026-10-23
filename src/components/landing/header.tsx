@@ -11,7 +11,10 @@ import { BrandMark } from "./brand-mark";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
 
-/** Section ids double as the message keys under `Landing.header`. */
+/**
+ * Section ids double as the message keys under `Landing.header`. Links point
+ * at the landing page so they also work from the legal pages.
+ */
 const NAV_SECTIONS = ["features", "workflow", "pricing", "faq"] as const;
 
 export function Header() {
@@ -33,7 +36,7 @@ export function Header() {
 						<a
 							key={id}
 							className="transition-colors hover:text-foreground"
-							href={`#${id}`}
+							href={`/photographers#${id}`}
 						>
 							{t(id)}
 						</a>
@@ -68,7 +71,7 @@ export function Header() {
 						<a
 							key={id}
 							onClick={() => setMenuOpen(false)}
-							href={`#${id}`}
+							href={`/photographers#${id}`}
 							className="rounded-lg px-3 py-2 text-sm hover:bg-accent"
 						>
 							{t(id)}

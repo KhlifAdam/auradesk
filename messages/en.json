@@ -1040,9 +1040,9 @@
 			"titleStart": "Your Entire Photography Business,",
 			"titleAccent": "In One Place.",
 			"subtitle": "Manage bookings, deliver stunning client galleries, and automate your workflow with AI.",
-			"startTrial": "Start free trial",
-			"watchDemo": "Watch demo",
-			"trialNote": "14 days free · No credit card required",
+			"startTrial": "Start your free month",
+			"watchDemo": "See a demo site",
+			"trialNote": "First month free · No credit card required",
 			"mock": {
 				"path": "auradesk / overview",
 				"studio": "Studio North",
@@ -1101,7 +1101,7 @@
 			},
 			"invoicing": {
 				"label": "Automated invoicing",
-				"amount": "$48.2k",
+				"amount": "48.2k DT",
 				"caption": "Collected this year",
 				"growth": "+18.4%",
 				"chartLabel": "Automated invoicing chart"
@@ -1161,9 +1161,9 @@
 			"yearlyDiscount": "−20%",
 			"mostPopular": "Most popular",
 			"perMonth": "/ month",
-			"billedAnnually": "Billed annually",
-			"billedMonthly": "Billed monthly",
-			"cta": "Start free trial",
+			"billedAnnually": "After your free month, {total} DT billed yearly",
+			"billedMonthly": "After your free month, billed monthly",
+			"cta": "Start your free month",
 			"plans": {
 				"starter": {
 					"name": "Starter",
@@ -1191,7 +1191,9 @@
 						"Custom branding"
 					]
 				}
-			}
+			},
+			"price": "{amount} DT",
+			"trialBanner": "First month free on every plan · No credit card required"
 		},
 		"faq": {
 			"eyebrow": "Questions, answered",
@@ -1201,7 +1203,7 @@
 			"items": {
 				"trial": {
 					"q": "Can I try AuraDesk before paying?",
-					"a": "Yes. Every plan begins with a 14-day free trial, with no credit card required."
+					"a": "Yes. Every plan starts with a free first month, with no credit card required. After that, plans start at 19 DT per month."
 				},
 				"migrate": {
 					"q": "Can I migrate my existing clients?",
@@ -1224,7 +1226,7 @@
 		"cta": {
 			"title": "Ready to level up your studio?",
 			"subtitle": "Join thousands of photographers running calmer, more profitable businesses.",
-			"button": "Start your free trial"
+			"button": "Start your free month"
 		},
 		"footer": {
 			"features": "Features",
@@ -1236,6 +1238,13 @@
 			"twitter": "Twitter",
 			"videos": "Videos",
 			"copyright": "© {year} AuraDesk, Inc. Built for the ones who see differently."
+		},
+		"demo": {
+			"label": "Demo site",
+			"back": "Back to AuraDesk",
+			"cta": "Start your free month",
+			"metaTitle": "Demo site",
+			"ctaShort": "Try free"
 		}
 	},
 	"Home": {
@@ -3067,5 +3076,161 @@
 		"empty": "No message yet.",
 		"to": "To {phone}",
 		"close": "Close"
+	},
+	"Legal": {
+		"back": "Back to AuraDesk",
+		"updated": "Last updated: 23 October 2026",
+		"privacy": {
+			"title": "Privacy policy",
+			"intro": "AuraDesk helps photographers run their studio: bookings, clients, projects, galleries, invoices and a public website. This policy explains what personal data we process, why, and the choices you have. It applies to photographers who use AuraDesk, to their clients, and to visitors of the sites built with it.",
+			"sections": [
+				{
+					"title": "Who is responsible",
+					"paragraphs": [
+						"For photographer accounts and this website, AuraDesk is responsible for the data (data controller).",
+						"For the data a photographer keeps about their own clients (contact details, bookings, galleries, invoices), the photographer is responsible, and AuraDesk processes it only on their behalf and following their instructions."
+					]
+				},
+				{
+					"title": "What we collect",
+					"items": [
+						"Account data: name, email address, phone number, password (stored only in hashed form) and language.",
+						"Studio data: studio name, city, website content, packages and prices.",
+						"Client work: the contact details, bookings, projects, messages, invoices and payments a photographer records.",
+						"Photos and videos uploaded to galleries and websites, with technical details (size, dimensions, capture date, camera).",
+						"Security data: sign-in sessions, IP address and browser type."
+					]
+				},
+				{
+					"title": "Why we use it",
+					"items": [
+						"To provide the service: accounts, websites, galleries, bookings and invoicing.",
+						"To send the messages you expect, by email or SMS: invitations, booking confirmations, gallery and delivery notices.",
+						"To keep the service secure and prevent abuse.",
+						"To answer your questions and support requests."
+					],
+					"paragraphs": [
+						"We never sell personal data and never use it for advertising."
+					]
+				},
+				{
+					"title": "Photos and location",
+					"paragraphs": [
+						"Photos shown on public websites are stored so that anyone can view them. Their GPS position is removed in your browser before upload, and large photos are reduced to web size.",
+						"Client galleries are private: only the invited client can open them, or people the photographer chooses to share a link with. Photographers can also remove location data from gallery photos."
+					]
+				},
+				{
+					"title": "Where data is stored",
+					"paragraphs": [
+						"Data is kept in a secured database and files in Cloudflare R2 storage. Emails and text messages go through delivery providers that only receive what is needed to send them.",
+						"Some providers may be located outside Tunisia. We only use providers that protect the data under contract."
+					]
+				},
+				{
+					"title": "How long we keep it",
+					"paragraphs": [
+						"Account data is kept while the account is open. Photographers choose how long delivered galleries are kept, from their Privacy & data page, and proofs of delivered projects are removed automatically.",
+						"When an account is deleted, its data and files are erased, except invoices the law requires the photographer to keep."
+					]
+				},
+				{
+					"title": "Your rights",
+					"paragraphs": [
+						"Under Tunisian Organic Law No. 2004-63 on the protection of personal data, and the GDPR where it applies, you can access, correct, export or delete your data and object to its use.",
+						"Signed-in users can export their data or delete their account at any time from the Privacy & data page. Clients of a photographer can also contact that photographer directly. You may lodge a complaint with the INPDP (Instance Nationale de Protection des Données Personnelles)."
+					]
+				},
+				{
+					"title": "Cookies",
+					"paragraphs": [
+						"We only use the cookies the service needs: your sign-in session, your language and your theme. There are no advertising or third-party tracking cookies."
+					]
+				},
+				{
+					"title": "Changes to this policy",
+					"paragraphs": [
+						"If we change this policy in a way that matters, signed-in users are told by email or in the app before the change applies."
+					]
+				}
+			]
+		},
+		"terms": {
+			"title": "Terms of service",
+			"intro": "These terms set the rules for using AuraDesk. By creating an account, you accept them. Please also read our privacy policy, which explains how data is handled.",
+			"sections": [
+				{
+					"title": "The service",
+					"paragraphs": [
+						"AuraDesk gives photographers tools to manage bookings, clients, projects, galleries, invoices and a public website. Their clients use it to follow their projects, choose photos and download their files."
+					]
+				},
+				{
+					"title": "Your account",
+					"paragraphs": [
+						"Give accurate information and keep your password safe. You are responsible for what happens in your account, including the actions of team members you invite. You must be at least 18 to open a photographer account."
+					]
+				},
+				{
+					"title": "Free month and plans",
+					"paragraphs": [
+						"Every plan starts with a free first month, with no credit card required. After it, the plan you choose is billed in Tunisian dinars (DT), monthly or yearly, at the price shown on the pricing page.",
+						"You can cancel at any time: your plan stays active until the end of the period already paid. Any price change is announced at least 30 days in advance."
+					]
+				},
+				{
+					"title": "Your content",
+					"paragraphs": [
+						"You keep all rights to your photos, videos and texts. You only give AuraDesk the permission needed to store, process and display them to provide the service, for example to resize a photo or show it on your website.",
+						"You confirm that you hold the rights and consents this requires, including from the people you photograph."
+					]
+				},
+				{
+					"title": "Acceptable use",
+					"items": [
+						"No illegal, hateful or violent content, and no sexual content involving minors.",
+						"No content you do not have the rights to.",
+						"No spam, and no messages to people who have not agreed to receive them.",
+						"No attempts to break, overload or get into the service or other accounts."
+					]
+				},
+				{
+					"title": "Your clients' data",
+					"paragraphs": [
+						"When you add your clients' information, you are responsible for having a valid reason to use it and for telling them how it is used. AuraDesk processes it only on your behalf, as described in the privacy policy."
+					]
+				},
+				{
+					"title": "Availability",
+					"paragraphs": [
+						"We work to keep AuraDesk available and your data safe, but the service is provided as is, without a guarantee that it will never be interrupted. Keep your own copies of important files."
+					]
+				},
+				{
+					"title": "Suspension and closing",
+					"paragraphs": [
+						"You can delete your account at any time from the Privacy & data page. We may suspend an account that seriously or repeatedly breaks these terms, after a warning whenever possible."
+					]
+				},
+				{
+					"title": "Liability",
+					"paragraphs": [
+						"As far as the law allows, AuraDesk is not liable for indirect losses such as lost profit or lost bookings. Our total liability is limited to the amounts you paid in the 12 months before the event."
+					]
+				},
+				{
+					"title": "Governing law",
+					"paragraphs": [
+						"These terms are governed by Tunisian law. We will first try to settle any dispute amicably; failing that, the courts of Tunis have jurisdiction."
+					]
+				},
+				{
+					"title": "Changes to these terms",
+					"paragraphs": [
+						"We may update these terms. Important changes are announced at least 30 days before they apply."
+					]
+				}
+			]
+		}
 	}
 }
