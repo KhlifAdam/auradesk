@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { AuditList } from "@/components/admin/audit-list";
 import { BanButton } from "@/components/admin/ban-button";
+import { SubscriptionCard } from "@/components/admin/subscription-card";
 import { StatCards } from "@/components/dashboard/shared/stat-cards";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ import { formatPhone } from "@/lib/phone";
 import { listAdminActions } from "@/services/admin/audit";
 import type { ROLE_FILTERS } from "@/services/admin/schemas";
 import { getAdminUserDetail } from "@/services/admin/user-detail";
+import { getSubscription } from "@/services/billing/queries";
 
 /**
  * One account for the admin: identity, activity, studio, and how much it
@@ -53,6 +55,7 @@ export default async function AdminUserPage({
 		},
 	];
 	const isStudio = user.role === ROLES.photographer;
+	const subscription = isStudio ? await getSubscription(user.id) : null;
 
 	return (
 		<>
@@ -109,6 +112,9 @@ export default async function AdminUserPage({
 					</div>
 				))}
 			</dl>
+			{subscription && (
+				<SubscriptionCard userId={user.id} subscription={subscription} />
+			)}
 			{isStudio && (
 				<section className="flex flex-col gap-3">
 					<div className="flex flex-wrap items-center justify-between gap-2">

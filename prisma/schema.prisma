@@ -32,6 +32,8 @@ model User {
   banExpires DateTime? @map("ban_expires")
 
   studio   Studio?
+  /// The photographer's AuraDesk plan (free month, then paid).
+  subscription Subscription?
   media    Media[]
   albums   Album[]
   packages Package[]
@@ -1122,8 +1124,45 @@ enum AdminAction {
   UNBAN
   GRANT_ADMIN
   REVOKE_ADMIN
+  PAYMENT_RECORDED
 
   @@map("admin_action")
+}
+
+// ─── AuraDesk billing ─────────────────────────────────────────────────────────
+// Every photographer starts with a free month. Payment is made outside the
+// app (transfer, cash…); an admin records it, which extends `paidUntil`.
+
+enum SubscriptionPlan {
+  STARTER
+  PRO
+  STUDIO
+
+  @@map("subscription_plan")
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+
+  @@map("billing_cycle")
+}
+
+model Subscription {
+  id             String           @id @default(cuid())
+  photographerId String           @unique @map("photographer_id")
+  /// The plan the photographer chose; billed once the free month is over.
+  plan           SubscriptionPlan @default(PRO)
+  cycle          BillingCycle     @default(MONTHLY)
+  trialEndsAt    DateTime         @map("trial_ends_at")
+  /// End of the period already paid; null until the first payment.
+  paidUntil      DateTime?        @map("paid_until")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+
+  photographer User @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
 }
 
 /// Who did what to whom, and why. Names are copied in, so the log still reads

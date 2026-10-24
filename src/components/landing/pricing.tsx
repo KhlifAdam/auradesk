@@ -7,21 +7,20 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+	PLAN_IDS,
+	type PlanId,
+	POPULAR_PLAN,
+	pricePerMonth,
+} from "@/services/billing/plans";
 import { reveal } from "./animations";
 
-/** Monthly prices, in Tunisian dinars. Every plan starts with a free month. */
-const PLANS = [
-	{ id: "starter", price: 19 },
-	{ id: "pro", price: 36 },
-	{ id: "studio", price: 79 },
-] as const;
-const POPULAR_PLAN = "pro";
-/** Paying for the year costs 20% less per month. */
-const YEARLY_FACTOR = 0.8;
-
-/** What a month costs on the chosen billing, in whole dinars. */
-const monthlyPrice = (price: number, yearly: boolean) =>
-	yearly ? Math.round(price * YEARLY_FACTOR) : price;
+/** Message keys of each plan (`plans.starter`…), in display order. */
+const PLAN_KEYS = {
+	STARTER: "starter",
+	PRO: "pro",
+	STUDIO: "studio",
+} as const satisfies Record<PlanId, string>;
 
 export function Pricing() {
 	const t = useTranslations("Landing.pricing");
@@ -65,9 +64,10 @@ export function Pricing() {
 					</p>
 				</motion.div>
 				<div className="mt-12 grid items-center gap-4 md:grid-cols-3">
-					{PLANS.map(({ id, price }) => {
-						const popular = id === POPULAR_PLAN;
-						const perMonth = monthlyPrice(price, yearly);
+					{PLAN_IDS.map((plan) => {
+						const id = PLAN_KEYS[plan];
+						const popular = plan === POPULAR_PLAN;
+						const perMonth = pricePerMonth(plan, yearly ? "YEARLY" : "MONTHLY");
 						const features = t.raw(`plans.${id}.features`) as string[];
 						return (
 							<motion.article

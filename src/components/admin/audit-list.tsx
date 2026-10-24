@@ -1,4 +1,11 @@
-import { Ban, History, RotateCcw, ShieldMinus, ShieldPlus } from "lucide-react";
+import {
+	Ban,
+	Banknote,
+	History,
+	RotateCcw,
+	ShieldMinus,
+	ShieldPlus,
+} from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
@@ -10,6 +17,7 @@ const ICONS = {
 	UNBAN: RotateCcw,
 	GRANT_ADMIN: ShieldPlus,
 	REVOKE_ADMIN: ShieldMinus,
+	PAYMENT_RECORDED: Banknote,
 } as const;
 
 type AuditPage = Awaited<ReturnType<typeof listAdminActions>>;

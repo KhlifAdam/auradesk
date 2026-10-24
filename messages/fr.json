@@ -20,7 +20,8 @@
 			"invoices": "Factures",
 			"equipment": "Matériel",
 			"team": "Équipe",
-			"privacy": "Confidentialité"
+			"privacy": "Confidentialité",
+			"subscription": "Abonnement"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -2452,7 +2453,8 @@
 				"BAN": "{actor} a suspendu <target>compte</target>",
 				"UNBAN": "{actor} a réactivé <target>compte</target>",
 				"GRANT_ADMIN": "{actor} a nommé <target>compte</target> administrateur",
-				"REVOKE_ADMIN": "{actor} a retiré le rôle d'administrateur à <target>compte</target>"
+				"REVOKE_ADMIN": "{actor} a retiré le rôle d'administrateur à <target>compte</target>",
+				"PAYMENT_RECORDED": "{actor} a enregistré un paiement pour <target>account</target>"
 			}
 		},
 		"detail": {
@@ -2475,6 +2477,25 @@
 				"bookings": "Réservations",
 				"invoices": "Factures"
 			}
+		},
+		"billing": {
+			"title": "Abonnement",
+			"status": {
+				"trial": "Mois offert",
+				"active": "Payé",
+				"expired": "Terminé"
+			},
+			"plan": "Formule",
+			"amount": "Par période",
+			"trialEnds": "Fin du mois offert",
+			"paidUntil": "Payé jusqu’au",
+			"reference": "Référence",
+			"record": "Enregistrer un paiement",
+			"confirmTitle": "Enregistrer un paiement ?",
+			"confirmDescription": "Confirmez avoir reçu {summary}. La formule est prolongée d’une période, à partir de la fin de la période en cours.",
+			"confirm": "Enregistrer le paiement",
+			"cancel": "Annuler",
+			"recorded": "Paiement enregistré. La formule est prolongée."
 		}
 	},
 	"Messages": {
@@ -3231,6 +3252,72 @@
 					]
 				}
 			]
+		}
+	},
+	"Billing": {
+		"title": "Abonnement",
+		"description": "Votre formule AuraDesk : votre mois offert, la formule à payer ensuite et comment payer.",
+		"plans": {
+			"STARTER": {
+				"name": "Starter",
+				"summary": "3 projets actifs · 20 Go"
+			},
+			"PRO": {
+				"name": "Pro",
+				"summary": "Projets illimités · 250 Go · IA"
+			},
+			"STUDIO": {
+				"name": "Studio",
+				"summary": "5 membres d’équipe · 1 To"
+			}
+		},
+		"cycles": {
+			"MONTHLY": "Mensuel",
+			"YEARLY": "Annuel −20 %"
+		},
+		"status": {
+			"trial": {
+				"title": "Mois offert · {days, plural, one {# jour restant} other {# jours restants}}",
+				"description": "Tout est ouvert jusqu’au {date}. Choisissez votre formule ci-dessous pour que rien ne s’arrête ensuite."
+			},
+			"active": {
+				"title": "Formule {plan} · active",
+				"description": "Payée jusqu’au {date}. Merci !"
+			},
+			"expired": {
+				"title": "Votre formule est terminée",
+				"description": "Votre tableau de bord est en pause, mais votre site public et vos données sont en sécurité. Payez une formule pour reprendre là où vous en étiez."
+			}
+		},
+		"picker": {
+			"title": "Votre formule",
+			"popular": "Populaire",
+			"perMonth": "{amount} DT/mois",
+			"billed": {
+				"MONTHLY": "{amount} DT facturés chaque mois",
+				"YEARLY": "{amount} DT facturés une fois par an"
+			},
+			"save": "Enregistrer mon choix",
+			"saved": "Formule enregistrée."
+		},
+		"payment": {
+			"title": "Comment payer",
+			"plan": "Formule",
+			"amount": "Montant",
+			"amountValue": "{amount} DT",
+			"reference": "Référence",
+			"how": "Payez par virement ou en espèces en indiquant cette référence, pour que nous sachions que le paiement est le vôtre. L’équipe AuraDesk active ensuite votre formule, en général sous 24 heures, et elle apparaît ici comme active."
+		},
+		"banner": {
+			"trial": "Votre mois offert se termine dans {days, plural, one {# jour} other {# jours}}.",
+			"active": "Votre formule se renouvelle dans {days, plural, one {# jour} other {# jours}}.",
+			"action": "Choisir une formule"
+		},
+		"locked": {
+			"title": "Votre mois offert est terminé",
+			"description": "Votre site public reste en ligne et vos données sont en sécurité. Choisissez une formule et payez pour rouvrir votre tableau de bord.",
+			"action": "Voir les formules et le paiement",
+			"privacy": "Exporter ou supprimer mes données"
 		}
 	}
 }

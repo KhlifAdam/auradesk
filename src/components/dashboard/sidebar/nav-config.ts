@@ -2,6 +2,7 @@ import {
 	BookOpen,
 	Briefcase,
 	CalendarDays,
+	CreditCard,
 	FolderKanban,
 	Images,
 	LayoutGrid,
@@ -51,6 +52,11 @@ export const NAV_GROUPS: NavGroup[] = [
 			{ href: "/dashboard/team", labelKey: "team", icon: UsersRound },
 			{ href: "/dashboard/messages", labelKey: "messages", icon: Mail },
 			{ href: "/dashboard/privacy", labelKey: "privacy", icon: ShieldCheck },
+			{
+				href: "/dashboard/subscription",
+				labelKey: "subscription",
+				icon: CreditCard,
+			},
 		],
 	},
 	{

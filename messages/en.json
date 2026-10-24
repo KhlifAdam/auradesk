@@ -20,7 +20,8 @@
 			"invoices": "Invoices",
 			"equipment": "Equipment",
 			"team": "Team",
-			"privacy": "Privacy & data"
+			"privacy": "Privacy & data",
+			"subscription": "Subscription"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -2452,7 +2453,8 @@
 				"BAN": "{actor} suspended <target>account</target>",
 				"UNBAN": "{actor} reactivated <target>account</target>",
 				"GRANT_ADMIN": "{actor} made <target>account</target> an administrator",
-				"REVOKE_ADMIN": "{actor} removed the administrator role from <target>account</target>"
+				"REVOKE_ADMIN": "{actor} removed the administrator role from <target>account</target>",
+				"PAYMENT_RECORDED": "{actor} recorded a payment for <target>account</target>"
 			}
 		},
 		"detail": {
@@ -2475,6 +2477,25 @@
 				"bookings": "Bookings",
 				"invoices": "Invoices"
 			}
+		},
+		"billing": {
+			"title": "Subscription",
+			"status": {
+				"trial": "Free month",
+				"active": "Paid",
+				"expired": "Ended"
+			},
+			"plan": "Plan",
+			"amount": "Per period",
+			"trialEnds": "Free month ends",
+			"paidUntil": "Paid until",
+			"reference": "Reference",
+			"record": "Record payment",
+			"confirmTitle": "Record a payment?",
+			"confirmDescription": "Confirm you received {summary}. The plan is extended by one period, from the end of the current one.",
+			"confirm": "Record payment",
+			"cancel": "Cancel",
+			"recorded": "Payment recorded. The plan is extended."
 		}
 	},
 	"Messages": {
@@ -3231,6 +3252,72 @@
 					]
 				}
 			]
+		}
+	},
+	"Billing": {
+		"title": "Subscription",
+		"description": "Your AuraDesk plan: your free month, the plan you pay for after it, and how to pay.",
+		"plans": {
+			"STARTER": {
+				"name": "Starter",
+				"summary": "3 active projects · 20 GB"
+			},
+			"PRO": {
+				"name": "Pro",
+				"summary": "Unlimited projects · 250 GB · AI"
+			},
+			"STUDIO": {
+				"name": "Studio",
+				"summary": "5 team members · 1 TB"
+			}
+		},
+		"cycles": {
+			"MONTHLY": "Monthly",
+			"YEARLY": "Yearly −20%"
+		},
+		"status": {
+			"trial": {
+				"title": "Free month · {days, plural, one {# day} other {# days}} left",
+				"description": "Everything is open until {date}. Choose your plan below so nothing stops after that."
+			},
+			"active": {
+				"title": "{plan} plan · active",
+				"description": "Paid until {date}. Thank you!"
+			},
+			"expired": {
+				"title": "Your plan has ended",
+				"description": "Your dashboard is paused, but your public site and your data are safe. Pay for a plan to pick up where you left off."
+			}
+		},
+		"picker": {
+			"title": "Your plan",
+			"popular": "Popular",
+			"perMonth": "{amount} DT/month",
+			"billed": {
+				"MONTHLY": "{amount} DT billed each month",
+				"YEARLY": "{amount} DT billed once a year"
+			},
+			"save": "Save my choice",
+			"saved": "Plan saved."
+		},
+		"payment": {
+			"title": "How to pay",
+			"plan": "Plan",
+			"amount": "Amount",
+			"amountValue": "{amount} DT",
+			"reference": "Reference",
+			"how": "Pay by bank transfer or in cash and give this reference, so we know the payment is yours. The AuraDesk team then activates your plan, usually within 24 hours, and it shows here as active."
+		},
+		"banner": {
+			"trial": "Your free month ends in {days, plural, one {# day} other {# days}}.",
+			"active": "Your plan renews in {days, plural, one {# day} other {# days}}.",
+			"action": "Choose a plan"
+		},
+		"locked": {
+			"title": "Your free month is over",
+			"description": "Your public site stays online and your data is safe. Choose a plan and pay to open your dashboard again.",
+			"action": "See plans and payment",
+			"privacy": "Export or delete my data"
 		}
 	}
 }
