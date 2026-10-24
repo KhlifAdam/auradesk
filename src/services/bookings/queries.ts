@@ -60,6 +60,26 @@ export async function listBookings(
 	return { ...meta, items: rows.map(toSummary) };
 }
 
+/** Requests still waiting on someone (new, in discussion, quote sent). */
+export async function listOpenBookings(
+	photographerId: string,
+	page: number,
+): Promise<BookingPage> {
+	const where: Prisma.BookingWhereInput = {
+		photographerId,
+		status: { in: [...OPEN_STATUSES] },
+	};
+	const total = await db.booking.count({ where });
+	const meta = pageMeta(page, total, BOOKING_PAGE_SIZE);
+	const rows = await db.booking.findMany({
+		where,
+		orderBy: listOrder,
+		skip: pageSkip(meta.page, BOOKING_PAGE_SIZE),
+		take: BOOKING_PAGE_SIZE,
+	});
+	return { ...meta, items: rows.map(toSummary) };
+}
+
 /** Counts for the dashboard header: everything, waiting, confirmed, closed. */
 export async function getBookingStats(
 	photographerId: string,

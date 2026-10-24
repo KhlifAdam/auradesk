@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Streamdown (the assistant's Markdown) ships its own utility classes. */
+@source "../../node_modules/streamdown/dist/*.js";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -80,6 +82,8 @@
 
 :root {
 	--radius: 0.75rem;
+	/* The AI assistant's side panel; the page shrinks by this much. */
+	--assistant-panel-width: 25rem;
 	--background: oklch(0.985 0.004 260);
 	--foreground: oklch(0.16 0.025 268);
 	--card: oklch(1 0 0);
@@ -216,6 +220,26 @@
 			circle at 90% 40%,
 			color-mix(in oklab, var(--chart-2) 12%, transparent),
 			transparent 26%
+		);
+}
+
+/* The AI assistant's surfaces: the panel, the floating button, its cards. */
+@utility assistant-glass {
+	background-color: color-mix(in oklab, var(--card) 86%, transparent);
+	backdrop-filter: blur(16px) saturate(140%);
+}
+
+@utility assistant-aura {
+	background-image:
+		radial-gradient(
+			circle at 100% 0%,
+			color-mix(in oklab, var(--primary) 14%, transparent),
+			transparent 45%
+		),
+		radial-gradient(
+			circle at 0% 100%,
+			color-mix(in oklab, var(--chart-2) 8%, transparent),
+			transparent 40%
 		);
 }
 

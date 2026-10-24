@@ -1,4 +1,9 @@
+import { cookies } from "next/headers";
 import type { ReactNode } from "react";
+import { AssistantFab } from "@/components/assistant/assistant-fab";
+import { AssistantPanel } from "@/components/assistant/assistant-panel";
+import { AssistantProvider } from "@/components/assistant/assistant-provider";
+import { ASSISTANT_OPEN_COOKIE } from "@/components/assistant/open-cookie";
 import { ExpiredGate } from "@/components/dashboard/billing/expired-gate";
 import { SubscriptionBanner } from "@/components/dashboard/billing/subscription-banner";
 import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
@@ -16,33 +21,43 @@ export default async function DashboardLayout({
 	children: ReactNode;
 }) {
 	const { session, photographerId } = await requirePhotographer();
-	const [studio, timeZone, unreadMessages, subscription] = await Promise.all([
-		getStudioSummary(photographerId),
-		getRequestTimeZone(),
-		countUnread({ id: photographerId, role: "photographer" }),
-		getSubscription(photographerId),
-	]);
+	const [studio, timeZone, unreadMessages, subscription, cookieStore] =
+		await Promise.all([
+			getStudioSummary(photographerId),
+			getRequestTimeZone(),
+			countUnread({ id: photographerId, role: "photographer" }),
+			getSubscription(photographerId),
+			cookies(),
+		]);
+	const assistantOpen = cookieStore.get(ASSISTANT_OPEN_COOKIE)?.value === "1";
 
 	return (
-		<div className="flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
-			<TimeZoneSync serverTimeZone={timeZone} />
-			<Sidebar
-				studioName={studio?.name ?? BRAND_NAME}
-				unreadMessages={unreadMessages}
-				user={session.user}
-			/>
-			{/*
+		<AssistantProvider
+			initialOpen={assistantOpen}
+			basePath="/dashboard/assistant"
+		>
+			<div className="flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
+				<TimeZoneSync serverTimeZone={timeZone} />
+				<Sidebar
+					studioName={studio?.name ?? BRAND_NAME}
+					unreadMessages={unreadMessages}
+					user={session.user}
+				/>
+				{/*
 			  `relative` is load-bearing: Radix form controls (checkbox, switch,
 			  select, radio) render a hidden `position: absolute` native input.
 			  Without a positioned ancestor it escapes this scroll container and
 			  stretches the whole document, adding a second, outer scrollbar.
 			*/}
-			<main className="relative flex flex-1 flex-col overflow-y-auto print:overflow-visible">
-				<SubscriptionBanner subscription={subscription} />
-				<ExpiredGate expired={subscription.status === "expired"}>
-					{children}
-				</ExpiredGate>
-			</main>
-		</div>
+				<main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto print:overflow-visible">
+					<SubscriptionBanner subscription={subscription} />
+					<ExpiredGate expired={subscription.status === "expired"}>
+						{children}
+					</ExpiredGate>
+				</main>
+				<AssistantPanel team={false} />
+			</div>
+			<AssistantFab />
+		</AssistantProvider>
 	);
 }

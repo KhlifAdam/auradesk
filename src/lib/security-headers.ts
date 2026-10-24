@@ -11,6 +11,8 @@ const publicMedia = process.env.R2_PUBLIC_URL
 	: "";
 /** Signed links to private galleries, and direct uploads, hit the R2 API. */
 const r2Api = "https://*.r2.cloudflarestorage.com";
+/** Live voice dictation streams the microphone to Soniox from the browser. */
+const liveSpeech = "wss://stt-rt.soniox.com";
 /** Profile pictures of accounts created with Google or GitHub. */
 const avatars =
 	"https://lh3.googleusercontent.com https://avatars.githubusercontent.com";
@@ -29,7 +31,7 @@ const contentSecurityPolicy = [
 	`img-src 'self' blob: data: ${storage} ${avatars}`,
 	`media-src 'self' blob: ${storage}`,
 	"font-src 'self' data:",
-	`connect-src 'self' ${storage}${isDev ? " ws: wss:" : ""}`,
+	`connect-src 'self' ${storage} ${liveSpeech}${isDev ? " ws: wss:" : ""}`,
 	"worker-src 'self' blob:",
 	// Showreels may embed a YouTube or Vimeo player.
 	`frame-src 'self' ${VIDEO_EMBED_ORIGINS.join(" ")}`,
@@ -49,7 +51,8 @@ export const securityHeaders = [
 	{ key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 	{
 		key: "Permissions-Policy",
-		value: "camera=(), microphone=(), geolocation=(), payment=()",
+		// The microphone is for the assistant's voice notes, on our own pages only.
+		value: "camera=(), microphone=(self), geolocation=(), payment=()",
 	},
 	{ key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 	// HTTPS only, for two years. Skipped locally, where it would pin localhost.

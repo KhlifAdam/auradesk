@@ -34,6 +34,8 @@ model User {
   studio   Studio?
   /// The photographer's AuraDesk plan (free month, then paid).
   subscription Subscription?
+  /// Conversations with the AI assistant; personal to this user.
+  assistantThreads AssistantThread[]
   media    Media[]
   albums   Album[]
   packages Package[]
@@ -1181,4 +1183,39 @@ model AdminAuditLog {
 
   @@index([createdAt])
   @@map("admin_audit_logs")
+}
+
+/// One conversation with the AI assistant. Threads are personal: only the user
+/// who started one can read it, whatever their role.
+model AssistantThread {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  /// The first words of the opening question; the user can rename it.
+  title     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AssistantMessage[]
+
+  @@index([userId, updatedAt])
+  @@map("assistant_threads")
+}
+
+/// A message in AI SDK UI format: text, tool calls and their results as JSON
+/// parts. Ids come from the chat client, so they are only unique per thread.
+model AssistantMessage {
+  id        String
+  threadId  String   @map("thread_id")
+  role      String
+  parts     Json
+  /// Order within the thread.
+  position  Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  thread AssistantThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, id])
+  @@index([threadId, position])
+  @@map("assistant_messages")
 }

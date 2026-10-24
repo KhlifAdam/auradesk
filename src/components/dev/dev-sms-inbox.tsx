@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Copy, MessageSquareText, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
@@ -28,6 +29,9 @@ const fetchInbox = (url: string) =>
  */
 export function DevSmsInbox() {
 	const t = useTranslations("DevSms");
+	// In the dashboard it sits in the sidebar, just above the profile, where
+	// nothing else is; elsewhere it keeps to the bottom right.
+	const inSidebar = usePathname().startsWith("/dashboard");
 	// Pages shown inside a frame (the site preview) leave it to the page around,
 	// and don't poll at all. Unknown until mounted, so it starts off.
 	const [inFrame, setInFrame] = useState(true);
@@ -60,7 +64,14 @@ export function DevSmsInbox() {
 	};
 
 	return (
-		<div className="fixed bottom-4 right-16 z-50 flex flex-col items-end gap-2">
+		<div
+			className={cn(
+				"fixed z-50 flex flex-col gap-2",
+				inSidebar
+					? "bottom-[5.25rem] left-2.5 items-start"
+					: "right-16 bottom-4 items-end",
+			)}
+		>
 			{open && (
 				<section className="w-80 overflow-hidden rounded-2xl border border-border bg-background/95 shadow-luminous-lg backdrop-blur-xl">
 					<header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">

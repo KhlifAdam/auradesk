@@ -54,8 +54,10 @@ const today = () => new Date(new Date().toISOString().slice(0, 10));
 function listWhere(
 	photographerId: string,
 	{ q, status }: ListInvoicesParams,
+	clientId?: string,
 ): Prisma.InvoiceWhereInput {
 	const where: Prisma.InvoiceWhereInput = { photographerId };
+	if (clientId) where.clientId = clientId;
 	if (status === "OVERDUE") {
 		where.status = "SENT";
 		where.dueDate = { lt: today() };
@@ -70,11 +72,13 @@ function listWhere(
 	return where;
 }
 
+/** `clientId` narrows the list to one client's invoices. */
 export async function listInvoices(
 	photographerId: string,
 	params: ListInvoicesParams,
+	clientId?: string,
 ): Promise<InvoicePage> {
-	const where = listWhere(photographerId, params);
+	const where = listWhere(photographerId, params, clientId);
 	const total = await db.invoice.count({ where });
 	const meta = pageMeta(params.page, total, INVOICE_PAGE_SIZE);
 	const rows = await db.invoice.findMany({

@@ -1,11 +1,33 @@
 import "server-only";
 
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import OpenAI from "openai";
 import { z } from "zod";
 import { BRAND_NAME } from "@/lib/brand";
 
 /** The model the assistants use for vision checks: cheap while testing. */
 export const VISION_MODEL = "google/gemma-3-12b-it";
+
+/** The chat assistant's model: cheap, but reliable at calling tools. */
+const ASSISTANT_MODEL =
+	process.env.ASSISTANT_MODEL || "mistralai/ministral-8b-2512";
+
+/**
+ * Turns voice notes into text for the assistant's composer. A chat model that
+ * hears audio, not Whisper: it doesn't tack "Thank you." onto the end.
+ */
+export const TRANSCRIBE_MODEL = "google/gemini-2.5-flash-lite";
+
+/** The assistant's model through the AI SDK, or null without an API key. */
+export function getAssistantModel() {
+	const apiKey = process.env.OPENROUTER_API_KEY;
+	if (!apiKey) return null;
+	const openrouter = createOpenRouter({
+		apiKey,
+		headers: { "X-Title": BRAND_NAME },
+	});
+	return openrouter(ASSISTANT_MODEL);
+}
 
 let client: OpenAI | null | undefined;
 
