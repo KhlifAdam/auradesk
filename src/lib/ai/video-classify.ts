@@ -1,9 +1,8 @@
 import "server-only";
 
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import { VIDEO_CATEGORIES } from "@/services/ai/options";
-import { getClaude, VISION_MODEL } from "./claude";
+import { askVision, jpegPart } from "./openrouter";
 
 const ClipLabel = z.object({
 	category: z.enum(VIDEO_CATEGORIES),
@@ -31,33 +30,13 @@ export async function classifyClip(
 	frames: Buffer[],
 	language: keyof typeof LANGUAGES,
 ): Promise<ClipLabel | null> {
-	const anthropic = getClaude();
-	if (!anthropic || frames.length === 0) return null;
+	if (frames.length === 0) return null;
 
 	try {
-		const response = await anthropic.messages.parse({
-			model: VISION_MODEL,
-			max_tokens: 1024,
-			output_config: { effort: "low", format: zodOutputFormat(ClipLabel) },
-			messages: [
-				{
-					role: "user",
-					content: [
-						...frames.map((frame) => ({
-							type: "image" as const,
-							source: {
-								type: "base64" as const,
-								media_type: "image/jpeg" as const,
-								data: frame.toString("base64"),
-							},
-						})),
-						{ type: "text", text: prompt(language) },
-					],
-				},
-			],
-		});
-		if (response.stop_reason === "refusal") return null;
-		return response.parsed_output ?? null;
+		return await askVision("clip_label", ClipLabel, [
+			...frames.map(jpegPart),
+			{ type: "text", text: prompt(language) },
+		]);
 	} catch (error) {
 		console.error("Clip classification failed:", error);
 		return null;

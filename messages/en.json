@@ -2302,7 +2302,7 @@
 			"done": "Analysis complete",
 			"allGood": "Nothing to flag: sharp, well exposed, no near-duplicates.",
 			"review": "Review {count, plural, one {# flagged photo} other {# flagged photos}} →",
-			"noVision": "Blur, exposure and near-duplicates are checked. Add an ANTHROPIC_API_KEY to also detect closed eyes.",
+			"noVision": "Blur, exposure and near-duplicates are checked. Add an OPENROUTER_API_KEY to also detect closed eyes.",
 			"removeFlagged": "Remove flagged ({count})",
 			"removeTitle": "Remove the flagged photos?",
 			"removeDescription": "The {count, plural, one {flagged photo leaves} other {# flagged photos leave}} this proofs gallery. Photos already picked are kept, and your originals stay on your computer.",
@@ -2334,7 +2334,7 @@
 			"mostlySilent": "Mostly silent: B-roll?",
 			"shotAt": "Shot {index} starts at {time}",
 			"silenceAt": "Silence from {from} to {to}",
-			"noVision": "Shots and silences are detected. Add an ANTHROPIC_API_KEY to also label each clip (ceremony, speech, dance…)."
+			"noVision": "Shots and silences are detected. Add an OPENROUTER_API_KEY to also label each clip (ceremony, speech, dance…)."
 		},
 		"videoCategories": {
 			"CEREMONY": "Ceremony",

@@ -2302,7 +2302,7 @@
 			"done": "Analyse terminée",
 			"allGood": "Rien à signaler : photos nettes, bien exposées, sans quasi-doublons.",
 			"review": "Revoir {count, plural, one {# photo signalée} other {# photos signalées}} →",
-			"noVision": "Le flou, l'exposition et les quasi-doublons sont vérifiés. Ajoutez une ANTHROPIC_API_KEY pour détecter aussi les yeux fermés.",
+			"noVision": "Le flou, l'exposition et les quasi-doublons sont vérifiés. Ajoutez une OPENROUTER_API_KEY pour détecter aussi les yeux fermés.",
 			"removeFlagged": "Retirer les signalées ({count})",
 			"removeTitle": "Retirer les photos signalées ?",
 			"removeDescription": "{count, plural, one {La photo signalée quitte} other {Les # photos signalées quittent}} cette galerie d'épreuves. Les photos déjà choisies sont gardées, et vos originaux restent sur votre ordinateur.",
@@ -2334,7 +2334,7 @@
 			"mostlySilent": "Surtout silencieuse : plans de coupe ?",
 			"shotAt": "Le plan {index} commence à {time}",
 			"silenceAt": "Silence de {from} à {to}",
-			"noVision": "Les plans et les silences sont détectés. Ajoutez une ANTHROPIC_API_KEY pour aussi classer chaque clip (cérémonie, discours, danse…)."
+			"noVision": "Les plans et les silences sont détectés. Ajoutez une OPENROUTER_API_KEY pour aussi classer chaque clip (cérémonie, discours, danse…)."
 		},
 		"videoCategories": {
 			"CEREMONY": "Cérémonie",

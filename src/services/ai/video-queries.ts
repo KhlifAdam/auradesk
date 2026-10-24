@@ -1,6 +1,6 @@
 import "server-only";
 
-import { isVisionEnabled } from "@/lib/ai/claude";
+import { isVisionEnabled } from "@/lib/ai/openrouter";
 import type { Silence } from "@/lib/ai/video-metrics";
 import { db } from "@/lib/db";
 import type { VideoCategory } from "./options";

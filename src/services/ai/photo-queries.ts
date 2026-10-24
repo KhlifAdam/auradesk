@@ -1,6 +1,6 @@
 import "server-only";
 
-import { isVisionEnabled } from "@/lib/ai/claude";
+import { isVisionEnabled } from "@/lib/ai/openrouter";
 import { db } from "@/lib/db";
 import { PHOTO_FLAGS, type PhotoFlag } from "./options";
 
