@@ -226,7 +226,6 @@
 		"bookTooFewPages": "The book has too few pages for this studio.",
 		"bookTooManyPages": "The book has too many pages.",
 		"bookBadOption": "One of the chosen options is no longer offered. Choose again.",
-		"bookNeedsPayment": "The invoice must be paid before printing starts.",
 		"bookHasPayment": "A payment was already recorded, so this order can't be sent back."
 	},
 	"Validation": {
@@ -1794,6 +1793,10 @@
 			},
 			"dropHintProofs": "Photos (JPEG, PNG, WebP). Only a light copy (~300 KB) is sent: your originals stay on your computer.",
 			"stageAutoHint": "The project moves to the Import step as soon as the first file arrives."
+		},
+		"stagesByMedia": {
+			"VIDEO": "Video editing",
+			"BOTH": "Retouching & video editing"
 		}
 	},
 	"Bookings": {
@@ -2367,7 +2370,10 @@
 			"selectionToReview": "The client sent their selection in “{gallery}”. Time to edit.",
 			"overdueInvoices": "{count, plural, one {# invoice is} other {# invoices are}} overdue. Send a reminder.",
 			"bookingFollowUp": "“{booking}” is past its answer deadline. Follow up.",
-			"rentalReturn": "{gear} should be back from {party}."
+			"rentalReturn": "{gear} should be back from {party}.",
+			"deadlineAtRisk": "{project}: at the current pace it may finish {days, plural, one {# day} other {# days}} after its deadline. Start the editing or move the date.",
+			"bookToCollect": "Photo book “{book}” is ready: collect {client}'s payment when you hand it over.",
+			"bookUnpaid": "Photo book “{book}” was delivered but {client} hasn't paid yet."
 		},
 		"video": {
 			"title": "AI video assistant",
@@ -2590,7 +2596,8 @@
 			"AVAILABLE": "Available",
 			"UNAVAILABLE": "Unavailable",
 			"OTHER": "Other",
-			"PROJECT": "Project date"
+			"PROJECT": "Project date",
+			"ESTIMATE": "Expected delivery"
 		},
 		"grid": {
 			"more": "+{count} more",
@@ -3046,6 +3053,35 @@
 				"title": "No photographer yet",
 				"description": "Studios appear here once you send them a request from their site, or they send you a booking or invite you to a project."
 			}
+		},
+		"next": {
+			"label": "What's next",
+			"expected": "Expected ready around {date}. It's an estimate; the studio will confirm.",
+			"waitShoot": {
+				"title": "Your shoot is coming up",
+				"body": "Planned for {date}. {studio} is preparing everything.",
+				"cta": "See details"
+			},
+			"chooseFiles": {
+				"title": "Choose your favourite photos",
+				"body": "{studio} shared your proofs. Tap the heart on the ones you love, then send your selection.",
+				"cta": "Start choosing"
+			},
+			"waitStudio": {
+				"title": "{studio} is working on it",
+				"body": "Your photos are being edited. You'll get an email as soon as there's something for you.",
+				"cta": "See details"
+			},
+			"payBalance": {
+				"title": "A payment is waiting",
+				"body": "{amount} left to pay to {studio}. Your final files open as soon as the project is paid.",
+				"cta": "View the invoice"
+			},
+			"downloadFiles": {
+				"title": "Your files are ready",
+				"body": "Everything is delivered in full quality. Download them, and why not make a printed photo book?",
+				"cta": "Open my files"
+			}
 		}
 	},
 	"Privacy": {
@@ -3412,12 +3448,18 @@
 			"suggestions": {
 				"today": "What should I do today?",
 				"pending": "Do I have pending requests?",
-				"unpaid": "Which invoices are unpaid?",
 				"week": "What's on my calendar this month?",
-				"stats": "How is the studio doing this month?",
 				"myProjects": "Which projects am I on?",
-				"nextShoot": "When and where is my next shoot?"
-			}
+				"nextShoot": "When and where is my next shoot?",
+				"money": "How much money do I still have to collect?",
+				"forecast": "Am I on schedule? What could be late?",
+				"whereProject": "Where is my project at?",
+				"whatToDo": "Is there anything I need to do?",
+				"howChoose": "How do I choose my photos?",
+				"whatOwe": "How much do I still have to pay?",
+				"photoBook": "How do I make a photo book?"
+			},
+			"subtitlePortal": "Ask me anything about your projects, photos, invoices or photo books. I'll explain where things are and what to do next."
 		},
 		"errors": {
 			"generic": "Something went wrong. Please try again.",
@@ -3445,7 +3487,16 @@
 			"team": "Looking at the team…",
 			"equipment": "Checking the gear…",
 			"my_projects": "Listing your projects…",
-			"get_assigned_project": "Opening the project…"
+			"get_assigned_project": "Opening the project…",
+			"money_to_collect": "Counting what you're owed…",
+			"estimate_project": "Estimating the time left…",
+			"workload_forecast": "Planning your workload…",
+			"client_projects": "Looking at your projects…",
+			"client_project_status": "Checking where your project is…",
+			"client_invoices": "Checking your invoices…",
+			"client_requests": "Checking your requests…",
+			"client_books": "Looking at your photo books…",
+			"studio_contacts": "Finding the studio's contact…"
 		},
 		"actions": {
 			"cancel": "Cancel",
@@ -3590,6 +3641,47 @@
 				"messageClient": "Write a message to {name}.",
 				"reply": "Help me reply to {name}."
 			}
+		},
+		"portal": {
+			"label": "Need help?",
+			"open": "Open the help assistant",
+			"title": "Your assistant",
+			"status": "Here to help, day and night",
+			"newChat": "New conversation",
+			"close": "Close",
+			"greetingTitle": "Hi there 👋",
+			"greeting": "Questions about your photos, delivery or invoices? Ask me.",
+			"dismiss": "Dismiss"
+		},
+		"client": {
+			"projects": "Your projects",
+			"noProjects": "No project yet.",
+			"notFound": "I couldn't find that project.",
+			"expected": "Expected ready around {date}",
+			"owed": "Left to pay: {amount}",
+			"chosen": "{selected} chosen of {files}",
+			"files": "{files} files",
+			"next": {
+				"waitShoot": "Shoot coming up",
+				"chooseFiles": "Choose your photos",
+				"waitStudio": "The studio is working on it",
+				"payBalance": "Payment due",
+				"downloadFiles": "Ready to download"
+			},
+			"invoices": "Your invoices",
+			"noInvoices": "No invoice yet.",
+			"invoiceStatus": {
+				"SENT": "To pay",
+				"PAID": "Paid",
+				"OVERDUE": "Overdue"
+			},
+			"requests": "Your requests",
+			"noRequests": "No request yet.",
+			"books": "Your photo books",
+			"noBooks": "No photo book yet.",
+			"studios": "Your studios",
+			"noStudios": "No studio yet.",
+			"website": "Website"
 		}
 	},
 	"PhotoBook": {
@@ -3746,7 +3838,14 @@
 			"submit": "Send to {studio}",
 			"leadTime": "Usually ready within {days} days after payment.",
 			"adds": "+ {price, number} TND",
-			"included": "Included"
+			"included": "Included",
+			"studioClosed": "Open book orders in your prices first.",
+			"studioPlaced": "Order placed and invoice sent to the client.",
+			"studioButton": "Place the order",
+			"studioTitle": "Place the order for the client",
+			"studioDescription": "Choose the options and the copies. The order is accepted at once and the client receives the invoice.",
+			"studioSubmit": "Order and invoice",
+			"studioPrice": "Price to charge (TND), if different"
 		},
 		"quote": {
 			"base": "Book, {format}, {pages} pages",
@@ -3760,7 +3859,7 @@
 		},
 		"view": {
 			"submitted": "{studio} has your order and will confirm it soon.",
-			"accepted": "{studio} accepted your order. Pay invoice {number} to start printing.",
+			"accepted": "{studio} accepted your order and is getting it printed. Invoice {number}: pay it now or on delivery.",
 			"acceptedPaid": "Payment received. {studio} will start printing soon.",
 			"production": "{studio} is printing your book.",
 			"ready": "Your book is ready. {studio} will deliver it.",
@@ -3854,12 +3953,13 @@
 			"button": "Download print-ready PDF",
 			"hint": "With bleed and trim marks, at print resolution.",
 			"failed": "The PDF couldn't be made. Please try again.",
-			"missing": "{count, plural, one {# photo} other {# photos}} couldn't be read and left blank. Check the PDF before printing."
+			"missing": "{count, plural, one {# photo} other {# photos}} couldn't be read and left blank. Check the PDF before printing.",
+			"preparing": "Reading your original photos from storage. This can take a few minutes on a slow connection; keep this page open."
 		},
 		"actions": {
 			"hint": {
 				"SUBMITTED": "Review the book and its price. Accepting sends the client an invoice.",
-				"ACCEPTED": "Waiting for the client to pay. Printing starts once the invoice is paid.",
+				"ACCEPTED": "Order accepted and invoiced. You can start printing now; the client pays now or on delivery.",
 				"IN_PRODUCTION": "Print the book, then mark it ready.",
 				"READY": "The client was told it's ready. Mark it delivered once handed over."
 			},
@@ -3869,7 +3969,6 @@
 			"accepted": "Order accepted and invoice sent.",
 			"start": "Start printing",
 			"started": "Printing started.",
-			"needsPayment": "Record the payment on the invoice first.",
 			"ready": "Mark ready",
 			"readied": "Marked ready. The client was notified.",
 			"deliver": "Mark delivered",
@@ -3878,7 +3977,95 @@
 			"sendBackConfirm": "Send back",
 			"sentBack": "Sent back to the client.",
 			"notePlaceholder": "What should the client change?",
-			"cancel": "Cancel"
+			"cancel": "Cancel",
+			"unpaidNote": "Not paid yet. That's fine: print it now and collect the money when you hand the book over. You'll be asked at delivery.",
+			"deliveredPaid": "Delivered and payment recorded."
+		},
+		"new": {
+			"button": "New photo book",
+			"title": "New photo book for a client",
+			"description": "Pick a delivered project and a size. We lay out the client's photos; you adjust, then place the order. The client only sees it once it is ordered.",
+			"search": "Search by project or client",
+			"empty": "No delivered project found.",
+			"size": "Book size",
+			"submit": "Create the book"
+		},
+		"section": {
+			"title": "Photo books",
+			"empty": "No photo book for this project yet. Make one for your client from their delivered photos.",
+			"notDelivered": "Photo books become available once the project is delivered."
+		},
+		"deliver": {
+			"title": "Did the client pay?",
+			"description": "{amount} is still to be paid on this order. Record it now if you were paid on delivery.",
+			"paid": "Paid {amount}, deliver",
+			"unpaid": "Deliver, still unpaid"
+		},
+		"payment": {
+			"title": "Payment",
+			"notPaid": "Not paid",
+			"paid": "Paid",
+			"left": "{amount} left of {total}",
+			"paidAll": "{amount} received",
+			"method": "Paid by",
+			"markedPaid": "Marked as paid. The invoice is settled.",
+			"markedUnpaid": "Marked as not paid. The payments were removed from the invoice.",
+			"unpaidHint": "Switch to Paid when the money is in; the invoice updates by itself.",
+			"paidHint": "The invoice is settled. Partial payments are on the invoice page."
 		}
+	},
+	"Money": {
+		"title": "Money to collect",
+		"allInvoices": "All invoices",
+		"toCollect": "Still owed",
+		"overdue": "Overdue ({count})",
+		"collectedThisMonth": "Collected this month",
+		"allPaid": "Nothing to collect: every client is up to date.",
+		"more": "+ {count} more on the invoices and projects pages.",
+		"reasons": {
+			"overdue": "{days, plural, one {# day late} other {# days late}}",
+			"deliveredUnpaid": "Delivered, unpaid",
+			"readyUnpaid": "Ready, collect at handover",
+			"deliveringSoon": "Delivering soon",
+			"dueSoon": "{days, plural, =0 {Due today} one {Due tomorrow} other {Due in # days}}",
+			"open": "Open"
+		}
+	},
+	"Estimate": {
+		"title": "Time to finish · smart estimate",
+		"finish": "Ready around {date}",
+		"summary": "{days, plural, =0 {Today} one {In # day} other {In # days}} · {hours} h of work left",
+		"hours": "{hours} h",
+		"confidence": {
+			"low": "Rough estimate",
+			"medium": "Fair estimate",
+			"high": "Reliable estimate"
+		},
+		"deadline": {
+			"onTrack": "On track · {days, plural, one {# day} other {# days}} to spare",
+			"tight": "Tight · {days, plural, =0 {no margin} one {# day margin} other {# days margin}}",
+			"late": "At risk · {days, plural, one {# day} other {# days}} past the deadline"
+		},
+		"tasks": {
+			"import": "Import & backup",
+			"culling": "Culling",
+			"retouching": "Photo retouching",
+			"videoEditing": "Video editing",
+			"export": "Export & delivery"
+		},
+		"waits": {
+			"shoot": "Shoot in {days, plural, one {# day} other {# days}}",
+			"selection": "Client selection ~{days} days",
+			"validation": "Client approval ~{days} days"
+		},
+		"basis": {
+			"files": "Based on the uploaded files: about {photos} photos to deliver.",
+			"typical": "No files yet, so based on a typical project of this kind: about {photos} photos.",
+			"history": "Adjusted with how fast you usually deliver.",
+			"video": "About {minutes} min of finished video to edit."
+		},
+		"done": "This project is delivered.",
+		"forecast": "Work ahead · {hours} h",
+		"nothingAhead": "No project in progress."
 	}
 }

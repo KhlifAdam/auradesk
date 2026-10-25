@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { PhotoBook } from "@/generated/prisma/client";
 import { pageCount, parseBookDesign, usedItemIds } from "@/lib/books/design";
 import { db } from "@/lib/db";
 import { getPrivateViewUrl } from "@/lib/storage/r2-private";
@@ -80,12 +81,17 @@ export async function getBookPhotos(
 	return Object.fromEntries(photos.map((photo) => [photo.id, photo]));
 }
 
+/** What a client sees of their books: not the drafts the studio is still making for them. */
+const clientVisible = {
+	NOT: { createdByStudio: true, status: "DRAFT" },
+} as const;
+
 export async function listProjectBooks(
 	clientId: string,
 	projectId: string,
 ): Promise<BookSummary[]> {
 	const rows = await db.photoBook.findMany({
-		where: { clientId, projectId },
+		where: { clientId, projectId, ...clientVisible },
 		orderBy: { updatedAt: "desc" },
 	});
 	const designs = rows.map((row) => parseBookDesign(row.design));
@@ -112,8 +118,33 @@ export async function getBook(
 	clientId: string,
 	bookId: string,
 ): Promise<BookView | null> {
-	const row = await db.photoBook.findFirst({ where: { id: bookId, clientId } });
+	const row = await db.photoBook.findFirst({
+		where: { id: bookId, clientId, ...clientVisible },
+	});
 	if (!row) return null;
+	return toView(row, clientId);
+}
+
+/** A studio-made draft to edit, with the client's delivered photos it uses. */
+export async function getStudioDraft(
+	photographerId: string,
+	bookId: string,
+): Promise<BookView | null> {
+	const row = await db.photoBook.findFirst({
+		where: {
+			id: bookId,
+			photographerId,
+			createdByStudio: true,
+			status: "DRAFT",
+		},
+	});
+	return row ? toView(row, row.clientId) : null;
+}
+
+async function toView(
+	row: PhotoBook,
+	clientId: string,
+): Promise<BookView | null> {
 	const design = parseBookDesign(row.design);
 	const project = await getBookableProject(clientId, row.projectId);
 	if (!design.success || !project) return null;

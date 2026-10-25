@@ -2,6 +2,7 @@ import { BookImage, Tag } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { NewBookDialog } from "@/components/dashboard/books/new-book-dialog";
 import { OrderList } from "@/components/dashboard/books/order-list";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
@@ -18,7 +19,7 @@ import {
 	listOrdersSchema,
 } from "@/services/books/order-schemas";
 import { getPriceList } from "@/services/books/price-list";
-import { ORDER_STATUSES } from "@/services/books/types";
+import { STUDIO_LIST_STATUSES } from "@/services/books/types";
 
 /** Photo books clients have sent to be printed, and the studio's prices for them. */
 export default async function BookOrdersPage({
@@ -36,17 +37,20 @@ export default async function BookOrdersPage({
 				title={t("title")}
 				description={t("description")}
 				actions={
-					<Button
-						asChild
-						variant="outline"
-						size="sm"
-						className="h-8 gap-1.5 text-xs"
-					>
-						<Link href="/dashboard/books/prices">
-							<Tag className="h-3.5 w-3.5" />
-							{t("pricesButton")}
-						</Link>
-					</Button>
+					<div className="flex items-center gap-2">
+						<Button
+							asChild
+							variant="outline"
+							size="sm"
+							className="h-8 gap-1.5 text-xs"
+						>
+							<Link href="/dashboard/books/prices">
+								<Tag className="h-3.5 w-3.5" />
+								{t("pricesButton")}
+							</Link>
+						</Button>
+						<NewBookDialog />
+					</div>
 				}
 			/>
 			<Suspense fallback={null}>
@@ -59,7 +63,7 @@ export default async function BookOrdersPage({
 					active={params.status}
 					allLabel={t("all")}
 					ariaLabel={t("filter")}
-					options={ORDER_STATUSES.map((value) => ({
+					options={STUDIO_LIST_STATUSES.map((value) => ({
 						value,
 						label: tStatus(value),
 					}))}

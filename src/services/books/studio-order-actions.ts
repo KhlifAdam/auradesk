@@ -185,7 +185,7 @@ const FROM = {
 	DELIVERED: "READY",
 } as const;
 
-/** Moves an order along. Production starts only once the invoice is paid. */
+/** Moves an order along. Printing can start before payment: many clients pay on delivery. */
 export async function advanceBookOrder(input: unknown): Promise<ActionResult> {
 	const { session, photographerId } = await requirePhotographer();
 	const parsed = advanceSchema.safeParse(input);
@@ -194,11 +194,9 @@ export async function advanceBookOrder(input: unknown): Promise<ActionResult> {
 
 	const book = await db.photoBook.findFirst({
 		where: { id, photographerId, status: FROM[to] },
-		include: { client: clientContact, invoice: { select: { status: true } } },
+		include: { client: clientContact },
 	});
 	if (!book) return fail("bookWrongStatus");
-	if (to === "IN_PRODUCTION" && book.invoice?.status !== "PAID")
-		return fail("bookNeedsPayment");
 
 	const { count } = await db.photoBook.updateMany({
 		where: { id, status: FROM[to] },

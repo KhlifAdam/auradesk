@@ -7,7 +7,8 @@ import type { ReactNode } from "react";
 import type { SaveStatus } from "./use-book-design";
 
 interface BookHeaderProps {
-	projectId: string;
+	/** Where the back link goes. */
+	backHref: string;
 	projectTitle: string;
 	title: string;
 	status: SaveStatus;
@@ -19,7 +20,7 @@ interface BookHeaderProps {
 
 /** The editor's top: where you are, whether it's saved, the order button, and print-quality warnings. */
 export function BookHeader({
-	projectId,
+	backHref,
 	projectTitle,
 	title,
 	status,
@@ -33,7 +34,7 @@ export function BookHeader({
 			<header className="flex flex-wrap items-center justify-between gap-3">
 				<div className="flex min-w-0 flex-col gap-1">
 					<Link
-						href={`/portal/projects/${projectId}`}
+						href={backHref}
 						className="flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
 					>
 						<ArrowLeft className="h-3.5 w-3.5" />

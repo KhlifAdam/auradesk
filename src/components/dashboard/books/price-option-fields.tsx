@@ -54,7 +54,7 @@ export function PriceOptionFields({
 							<Input
 								type="number"
 								min={0}
-								step="0.001"
+								step="any"
 								className="h-8 w-28"
 								aria-label={t("optionPrice")}
 								value={f.value}

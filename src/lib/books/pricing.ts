@@ -50,33 +50,62 @@ export type PriceList = z.infer<typeof priceListSchema>;
 export type PriceOption = z.infer<typeof priceOptionSchema>;
 
 /** Starting prices for a studio that hasn't set its own (and not open for orders yet). */
-export const defaultPriceList = (): PriceList => ({
-	enabled: false,
-	base: { square: 90, landscape: 110, portrait: 110 },
-	includedPages: 10,
-	extraSpreadPrice: 10,
-	minPages: 10,
-	covers: [
-		{ id: "softcover", name: "Softcover", price: 0 },
-		{ id: "fabric", name: "Fabric hardcover", price: 25 },
-		{ id: "velvet", name: "Velvet hardcover", price: 45 },
-	],
-	papers: [
-		{ id: "matte", name: "Matte paper", price: 0 },
-		{ id: "glossy", name: "Glossy paper", price: 0 },
-		{ id: "silk", name: "Silk paper", price: 10 },
-	],
-	extras: [
-		{ id: "giftbox", name: "Gift box", price: 20 },
-		{ id: "engraving", name: "Engraved wooden title", price: 35 },
-	],
-	leadTimeDays: 14,
-});
+const DEFAULT_NAMES = {
+	en: {
+		softcover: "Softcover",
+		fabric: "Fabric hardcover",
+		velvet: "Velvet hardcover",
+		matte: "Matte paper",
+		glossy: "Glossy paper",
+		silk: "Silk paper",
+		giftbox: "Gift box",
+		engraving: "Engraved wooden title",
+	},
+	fr: {
+		softcover: "Couverture souple",
+		fabric: "Couverture rigide en tissu",
+		velvet: "Couverture rigide en velours",
+		matte: "Papier mat",
+		glossy: "Papier brillant",
+		silk: "Papier satiné",
+		giftbox: "Coffret cadeau",
+		engraving: "Titre gravé sur bois",
+	},
+} as const;
+
+export const defaultPriceList = (locale: "en" | "fr" = "en"): PriceList => {
+	const n = DEFAULT_NAMES[locale];
+	return {
+		enabled: false,
+		base: { square: 90, landscape: 110, portrait: 110 },
+		includedPages: 10,
+		extraSpreadPrice: 10,
+		minPages: 10,
+		covers: [
+			{ id: "softcover", name: n.softcover, price: 0 },
+			{ id: "fabric", name: n.fabric, price: 25 },
+			{ id: "velvet", name: n.velvet, price: 45 },
+		],
+		papers: [
+			{ id: "matte", name: n.matte, price: 0 },
+			{ id: "glossy", name: n.glossy, price: 0 },
+			{ id: "silk", name: n.silk, price: 10 },
+		],
+		extras: [
+			{ id: "giftbox", name: n.giftbox, price: 20 },
+			{ id: "engraving", name: n.engraving, price: 35 },
+		],
+		leadTimeDays: 14,
+	};
+};
 
 /** A stored price list, or the defaults when there is none or it no longer fits the shape. */
-export function parsePriceList(raw: unknown): PriceList {
+export function parsePriceList(
+	raw: unknown,
+	locale: "en" | "fr" = "en",
+): PriceList {
 	const parsed = priceListSchema.safeParse(raw);
-	return parsed.success ? parsed.data : defaultPriceList();
+	return parsed.success ? parsed.data : defaultPriceList(locale);
 }
 
 /** What the client chooses when ordering a book. */

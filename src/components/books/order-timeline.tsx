@@ -9,7 +9,14 @@ import { type BookStatus, ORDER_STATUSES } from "@/services/books/types";
 const STEPS = ORDER_STATUSES;
 
 /** A row of steps from "sent" to "delivered", with the current one marked. */
-export function OrderTimeline({ status }: { status: BookStatus }) {
+export function OrderTimeline({
+	status,
+	onStep,
+}: {
+	status: BookStatus;
+	/** The studio can click the step that comes next to move the order on; others stay plain. */
+	onStep?: (step: (typeof STEPS)[number]) => void;
+}) {
 	const t = useTranslations("PhotoBook.status");
 	const current = STEPS.indexOf(status as (typeof STEPS)[number]);
 
@@ -18,6 +25,7 @@ export function OrderTimeline({ status }: { status: BookStatus }) {
 			{STEPS.map((step, index) => {
 				const done = index < current;
 				const active = index === current;
+				const next = Boolean(onStep) && index === current + 1 && index > 1;
 				return (
 					<li
 						key={step}
@@ -34,9 +42,14 @@ export function OrderTimeline({ status }: { status: BookStatus }) {
 											: "bg-border",
 								)}
 							/>
-							<span
+							<button
+								type="button"
+								disabled={!next}
+								onClick={() => onStep?.(step)}
 								className={cn(
-									"flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold transition-colors",
+									"flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[10px] font-semibold transition-colors disabled:cursor-default",
+									next &&
+										"cursor-pointer border-primary text-primary hover:bg-primary/10",
 									done && "border-primary bg-primary text-primary-foreground",
 									active &&
 										"border-primary bg-primary/15 text-primary ring-4 ring-primary/10",
@@ -44,7 +57,7 @@ export function OrderTimeline({ status }: { status: BookStatus }) {
 								)}
 							>
 								{done ? <Check className="h-3.5 w-3.5" /> : index + 1}
-							</span>
+							</button>
 							<span
 								className={cn(
 									"h-px flex-1",

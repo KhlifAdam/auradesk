@@ -12,6 +12,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { GalleryCard } from "@/components/client-work/gallery-card";
+import { NewBookDialog } from "@/components/dashboard/books/new-book-dialog";
 import { ProjectEquipmentSection } from "@/components/dashboard/equipment/project-equipment-section";
 import { NewGalleryDialog } from "@/components/dashboard/projects/new-gallery-dialog";
 import { ProjectClientCard } from "@/components/dashboard/projects/project-client-card";
@@ -69,6 +70,9 @@ export default async function ProjectPage({
 				title={project.title}
 				actions={
 					<>
+						{project.client && isDeliveredToClient(project) && (
+							<NewBookDialog fixedProjectId={project.id} small />
+						)}
 						<ProjectDeleteButton projectId={project.id} />
 						<Button
 							asChild

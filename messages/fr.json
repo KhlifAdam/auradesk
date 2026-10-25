@@ -226,7 +226,6 @@
 		"bookTooFewPages": "Le livre n'a pas assez de pages pour ce studio.",
 		"bookTooManyPages": "Le livre a trop de pages.",
 		"bookBadOption": "Une des options choisies n'est plus proposée. Choisissez à nouveau.",
-		"bookNeedsPayment": "La facture doit être payée avant le début de l'impression.",
 		"bookHasPayment": "Un paiement est déjà enregistré : cette commande ne peut pas être renvoyée."
 	},
 	"Validation": {
@@ -1794,6 +1793,10 @@
 			},
 			"dropHintProofs": "Photos (JPEG, PNG, WebP). Seule une copie légère (~300 Ko) est envoyée : vos originaux restent sur votre ordinateur.",
 			"stageAutoHint": "Le projet passe à l’étape Import dès l’arrivée du premier fichier."
+		},
+		"stagesByMedia": {
+			"VIDEO": "Montage vidéo",
+			"BOTH": "Retouche & montage vidéo"
 		}
 	},
 	"Bookings": {
@@ -2367,7 +2370,10 @@
 			"selectionToReview": "Le client a envoyé sa sélection dans « {gallery} ». Place à la retouche.",
 			"overdueInvoices": "{count, plural, one {# facture est} other {# factures sont}} en retard. Envoyez une relance.",
 			"bookingFollowUp": "« {booking} » a dépassé sa date de réponse. Relancez.",
-			"rentalReturn": "{gear} devrait être revenu de chez {party}."
+			"rentalReturn": "{gear} devrait être revenu de chez {party}.",
+			"deadlineAtRisk": "{project} : au rythme actuel, il risque de finir {days, plural, one {# jour} other {# jours}} après l'échéance. Lancez le montage ou décalez la date.",
+			"bookToCollect": "Le livre photo « {book} » est prêt : encaissez le paiement de {client} à la remise.",
+			"bookUnpaid": "Le livre photo « {book} » a été livré mais {client} n'a pas encore payé."
 		},
 		"video": {
 			"title": "Assistant vidéo IA",
@@ -2590,7 +2596,8 @@
 			"AVAILABLE": "Disponible",
 			"UNAVAILABLE": "Indisponible",
 			"OTHER": "Autre",
-			"PROJECT": "Date de projet"
+			"PROJECT": "Date de projet",
+			"ESTIMATE": "Livraison prévue"
 		},
 		"grid": {
 			"more": "+{count} de plus",
@@ -3046,6 +3053,35 @@
 				"title": "Aucun photographe pour l'instant",
 				"description": "Les studios apparaissent ici dès que vous leur envoyez une demande depuis leur site, ou qu'ils vous envoient une réservation ou vous invitent à un projet."
 			}
+		},
+		"next": {
+			"label": "Prochaine étape",
+			"expected": "Prêt vers le {date}. C'est une estimation ; le studio vous confirmera.",
+			"waitShoot": {
+				"title": "Votre séance approche",
+				"body": "Prévue le {date}. {studio} prépare tout.",
+				"cta": "Voir les détails"
+			},
+			"chooseFiles": {
+				"title": "Choisissez vos photos préférées",
+				"body": "{studio} a partagé vos épreuves. Touchez le cœur sur celles que vous aimez, puis envoyez votre sélection.",
+				"cta": "Commencer"
+			},
+			"waitStudio": {
+				"title": "{studio} y travaille",
+				"body": "Vos photos sont en cours de retouche. Vous recevrez un e-mail dès qu'il y aura du nouveau.",
+				"cta": "Voir les détails"
+			},
+			"payBalance": {
+				"title": "Un paiement est attendu",
+				"body": "Il reste {amount} à payer à {studio}. Vos fichiers finaux s'ouvrent dès que le projet est réglé.",
+				"cta": "Voir la facture"
+			},
+			"downloadFiles": {
+				"title": "Vos fichiers sont prêts",
+				"body": "Tout est livré en pleine qualité. Téléchargez-les, et pourquoi pas un livre photo imprimé ?",
+				"cta": "Ouvrir mes fichiers"
+			}
 		}
 	},
 	"Privacy": {
@@ -3412,12 +3448,18 @@
 			"suggestions": {
 				"today": "Que dois-je faire aujourd'hui ?",
 				"pending": "Ai-je des demandes en attente ?",
-				"unpaid": "Quelles factures sont impayées ?",
 				"week": "Qu'y a-t-il dans mon calendrier ce mois-ci ?",
-				"stats": "Comment va le studio ce mois-ci ?",
 				"myProjects": "Sur quels projets suis-je ?",
-				"nextShoot": "Quand et où est mon prochain shooting ?"
-			}
+				"nextShoot": "Quand et où est mon prochain shooting ?",
+				"money": "Combien d'argent me reste-t-il à encaisser ?",
+				"forecast": "Suis-je dans les temps ? Qu'est-ce qui risque d'être en retard ?",
+				"whereProject": "Où en est mon projet ?",
+				"whatToDo": "Y a-t-il quelque chose que je dois faire ?",
+				"howChoose": "Comment choisir mes photos ?",
+				"whatOwe": "Combien me reste-t-il à payer ?",
+				"photoBook": "Comment créer un livre photo ?"
+			},
+			"subtitlePortal": "Posez-moi vos questions sur vos projets, photos, factures ou livres photo. Je vous explique où trouver les choses et quoi faire ensuite."
 		},
 		"errors": {
 			"generic": "Une erreur est survenue. Veuillez réessayer.",
@@ -3445,7 +3487,16 @@
 			"team": "Je regarde l'équipe…",
 			"equipment": "Vérification du matériel…",
 			"my_projects": "Liste de vos projets…",
-			"get_assigned_project": "Ouverture du projet…"
+			"get_assigned_project": "Ouverture du projet…",
+			"money_to_collect": "Calcul de ce qu'on vous doit…",
+			"estimate_project": "Estimation du temps restant…",
+			"workload_forecast": "Planification de votre charge…",
+			"client_projects": "Je regarde vos projets…",
+			"client_project_status": "Je vérifie où en est votre projet…",
+			"client_invoices": "Je vérifie vos factures…",
+			"client_requests": "Je vérifie vos demandes…",
+			"client_books": "Je regarde vos livres photo…",
+			"studio_contacts": "Je cherche le contact du studio…"
 		},
 		"actions": {
 			"cancel": "Annuler",
@@ -3590,6 +3641,47 @@
 				"messageClient": "Écris un message à {name}.",
 				"reply": "Aide-moi à répondre à {name}."
 			}
+		},
+		"portal": {
+			"label": "Besoin d'aide ?",
+			"open": "Ouvrir l'assistant",
+			"title": "Votre assistant",
+			"status": "Disponible jour et nuit",
+			"newChat": "Nouvelle conversation",
+			"close": "Fermer",
+			"greetingTitle": "Bonjour 👋",
+			"greeting": "Une question sur vos photos, la livraison ou vos factures ? Demandez-moi.",
+			"dismiss": "Fermer"
+		},
+		"client": {
+			"projects": "Vos projets",
+			"noProjects": "Aucun projet pour l'instant.",
+			"notFound": "Je n'ai pas trouvé ce projet.",
+			"expected": "Prêt vers le {date} (estimation)",
+			"owed": "Reste à payer : {amount}",
+			"chosen": "{selected} choisies sur {files}",
+			"files": "{files} fichiers",
+			"next": {
+				"waitShoot": "Séance à venir",
+				"chooseFiles": "Choisissez vos photos",
+				"waitStudio": "Le studio y travaille",
+				"payBalance": "Paiement attendu",
+				"downloadFiles": "Prêt à télécharger"
+			},
+			"invoices": "Vos factures",
+			"noInvoices": "Aucune facture pour l'instant.",
+			"invoiceStatus": {
+				"SENT": "À payer",
+				"PAID": "Payée",
+				"OVERDUE": "En retard"
+			},
+			"requests": "Vos demandes",
+			"noRequests": "Aucune demande pour l'instant.",
+			"books": "Vos livres photo",
+			"noBooks": "Aucun livre photo pour l'instant.",
+			"studios": "Vos studios",
+			"noStudios": "Aucun studio pour l'instant.",
+			"website": "Site web"
 		}
 	},
 	"PhotoBook": {
@@ -3746,7 +3838,14 @@
 			"submit": "Envoyer à {studio}",
 			"leadTime": "Généralement prêt sous {days} jours après paiement.",
 			"adds": "+ {price, number} TND",
-			"included": "Inclus"
+			"included": "Inclus",
+			"studioClosed": "Ouvrez d'abord les commandes de livres dans vos tarifs.",
+			"studioPlaced": "Commande passée et facture envoyée au client.",
+			"studioButton": "Passer la commande",
+			"studioTitle": "Passer la commande pour le client",
+			"studioDescription": "Choisissez les options et le nombre d'exemplaires. La commande est acceptée aussitôt et le client reçoit la facture.",
+			"studioSubmit": "Commander et facturer",
+			"studioPrice": "Prix à facturer (TND), s'il diffère"
 		},
 		"quote": {
 			"base": "Livre, {format}, {pages} pages",
@@ -3760,7 +3859,7 @@
 		},
 		"view": {
 			"submitted": "{studio} a reçu votre commande et la confirmera bientôt.",
-			"accepted": "{studio} a accepté votre commande. Réglez la facture {number} pour lancer l'impression.",
+			"accepted": "{studio} a accepté votre commande et la fait imprimer. Facture {number} : réglez-la maintenant ou à la livraison.",
 			"acceptedPaid": "Paiement reçu. {studio} lancera bientôt l'impression.",
 			"production": "{studio} imprime votre livre.",
 			"ready": "Votre livre est prêt. {studio} vous le remettra.",
@@ -3854,12 +3953,13 @@
 			"button": "Télécharger le PDF prêt à imprimer",
 			"hint": "Avec fonds perdus et traits de coupe, en résolution d'impression.",
 			"failed": "Le PDF n'a pas pu être créé. Réessayez.",
-			"missing": "{count, plural, one {# photo n'a pas pu être lue et a été laissée} other {# photos n'ont pas pu être lues et ont été laissées}} vide(s). Vérifiez le PDF avant l'impression."
+			"missing": "{count, plural, one {# photo n'a pas pu être lue et a été laissée} other {# photos n'ont pas pu être lues et ont été laissées}} vide(s). Vérifiez le PDF avant l'impression.",
+			"preparing": "Lecture de vos photos originales depuis le stockage. Cela peut prendre quelques minutes avec une connexion lente ; gardez cette page ouverte."
 		},
 		"actions": {
 			"hint": {
 				"SUBMITTED": "Vérifiez le livre et son prix. En acceptant, le client reçoit une facture.",
-				"ACCEPTED": "En attente du paiement. L'impression démarre une fois la facture payée.",
+				"ACCEPTED": "Commande acceptée et facturée. Vous pouvez lancer l'impression ; le client paie maintenant ou à la livraison.",
 				"IN_PRODUCTION": "Imprimez le livre, puis marquez-le prêt.",
 				"READY": "Le client a été prévenu. Marquez-le livré une fois remis."
 			},
@@ -3869,7 +3969,6 @@
 			"accepted": "Commande acceptée et facture envoyée.",
 			"start": "Lancer l'impression",
 			"started": "Impression lancée.",
-			"needsPayment": "Enregistrez d'abord le paiement sur la facture.",
 			"ready": "Marquer prêt",
 			"readied": "Marqué prêt. Le client a été prévenu.",
 			"deliver": "Marquer livré",
@@ -3878,7 +3977,95 @@
 			"sendBackConfirm": "Renvoyer",
 			"sentBack": "Renvoyé au client.",
 			"notePlaceholder": "Que doit modifier le client ?",
-			"cancel": "Annuler"
+			"cancel": "Annuler",
+			"unpaidNote": "Pas encore payé. Ce n'est pas un problème : imprimez maintenant et encaissez à la remise du livre. On vous le demandera à la livraison.",
+			"deliveredPaid": "Livré et paiement enregistré."
+		},
+		"new": {
+			"button": "Nouveau livre photo",
+			"title": "Nouveau livre photo pour un client",
+			"description": "Choisissez un projet livré et un format. Nous disposons les photos du client ; vous ajustez, puis passez la commande. Le client ne le voit qu'une fois commandé.",
+			"search": "Rechercher un projet ou un client",
+			"empty": "Aucun projet livré trouvé.",
+			"size": "Format du livre",
+			"submit": "Créer le livre"
+		},
+		"section": {
+			"title": "Livres photo",
+			"empty": "Aucun livre photo pour ce projet. Créez-en un pour votre client à partir de ses photos livrées.",
+			"notDelivered": "Les livres photo sont disponibles une fois le projet livré."
+		},
+		"deliver": {
+			"title": "Le client a-t-il payé ?",
+			"description": "Il reste {amount} à payer sur cette commande. Enregistrez-le maintenant si vous avez été payé à la livraison.",
+			"paid": "Payé {amount}, livrer",
+			"unpaid": "Livrer, toujours impayé"
+		},
+		"payment": {
+			"title": "Paiement",
+			"notPaid": "Non payé",
+			"paid": "Payé",
+			"left": "Reste {amount} sur {total}",
+			"paidAll": "{amount} encaissés",
+			"method": "Payé par",
+			"markedPaid": "Marqué comme payé. La facture est réglée.",
+			"markedUnpaid": "Marqué comme non payé. Les paiements ont été retirés de la facture.",
+			"unpaidHint": "Passez à Payé dès que l'argent est encaissé ; la facture se met à jour toute seule.",
+			"paidHint": "La facture est réglée. Les paiements partiels se gèrent sur la page de la facture."
 		}
+	},
+	"Money": {
+		"title": "Argent à encaisser",
+		"allInvoices": "Toutes les factures",
+		"toCollect": "Reste dû",
+		"overdue": "En retard ({count})",
+		"collectedThisMonth": "Encaissé ce mois-ci",
+		"allPaid": "Rien à encaisser : tous vos clients sont à jour.",
+		"more": "+ {count} autres sur les pages factures et projets.",
+		"reasons": {
+			"overdue": "{days, plural, one {# jour de retard} other {# jours de retard}}",
+			"deliveredUnpaid": "Livré, impayé",
+			"readyUnpaid": "Prêt, à encaisser à la remise",
+			"deliveringSoon": "Livraison proche",
+			"dueSoon": "{days, plural, =0 {Échéance aujourd'hui} one {Échéance demain} other {Échéance dans # jours}}",
+			"open": "En cours"
+		}
+	},
+	"Estimate": {
+		"title": "Temps restant · estimation intelligente",
+		"finish": "Prêt vers le {date}",
+		"summary": "{days, plural, =0 {Aujourd'hui} one {Dans # jour} other {Dans # jours}} · {hours} h de travail restantes",
+		"hours": "{hours} h",
+		"confidence": {
+			"low": "Estimation approximative",
+			"medium": "Estimation correcte",
+			"high": "Estimation fiable"
+		},
+		"deadline": {
+			"onTrack": "Dans les temps · {days, plural, one {# jour} other {# jours}} d'avance",
+			"tight": "Serré · {days, plural, =0 {aucune marge} one {# jour de marge} other {# jours de marge}}",
+			"late": "En risque · {days, plural, one {# jour} other {# jours}} après l'échéance"
+		},
+		"tasks": {
+			"import": "Import & sauvegarde",
+			"culling": "Tri",
+			"retouching": "Retouche photo",
+			"videoEditing": "Montage vidéo",
+			"export": "Export & livraison"
+		},
+		"waits": {
+			"shoot": "Séance dans {days, plural, one {# jour} other {# jours}}",
+			"selection": "Sélection client ~{days} jours",
+			"validation": "Validation client ~{days} jours"
+		},
+		"basis": {
+			"files": "D'après les fichiers importés : environ {photos} photos à livrer.",
+			"typical": "Pas encore de fichiers : d'après un projet type de ce genre, environ {photos} photos.",
+			"history": "Ajusté selon votre rythme de livraison habituel.",
+			"video": "Environ {minutes} min de vidéo montée à produire."
+		},
+		"done": "Ce projet est livré.",
+		"forecast": "Travail à venir · {hours} h",
+		"nothingAhead": "Aucun projet en cours."
 	}
 }

@@ -46,7 +46,9 @@ export function DownloadPdfButton({ bookId }: { bookId: string }) {
 				)}
 				{t("button")}
 			</Button>
-			<p className="text-[11px] text-muted-foreground">{t("hint")}</p>
+			<p className="text-[11px] text-muted-foreground">
+				{busy ? t("preparing") : t("hint")}
+			</p>
 		</div>
 	);
 }

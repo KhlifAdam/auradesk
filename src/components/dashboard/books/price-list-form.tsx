@@ -15,11 +15,11 @@ import { savePriceList } from "@/services/books/price-actions";
 import { PriceOptionFields } from "./price-option-fields";
 
 const NUMBER_FIELDS = [
-	{ name: "base.square", label: "baseSquare", step: "0.001" },
-	{ name: "base.landscape", label: "baseLandscape", step: "0.001" },
-	{ name: "base.portrait", label: "basePortrait", step: "0.001" },
+	{ name: "base.square", label: "baseSquare", step: "any" },
+	{ name: "base.landscape", label: "baseLandscape", step: "any" },
+	{ name: "base.portrait", label: "basePortrait", step: "any" },
 	{ name: "includedPages", label: "includedPages", step: "1" },
-	{ name: "extraSpreadPrice", label: "extraSpreadPrice", step: "0.001" },
+	{ name: "extraSpreadPrice", label: "extraSpreadPrice", step: "any" },
 	{ name: "minPages", label: "minPages", step: "1" },
 	{ name: "leadTimeDays", label: "leadTimeDays", step: "1" },
 ] as const;

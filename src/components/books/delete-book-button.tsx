@@ -19,14 +19,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { deleteBook } from "@/services/books/actions";
+import { deleteStudioBook } from "@/services/books/studio-book-actions";
 
 /** Deletes a book design (never the photos it used), after a confirmation. */
 export function DeleteBookButton({
 	bookId,
 	title,
+	studio = false,
 }: {
 	bookId: string;
 	title: string;
+	/** A book the studio made: removed through the studio's action, then back to the list. */
+	studio?: boolean;
 }) {
 	const t = useTranslations("PhotoBook.delete");
 	const router = useRouter();
@@ -35,10 +39,11 @@ export function DeleteBookButton({
 
 	const remove = () =>
 		startTransition(async () => {
-			const result = await deleteBook(bookId);
+			const result = await (studio ? deleteStudioBook : deleteBook)(bookId);
 			if (!result.ok) return void toast.error(errorMessage(result.error));
 			toast.success(t("done"));
-			router.refresh();
+			if (studio) router.push("/dashboard/books");
+			else router.refresh();
 		});
 
 	return (

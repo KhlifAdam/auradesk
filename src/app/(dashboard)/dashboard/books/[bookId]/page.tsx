@@ -1,18 +1,21 @@
 import { ArrowLeft, Receipt } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { BookEditor } from "@/components/books/book-editor";
 import { BookStatusBadge } from "@/components/books/book-status-badge";
-import { OrderTimeline } from "@/components/books/order-timeline";
 import { QuoteSummary } from "@/components/books/quote-summary";
 import { SpreadGallery } from "@/components/books/spread-gallery";
+import { BookPaymentCard } from "@/components/dashboard/books/book-payment-card";
 import { DownloadPdfButton } from "@/components/dashboard/books/download-pdf-button";
-import { OrderActionsPanel } from "@/components/dashboard/books/order-actions-panel";
+import { OrderWorkflow } from "@/components/dashboard/books/order-workflow";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { pageCount } from "@/lib/books/design";
 import { getBookOrder } from "@/services/books/order-queries";
+import { getStudioDraft } from "@/services/books/queries";
+import { formatMoney } from "@/services/projects/money";
 
 /** One order: what the client chose, what it costs, and the steps to deliver it. */
 export default async function BookOrderPage({
@@ -23,10 +26,13 @@ export default async function BookOrderPage({
 	const { bookId } = await params;
 	const t = await getTranslations("BookOrders.detail");
 	const { photographerId } = await requirePhotographer();
+	const draft = await getStudioDraft(photographerId, bookId);
+	if (draft) return <BookEditor book={draft} studio />;
 	const book = await getBookOrder(photographerId, bookId);
 	if (!book) notFound();
 	const { order, design, client } = book;
 	const { invoice } = order;
+	const locale = await getLocale();
 
 	return (
 		<PageShell>
@@ -62,12 +68,15 @@ export default async function BookOrderPage({
 			</header>
 
 			<section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
-				<OrderTimeline status={order.status} />
-				<OrderActionsPanel
+				<OrderWorkflow
 					bookId={book.id}
 					status={order.status}
 					calculated={order.quote?.total ?? 0}
 					invoicePaid={invoice?.status === "PAID"}
+					balance={formatMoney(
+						invoice ? Math.max(0, invoice.total - invoice.paid) : 0,
+						locale,
+					)}
 				/>
 			</section>
 
@@ -82,6 +91,7 @@ export default async function BookOrderPage({
 							charged={order.total}
 						/>
 					)}
+					{invoice && <BookPaymentCard bookId={book.id} invoice={invoice} />}
 					{invoice && (
 						<Button
 							asChild

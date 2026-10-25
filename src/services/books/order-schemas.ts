@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { searchQuerySchema } from "@/services/clients/schemas";
 import { idSchema, optionalText } from "@/services/shared/schemas";
-import { ORDER_STATUSES } from "./types";
+import { STUDIO_LIST_STATUSES } from "./types";
 
 export const ORDERS_PAGE_SIZE = 20;
 
 export const listOrdersSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),
 	q: searchQuerySchema,
-	status: z.enum(ORDER_STATUSES).optional().catch(undefined),
+	status: z.enum(STUDIO_LIST_STATUSES).optional().catch(undefined),
 });
 export type ListOrdersParams = z.infer<typeof listOrdersSchema>;
 

@@ -1200,13 +1200,15 @@ model AssistantThread {
   userId    String   @map("user_id")
   /// The first words of the opening question; the user can rename it.
   title     String
+  /// "studio" (dashboard and team space) or "portal" (the client assistant); each lists only its own.
+  space     String   @default("studio")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages AssistantMessage[]
 
-  @@index([userId, updatedAt])
+  @@index([userId, space, updatedAt])
   @@map("assistant_threads")
 }
 
@@ -1233,31 +1235,33 @@ model AssistantMessage {
 /// JSON, checked on every save against the shape in `lib/books/design.ts`;
 /// the print-ready PDF is built from it on demand.
 model PhotoBook {
-  id             String          @id @default(cuid())
-  projectId      String          @map("project_id")
-  clientId       String          @map("client_id")
+  id              String          @id @default(cuid())
+  projectId       String          @map("project_id")
+  clientId        String          @map("client_id")
   /// The studio that prints it (the project's photographer); lets every studio query stay scoped.
-  photographerId String          @map("photographer_id")
+  photographerId  String          @map("photographer_id")
   /// Same as `design.title`, kept here for lists.
-  title          String
-  design         Json
+  title           String
+  design          Json
   /// DRAFT while the client designs it; once sent, the design is locked.
-  status         BookOrderStatus @default(DRAFT)
-  copies         Int             @default(1)
+  status          BookOrderStatus @default(DRAFT)
+  copies          Int             @default(1)
   /// What the client chose: cover, paper and extras, as ids of the studio's price list.
-  options        Json?
+  options         Json?
   /// The client's message to the studio with the order.
-  clientNote     String          @default("") @map("client_note")
+  clientNote      String          @default("") @map("client_note")
   /// The price as calculated when it was sent: lines, per copy and total, so later price changes don't move it.
-  quote          Json?
+  quote           Json?
   /// What the studio finally charges (the quote, unless they adjusted it).
-  total          Decimal?        @db.Decimal(12, 3)
+  total           Decimal?        @db.Decimal(12, 3)
   /// The studio's note when it sends a book back to the client.
-  statusNote     String          @default("") @map("status_note")
-  invoiceId      String?         @unique @map("invoice_id")
-  submittedAt    DateTime?       @map("submitted_at")
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt @map("updated_at")
+  statusNote      String          @default("") @map("status_note")
+  invoiceId       String?         @unique @map("invoice_id")
+  submittedAt     DateTime?       @map("submitted_at")
+  /// Designed by the studio for the client; while a draft, only the studio sees and edits it.
+  createdByStudio Boolean         @default(false) @map("created_by_studio")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
 
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   client       User     @relation("ClientBooks", fields: [clientId], references: [id], onDelete: Cascade)

@@ -5,7 +5,10 @@ import { loadBookPhotos } from "@/services/books/actions";
 import type { BookPhoto } from "@/services/books/types";
 
 /** The delivered photos a book can use, loaded a page at a time as the client asks. */
-export function useBookTray(projectId: string) {
+export function useBookTray(
+	projectId: string,
+	load: typeof loadBookPhotos = loadBookPhotos,
+) {
 	const [items, setItems] = useState<BookPhoto[]>([]);
 	const [total, setTotal] = useState(0);
 	const [hasMore, setHasMore] = useState(true);
@@ -19,7 +22,7 @@ export function useBookTray(projectId: string) {
 		busy.current = true;
 		setLoading(true);
 		setFailed(false);
-		const result = await loadBookPhotos({
+		const result = await load({
 			projectId,
 			page: nextPage.current,
 		}).catch(() => null);
@@ -35,7 +38,7 @@ export function useBookTray(projectId: string) {
 		} else setFailed(true);
 		busy.current = false;
 		setLoading(false);
-	}, [projectId]);
+	}, [projectId, load]);
 
 	useEffect(() => {
 		void loadMore();

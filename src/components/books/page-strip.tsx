@@ -18,6 +18,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useId } from "react";
 import type { BookDesign, BookSpread } from "@/lib/books/design";
 import { MAX_SPREADS } from "@/lib/books/formats";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,7 @@ export function PageStrip({
 	locked,
 }: PageStripProps) {
 	const t = useTranslations("PhotoBook.editor");
+	const dndId = useId();
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
 		useSensor(KeyboardSensor, {
@@ -78,6 +80,7 @@ export function PageStrip({
 				/>
 			</Tile>
 			<DndContext
+				id={dndId}
 				sensors={sensors}
 				collisionDetection={closestCenter}
 				onDragEnd={onDragEnd}

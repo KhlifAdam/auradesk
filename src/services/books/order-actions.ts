@@ -38,7 +38,9 @@ export async function submitBook(input: unknown): Promise<ActionResult> {
 	if (!parsed.success) return failFromZod(parsed.error);
 	const { id, options } = parsed.data;
 
-	const book = await db.photoBook.findFirst({ where: { id, clientId } });
+	const book = await db.photoBook.findFirst({
+		where: { id, clientId, createdByStudio: false },
+	});
 	if (!book) return fail("notFound");
 	if (book.status !== "DRAFT") return fail("bookLocked");
 	const project = await getBookableProject(clientId, book.projectId);
@@ -59,7 +61,7 @@ export async function submitBook(input: unknown): Promise<ActionResult> {
 
 	// Only one request wins if the button is pressed twice.
 	const { count } = await db.photoBook.updateMany({
-		where: { id, clientId, status: "DRAFT" },
+		where: { id, clientId, createdByStudio: false, status: "DRAFT" },
 		data: {
 			status: "SUBMITTED",
 			copies: options.copies,

@@ -31,6 +31,8 @@ import {
 	type PriceList,
 } from "@/lib/books/pricing";
 import { submitBook } from "@/services/books/order-actions";
+import { placeStudioOrder } from "@/services/books/studio-book-actions";
+import { Choice } from "./order-choice";
 import { QuoteSummary } from "./quote-summary";
 
 interface OrderBookDialogProps {
@@ -40,6 +42,8 @@ interface OrderBookDialogProps {
 	format: BookFormat;
 	pages: number;
 	hasCover: boolean;
+	/** The studio is ordering for the client: it sets the price and the order goes straight to billing. */
+	studio?: boolean;
 	/** Saves pending changes first: the studio prints what is saved. */
 	flush: () => Promise<unknown>;
 }
@@ -52,6 +56,7 @@ export function OrderBookDialog({
 	format,
 	pages,
 	hasCover,
+	studio = false,
 	flush,
 }: OrderBookDialogProps) {
 	const t = useTranslations("PhotoBook.order");
@@ -59,6 +64,7 @@ export function OrderBookDialog({
 	const errorMessage = useErrorMessage();
 	const id = useId();
 	const [open, setOpen] = useState(false);
+	const [price, setPrice] = useState("");
 	const form = useForm<BookOrderOptions>({
 		resolver: zodResolver(bookOrderOptionsSchema),
 		defaultValues: {
@@ -73,7 +79,9 @@ export function OrderBookDialog({
 	const { isSubmitting } = form.formState;
 
 	const problem = !priceList.enabled
-		? t("closed", { studio: studioName })
+		? studio
+			? t("studioClosed")
+			: t("closed", { studio: studioName })
 		: !hasCover
 			? t("noCover")
 			: pages < priceList.minPages
@@ -83,11 +91,20 @@ export function OrderBookDialog({
 
 	async function onSubmit(options: BookOrderOptions) {
 		await flush();
-		const result = await submitBook({ id: bookId, options });
+		const result = studio
+			? await placeStudioOrder({
+					id: bookId,
+					options,
+					total: price === "" ? null : Number(price),
+				})
+			: await submitBook({ id: bookId, options });
 		if (!result.ok) return void toast.error(errorMessage(result.error));
-		toast.success(t("sent", { studio: studioName }));
+		toast.success(
+			studio ? t("studioPlaced") : t("sent", { studio: studioName }),
+		);
 		setOpen(false);
-		router.refresh();
+		if (studio) router.push(`/dashboard/books/${bookId}`);
+		else router.refresh();
 	}
 
 	const toggleExtra = (extraId: string, on: boolean) => {
@@ -111,9 +128,11 @@ export function OrderBookDialog({
 			</DialogTrigger>
 			<DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
 				<DialogHeader>
-					<DialogTitle>{t("title")}</DialogTitle>
+					<DialogTitle>{studio ? t("studioTitle") : t("title")}</DialogTitle>
 					<DialogDescription>
-						{t("description", { studio: studioName })}
+						{studio
+							? t("studioDescription")
+							: t("description", { studio: studioName })}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -235,44 +254,34 @@ export function OrderBookDialog({
 								</p>
 							)}
 						</div>
+						{studio && (
+							<div className="flex items-center justify-between gap-3">
+								<label htmlFor={`${id}-price`} className="text-sm font-medium">
+									{t("studioPrice")}
+								</label>
+								<Input
+									id={`${id}-price`}
+									type="number"
+									min={0}
+									step="any"
+									className="w-32"
+									value={price}
+									placeholder={quoted.ok ? String(quoted.quote.total) : ""}
+									onChange={(e) => setPrice(e.target.value)}
+								/>
+							</div>
+						)}
 						<DialogFooter>
 							<Button type="submit" disabled={isSubmitting || !quoted.ok}>
 								{isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-								{t("submit", { studio: studioName })}
+								{studio
+									? t("studioSubmit")
+									: t("submit", { studio: studioName })}
 							</Button>
 						</DialogFooter>
 					</form>
 				)}
 			</DialogContent>
 		</Dialog>
-	);
-}
-
-/** One option with its control and what it adds to the price. */
-function Choice({
-	id,
-	name,
-	price,
-	children,
-}: {
-	id: string;
-	name: string;
-	price: number;
-	children: React.ReactNode;
-}) {
-	const t = useTranslations("PhotoBook.order");
-	return (
-		<div className="flex items-center gap-2.5">
-			{children}
-			<label
-				htmlFor={id}
-				className="flex flex-1 cursor-pointer justify-between gap-3 text-sm"
-			>
-				<span>{name}</span>
-				<span className="text-muted-foreground tabular-nums">
-					{price > 0 ? t("adds", { price }) : t("included")}
-				</span>
-			</label>
-		</div>
 	);
 }

@@ -18,6 +18,7 @@ export function useBookDesign(
 	bookId: string,
 	initial: BookDesign,
 	onSaveError: (code: string) => void,
+	saveDraft: typeof saveBook = saveBook,
 ) {
 	const [design, dispatch] = useReducer(bookReducer, initial);
 	const [status, setStatus] = useState<SaveStatus>("saved");
@@ -30,7 +31,7 @@ export function useBookDesign(
 		queue.current = queue.current.then(async () => {
 			const json = JSON.stringify(latest.current);
 			if (json === saved.current) return setStatus("saved");
-			const result = await saveBook({ id: bookId, design: latest.current });
+			const result = await saveDraft({ id: bookId, design: latest.current });
 			if (!result.ok) {
 				setStatus("error");
 				return onSaveError(result.error);
@@ -40,7 +41,7 @@ export function useBookDesign(
 			setStatus(JSON.stringify(latest.current) === json ? "saved" : "saving");
 		});
 		return queue.current;
-	}, [bookId, onSaveError]);
+	}, [bookId, onSaveError, saveDraft]);
 
 	useEffect(() => {
 		if (JSON.stringify(design) === saved.current) return;

@@ -38,6 +38,9 @@ export const ORDER_STATUSES = [
 	"DELIVERED",
 ] as const;
 
+/** What the studio can filter its list by: orders, plus the books it is still designing. */
+export const STUDIO_LIST_STATUSES = ["DRAFT", ...ORDER_STATUSES] as const;
+
 export interface BookSummary {
 	id: string;
 	title: string;

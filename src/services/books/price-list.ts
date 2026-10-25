@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getLocale } from "next-intl/server";
 import { parsePriceList } from "@/lib/books/pricing";
 import { db } from "@/lib/db";
 
@@ -9,5 +10,6 @@ export async function getPriceList(photographerId: string) {
 		where: { photographerId },
 		select: { data: true },
 	});
-	return parsePriceList(row?.data);
+	const locale = await getLocale();
+	return parsePriceList(row?.data, locale === "fr" ? "fr" : "en");
 }

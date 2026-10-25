@@ -19,26 +19,39 @@ import {
 	type StudioOrderPage,
 } from "./types";
 
-/** The studio's orders, newest first. Drafts are the client's own and never show. */
+/** The studio's orders and the books it is still making for clients, most recently touched first. A client's own drafts never show. */
 export async function listBookOrders(
 	photographerId: string,
 	{ page, q, status }: ListOrdersParams,
 ): Promise<StudioOrderPage> {
 	const where: Prisma.PhotoBookWhereInput = {
 		photographerId,
-		status: status ? (status as BookStatus) : { in: [...ORDER_STATUSES] },
+		AND: [
+			{
+				OR: [
+					{ status: { in: [...ORDER_STATUSES] } },
+					{ createdByStudio: true },
+				],
+			},
+			...(status ? [{ status: status as BookStatus }] : []),
+		],
 	};
 	if (q)
-		where.OR = [
-			{ title: { contains: q, mode: "insensitive" } },
-			{ client: { name: { contains: q, mode: "insensitive" } } },
-			{ project: { title: { contains: q, mode: "insensitive" } } },
+		where.AND = [
+			...(where.AND as Prisma.PhotoBookWhereInput[]),
+			{
+				OR: [
+					{ title: { contains: q, mode: "insensitive" } },
+					{ client: { name: { contains: q, mode: "insensitive" } } },
+					{ project: { title: { contains: q, mode: "insensitive" } } },
+				],
+			},
 		];
 	const total = await db.photoBook.count({ where });
 	const meta = pageMeta(page, total, ORDERS_PAGE_SIZE);
 	const rows = await db.photoBook.findMany({
 		where,
-		orderBy: [{ submittedAt: "desc" }, { id: "asc" }],
+		orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
 		skip: pageSkip(meta.page, ORDERS_PAGE_SIZE),
 		take: ORDERS_PAGE_SIZE,
 		include: {
@@ -131,4 +144,20 @@ export async function getBookOrder(
 		order: toBookOrder(row, invoice && toBookInvoice(invoice)),
 		priceList,
 	};
+}
+
+/** A project's books as the studio sees them: its orders and the drafts it made itself. */
+export async function listProjectBooksForStudio(
+	photographerId: string,
+	projectId: string,
+) {
+	return db.photoBook.findMany({
+		where: {
+			photographerId,
+			projectId,
+			OR: [{ status: { in: [...ORDER_STATUSES] } }, { createdByStudio: true }],
+		},
+		orderBy: { updatedAt: "desc" },
+		select: { id: true, title: true, status: true, copies: true },
+	});
 }

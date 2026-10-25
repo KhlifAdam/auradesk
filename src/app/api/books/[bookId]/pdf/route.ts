@@ -5,7 +5,7 @@ import { parseBookDesign, usedItemIds } from "@/lib/books/design";
 import { attachmentHeader } from "@/lib/content-disposition";
 import { db } from "@/lib/db";
 import { buildBookPdf } from "@/services/books/pdf-builder";
-import { r2PhotoLoader } from "@/services/books/print-photo";
+import { prepareR2Photos } from "@/services/books/print-photo";
 import { ORDER_STATUSES } from "@/services/books/types";
 
 // Reading and cropping every original takes a while for a big book.
@@ -47,9 +47,9 @@ export async function GET(
 	});
 	const keys = new Map(photos.map((photo) => [photo.id, photo.key]));
 
-	const { bytes, missing } = await buildBookPdf(
-		design.data,
-		r2PhotoLoader(keys),
+	const { loader, cleanup } = await prepareR2Photos(keys);
+	const { bytes, missing } = await buildBookPdf(design.data, loader).finally(
+		cleanup,
 	);
 	return new Response(Buffer.from(bytes), {
 		headers: {

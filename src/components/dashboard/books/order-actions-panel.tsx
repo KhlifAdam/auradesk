@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, Printer, Truck, Undo2 } from "lucide-react";
+import { Check, Info, Loader2, Printer, Truck, Undo2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
@@ -12,10 +12,10 @@ import { useErrorMessage } from "@/hooks/use-error-message";
 import type { ActionResult } from "@/lib/action-result";
 import {
 	acceptBookOrder,
-	advanceBookOrder,
 	sendBackBookOrder,
 } from "@/services/books/studio-order-actions";
 import type { BookStatus } from "@/services/books/types";
+import type { AdvanceTo } from "./use-order-advance";
 
 interface Props {
 	bookId: string;
@@ -23,6 +23,8 @@ interface Props {
 	/** The price worked out from the studio's list. */
 	calculated: number;
 	invoicePaid: boolean;
+	busy: boolean;
+	onAdvance: (to: AdvanceTo) => void;
 }
 
 /** The next step for an order: accept (or send back), then print, ready, delivered. */
@@ -31,14 +33,17 @@ export function OrderActionsPanel({
 	status,
 	calculated,
 	invoicePaid,
+	busy,
+	onAdvance,
 }: Props) {
 	const t = useTranslations("BookOrders.actions");
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
-	const [pending, startTransition] = useTransition();
+	const [running, startTransition] = useTransition();
 	const [price, setPrice] = useState(String(calculated));
 	const [note, setNote] = useState("");
 	const [sendingBack, setSendingBack] = useState(false);
+	const pending = running || busy;
 
 	const run = (task: () => Promise<ActionResult<unknown>>, done: string) =>
 		startTransition(async () => {
@@ -49,19 +54,28 @@ export function OrderActionsPanel({
 			router.refresh();
 		});
 
-	const advance = (to: "IN_PRODUCTION" | "READY" | "DELIVERED", done: string) =>
-		run(() => advanceBookOrder({ id: bookId, to }), done);
-
-	const spinner = (icon: React.ReactNode) =>
-		pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : icon;
+	const icon = (node: React.ReactNode) =>
+		pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : node;
 
 	if (status === "DELIVERED" || status === "DRAFT")
 		return <p className="text-sm text-muted-foreground">{t("done")}</p>;
 	const canSendBack = status === "SUBMITTED" || status === "ACCEPTED";
+	const step = {
+		ACCEPTED: { to: "IN_PRODUCTION", label: t("start"), Icon: Printer },
+		IN_PRODUCTION: { to: "READY", label: t("ready"), Icon: Check },
+		READY: { to: "DELIVERED", label: t("deliver"), Icon: Truck },
+	} as const;
+	const next = status === "SUBMITTED" ? null : step[status];
 
 	return (
 		<div className="flex flex-col gap-3">
 			<p className="text-sm">{t(`hint.${status}`)}</p>
+			{status !== "SUBMITTED" && !invoicePaid && (
+				<p className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs">
+					<Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+					{t("unpaidNote")}
+				</p>
+			)}
 			{status === "SUBMITTED" && (
 				<div className="flex flex-wrap items-end gap-2">
 					<label
@@ -70,10 +84,10 @@ export function OrderActionsPanel({
 					>
 						{t("price")}
 						<Input
-							type="number"
 							id="book-price"
+							type="number"
 							min={0}
-							step="0.001"
+							step="any"
 							value={price}
 							onChange={(e) => setPrice(e.target.value)}
 							className="h-8 w-32"
@@ -94,49 +108,20 @@ export function OrderActionsPanel({
 							)
 						}
 					>
-						{spinner(<Check className="h-3.5 w-3.5" />)}
+						{icon(<Check className="h-3.5 w-3.5" />)}
 						{t("accept")}
 					</Button>
 				</div>
 			)}
-			{status === "ACCEPTED" && (
-				<div className="flex flex-col gap-1">
-					<Button
-						size="sm"
-						className="w-fit gap-1.5"
-						disabled={pending || !invoicePaid}
-						onClick={() => advance("IN_PRODUCTION", t("started"))}
-					>
-						{spinner(<Printer className="h-3.5 w-3.5" />)}
-						{t("start")}
-					</Button>
-					{!invoicePaid && (
-						<p className="text-[11px] text-muted-foreground">
-							{t("needsPayment")}
-						</p>
-					)}
-				</div>
-			)}
-			{status === "IN_PRODUCTION" && (
+			{next && (
 				<Button
 					size="sm"
 					className="w-fit gap-1.5"
 					disabled={pending}
-					onClick={() => advance("READY", t("readied"))}
+					onClick={() => onAdvance(next.to)}
 				>
-					{spinner(<Check className="h-3.5 w-3.5" />)}
-					{t("ready")}
-				</Button>
-			)}
-			{status === "READY" && (
-				<Button
-					size="sm"
-					className="w-fit gap-1.5"
-					disabled={pending}
-					onClick={() => advance("DELIVERED", t("delivered"))}
-				>
-					{spinner(<Truck className="h-3.5 w-3.5" />)}
-					{t("deliver")}
+					{icon(<next.Icon className="h-3.5 w-3.5" />)}
+					{next.label}
 				</Button>
 			)}
 			{canSendBack &&
@@ -161,7 +146,7 @@ export function OrderActionsPanel({
 									)
 								}
 							>
-								{spinner(<Undo2 className="h-3.5 w-3.5" />)}
+								{icon(<Undo2 className="h-3.5 w-3.5" />)}
 								{t("sendBackConfirm")}
 							</Button>
 							<Button

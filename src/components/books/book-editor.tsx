@@ -15,10 +15,16 @@ import {
 	type SlotRef,
 } from "@/lib/books/design-reducer";
 import { firstEmptySlot, placedFor, placedSlots } from "@/lib/books/geometry";
+import { loadBookPhotos, saveBook } from "@/services/books/actions";
+import {
+	loadStudioBookPhotos,
+	saveStudioBook,
+} from "@/services/books/studio-book-actions";
 import type { BookView } from "@/services/books/types";
 import { BookHeader } from "./book-header";
 import { BookSettings } from "./book-settings";
 import { isLowResolution, type PanMove } from "./book-slot";
+import { DeleteBookButton } from "./delete-book-button";
 import { OrderBookDialog } from "./order-book-dialog";
 import { COVER, PageStrip } from "./page-strip";
 import { PageWorkspace } from "./page-workspace";
@@ -33,7 +39,14 @@ const UNKNOWN_PHOTO = { w: 3, h: 2 };
  * The photo book editor: photos on the left, the spread being edited in the
  * middle, the spreads along the bottom. Everything saves by itself.
  */
-export function BookEditor({ book }: { book: BookView }) {
+export function BookEditor({
+	book,
+	studio = false,
+}: {
+	book: BookView;
+	/** The studio is designing it for the client: it saves and orders through the studio's actions. */
+	studio?: boolean;
+}) {
 	const t = useTranslations("PhotoBook.editor");
 	const errorMessage = useErrorMessage();
 	const onSaveError = useCallback(
@@ -44,8 +57,12 @@ export function BookEditor({ book }: { book: BookView }) {
 		book.id,
 		book.design,
 		onSaveError,
+		studio ? saveStudioBook : saveBook,
 	);
-	const tray = useBookTray(book.projectId);
+	const tray = useBookTray(
+		book.projectId,
+		studio ? loadStudioBookPhotos : loadBookPhotos,
+	);
 	const [selected, setSelected] = useState(COVER);
 	const [slotRef, setSlotRef] = useState<SlotRef | null>(null);
 	const [side, setSide] = useState<Side>("left");
@@ -129,24 +146,32 @@ export function BookEditor({ book }: { book: BookView }) {
 	return (
 		<div className="flex flex-col gap-4">
 			<BookHeader
-				projectId={book.projectId}
+				backHref={
+					studio ? "/dashboard/books" : `/portal/projects/${book.projectId}`
+				}
 				projectTitle={book.projectTitle}
 				title={design.title}
 				status={status}
 				lowResolution={lowResolution}
 				action={
-					<OrderBookDialog
-						bookId={book.id}
-						studioName={book.studioName}
-						priceList={book.priceList}
-						format={design.format}
-						pages={pageCount(design)}
-						hasCover={Boolean(design.cover.itemId)}
-						flush={flush}
-					/>
+					<>
+						{studio && (
+							<DeleteBookButton bookId={book.id} title={design.title} studio />
+						)}
+						<OrderBookDialog
+							bookId={book.id}
+							studioName={book.studioName}
+							priceList={book.priceList}
+							format={design.format}
+							pages={pageCount(design)}
+							hasCover={Boolean(design.cover.itemId)}
+							studio={studio}
+							flush={flush}
+						/>
+					</>
 				}
 			/>
-			{book.order.statusNote && (
+			{!studio && book.order.statusNote && (
 				<p className="flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
 					<MessageSquareWarning className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
 					<span>
