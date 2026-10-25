@@ -1,6 +1,7 @@
 import "server-only";
 
 import { db } from "@/lib/db";
+import { getActiveEstimates } from "@/services/projects/estimate";
 import { monthQueryRange } from "./dates";
 import type { CalendarEntry, ProjectOption } from "./types";
 
@@ -75,4 +76,30 @@ export async function listProjectOptions(
 		select: { id: true, title: true },
 		orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
 	});
+}
+
+/** The days active projects should be finished, from the smart estimate, in a month. */
+export async function listEstimateEntries(
+	photographerId: string,
+	month: string,
+): Promise<CalendarEntry[]> {
+	const estimates = await getActiveEstimates(photographerId);
+	return estimates
+		.filter(({ estimate }) => estimate.finishDate.startsWith(month))
+		.map(({ projectId, title, estimate }) => {
+			const day = `${estimate.finishDate}T00:00:00.000Z`;
+			return {
+				id: `estimate-${projectId}`,
+				kind: "estimate",
+				type: "ESTIMATE",
+				title,
+				allDay: true,
+				startsAt: day,
+				endsAt: day,
+				location: "",
+				notes: "",
+				projectId,
+				projectTitle: title,
+			};
+		});
 }

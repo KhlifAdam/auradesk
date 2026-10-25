@@ -14,6 +14,7 @@ const LEGEND = [
 	"AVAILABLE",
 	"UNAVAILABLE",
 	"PROJECT",
+	"ESTIMATE",
 ] as const;
 
 const monthHref = (month: string) => `/dashboard/calendar?month=${month}`;

@@ -1,5 +1,6 @@
 import {
 	Ban,
+	CalendarClock,
 	Camera,
 	CircleCheck,
 	FolderKanban,
@@ -52,6 +53,12 @@ export const EVENT_STYLES: Record<EntryType, EventStyle> = {
 		dot: "bg-event-other",
 		chip: "bg-event-other/15 text-event-other hover:bg-event-other/25",
 		bar: "bg-event-other",
+	},
+	ESTIMATE: {
+		icon: CalendarClock,
+		dot: "bg-primary",
+		chip: "border border-dashed border-primary/50 text-primary hover:bg-primary/10",
+		bar: "bg-primary",
 	},
 	PROJECT: {
 		icon: FolderKanban,

@@ -3,6 +3,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { OPEN_STATUSES } from "@/services/bookings/options";
 import { todayUtc } from "@/services/equipment/options";
+import { planningReminders } from "./planning-reminders";
 
 export type ReminderKind =
 	| "prepareGear"
@@ -14,7 +15,10 @@ export type ReminderKind =
 	| "selectionToReview"
 	| "overdueInvoices"
 	| "bookingFollowUp"
-	| "rentalReturn";
+	| "rentalReturn"
+	| "deadlineAtRisk"
+	| "bookToCollect"
+	| "bookUnpaid";
 
 export interface Reminder {
 	kind: ReminderKind;
@@ -218,6 +222,7 @@ export async function getAssistantReminders(
 		shootReminders(photographerId, today),
 		deadlineReminders(photographerId, today),
 		followUpReminders(photographerId, today),
+		planningReminders(photographerId, today),
 	]);
 	const all = groups.flat();
 	return [...all.filter((r) => r.urgent), ...all.filter((r) => !r.urgent)];

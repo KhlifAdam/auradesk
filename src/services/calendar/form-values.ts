@@ -29,7 +29,10 @@ export function entryToValues(
 	timeZone: string,
 ): EventFormValues {
 	const base = {
-		type: entry.type === "PROJECT" ? "SHOOT" : entry.type,
+		type:
+			entry.type === "PROJECT" || entry.type === "ESTIMATE"
+				? "SHOOT"
+				: entry.type,
 		title: entry.title,
 		allDay: entry.allDay,
 		location: entry.location,

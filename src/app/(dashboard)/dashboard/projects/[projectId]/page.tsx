@@ -12,11 +12,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { GalleryCard } from "@/components/client-work/gallery-card";
-import { NewBookDialog } from "@/components/dashboard/books/new-book-dialog";
+import { ProjectBooksSection } from "@/components/dashboard/books/project-books-section";
 import { ProjectEquipmentSection } from "@/components/dashboard/equipment/project-equipment-section";
 import { NewGalleryDialog } from "@/components/dashboard/projects/new-gallery-dialog";
 import { ProjectClientCard } from "@/components/dashboard/projects/project-client-card";
 import { ProjectDeleteButton } from "@/components/dashboard/projects/project-delete-button";
+import { ProjectEstimateCard } from "@/components/dashboard/projects/project-estimate-card";
 import { ProjectFacts } from "@/components/dashboard/projects/project-facts";
 import { ProjectStageControl } from "@/components/dashboard/projects/project-stage-control";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
@@ -32,6 +33,7 @@ import {
 	advanceShootDays,
 	isAutoAdvanceOn,
 } from "@/services/projects/auto-stage";
+import { getProjectEstimate } from "@/services/projects/estimate";
 import { getProject } from "@/services/projects/queries";
 import {
 	canClientView,
@@ -50,11 +52,12 @@ export default async function ProjectPage({
 	await advanceShootDays(photographerId);
 	const project = await getProject(photographerId, projectId);
 	if (!project) notFound();
-	const [invoices, gear, crew, autoAdvance] = await Promise.all([
+	const [invoices, gear, crew, autoAdvance, estimate] = await Promise.all([
 		listProjectInvoices(photographerId, project.id),
 		listProjectEquipment(photographerId, project.id),
 		listProjectTeam(photographerId, project.id),
 		isAutoAdvanceOn(photographerId),
+		getProjectEstimate(photographerId, project.id),
 	]);
 
 	return (
@@ -70,9 +73,6 @@ export default async function ProjectPage({
 				title={project.title}
 				actions={
 					<>
-						{project.client && isDeliveredToClient(project) && (
-							<NewBookDialog fixedProjectId={project.id} small />
-						)}
 						<ProjectDeleteButton projectId={project.id} />
 						<Button
 							asChild
@@ -104,7 +104,9 @@ export default async function ProjectPage({
 				stage={project.stage}
 				payment={project.paymentStatus}
 				autoAdvance={autoAdvance}
+				media={project.mediaType}
 			/>
+			{estimate && <ProjectEstimateCard estimate={estimate.estimate} />}
 			<ProjectTeamSection projectId={project.id} assignments={crew} />
 			<ProjectEquipmentSection
 				projectId={project.id}
@@ -167,6 +169,11 @@ export default async function ProjectPage({
 					</div>
 				)}
 			</section>
+			<ProjectBooksSection
+				photographerId={photographerId}
+				projectId={project.id}
+				canCreate={Boolean(project.client) && isDeliveredToClient(project)}
+			/>
 		</PageShell>
 	);
 }

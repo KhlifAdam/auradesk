@@ -6,6 +6,7 @@ import { useOptimistic, useTransition } from "react";
 import { toast } from "sonner";
 import { StageTimeline } from "@/components/client-work/stage-timeline";
 import { useErrorMessage } from "@/hooks/use-error-message";
+import type { MediaKind } from "@/lib/projects/estimate";
 import { updateProjectStage } from "@/services/projects/actions";
 import type { PaymentStatus } from "@/services/projects/options";
 import type { ProjectStage } from "@/services/projects/stages";
@@ -18,12 +19,15 @@ export function ProjectStageControl({
 	stage,
 	payment,
 	autoAdvance,
+	media,
 }: {
 	projectId: string;
 	stage: ProjectStage;
 	payment: PaymentStatus;
 	/** The studio lets projects move forward on their own. */
 	autoAdvance: boolean;
+	/** Video projects name their editing step for what it is. */
+	media?: MediaKind;
 }) {
 	const t = useTranslations("Projects.detail");
 	const router = useRouter();
@@ -50,6 +54,7 @@ export function ProjectStageControl({
 			</div>
 			<StageTimeline
 				stage={optimistic}
+				media={media}
 				onSelect={select}
 				disabled={isPending}
 				locked={

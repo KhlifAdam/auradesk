@@ -73,7 +73,7 @@ export default async function TeamProjectPage({
 				)}
 			</div>
 			<section className="rounded-xl border border-border bg-card p-3">
-				<StageTimeline stage={project.stage} />
+				<StageTimeline stage={project.stage} media={project.mediaType} />
 			</section>
 			<div className="grid gap-3 lg:grid-cols-[1fr_20rem]">
 				<Card title={t("plan")}>

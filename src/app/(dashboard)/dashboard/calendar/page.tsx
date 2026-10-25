@@ -9,6 +9,7 @@ import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { todayKey } from "@/services/calendar/dates";
 import {
 	listCalendarEntries,
+	listEstimateEntries,
 	listProjectOptions,
 } from "@/services/calendar/queries";
 import { calendarParamsSchema } from "@/services/calendar/schemas";
@@ -46,8 +47,9 @@ async function CalendarData({
 	timeZone: string;
 }) {
 	const { photographerId } = await requirePhotographer();
-	const [entries, projects, locale] = await Promise.all([
+	const [entries, estimates, projects, locale] = await Promise.all([
 		listCalendarEntries(photographerId, month),
+		listEstimateEntries(photographerId, month),
 		listProjectOptions(photographerId),
 		getLocale(),
 	]);
@@ -60,7 +62,7 @@ async function CalendarData({
 			timeZone={timeZone}
 			// Weeks start on Monday in French, Sunday in English.
 			weekStartsOn={locale === "fr" ? 1 : 0}
-			entries={entries}
+			entries={[...entries, ...estimates]}
 			projects={projects}
 		/>
 	);

@@ -26,6 +26,17 @@ private dashboard (this app) and a public website per studio.
   closed eyes and near-duplicates; the video assistant splits clips into scenes.
 - Invoices (/dashboard/invoices): DRAFT, SENT, PAID, CANCELLED; OVERDUE is a sent
   invoice past its due date. Sending emails the client. Payments can be partial.
+- Photo books (/dashboard/books): clients design a printed album from their
+  delivered photos in the portal (or the studio designs it for them) and send
+  it as an order. Prices come from the studio's price list (/dashboard/books/prices).
+  Accepting bills it with an invoice; the studio can print before being paid and
+  collect on delivery. Steps: SUBMITTED, ACCEPTED, IN_PRODUCTION, READY, DELIVERED.
+- Money to collect (on the Overview): what each client still owes, overdue
+  amounts, and what to chase first.
+- Smart estimate (on each project and in the calendar as "Expected delivery"):
+  hours of work left (import, culling, retouching, video editing, export), client
+  waiting time, expected finish date and deadline risk. Video projects have a
+  video editing step (POST_PRODUCTION is "video editing" for them).
 - Equipment (/dashboard/equipment): gear, its status, and bookings on projects or rentals.
 - Team (/dashboard/team): collaborators invited by email, assigned to projects
   with a role (editor, drone pilot…). They only see their assigned projects.
@@ -36,5 +47,6 @@ Money is in Tunisian dinars (TND).
 
 ## Client portal
 Clients sign in with email or a phone code, see their projects, galleries and
-invoices, choose photos, message the studio and request new services.
+invoices, choose photos, design and order photo books, message the studio and
+request new services. They have their own assistant for questions.
 `.trim();

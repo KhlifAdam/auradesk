@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { monthGridDays } from "@/services/calendar/dates";
 import { entryToValues, newEventValues } from "@/services/calendar/form-values";
@@ -28,6 +29,7 @@ export function CalendarView({
 	entries,
 	projects,
 }: CalendarViewProps) {
+	const router = useRouter();
 	const days = monthGridDays(month, weekStartsOn);
 	const byDay = useEntriesByDay(entries, timeZone);
 	const [selected, setSelected] = useState(
@@ -40,11 +42,14 @@ export function CalendarView({
 		setDraft({ values: newEventValues(day) });
 	};
 	// A project date opens a new event already linked to that project.
+	// An expected delivery opens its project.
 	const open = (entry: CalendarEntry) =>
-		setDraft({
-			id: entry.kind === "event" ? entry.id : undefined,
-			values: entryToValues(entry, timeZone),
-		});
+		entry.kind === "estimate" && entry.projectId
+			? router.push(`/dashboard/projects/${entry.projectId}`)
+			: setDraft({
+					id: entry.kind === "event" ? entry.id : undefined,
+					values: entryToValues(entry, timeZone),
+				});
 
 	return (
 		<div className="flex flex-col gap-3">

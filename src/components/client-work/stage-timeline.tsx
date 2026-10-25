@@ -2,6 +2,7 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { MediaKind } from "@/lib/projects/estimate";
 import { cn } from "@/lib/utils";
 import {
 	PROJECT_STAGES,
@@ -16,6 +17,8 @@ interface StageTimelineProps {
 	disabled?: boolean;
 	/** Steps that can't be picked, with the reason shown on hover. */
 	locked?: { stage: ProjectStage; reason: string };
+	/** Video projects call post-production what it is: video editing. */
+	media?: MediaKind;
 }
 
 /** The project workflow as a row of steps; past steps are checked. */
@@ -24,9 +27,15 @@ export function StageTimeline({
 	onSelect,
 	disabled,
 	locked,
+	media,
 }: StageTimelineProps) {
 	const t = useTranslations("Projects.stages");
+	const tMedia = useTranslations("Projects.stagesByMedia");
 	const current = stageIndex(stage);
+	const label = (step: ProjectStage) =>
+		step === "POST_PRODUCTION" && (media === "VIDEO" || media === "BOTH")
+			? tMedia(media)
+			: t(step);
 
 	return (
 		<ol className="grid grid-cols-5 gap-1.5 md:grid-cols-10">
@@ -54,7 +63,7 @@ export function StageTimeline({
 								state === "current" && "font-semibold",
 							)}
 						>
-							{t(step)}
+							{label(step)}
 						</span>
 					</>
 				);

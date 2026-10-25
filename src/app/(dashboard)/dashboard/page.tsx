@@ -6,6 +6,10 @@ import {
 	AssistantCardSkeleton,
 } from "@/components/dashboard/overview/assistant-card";
 import { LatestUploads } from "@/components/dashboard/overview/latest-uploads";
+import {
+	MoneyCard,
+	MoneyCardSkeleton,
+} from "@/components/dashboard/overview/money-card";
 import { OverviewHeader } from "@/components/dashboard/overview/overview-header";
 import { SetupChecklist } from "@/components/dashboard/overview/setup-checklist";
 import { StatCard } from "@/components/dashboard/overview/stat-card";
@@ -54,9 +58,14 @@ export default async function OverviewPage({
 				hasStudio={studio !== null}
 			/>
 
-			<Suspense fallback={<AssistantCardSkeleton />}>
-				<AssistantCard />
-			</Suspense>
+			<div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+				<Suspense fallback={<AssistantCardSkeleton />}>
+					<AssistantCard />
+				</Suspense>
+				<Suspense fallback={<MoneyCardSkeleton />}>
+					<MoneyCard />
+				</Suspense>
+			</div>
 
 			<section className="flex flex-col gap-3">
 				<div className="flex flex-wrap items-center justify-between gap-2">
