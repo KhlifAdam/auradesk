@@ -22,7 +22,8 @@
 			"equipment": "Matériel",
 			"team": "Équipe",
 			"privacy": "Confidentialité",
-			"subscription": "Abonnement"
+			"subscription": "Abonnement",
+			"books": "Livres photo"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -215,7 +216,18 @@
 		"cannotBanAdmin": "Les administrateurs ne peuvent pas être suspendus.",
 		"metadataPending": "Certains fichiers sont encore en cours de lecture. Patientez un instant et réessayez.",
 		"forbidden": "Ce compte ne peut pas effectuer cette action.",
-		"bookingNotAccepted": "Le client n'a pas encore accepté cette demande."
+		"bookingNotAccepted": "Le client n'a pas encore accepté cette demande.",
+		"bookLimit": "Un projet peut avoir 3 livres photo au maximum.",
+		"bookNoPhotos": "Il n'y a pas encore de photos livrées à mettre dans un livre.",
+		"bookLocked": "Ce livre a été envoyé au studio et ne peut plus être modifié.",
+		"bookWrongStatus": "Cette commande a déjà avancé. Actualisez la page.",
+		"bookNoCover": "Choisissez une photo de couverture avant de commander.",
+		"bookNotEnabled": "Ce studio n'accepte pas encore les commandes de livres photo.",
+		"bookTooFewPages": "Le livre n'a pas assez de pages pour ce studio.",
+		"bookTooManyPages": "Le livre a trop de pages.",
+		"bookBadOption": "Une des options choisies n'est plus proposée. Choisissez à nouveau.",
+		"bookNeedsPayment": "La facture doit être payée avant le début de l'impression.",
+		"bookHasPayment": "Un paiement est déjà enregistré : cette commande ne peut pas être renvoyée."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -880,7 +892,8 @@
 			"signUp": "S'inscrire",
 			"wrongAudience": {
 				"photographer": "Ceci est un compte client. Veuillez utiliser la connexion client.",
-				"client": "Ce compte ne peut pas se connecter à l'espace client."
+				"client": "Ce compte ne peut pas se connecter à l'espace client.",
+				"admin": "Les administrateurs se connectent depuis la page d'administration."
 			}
 		},
 		"register": {
@@ -1024,6 +1037,12 @@
 			"resending": "Envoi…",
 			"resent": "Un nouveau code a été envoyé.",
 			"back": "Retour à la connexion"
+		},
+		"adminLogin": {
+			"badge": "Administration",
+			"title": "Connexion administrateur",
+			"description": "Réservé aux administrateurs de la plateforme.",
+			"notAdmin": "Ce compte n'est pas un compte administrateur."
 		}
 	},
 	"Landing": {
@@ -1456,6 +1475,33 @@
 			"intro": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur AuraDesk. Connectez-vous (ou créez un compte avec cette adresse) pour accepter et voir les projets qui vous sont confiés.",
 			"cta": "Voir l'invitation",
 			"text": "Bonjour {name}, {studio} vous invite à rejoindre son équipe sur AuraDesk. Acceptez ici : {url}"
+		},
+		"bookOrderSubmitted": {
+			"languageName": "Français",
+			"subject": "Nouvelle commande de livre photo de {client}",
+			"preheader": "{book} : {pages} pages, {copies} exemplaires, {total}",
+			"heading": "Un client a commandé un livre photo",
+			"intro": "{client} vous a envoyé le livre photo « {book} » du projet {project} : {pages} pages, {copies} exemplaires, {total}. Vérifiez-le, acceptez-le et téléchargez le PDF prêt à imprimer.",
+			"cta": "Voir la commande",
+			"text": "{client} vous a envoyé le livre photo « {book} » ({project}) : {pages} pages, {copies} exemplaires, {total}. Voir : {url}"
+		},
+		"bookSentBack": {
+			"languageName": "Français",
+			"subject": "{studio} vous a renvoyé votre livre photo",
+			"preheader": "« {book} » demande une modification",
+			"heading": "Votre livre photo demande une modification",
+			"intro": "{studio} vous a renvoyé « {book} ». Sa note : {note}. Modifiez-le puis renvoyez-le.",
+			"cta": "Ouvrir le livre",
+			"text": "{studio} vous a renvoyé « {book} ». Sa note : {note}. Ouvrir : {url}"
+		},
+		"bookReady": {
+			"languageName": "Français",
+			"subject": "Votre livre photo est prêt",
+			"preheader": "{studio} a terminé l'impression de « {book} »",
+			"heading": "Votre livre photo est prêt",
+			"intro": "{studio} a terminé l'impression de « {book} ». Il vous sera remis bientôt.",
+			"cta": "Voir la commande",
+			"text": "{studio} a terminé l'impression de « {book} ». Voir : {url}"
 		}
 	},
 	"Sms": {
@@ -2497,7 +2543,8 @@
 			"confirm": "Enregistrer le paiement",
 			"cancel": "Annuler",
 			"recorded": "Paiement enregistré. La formule est prolongée."
-		}
+		},
+		"mainAdmin": "Administrateur principal"
 	},
 	"Messages": {
 		"title": "Messagerie",
@@ -3323,6 +3370,7 @@
 	},
 	"Assistant": {
 		"fab": "Demander à l'assistant",
+		"fabLabel": "Demander à l'IA",
 		"panel": {
 			"title": "Assistant",
 			"newChat": "Nouvelle conversation",
@@ -3542,6 +3590,295 @@
 				"messageClient": "Écris un message à {name}.",
 				"reply": "Aide-moi à répondre à {name}."
 			}
+		}
+	},
+	"PhotoBook": {
+		"section": {
+			"title": "Livres photo",
+			"description": "Créez un livre à imprimer avec vos photos livrées : choisissez les pages, les mises en page et la couverture.",
+			"empty": "Vous n'avez pas encore créé de livre photo.",
+			"meta": "{count, plural, =0 {Couverture seule} one {# page} other {# pages}} · modifié {when}"
+		},
+		"create": {
+			"button": "Nouveau livre photo",
+			"title": "Nouveau livre photo",
+			"description": "Choisissez un format. Nous disposons vos photos livrées pour commencer ; vous pourrez tout modifier.",
+			"size": "Format du livre",
+			"submit": "Créer le livre",
+			"limit": "Jusqu'à {max} livres photo par projet."
+		},
+		"delete": {
+			"button": "Supprimer le livre",
+			"title": "Supprimer ce livre photo ?",
+			"description": "« {title} » sera supprimé. Vos photos ne sont pas touchées.",
+			"cancel": "Annuler",
+			"confirm": "Supprimer",
+			"done": "Livre photo supprimé."
+		},
+		"editor": {
+			"pageTitle": "Livre photo",
+			"untitled": "Livre sans titre",
+			"cover": "Couverture",
+			"noCover": "Pas encore de photo de couverture",
+			"coverHint": "Cliquez sur une photo à gauche pour changer la couverture.",
+			"coverEmptyHint": "Cliquez sur une photo à gauche pour en faire la couverture.",
+			"removeCover": "Retirer la photo de couverture",
+			"layout": "Mise en page",
+			"caption": "Légende",
+			"captionPlaceholder": "Ajouter une légende (facultatif)",
+			"selectSlot": "Choisir l'emplacement photo {number}",
+			"clearSlot": "Retirer la photo de cet emplacement",
+			"lowResolution": "Cette photo est petite pour ce format et risque d'être floue à l'impression.",
+			"lowResolutionShort": "Basse qualité",
+			"lowResolutionWarning": "{count, plural, one {# photo est trop petite} other {# photos sont trop petites}} pour être nettes à l'impression avec ce format. Choisissez un format plus petit ou une autre photo.",
+			"pickHint": "Cliquez sur une photo pour la placer dans le premier emplacement vide.",
+			"pickHintSlot": "Cliquez sur une photo pour la placer dans l'emplacement {number}.",
+			"pickHintCover": "Cliquez sur une photo pour en faire la couverture.",
+			"pagesCount": "{count, plural, =0 {Aucune page} one {# page} other {# pages}} hors couverture",
+			"fill": "Ajouter {count, plural, =0 {les photos inutilisées} one {# photo inutilisée} other {# photos inutilisées}}",
+			"status": {
+				"saved": "Enregistré",
+				"saving": "Enregistrement…",
+				"error": "Non enregistré"
+			},
+			"tabs": {
+				"photos": "Photos",
+				"settings": "Livre"
+			},
+			"tray": {
+				"count": "{shown} photos sur {total}",
+				"hideUsed": "Masquer les utilisées",
+				"empty": "Aucune photo livrée à choisir.",
+				"allUsed": "Toutes les photos chargées sont déjà dans le livre.",
+				"failed": "Les photos n'ont pas pu être chargées.",
+				"retry": "Réessayer",
+				"loadMore": "Charger plus de photos"
+			},
+			"layouts": {
+				"full": "Une photo, bord à bord",
+				"single": "Une photo avec marge",
+				"two-side": "Deux photos côte à côte",
+				"two-stack": "Deux photos l'une sur l'autre",
+				"three-left": "Une grande photo et deux petites",
+				"three-top": "Une photo large et deux petites",
+				"four-grid": "Quatre photos",
+				"six-grid": "Six photos"
+			},
+			"settings": {
+				"title": "Titre",
+				"titlePlaceholder": "Le titre du livre",
+				"subtitle": "Sous-titre",
+				"subtitlePlaceholder": "Une date, un lieu…",
+				"format": "Format",
+				"formats": {
+					"square": "Carré",
+					"landscape": "Paysage",
+					"portrait": "Portrait"
+				},
+				"margin": "Espacement",
+				"margins": {
+					"none": "Aucun",
+					"tight": "Serré",
+					"normal": "Normal",
+					"airy": "Aéré"
+				},
+				"background": "Couleur des pages",
+				"backgrounds": {
+					"white": "Blanc",
+					"cream": "Crème",
+					"charcoal": "Anthracite",
+					"black": "Noir"
+				},
+				"titleTone": "Texte de couverture",
+				"tones": {
+					"light": "Clair",
+					"dark": "Sombre"
+				}
+			},
+			"selectCover": "Choisir la photo de couverture",
+			"selectPanorama": "Choisir la photo panoramique",
+			"spreadLabel": "Pages {from}–{to}",
+			"addSpread": "Ajouter deux pages",
+			"spreadOf": "Pages {number} sur {total}",
+			"duplicateSpread": "Dupliquer ces pages",
+			"removeSpread": "Supprimer ces pages",
+			"spreadKind": "Type",
+			"kinds": {
+				"pages": "Deux pages",
+				"panorama": "Panorama"
+			},
+			"panoramaHint": "Une seule photo s'étend sur les deux pages.",
+			"whichPage": "Page",
+			"sides": {
+				"left": "Gauche",
+				"right": "Droite"
+			},
+			"adjust": {
+				"hint": "Faites glisser la photo pour la repositionner.",
+				"zoom": "Zoom",
+				"reset": "Réinitialiser"
+			},
+			"pickHintSelected": "Cliquez sur une photo pour la placer dans l'emplacement sélectionné.",
+			"sentBack": "{studio} vous a renvoyé le livre : {note}"
+		},
+		"status": {
+			"DRAFT": "Brouillon",
+			"SUBMITTED": "Envoyé",
+			"ACCEPTED": "Accepté",
+			"IN_PRODUCTION": "Impression",
+			"READY": "Prêt",
+			"DELIVERED": "Livré"
+		},
+		"order": {
+			"button": "Commander ce livre",
+			"title": "Commander un livre imprimé",
+			"description": "{studio} imprime et vous livre votre livre. Le prix s'affiche ci-dessous avant toute facturation.",
+			"cover": "Couverture",
+			"paper": "Papier",
+			"extras": "Options",
+			"copies": "Exemplaires",
+			"note": "Note pour le studio",
+			"notePlaceholder": "Tout ce que le studio doit savoir (facultatif)",
+			"closed": "{studio} n'accepte pas encore les commandes de livres photo.",
+			"noCover": "Choisissez d'abord une photo de couverture.",
+			"tooFew": "Ce studio demande au moins {min} pages ; votre livre en compte {count}.",
+			"sent": "Votre livre a été envoyé à {studio}.",
+			"submit": "Envoyer à {studio}",
+			"leadTime": "Généralement prêt sous {days} jours après paiement.",
+			"adds": "+ {price, number} TND",
+			"included": "Inclus"
+		},
+		"quote": {
+			"base": "Livre, {format}, {pages} pages",
+			"pages": "{count} pages supplémentaires",
+			"cover": "Couverture : {name}",
+			"paper": "Papier : {name}",
+			"perCopy": "Par exemplaire",
+			"copies": "{count, plural, one {# exemplaire} other {# exemplaires}}",
+			"total": "Total",
+			"adjusted": "Le studio a ajusté le prix calculé ({quoted})."
+		},
+		"view": {
+			"submitted": "{studio} a reçu votre commande et la confirmera bientôt.",
+			"accepted": "{studio} a accepté votre commande. Réglez la facture {number} pour lancer l'impression.",
+			"acceptedPaid": "Paiement reçu. {studio} lancera bientôt l'impression.",
+			"production": "{studio} imprime votre livre.",
+			"ready": "Votre livre est prêt. {studio} vous le remettra.",
+			"delivered": "Votre livre a été livré.",
+			"sentOn": "Envoyé le {date}",
+			"withdraw": "Retirer la commande",
+			"withdrawn": "Commande retirée. Vous pouvez modifier à nouveau votre livre.",
+			"openInvoice": "Ouvrir la facture {number}",
+			"balance": "Reste à payer : {amount}",
+			"price": "Prix",
+			"yourNote": "Votre note",
+			"yourBook": "Votre livre"
+		},
+		"invoice": {
+			"base": "Livre photo « {title} », {format}, {pages} pages",
+			"pages": "Pages supplémentaires ({count})",
+			"cover": "Couverture : {name}",
+			"paper": "Papier : {name}",
+			"extra": "Option",
+			"adjustment": "Ajustement du prix",
+			"note": "Livre photo imprimé « {title} »."
+		}
+	},
+	"BookOrders": {
+		"title": "Livres photo",
+		"description": "Les livres conçus par vos clients et envoyés pour impression.",
+		"pricesButton": "Tarifs",
+		"prices": {
+			"back": "Commandes de livres",
+			"title": "Tarifs des livres photo",
+			"description": "Les clients voient un prix calculé à partir de cette grille. Tous les prix sont par exemplaire, en TND.",
+			"enabled": "Accepter les commandes de livres photo",
+			"enabledHint": "Désactivé, les clients peuvent concevoir des livres mais pas les commander.",
+			"base": "Prix de base",
+			"baseSquare": "Livre carré",
+			"baseLandscape": "Livre paysage",
+			"basePortrait": "Livre portrait",
+			"includedPages": "Pages incluses",
+			"extraSpreadPrice": "Prix par tranche de deux pages en plus",
+			"minPages": "Pages minimum",
+			"leadTimeDays": "Délai (jours)",
+			"covers": "Couvertures",
+			"coversHint": "Prix ajouté au prix de base.",
+			"papers": "Papier",
+			"papersHint": "Prix ajouté au prix de base.",
+			"extras": "Options",
+			"extrasHint": "Suppléments facultatifs comme un coffret cadeau.",
+			"optionName": "Nom",
+			"optionPrice": "Prix",
+			"add": "Ajouter",
+			"remove": "Retirer",
+			"invalid": "Vérifiez les valeurs signalées : les noms sont obligatoires et les prix ne peuvent pas être négatifs.",
+			"save": "Enregistrer les tarifs",
+			"saved": "Tarifs enregistrés."
+		},
+		"search": "Rechercher un livre, un client ou un projet",
+		"all": "Tous les statuts",
+		"filter": "Filtrer par statut",
+		"closed": "Vos clients ne peuvent pas encore commander de livres.",
+		"openPrices": "Définir vos tarifs et ouvrir les commandes",
+		"empty": {
+			"title": "Aucune commande de livre",
+			"description": "Quand un client envoie un livre depuis son espace, il apparaît ici.",
+			"noMatch": "Aucune commande ne correspond à ces filtres"
+		},
+		"list": {
+			"size": "{pages} pages · {copies, plural, one {# exemplaire} other {# exemplaires}}",
+			"invoice": {
+				"DRAFT": "Brouillon",
+				"SENT": "Impayée",
+				"PAID": "Payée",
+				"CANCELLED": "Annulée"
+			}
+		},
+		"detail": {
+			"back": "Toutes les commandes",
+			"price": "Prix",
+			"invoice": "Facture {number} · {status}",
+			"invoiceStatus": {
+				"DRAFT": "Brouillon",
+				"SENT": "Impayée",
+				"PAID": "Payée",
+				"CANCELLED": "Annulée"
+			},
+			"client": "Client",
+			"name": "Nom",
+			"email": "E-mail",
+			"phone": "Téléphone"
+		},
+		"pdf": {
+			"button": "Télécharger le PDF prêt à imprimer",
+			"hint": "Avec fonds perdus et traits de coupe, en résolution d'impression.",
+			"failed": "Le PDF n'a pas pu être créé. Réessayez.",
+			"missing": "{count, plural, one {# photo n'a pas pu être lue et a été laissée} other {# photos n'ont pas pu être lues et ont été laissées}} vide(s). Vérifiez le PDF avant l'impression."
+		},
+		"actions": {
+			"hint": {
+				"SUBMITTED": "Vérifiez le livre et son prix. En acceptant, le client reçoit une facture.",
+				"ACCEPTED": "En attente du paiement. L'impression démarre une fois la facture payée.",
+				"IN_PRODUCTION": "Imprimez le livre, puis marquez-le prêt.",
+				"READY": "Le client a été prévenu. Marquez-le livré une fois remis."
+			},
+			"done": "Cette commande est livrée.",
+			"price": "Prix à facturer (TND)",
+			"accept": "Accepter et facturer",
+			"accepted": "Commande acceptée et facture envoyée.",
+			"start": "Lancer l'impression",
+			"started": "Impression lancée.",
+			"needsPayment": "Enregistrez d'abord le paiement sur la facture.",
+			"ready": "Marquer prêt",
+			"readied": "Marqué prêt. Le client a été prévenu.",
+			"deliver": "Marquer livré",
+			"delivered": "Marqué livré.",
+			"sendBack": "Renvoyer au client",
+			"sendBackConfirm": "Renvoyer",
+			"sentBack": "Renvoyé au client.",
+			"notePlaceholder": "Que doit modifier le client ?",
+			"cancel": "Annuler"
 		}
 	}
 }

@@ -28,6 +28,8 @@ interface SpaceHeaderProps {
 	user: { name: string; email: string; image?: string | null };
 	/** Photographers get a way back to their own studio. */
 	isPhotographer: boolean;
+	/** Where signing out lands; each space has its own sign-in page. */
+	loginPath?: string;
 }
 
 /** Top bar of a standalone space (team, admin): its name and the account menu. */
@@ -37,6 +39,7 @@ export function SpaceHeader({
 	icon,
 	user,
 	isPhotographer,
+	loginPath = "/login",
 }: SpaceHeaderProps) {
 	const t = useTranslations("SpaceHeader");
 	const router = useRouter();
@@ -45,7 +48,7 @@ export function SpaceHeader({
 	const logout = async () => {
 		setIsLoggingOut(true);
 		await authClient.signOut();
-		router.push("/login");
+		router.push(loginPath);
 		router.refresh();
 	};
 

@@ -8,6 +8,7 @@ import { SubscriptionCard } from "@/components/admin/subscription-card";
 import { StatCards } from "@/components/dashboard/shared/stat-cards";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { isMainAdminEmail } from "@/lib/auth/main-admin";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { ROLES } from "@/lib/auth/roles";
 import { formatBytes } from "@/lib/format";
@@ -83,6 +84,9 @@ export default async function AdminUserPage({
 						<Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
 							{t(`roles.${user.role as (typeof ROLE_FILTERS)[number]}`)}
 						</Badge>
+						{isMainAdminEmail(user.email) && (
+							<Badge className="h-5 px-1.5 text-[10px]">{t("mainAdmin")}</Badge>
+						)}
 						{user.banned && (
 							<Badge
 								variant="outline"

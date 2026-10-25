@@ -4,6 +4,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { Badge } from "@/components/ui/badge";
+import { isMainAdminEmail } from "@/lib/auth/main-admin";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { listUsers } from "@/services/admin/queries";
 import type { ListUsersParams, ROLE_FILTERS } from "@/services/admin/schemas";
@@ -35,6 +36,11 @@ export async function UserList({ params }: { params: ListUsersParams }) {
 								>
 									{user.name}
 								</Link>
+								{isMainAdminEmail(user.email) && (
+									<Badge className="ml-2 h-5 px-1.5 text-[10px]">
+										{t("mainAdmin")}
+									</Badge>
+								)}
 								{user.banned && (
 									<Badge
 										variant="outline"

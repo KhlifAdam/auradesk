@@ -38,7 +38,7 @@ export function ThreadRow({
 			<Link href={href} className="min-w-0 flex-1 px-2 py-1.5">
 				<p className="truncate text-sm">{thread.title}</p>
 				<p className="text-[10px] text-muted-foreground">
-					{format.relativeTime(new Date(thread.updatedAt))}
+					{format.relativeTime(new Date(thread.updatedAt), new Date())}
 				</p>
 			</Link>
 			<DropdownMenu>

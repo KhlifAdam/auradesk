@@ -1,6 +1,7 @@
 // Gives (or takes back) the platform admin role.
 //   pnpm admin:grant someone@example.com
 //   pnpm admin:revoke someone@example.com   (back to photographer)
+// The main admin is made with `pnpm admin:create`, and can't be revoked here.
 // There is no way to become admin from the app itself: only someone with
 // access to the server and its database can run this.
 
@@ -13,6 +14,16 @@ if (!["grant", "revoke"].includes(action) || !email) {
 }
 
 process.loadEnvFile(".env");
+// The main admin (ADMIN_EMAIL) keeps the role; change ADMIN_EMAIL first to move it.
+if (
+	action === "revoke" &&
+	process.env.ADMIN_EMAIL?.toLowerCase() === email.trim().toLowerCase()
+) {
+	console.error(
+		`${email} is the main administrator (ADMIN_EMAIL) and can't be demoted. Change ADMIN_EMAIL first.`,
+	);
+	process.exit(1);
+}
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
 await client.connect();
 try {

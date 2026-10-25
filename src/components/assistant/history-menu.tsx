@@ -71,7 +71,7 @@ export function HistoryMenu() {
 								{thread.title}
 							</span>
 							<span className="shrink-0 text-[10px] text-muted-foreground">
-								{format.relativeTime(new Date(thread.updatedAt))}
+								{format.relativeTime(new Date(thread.updatedAt), new Date())}
 							</span>
 						</DropdownMenuItem>
 					))

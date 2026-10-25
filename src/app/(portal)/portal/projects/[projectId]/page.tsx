@@ -2,6 +2,7 @@ import { ArrowLeft, Clock, EyeOff, Images, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { ProjectBooks } from "@/components/books/project-books";
 import { GalleryCard } from "@/components/client-work/gallery-card";
 import { StageTimeline } from "@/components/client-work/stage-timeline";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
 import { listClientProjectInvoices } from "@/services/invoices/queries";
 import { getPortalProject } from "@/services/portal/queries";
+import { isDeliveredToClient } from "@/services/projects/visibility";
 
 export default async function PortalProjectPage({
 	params,
@@ -100,6 +102,7 @@ export default async function PortalProjectPage({
 					</div>
 				)}
 			</section>
+			{isDeliveredToClient(project) && <ProjectBooks projectId={project.id} />}
 		</>
 	);
 }

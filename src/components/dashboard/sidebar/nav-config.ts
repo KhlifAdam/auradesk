@@ -1,4 +1,5 @@
 import {
+	BookImage,
 	BookOpen,
 	Briefcase,
 	CalendarDays,
@@ -49,6 +50,7 @@ export const NAV_GROUPS: NavGroup[] = [
 			{ href: "/dashboard/bookings", labelKey: "bookings", icon: BookOpen },
 			{ href: "/dashboard/clients", labelKey: "clients", icon: Users },
 			{ href: "/dashboard/projects", labelKey: "projects", icon: FolderKanban },
+			{ href: "/dashboard/books", labelKey: "books", icon: BookImage },
 			{ href: "/dashboard/invoices", labelKey: "invoices", icon: Receipt },
 			{ href: "/dashboard/equipment", labelKey: "equipment", icon: Package },
 			{ href: "/dashboard/team", labelKey: "team", icon: UsersRound },

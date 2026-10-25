@@ -111,7 +111,7 @@ export function useAssistantFormat() {
 				hour: "2-digit",
 				minute: "2-digit",
 			}),
-		relative: (iso: string) => format.relativeTime(new Date(iso)),
+		relative: (iso: string) => format.relativeTime(new Date(iso), new Date()),
 		money: (value: number | null) =>
 			value === null ? "" : formatMoney(value, locale),
 	};

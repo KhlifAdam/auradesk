@@ -31,14 +31,19 @@ model User {
   banReason  String?   @map("ban_reason")
   banExpires DateTime? @map("ban_expires")
 
-  studio   Studio?
+  studio           Studio?
   /// The photographer's AuraDesk plan (free month, then paid).
-  subscription Subscription?
+  subscription     Subscription?
   /// Conversations with the AI assistant; personal to this user.
   assistantThreads AssistantThread[]
-  media    Media[]
-  albums   Album[]
-  packages Package[]
+  /// Photo books this person designed from their delivered photos.
+  photoBooks       PhotoBook[]       @relation("ClientBooks")
+  /// Photo book orders sent to this photographer, and the prices they set for them.
+  bookOrders       PhotoBook[]       @relation("PhotographerBooks")
+  bookPriceList    BookPriceList?
+  media            Media[]
+  albums           Album[]
+  packages         Package[]
 
   projects            Project[]          @relation("PhotographerProjects")
   clientProjects      Project[]          @relation("ClientProjects")
@@ -188,7 +193,7 @@ model Studio {
   /// Unsaved sections being edited, shown only in the dashboard's live
   /// preview. Cleared when the sections are saved.
   sectionsDraft          Json?        @map("sections_draft")
-  createdAt             DateTime     @default(now()) @map("created_at")
+  createdAt              DateTime     @default(now()) @map("created_at")
   updatedAt              DateTime     @updatedAt @map("updated_at")
 
   photographer User   @relation(fields: [photographerId], references: [id], onDelete: Cascade)
@@ -417,6 +422,7 @@ model Project {
   photographer      User                @relation("PhotographerProjects", fields: [photographerId], references: [id], onDelete: Cascade)
   client            User?               @relation("ClientProjects", fields: [clientId], references: [id], onDelete: SetNull)
   galleries         Gallery[]
+  photoBooks        PhotoBook[]
   events            CalendarEvent[]
   booking           Booking?
   invoices          Invoice[]
@@ -873,6 +879,8 @@ model Invoice {
   project      Project?         @relation(fields: [projectId], references: [id], onDelete: SetNull)
   items        InvoiceItem[]
   payments     InvoicePayment[]
+  /// The photo book order this invoice bills, if any.
+  photoBook    PhotoBook?
 
   @@unique([photographerId, number])
   @@index([photographerId, status, issueDate])
@@ -1218,4 +1226,70 @@ model AssistantMessage {
   @@id([threadId, id])
   @@index([threadId, position])
   @@map("assistant_messages")
+}
+
+/// A photo book a client designs from the final photos of a delivered project.
+/// `design` holds the whole layout (cover, pages, which photo goes where) as
+/// JSON, checked on every save against the shape in `lib/books/design.ts`;
+/// the print-ready PDF is built from it on demand.
+model PhotoBook {
+  id             String          @id @default(cuid())
+  projectId      String          @map("project_id")
+  clientId       String          @map("client_id")
+  /// The studio that prints it (the project's photographer); lets every studio query stay scoped.
+  photographerId String          @map("photographer_id")
+  /// Same as `design.title`, kept here for lists.
+  title          String
+  design         Json
+  /// DRAFT while the client designs it; once sent, the design is locked.
+  status         BookOrderStatus @default(DRAFT)
+  copies         Int             @default(1)
+  /// What the client chose: cover, paper and extras, as ids of the studio's price list.
+  options        Json?
+  /// The client's message to the studio with the order.
+  clientNote     String          @default("") @map("client_note")
+  /// The price as calculated when it was sent: lines, per copy and total, so later price changes don't move it.
+  quote          Json?
+  /// What the studio finally charges (the quote, unless they adjusted it).
+  total          Decimal?        @db.Decimal(12, 3)
+  /// The studio's note when it sends a book back to the client.
+  statusNote     String          @default("") @map("status_note")
+  invoiceId      String?         @unique @map("invoice_id")
+  submittedAt    DateTime?       @map("submitted_at")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  client       User     @relation("ClientBooks", fields: [clientId], references: [id], onDelete: Cascade)
+  photographer User     @relation("PhotographerBooks", fields: [photographerId], references: [id], onDelete: Cascade)
+  invoice      Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@index([clientId, projectId])
+  @@index([photographerId, status, submittedAt])
+  @@map("photo_books")
+}
+
+/// Where a photo book order stands. The studio moves it along; production only
+/// starts once the invoice is paid.
+enum BookOrderStatus {
+  DRAFT
+  SUBMITTED
+  ACCEPTED
+  IN_PRODUCTION
+  READY
+  DELIVERED
+
+  @@map("book_order_status")
+}
+
+/// What a studio charges for photo books: a price per size, extra pages, and
+/// the covers, papers and extras it offers. Checked by `lib/books/pricing.ts`.
+model BookPriceList {
+  photographerId String   @id @map("photographer_id")
+  data           Json
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  photographer User @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+
+  @@map("book_price_lists")
 }

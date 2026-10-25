@@ -22,10 +22,10 @@ export function AssistantFab() {
 					onClick={() => setOpen(true)}
 					aria-label={t("fab")}
 					title={`${t("fab")} (Ctrl+J)`}
-					className="assistant-glass group fixed right-4 bottom-4 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-primary/40 text-primary shadow-luminous transition-all duration-300 hover:scale-105 hover:shadow-luminous-lg print:hidden"
+					className="assistant-launcher group fixed right-8 bottom-7 z-40 flex h-12 items-center gap-2 rounded-full pr-5 pl-4 text-sm font-semibold text-primary-foreground duration-300 hover:scale-105 print:hidden"
 				>
-					<span className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/25 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-100" />
-					<Sparkles className="relative h-5 w-5" />
+					<Sparkles className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
+					{t("fabLabel")}
 				</motion.button>
 			)}
 		</AnimatePresence>

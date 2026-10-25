@@ -229,6 +229,32 @@
 	backdrop-filter: blur(16px) saturate(140%);
 }
 
+/*
+ * The launcher: the brand gold as a glossy gradient (light on top, deeper at
+ * the bottom) and a warm glow beneath and around it.
+ * Everything is mixed from --primary, so it follows the brand colour.
+ */
+@utility assistant-launcher {
+	background-image: linear-gradient(
+		180deg,
+		color-mix(in oklab, var(--primary) 70%, white) 0%,
+		var(--primary) 48%,
+		color-mix(in oklab, var(--primary) 78%, oklch(0.55 0.17 55)) 100%
+	);
+	box-shadow:
+		0 10px 28px -4px color-mix(in oklab, var(--primary) 75%, transparent),
+		0 0 36px color-mix(in oklab, var(--primary) 40%, transparent);
+	text-shadow: 0 1px 0 color-mix(in oklab, white 35%, transparent);
+	transition-property: transform, box-shadow, filter;
+
+	&:hover {
+		filter: brightness(1.06) saturate(1.1);
+		box-shadow:
+			0 14px 36px -4px color-mix(in oklab, var(--primary) 85%, transparent),
+			0 0 52px color-mix(in oklab, var(--primary) 55%, transparent);
+	}
+}
+
 @utility assistant-aura {
 	background-image:
 		radial-gradient(

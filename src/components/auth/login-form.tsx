@@ -23,6 +23,7 @@ import {
 	AUTH_PATHS,
 	verifyEmailPath,
 } from "@/lib/auth/client-intent";
+import { ROLES } from "@/lib/auth/roles";
 import { AudienceBadge } from "./audience-badge";
 import { AuthBackLink } from "./auth-back-link";
 import { AuthHeading } from "./auth-heading";
@@ -61,7 +62,13 @@ export function LoginForm({ audience, providers, oauthError }: LoginFormProps) {
 			// person to the right page.
 			if (!AUDIENCE_ROLES[audience].includes(data?.user.role ?? "")) {
 				await authClient.signOut();
-				return void toast.error(t(`login.wrongAudience.${audience}`));
+				return void toast.error(
+					t(
+						data?.user.role === ROLES.admin
+							? "login.wrongAudience.admin"
+							: `login.wrongAudience.${audience}`,
+					),
+				);
 			}
 			toast.success(t("login.success"));
 			window.location.assign(paths.home);

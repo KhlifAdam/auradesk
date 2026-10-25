@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { SpaceHeader } from "@/components/shared/space-header";
+import { ADMIN_PATHS } from "@/lib/auth/admin-paths";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { BRAND_NAME } from "@/lib/brand";
 import { realEmail } from "@/lib/phone";
@@ -33,6 +34,7 @@ export default async function AdminLayout({
 					image: session.user.image,
 				}}
 				isPhotographer={false}
+				loginPath={ADMIN_PATHS.login}
 			/>
 			<main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-6 md:px-6">
 				<AdminNav />

@@ -29,10 +29,11 @@ export const AUTH_PATHS = {
 
 /**
  * Roles allowed to sign in on each side's page. A photographer can also be a
- * client of another studio, so the client page takes both.
+ * client of another studio, so the client page takes both. Administrators
+ * have a page of their own (`ADMIN_PATHS.login`) and are turned away here.
  */
 export const AUDIENCE_ROLES: Record<AuthAudience, readonly string[]> = {
-	photographer: [ROLES.photographer, ROLES.admin],
+	photographer: [ROLES.photographer],
 	client: [ROLES.client, ROLES.photographer],
 };
 

@@ -8,6 +8,8 @@ const coreSchema = z.object({
 	GITHUB_CLIENT_SECRET: z.string().optional(),
 	GOOGLE_CLIENT_ID: z.string().optional(),
 	GOOGLE_CLIENT_SECRET: z.string().optional(),
+	/** The platform's main administrator; created with `pnpm admin:create`. */
+	ADMIN_EMAIL: z.email().optional(),
 	/** Bearer token the scheduler sends to /api/cron/*; unset disables them. */
 	CRON_SECRET: z.string().min(16).optional(),
 });

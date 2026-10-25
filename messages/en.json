@@ -22,7 +22,8 @@
 			"equipment": "Equipment",
 			"team": "Team",
 			"privacy": "Privacy & data",
-			"subscription": "Subscription"
+			"subscription": "Subscription",
+			"books": "Photo books"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -215,7 +216,18 @@
 		"cannotBanAdmin": "Administrators can't be suspended.",
 		"metadataPending": "Some files are still being read. Wait a moment and try again.",
 		"forbidden": "You can't do that with this account.",
-		"bookingNotAccepted": "The client hasn't accepted this request yet."
+		"bookingNotAccepted": "The client hasn't accepted this request yet.",
+		"bookLimit": "A project can have at most 3 photo books.",
+		"bookNoPhotos": "There are no delivered photos to put in a book yet.",
+		"bookLocked": "This book was sent to the studio and can no longer be changed.",
+		"bookWrongStatus": "This order has already moved on. Refresh the page.",
+		"bookNoCover": "Choose a cover photo before ordering.",
+		"bookNotEnabled": "This studio doesn't take photo book orders yet.",
+		"bookTooFewPages": "The book has too few pages for this studio.",
+		"bookTooManyPages": "The book has too many pages.",
+		"bookBadOption": "One of the chosen options is no longer offered. Choose again.",
+		"bookNeedsPayment": "The invoice must be paid before printing starts.",
+		"bookHasPayment": "A payment was already recorded, so this order can't be sent back."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -880,7 +892,8 @@
 			"signUp": "Sign up",
 			"wrongAudience": {
 				"photographer": "This is a client account. Please use the client sign-in.",
-				"client": "This account can't sign in to the client space."
+				"client": "This account can't sign in to the client space.",
+				"admin": "Administrators sign in on the admin page."
 			}
 		},
 		"register": {
@@ -1024,6 +1037,12 @@
 			"resending": "Sending…",
 			"resent": "A new code has been sent.",
 			"back": "Back to sign in"
+		},
+		"adminLogin": {
+			"badge": "Administration",
+			"title": "Administrator sign-in",
+			"description": "Restricted to the platform's administrators.",
+			"notAdmin": "This account isn't an administrator."
 		}
 	},
 	"Landing": {
@@ -1456,6 +1475,33 @@
 			"intro": "Hi {name}, {studio} invited you to join their team on AuraDesk. Sign in (or create an account with this email address) to accept and see the projects you're assigned to.",
 			"cta": "See the invitation",
 			"text": "Hi {name}, {studio} invited you to join their team on AuraDesk. Accept it here: {url}"
+		},
+		"bookOrderSubmitted": {
+			"languageName": "English",
+			"subject": "New photo book order from {client}",
+			"preheader": "{book}: {pages} pages, {copies} copies, {total}",
+			"heading": "A client ordered a photo book",
+			"intro": "{client} sent you the photo book “{book}” from the project {project}: {pages} pages, {copies} copies, {total}. Review it, accept it and download the print-ready PDF.",
+			"cta": "View the order",
+			"text": "{client} sent you the photo book “{book}” ({project}): {pages} pages, {copies} copies, {total}. View it here: {url}"
+		},
+		"bookSentBack": {
+			"languageName": "English",
+			"subject": "{studio} sent your photo book back",
+			"preheader": "{book} needs a change",
+			"heading": "Your photo book needs a change",
+			"intro": "{studio} sent “{book}” back to you. Their note: {note}. Make the change and send it again.",
+			"cta": "Open the book",
+			"text": "{studio} sent “{book}” back to you. Their note: {note}. Open it here: {url}"
+		},
+		"bookReady": {
+			"languageName": "English",
+			"subject": "Your photo book is ready",
+			"preheader": "{studio} finished printing “{book}”",
+			"heading": "Your photo book is ready",
+			"intro": "{studio} finished printing “{book}”. They'll hand it over to you soon.",
+			"cta": "View the order",
+			"text": "{studio} finished printing “{book}”. View it here: {url}"
 		}
 	},
 	"Sms": {
@@ -2497,7 +2543,8 @@
 			"confirm": "Record payment",
 			"cancel": "Cancel",
 			"recorded": "Payment recorded. The plan is extended."
-		}
+		},
+		"mainAdmin": "Main admin"
 	},
 	"Messages": {
 		"title": "Messages",
@@ -3323,6 +3370,7 @@
 	},
 	"Assistant": {
 		"fab": "Ask the assistant",
+		"fabLabel": "Ask AI",
 		"panel": {
 			"title": "Assistant",
 			"newChat": "New conversation",
@@ -3542,6 +3590,295 @@
 				"messageClient": "Write a message to {name}.",
 				"reply": "Help me reply to {name}."
 			}
+		}
+	},
+	"PhotoBook": {
+		"section": {
+			"title": "Photo books",
+			"description": "Make a printable book from your delivered photos: choose the pages, the layouts and the cover.",
+			"empty": "You haven't made a photo book yet.",
+			"meta": "{count, plural, =0 {Cover only} one {# page} other {# pages}} · edited {when}"
+		},
+		"create": {
+			"button": "New photo book",
+			"title": "New photo book",
+			"description": "Pick a size. We'll lay out your delivered photos to start with; you can change everything.",
+			"size": "Book size",
+			"submit": "Create the book",
+			"limit": "Up to {max} photo books per project."
+		},
+		"delete": {
+			"button": "Delete the book",
+			"title": "Delete this photo book?",
+			"description": "“{title}” will be deleted. Your photos are not affected.",
+			"cancel": "Cancel",
+			"confirm": "Delete",
+			"done": "Photo book deleted."
+		},
+		"editor": {
+			"pageTitle": "Photo book",
+			"untitled": "Untitled book",
+			"cover": "Cover",
+			"noCover": "No cover photo yet",
+			"coverHint": "Click a photo on the left to change the cover.",
+			"coverEmptyHint": "Click a photo on the left to make it the cover.",
+			"removeCover": "Remove the cover photo",
+			"layout": "Layout",
+			"caption": "Caption",
+			"captionPlaceholder": "Add a caption (optional)",
+			"selectSlot": "Choose photo spot {number}",
+			"clearSlot": "Remove the photo from this spot",
+			"lowResolution": "This photo is small for this size and may look soft when printed.",
+			"lowResolutionShort": "Low quality",
+			"lowResolutionWarning": "{count, plural, one {# photo is} other {# photos are}} too small to print sharp at this book size. Use a smaller book or another photo.",
+			"pickHint": "Click a photo to place it in the first empty spot.",
+			"pickHintSlot": "Click a photo to place it in spot {number}.",
+			"pickHintCover": "Click a photo to use it as the cover.",
+			"pagesCount": "{count, plural, =0 {No pages yet} one {# page} other {# pages}} besides the cover",
+			"fill": "Add {count, plural, =0 {unused photos} one {# unused photo} other {# unused photos}}",
+			"status": {
+				"saved": "Saved",
+				"saving": "Saving…",
+				"error": "Not saved"
+			},
+			"tabs": {
+				"photos": "Photos",
+				"settings": "Book"
+			},
+			"tray": {
+				"count": "{shown} of {total} photos",
+				"hideUsed": "Hide used",
+				"empty": "No delivered photos to choose from.",
+				"allUsed": "All loaded photos are already in the book.",
+				"failed": "The photos couldn't be loaded.",
+				"retry": "Try again",
+				"loadMore": "Load more photos"
+			},
+			"layouts": {
+				"full": "One photo, edge to edge",
+				"single": "One photo with a margin",
+				"two-side": "Two photos side by side",
+				"two-stack": "Two photos stacked",
+				"three-left": "One large photo and two small",
+				"three-top": "One wide photo and two small",
+				"four-grid": "Four photos",
+				"six-grid": "Six photos"
+			},
+			"settings": {
+				"title": "Title",
+				"titlePlaceholder": "The book's title",
+				"subtitle": "Subtitle",
+				"subtitlePlaceholder": "A date, a place…",
+				"format": "Size",
+				"formats": {
+					"square": "Square",
+					"landscape": "Landscape",
+					"portrait": "Portrait"
+				},
+				"margin": "Spacing",
+				"margins": {
+					"none": "None",
+					"tight": "Tight",
+					"normal": "Normal",
+					"airy": "Airy"
+				},
+				"background": "Page colour",
+				"backgrounds": {
+					"white": "White",
+					"cream": "Cream",
+					"charcoal": "Charcoal",
+					"black": "Black"
+				},
+				"titleTone": "Cover text",
+				"tones": {
+					"light": "Light",
+					"dark": "Dark"
+				}
+			},
+			"selectCover": "Choose the cover photo",
+			"selectPanorama": "Choose the panoramic photo",
+			"spreadLabel": "Pages {from}–{to}",
+			"addSpread": "Add two pages",
+			"spreadOf": "Pages {number} of {total}",
+			"duplicateSpread": "Duplicate these pages",
+			"removeSpread": "Delete these pages",
+			"spreadKind": "Type",
+			"kinds": {
+				"pages": "Two pages",
+				"panorama": "Panorama"
+			},
+			"panoramaHint": "One photo runs across both pages.",
+			"whichPage": "Page",
+			"sides": {
+				"left": "Left",
+				"right": "Right"
+			},
+			"adjust": {
+				"hint": "Drag the photo to reposition it.",
+				"zoom": "Zoom",
+				"reset": "Reset"
+			},
+			"pickHintSelected": "Click a photo to place it in the selected spot.",
+			"sentBack": "{studio} sent your book back: {note}"
+		},
+		"status": {
+			"DRAFT": "Draft",
+			"SUBMITTED": "Sent",
+			"ACCEPTED": "Accepted",
+			"IN_PRODUCTION": "Printing",
+			"READY": "Ready",
+			"DELIVERED": "Delivered"
+		},
+		"order": {
+			"button": "Order this book",
+			"title": "Order a printed book",
+			"description": "{studio} prints and delivers your book. You'll get the price below before anything is billed.",
+			"cover": "Cover",
+			"paper": "Paper",
+			"extras": "Extras",
+			"copies": "Copies",
+			"note": "Note for the studio",
+			"notePlaceholder": "Anything the studio should know (optional)",
+			"closed": "{studio} doesn't take photo book orders yet.",
+			"noCover": "Choose a cover photo first.",
+			"tooFew": "This studio needs at least {min} pages; your book has {count}.",
+			"sent": "Your book was sent to {studio}.",
+			"submit": "Send to {studio}",
+			"leadTime": "Usually ready within {days} days after payment.",
+			"adds": "+ {price, number} TND",
+			"included": "Included"
+		},
+		"quote": {
+			"base": "Book, {format}, {pages} pages",
+			"pages": "{count} extra pages",
+			"cover": "Cover: {name}",
+			"paper": "Paper: {name}",
+			"perCopy": "Per copy",
+			"copies": "{count, plural, one {# copy} other {# copies}}",
+			"total": "Total",
+			"adjusted": "The studio adjusted the calculated price ({quoted})."
+		},
+		"view": {
+			"submitted": "{studio} has your order and will confirm it soon.",
+			"accepted": "{studio} accepted your order. Pay invoice {number} to start printing.",
+			"acceptedPaid": "Payment received. {studio} will start printing soon.",
+			"production": "{studio} is printing your book.",
+			"ready": "Your book is ready. {studio} will deliver it.",
+			"delivered": "Your book was delivered.",
+			"sentOn": "Sent on {date}",
+			"withdraw": "Withdraw the order",
+			"withdrawn": "The order was withdrawn. You can edit your book again.",
+			"openInvoice": "Open invoice {number}",
+			"balance": "Remaining to pay: {amount}",
+			"price": "Price",
+			"yourNote": "Your note",
+			"yourBook": "Your book"
+		},
+		"invoice": {
+			"base": "Photo book “{title}”, {format}, {pages} pages",
+			"pages": "Extra pages ({count})",
+			"cover": "Cover: {name}",
+			"paper": "Paper: {name}",
+			"extra": "Extra",
+			"adjustment": "Price adjustment",
+			"note": "Printed photo book “{title}”."
+		}
+	},
+	"BookOrders": {
+		"title": "Photo books",
+		"description": "Books your clients designed and sent to be printed.",
+		"pricesButton": "Prices",
+		"prices": {
+			"back": "Photo book orders",
+			"title": "Photo book prices",
+			"description": "Clients are quoted from this list as they choose. All prices are per copy, in TND.",
+			"enabled": "Accept photo book orders",
+			"enabledHint": "While off, clients can design books but not order them.",
+			"base": "Base prices",
+			"baseSquare": "Square book",
+			"baseLandscape": "Landscape book",
+			"basePortrait": "Portrait book",
+			"includedPages": "Pages included",
+			"extraSpreadPrice": "Price per extra two pages",
+			"minPages": "Minimum pages",
+			"leadTimeDays": "Lead time (days)",
+			"covers": "Covers",
+			"coversHint": "Price added to the base price.",
+			"papers": "Paper",
+			"papersHint": "Price added to the base price.",
+			"extras": "Extras",
+			"extrasHint": "Optional add-ons such as a gift box.",
+			"optionName": "Name",
+			"optionPrice": "Price",
+			"add": "Add",
+			"remove": "Remove",
+			"invalid": "Check the highlighted values: names are required and prices can't be negative.",
+			"save": "Save prices",
+			"saved": "Prices saved."
+		},
+		"search": "Search by book, client or project",
+		"all": "All statuses",
+		"filter": "Filter by status",
+		"closed": "Clients can't order books yet.",
+		"openPrices": "Set your prices and open orders",
+		"empty": {
+			"title": "No book orders yet",
+			"description": "When a client sends a book from their portal, it shows up here.",
+			"noMatch": "No order matches these filters"
+		},
+		"list": {
+			"size": "{pages} pages · {copies, plural, one {# copy} other {# copies}}",
+			"invoice": {
+				"DRAFT": "Draft",
+				"SENT": "Unpaid",
+				"PAID": "Paid",
+				"CANCELLED": "Cancelled"
+			}
+		},
+		"detail": {
+			"back": "All orders",
+			"price": "Price",
+			"invoice": "Invoice {number} · {status}",
+			"invoiceStatus": {
+				"DRAFT": "Draft",
+				"SENT": "Unpaid",
+				"PAID": "Paid",
+				"CANCELLED": "Cancelled"
+			},
+			"client": "Client",
+			"name": "Name",
+			"email": "Email",
+			"phone": "Phone"
+		},
+		"pdf": {
+			"button": "Download print-ready PDF",
+			"hint": "With bleed and trim marks, at print resolution.",
+			"failed": "The PDF couldn't be made. Please try again.",
+			"missing": "{count, plural, one {# photo} other {# photos}} couldn't be read and left blank. Check the PDF before printing."
+		},
+		"actions": {
+			"hint": {
+				"SUBMITTED": "Review the book and its price. Accepting sends the client an invoice.",
+				"ACCEPTED": "Waiting for the client to pay. Printing starts once the invoice is paid.",
+				"IN_PRODUCTION": "Print the book, then mark it ready.",
+				"READY": "The client was told it's ready. Mark it delivered once handed over."
+			},
+			"done": "This order is delivered.",
+			"price": "Price to charge (TND)",
+			"accept": "Accept and invoice",
+			"accepted": "Order accepted and invoice sent.",
+			"start": "Start printing",
+			"started": "Printing started.",
+			"needsPayment": "Record the payment on the invoice first.",
+			"ready": "Mark ready",
+			"readied": "Marked ready. The client was notified.",
+			"deliver": "Mark delivered",
+			"delivered": "Marked delivered.",
+			"sendBack": "Send back to the client",
+			"sendBackConfirm": "Send back",
+			"sentBack": "Sent back to the client.",
+			"notePlaceholder": "What should the client change?",
+			"cancel": "Cancel"
 		}
 	}
 }
