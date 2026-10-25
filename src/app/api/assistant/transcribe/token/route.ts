@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { toAssistantViewer } from "@/lib/ai/assistant/viewer";
 import { underVoiceCap } from "@/lib/ai/assistant/voice-caps";
 import { isLiveSpeechEnabled, mintLiveSpeechKey } from "@/lib/ai/soniox";
 import { getApiUser } from "@/lib/auth/api-session";
@@ -14,7 +13,8 @@ const deny = (error: string, status: number) =>
  */
 export async function POST() {
 	const user = await getApiUser();
-	if (!user || !toAssistantViewer(user)) return deny("unauthorized", 401);
+	// Any signed-in account: studio staff and clients in the portal alike.
+	if (!user) return deny("unauthorized", 401);
 	if (!isLiveSpeechEnabled()) return deny("liveSpeechUnavailable", 503);
 	if (!underVoiceCap("note", user.id)) return deny("dailyLimit", 429);
 

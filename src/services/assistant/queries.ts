@@ -4,7 +4,7 @@ import { ASSISTANT_LIMITS } from "@/lib/ai/assistant/limits";
 import type { AssistantUIMessage } from "@/lib/ai/assistant/tools";
 import { db } from "@/lib/db";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
-import type { ThreadPage, ThreadSummary } from "./types";
+import type { AssistantSpace, ThreadPage, ThreadSummary } from "./types";
 
 const DAY_MS = 86_400_000;
 const PAGE_SIZE = ASSISTANT_LIMITS.threadPageSize;
@@ -25,11 +25,12 @@ const toSummary = (row: {
 export async function listThreads(
 	userId: string,
 	page: number,
+	space: AssistantSpace = "studio",
 ): Promise<ThreadPage> {
-	const total = await db.assistantThread.count({ where: { userId } });
+	const total = await db.assistantThread.count({ where: { userId, space } });
 	const meta = pageMeta(page, total, PAGE_SIZE);
 	const rows = await db.assistantThread.findMany({
-		where: { userId },
+		where: { userId, space },
 		orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
 		skip: pageSkip(meta.page, PAGE_SIZE),
 		take: PAGE_SIZE,
@@ -39,9 +40,13 @@ export async function listThreads(
 }
 
 /** The few latest threads, for the panel's history menu. */
-export async function listRecentThreads(userId: string, take = 10) {
+export async function listRecentThreads(
+	userId: string,
+	take = 10,
+	space: AssistantSpace = "studio",
+) {
 	const rows = await db.assistantThread.findMany({
-		where: { userId },
+		where: { userId, space },
 		orderBy: [{ updatedAt: "desc" }, { id: "asc" }],
 		take,
 		select: summarySelect,
@@ -50,9 +55,13 @@ export async function listRecentThreads(userId: string, take = 10) {
 }
 
 /** A thread with its messages in order, or null when it isn't the user's. */
-export async function getThread(userId: string, threadId: string) {
+export async function getThread(
+	userId: string,
+	threadId: string,
+	space: AssistantSpace = "studio",
+) {
 	const thread = await db.assistantThread.findFirst({
-		where: { id: threadId, userId },
+		where: { id: threadId, userId, space },
 		select: {
 			...summarySelect,
 			messages: {

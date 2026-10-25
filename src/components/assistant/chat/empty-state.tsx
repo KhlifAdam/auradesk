@@ -2,10 +2,12 @@
 
 import { motion } from "framer-motion";
 import {
-	BarChart3,
+	BookImage,
 	BookOpen,
 	CalendarDays,
 	FolderKanban,
+	Hourglass,
+	Images,
 	ListTodo,
 	Receipt,
 	Sparkles,
@@ -15,9 +17,17 @@ import { useTranslations } from "next-intl";
 const PHOTOGRAPHER = [
 	{ key: "today", icon: ListTodo },
 	{ key: "pending", icon: BookOpen },
-	{ key: "unpaid", icon: Receipt },
+	{ key: "money", icon: Receipt },
+	{ key: "forecast", icon: Hourglass },
 	{ key: "week", icon: CalendarDays },
-	{ key: "stats", icon: BarChart3 },
+] as const;
+
+const PORTAL = [
+	{ key: "whereProject", icon: FolderKanban },
+	{ key: "whatToDo", icon: ListTodo },
+	{ key: "howChoose", icon: Images },
+	{ key: "whatOwe", icon: Receipt },
+	{ key: "photoBook", icon: BookImage },
 ] as const;
 
 const TEAM = [
@@ -28,13 +38,15 @@ const TEAM = [
 /** A welcome and a few one-tap questions to start with. */
 export function EmptyState({
 	team,
+	portal,
 	onPick,
 }: {
 	team: boolean;
+	portal?: boolean;
 	onPick: (question: string) => void;
 }) {
 	const t = useTranslations("Assistant.empty");
-	const suggestions = team ? TEAM : PHOTOGRAPHER;
+	const suggestions = portal ? PORTAL : team ? TEAM : PHOTOGRAPHER;
 
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-5 px-2 py-8 text-center">
@@ -49,7 +61,7 @@ export function EmptyState({
 			<div className="flex flex-col gap-1">
 				<h2 className="font-display text-lg font-semibold">{t("title")}</h2>
 				<p className="max-w-xs text-xs text-muted-foreground">
-					{t(team ? "subtitleTeam" : "subtitle")}
+					{t(portal ? "subtitlePortal" : team ? "subtitleTeam" : "subtitle")}
 				</p>
 			</div>
 			<div className="flex w-full max-w-sm flex-col gap-1.5">

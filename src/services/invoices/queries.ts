@@ -206,3 +206,17 @@ export async function listClientProjectInvoices(
 	});
 	return rows.map(toSummary);
 }
+
+/** The client's issued invoices across every studio, newest first. */
+export async function listClientInvoices(
+	clientId: string,
+	take = 20,
+): Promise<InvoiceSummary[]> {
+	const rows = await db.invoice.findMany({
+		where: { clientId, status: { in: ["SENT", "PAID"] } },
+		include: summaryInclude,
+		orderBy: [{ issueDate: "desc" }, { number: "desc" }],
+		take,
+	});
+	return rows.map(toSummary);
+}

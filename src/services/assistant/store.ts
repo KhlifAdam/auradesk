@@ -3,6 +3,7 @@ import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import type { AssistantUIMessage } from "@/lib/ai/assistant/tools";
 import { db } from "@/lib/db";
+import type { AssistantSpace } from "./types";
 
 const TITLE_LENGTH = 60;
 
@@ -20,19 +21,20 @@ export function titleFrom(messages: AssistantUIMessage[]) {
 		: text;
 }
 
-/** Makes sure the thread exists and is the user's; false when it's someone else's. */
+/** Makes sure the thread exists and is the user's, in this space; false otherwise. */
 export async function claimThread(
 	userId: string,
 	threadId: string,
 	firstMessages: AssistantUIMessage[],
+	space: AssistantSpace = "studio",
 ) {
 	const thread = await db.assistantThread.findUnique({
 		where: { id: threadId },
-		select: { userId: true },
+		select: { userId: true, space: true },
 	});
-	if (thread) return thread.userId === userId;
+	if (thread) return thread.userId === userId && thread.space === space;
 	await db.assistantThread.create({
-		data: { id: threadId, userId, title: titleFrom(firstMessages) },
+		data: { id: threadId, userId, space, title: titleFrom(firstMessages) },
 	});
 	return true;
 }

@@ -7,6 +7,7 @@ import { GalleryCard } from "@/components/client-work/gallery-card";
 import { StageTimeline } from "@/components/client-work/stage-timeline";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { InvoiceSection } from "@/components/invoices/invoice-section";
+import { ProjectNextStep } from "@/components/portal/project/project-next-step";
 import { ProjectOverview } from "@/components/portal/project/project-overview";
 import { StudioHeading } from "@/components/portal/studio-heading";
 import { Button } from "@/components/ui/button";
@@ -61,12 +62,13 @@ export default async function PortalProjectPage({
 					{project.title}
 				</h1>
 			</div>
+			<ProjectNextStep project={project} invoices={invoices} />
 			<ProjectOverview project={project} />
 			<section className="rounded-xl border border-border bg-card p-3">
 				<h2 className="mb-2 text-xs font-medium text-muted-foreground">
 					{t("progress")}
 				</h2>
-				<StageTimeline stage={project.stage} />
+				<StageTimeline stage={project.stage} media={project.mediaType} />
 			</section>
 			<InvoiceSection invoices={invoices} hrefBase="/portal/invoices" />
 			<section className="flex flex-col gap-3">

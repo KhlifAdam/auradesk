@@ -3,7 +3,6 @@ import OpenAI from "openai";
 import { ASSISTANT_LIMITS } from "@/lib/ai/assistant/limits";
 import { TRANSCRIBE_PROMPT } from "@/lib/ai/assistant/transcribe-prompt";
 import { cleanTranscript } from "@/lib/ai/assistant/transcript";
-import { toAssistantViewer } from "@/lib/ai/assistant/viewer";
 import { underVoiceCap } from "@/lib/ai/assistant/voice-caps";
 import { getOpenRouter, TRANSCRIBE_MODEL } from "@/lib/ai/openrouter";
 import { getApiUser } from "@/lib/auth/api-session";
@@ -22,7 +21,8 @@ const deny = (error: string, status: number) =>
  */
 export async function POST(request: Request) {
 	const user = await getApiUser();
-	if (!user || !toAssistantViewer(user)) return deny("unauthorized", 401);
+	// Any signed-in account: studio staff and clients in the portal alike.
+	if (!user) return deny("unauthorized", 401);
 	const openrouter = getOpenRouter();
 	if (!openrouter) return deny("assistantUnavailable", 503);
 

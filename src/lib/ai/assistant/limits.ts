@@ -4,6 +4,8 @@ export const ASSISTANT_LIMITS = {
 	maxSteps: 8,
 	/** Questions per person in any 24 hours. */
 	dailyMessages: 150,
+	/** Questions per client in the portal in any 24 hours. */
+	clientDailyMessages: 40,
 	/** Longest voice note, in seconds. */
 	voiceSeconds: 60,
 	/** Largest voice note upload: 60 s of 16 kHz mono is about 1.9 MB. */

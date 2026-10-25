@@ -5,9 +5,11 @@ import type { Locale } from "@/i18n/config";
 import type { AssistantViewer } from "../viewer";
 import { WRITE_TOOLS } from "../write-tools";
 import { bookingTools } from "./bookings";
+import { clientSpaceTools } from "./client-space";
 import { clientTools } from "./clients";
 import { insightTools } from "./insights";
 import { invoiceTools } from "./invoices";
+import { planningTools } from "./planning";
 import { projectTools } from "./projects";
 import { teamSpaceTools } from "./team-space";
 
@@ -24,6 +26,7 @@ function photographerTools(photographerId: string, ctx: ToolContext) {
 		...bookingTools(photographerId),
 		...invoiceTools(photographerId),
 		...insightTools({ photographerId, ...ctx }),
+		...planningTools(photographerId),
 		// No `execute`: the browser runs these after the user's go-ahead.
 		...WRITE_TOOLS,
 	};
@@ -34,13 +37,15 @@ function photographerTools(photographerId: string, ctx: ToolContext) {
  * so every lookup stays inside the viewer's own data.
  */
 export function buildAssistantTools(viewer: AssistantViewer, ctx: ToolContext) {
-	return viewer.kind === "photographer"
-		? photographerTools(viewer.photographerId, ctx)
-		: teamSpaceTools(viewer.userId);
+	if (viewer.kind === "photographer")
+		return photographerTools(viewer.photographerId, ctx);
+	if (viewer.kind === "client") return clientSpaceTools(viewer.identity);
+	return teamSpaceTools(viewer.userId);
 }
 
 type AssistantTools = ReturnType<typeof photographerTools> &
-	ReturnType<typeof teamSpaceTools>;
+	ReturnType<typeof teamSpaceTools> &
+	ReturnType<typeof clientSpaceTools>;
 
 export type AssistantUIMessage = UIMessage<
 	never,

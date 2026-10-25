@@ -18,6 +18,7 @@ import {
 	type WriteToolName,
 	type WriteToolOutput,
 } from "@/lib/ai/assistant/write-tools";
+import type { AssistantSpace } from "@/services/assistant/types";
 import { runWriteTool } from "../actions/action-registry";
 
 /** A write tool call still waiting for the user's Confirm or Cancel. */
@@ -34,6 +35,7 @@ export const isAwaitingUser = (part: AssistantUIMessage["parts"][number]) =>
 export function useAssistantChat(
 	threadId: string,
 	initialMessages: AssistantUIMessage[],
+	space: AssistantSpace = "studio",
 ) {
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
@@ -43,10 +45,10 @@ export function useAssistantChat(
 			new DefaultChatTransport<AssistantUIMessage>({
 				api: "/api/assistant",
 				prepareSendMessagesRequest: ({ id, messages }) => ({
-					body: { id, message: messages.at(-1) },
+					body: { id, space, message: messages.at(-1) },
 				}),
 			}),
-		[],
+		[space],
 	);
 
 	const chat = useChat<AssistantUIMessage>({

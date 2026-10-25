@@ -57,10 +57,13 @@ export function AssistantProvider({
 	children,
 	initialOpen,
 	basePath,
+	remembersOpen = true,
 }: {
 	children: ReactNode;
 	initialOpen: boolean;
 	basePath: string;
+	/** Keeps the panel open across pages (the dashboard); the portal starts closed. */
+	remembersOpen?: boolean;
 }) {
 	const pathname = usePathname();
 	const onPage = pathname.startsWith(basePath);
@@ -69,11 +72,15 @@ export function AssistantProvider({
 	const [dictationTick, setDictationTick] = useState(0);
 	const dictateOnOpen = useRef(false);
 
-	const setOpen = useCallback((next: boolean) => {
-		setOpenState(next);
-		// biome-ignore lint/suspicious/noDocumentCookie: a plain UI preference read by the layout.
-		document.cookie = `${ASSISTANT_OPEN_COOKIE}=${next ? 1 : 0}; path=/; max-age=31536000; samesite=lax`;
-	}, []);
+	const setOpen = useCallback(
+		(next: boolean) => {
+			setOpenState(next);
+			if (!remembersOpen) return;
+			// biome-ignore lint/suspicious/noDocumentCookie: a plain UI preference read by the layout.
+			document.cookie = `${ASSISTANT_OPEN_COOKIE}=${next ? 1 : 0}; path=/; max-age=31536000; samesite=lax`;
+		},
+		[remembersOpen],
+	);
 
 	const remember = useCallback(
 		(id: string, messages: AssistantUIMessage[]) =>

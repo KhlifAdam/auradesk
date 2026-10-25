@@ -73,6 +73,18 @@ export async function loadThread(
 	return ok({ title: thread.title, messages: thread.messages });
 }
 
+/** The client's portal conversation, to pick it up again after a reload. */
+export async function loadPortalThread(
+	input: unknown,
+): Promise<ActionResult<{ title: string; messages: AssistantUIMessage[] }>> {
+	const session = await requireUser();
+	const parsed = idSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const thread = await getThread(session.user.id, parsed.data, "portal");
+	if (!thread) return fail("notFound");
+	return ok({ title: thread.title, messages: thread.messages });
+}
+
 const previewSchema = z.object({
 	projectId: idSchema,
 	galleryId: idSchema.optional(),

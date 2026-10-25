@@ -16,7 +16,7 @@ import {
 	type AssistantUIMessage,
 	buildAssistantTools,
 } from "@/lib/ai/assistant/tools";
-import { toAssistantViewer } from "@/lib/ai/assistant/viewer";
+import { toAssistantViewer, toClientViewer } from "@/lib/ai/assistant/viewer";
 import { getAssistantModel } from "@/lib/ai/openrouter";
 import { getApiUser } from "@/lib/auth/api-session";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
@@ -29,6 +29,8 @@ export const maxDuration = 60;
 
 const bodySchema = z.object({
 	id: z.string().min(8).max(64),
+	/** The client portal has its own assistant, scoped to the client's things. */
+	space: z.enum(["studio", "portal"]).default("studio"),
 	message: z.object({
 		id: z.string().min(1).max(64),
 		role: z.enum(["user", "assistant"]),
@@ -50,14 +52,15 @@ const textOf = (message: AssistantUIMessage) =>
 export async function POST(request: Request) {
 	const user = await getApiUser();
 	if (!user) return deny("unauthorized", 401);
-	const viewer = toAssistantViewer(user);
-	if (!viewer) return deny("forbidden", 403);
 	const model = getAssistantModel();
 	if (!model) return deny("assistantUnavailable", 503);
 
 	const parsed = bodySchema.safeParse(await request.json().catch(() => null));
 	if (!parsed.success) return deny("invalidInput", 400);
-	const { id: threadId } = parsed.data;
+	const { id: threadId, space } = parsed.data;
+	const viewer =
+		space === "portal" ? toClientViewer(user) : toAssistantViewer(user);
+	if (!viewer) return deny("forbidden", 403);
 	const incoming = parsed.data.message as unknown as AssistantUIMessage;
 
 	if (viewer.kind === "photographer") {
@@ -65,7 +68,8 @@ export async function POST(request: Request) {
 		if (subscription.status === "expired") return deny("expired", 403);
 	}
 
-	const stored = (await getThread(viewer.userId, threadId))?.messages ?? [];
+	const stored =
+		(await getThread(viewer.userId, threadId, space))?.messages ?? [];
 	const known = stored.findIndex((m) => m.id === incoming.id);
 	if (known === -1 && incoming.role !== "user")
 		return deny("invalidInput", 400);
@@ -73,14 +77,18 @@ export async function POST(request: Request) {
 		if (textOf(incoming).length > ASSISTANT_LIMITS.messageChars)
 			return deny("tooLong", 400);
 		const asked = await countRecentQuestions(viewer.userId);
-		if (asked >= ASSISTANT_LIMITS.dailyMessages) return deny("dailyLimit", 429);
+		const cap =
+			space === "portal"
+				? ASSISTANT_LIMITS.clientDailyMessages
+				: ASSISTANT_LIMITS.dailyMessages;
+		if (asked >= cap) return deny("dailyLimit", 429);
 	}
 	const history =
 		known === -1
 			? [...stored, incoming]
 			: stored.map((m, i) => (i === known ? incoming : m));
 
-	if (!(await claimThread(viewer.userId, threadId, history)))
+	if (!(await claimThread(viewer.userId, threadId, history, space)))
 		return deny("notFound", 404);
 
 	const [locale, timeZone, studio] = await Promise.all([

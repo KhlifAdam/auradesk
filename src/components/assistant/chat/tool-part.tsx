@@ -14,7 +14,17 @@ import {
 } from "@/lib/ai/assistant/write-tools";
 import { ActionCard } from "../actions/action-card";
 import { BookingDetailCard, BookingListCard } from "../blocks/booking-cards";
+import {
+	ClientBooksCard,
+	ClientInvoicesCard,
+	ClientRequestsCard,
+	StudioContactsCard,
+} from "../blocks/client-account-cards";
 import { ClientListCard, ClientSummaryCard } from "../blocks/client-cards";
+import {
+	ClientProjectStatusCard,
+	ClientProjectsCard,
+} from "../blocks/client-space-cards";
 import { AgendaCard, StatsCard, TodoCard } from "../blocks/insight-cards";
 import { InvoiceDetailCard, InvoiceListCard } from "../blocks/invoice-cards";
 import {
@@ -22,6 +32,11 @@ import {
 	EquipmentCard,
 	TeamCard,
 } from "../blocks/list-cards";
+import {
+	EstimateCard,
+	ForecastCard,
+	MoneyToCollectCard,
+} from "../blocks/planning-cards";
 import { ProjectDetailCard, ProjectListCard } from "../blocks/project-cards";
 import {
 	AssignedProjectCard,
@@ -49,6 +64,15 @@ const CARDS: Record<string, ComponentType<{ data: any }>> = {
 	equipment: EquipmentCard,
 	my_projects: AssignedProjectsCard,
 	get_assigned_project: AssignedProjectCard,
+	money_to_collect: MoneyToCollectCard,
+	estimate_project: EstimateCard,
+	workload_forecast: ForecastCard,
+	client_projects: ClientProjectsCard,
+	client_project_status: ClientProjectStatusCard,
+	client_invoices: ClientInvoicesCard,
+	client_requests: ClientRequestsCard,
+	client_books: ClientBooksCard,
+	studio_contacts: StudioContactsCard,
 };
 
 /** One tool call in an answer: a lookup's card, or a proposed change. */

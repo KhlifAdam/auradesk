@@ -35,6 +35,8 @@ interface ChatViewProps {
 	threadId: string;
 	initialMessages: AssistantUIMessage[];
 	team: boolean;
+	/** The client portal's assistant: its own tools, suggestions and threads. */
+	portal?: boolean;
 	/** After each finished answer, with the whole conversation. */
 	onSettled?: (messages: AssistantUIMessage[]) => void;
 	autoFocus?: boolean;
@@ -46,12 +48,17 @@ export function ChatView({
 	threadId,
 	initialMessages,
 	team,
+	portal = false,
 	onSettled,
 	autoFocus,
 	className,
 }: ChatViewProps) {
 	const t = useTranslations("Assistant");
-	const chat = useAssistantChat(threadId, initialMessages);
+	const chat = useAssistantChat(
+		threadId,
+		initialMessages,
+		portal ? "portal" : "studio",
+	);
 	const { messages, status, sendMessage, stop, settle, awaitingUser } = chat;
 	const answering = status === "submitted" || status === "streaming";
 	const bottom = useRef<HTMLDivElement>(null);
@@ -86,7 +93,7 @@ export function ChatView({
 			<div className={cn("flex min-h-0 flex-1 flex-col", className)}>
 				<div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 py-4">
 					{messages.length === 0 ? (
-						<EmptyState team={team} onPick={ask} />
+						<EmptyState team={team} portal={portal} onPick={ask} />
 					) : (
 						<div className="flex flex-col gap-4">
 							{messages.map((message, index) => (
