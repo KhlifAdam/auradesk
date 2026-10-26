@@ -2842,7 +2842,8 @@
 			"account": "Mon compte",
 			"profile": "Profil",
 			"settings": "Paramètres",
-			"studios": "Mes photographes"
+			"studios": "Mes photographes",
+			"invoices": "Factures"
 		},
 		"projects": {
 			"greeting": "Bonjour {name}",
@@ -3070,6 +3071,28 @@
 			"empty": {
 				"title": "Aucun photographe pour l'instant",
 				"description": "Les studios apparaissent ici dès que vous leur envoyez une demande depuis leur site, ou qu'ils vous envoient une réservation ou vous invitent à un projet."
+			}
+		},
+		"invoices": {
+			"back": "Retour à mon espace",
+			"title": "Mes factures",
+			"description": "Tout ce que vos photographes vous ont facturé, et ce qu'il reste à payer. Le paiement se fait directement avec le studio.",
+			"all": "Toutes les factures",
+			"filter": "Filtrer par statut",
+			"filters": {
+				"SENT": "À payer",
+				"OVERDUE": "En retard",
+				"PAID": "Payées"
+			},
+			"due": {
+				"amount": "Reste à payer",
+				"count": "Factures impayées",
+				"overdue": "{count, plural, one {# en retard} other {# en retard}}"
+			},
+			"empty": {
+				"title": "Aucune facture pour l'instant",
+				"description": "Quand un studio vous envoie une facture, elle apparaît ici.",
+				"noMatch": "Aucune facture ne correspond à ce filtre."
 			}
 		},
 		"next": {

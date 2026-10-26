@@ -8,7 +8,12 @@ import {
 	optionalText,
 	requiredText,
 } from "@/services/shared/schemas";
-import { INVOICE_FILTERS, MAX_INVOICE_ITEMS, PAYMENT_METHODS } from "./options";
+import {
+	CLIENT_INVOICE_FILTERS,
+	INVOICE_FILTERS,
+	MAX_INVOICE_ITEMS,
+	PAYMENT_METHODS,
+} from "./options";
 
 export const INVOICE_PAGE_SIZE = 20;
 
@@ -79,7 +84,14 @@ export const listInvoicesSchema = z.object({
 	status: z.enum(INVOICE_FILTERS).optional().catch(undefined),
 });
 
+/** `/portal/invoices`: the client's page and status filter. */
+export const listClientInvoicesSchema = z.object({
+	page: z.coerce.number().int().min(1).catch(1),
+	status: z.enum(CLIENT_INVOICE_FILTERS).optional().catch(undefined),
+});
+
 export type InvoiceValues = z.infer<typeof invoiceSchema>;
 export type InvoiceItemValues = z.infer<typeof itemSchema>;
 export type PaymentValues = z.infer<typeof paymentSchema>;
 export type ListInvoicesParams = z.infer<typeof listInvoicesSchema>;
+export type ListClientInvoicesParams = z.infer<typeof listClientInvoicesSchema>;

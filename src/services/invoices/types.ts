@@ -12,6 +12,8 @@ export interface InvoiceSummary {
 	status: InvoiceStatus;
 	displayStatus: InvoiceDisplayStatus;
 	clientName: string;
+	/** Portal only: the studio and project, shown instead of the client. */
+	label?: string;
 	issueDate: string;
 	dueDate: string | null;
 	total: number;

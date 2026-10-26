@@ -38,3 +38,6 @@ export function displayStatus(
 
 /** Lines of an invoice; more belong in separate invoices. */
 export const MAX_INVOICE_ITEMS = 50;
+
+/** Portal filters: clients only ever see issued invoices. */
+export const CLIENT_INVOICE_FILTERS = ["SENT", "OVERDUE", "PAID"] as const;

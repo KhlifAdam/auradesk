@@ -10,12 +10,14 @@ import type { InvoiceDetail, InvoicePage, InvoiceSummary } from "./types";
 
 const num = (value: { toNumber(): number }) => value.toNumber();
 
-const summaryInclude = {
+export const summaryInclude = {
 	items: { orderBy: [{ position: "asc" }, { id: "asc" }] },
 	payments: { orderBy: [{ paidAt: "asc" }, { id: "asc" }] },
 } satisfies Prisma.InvoiceInclude;
 
-type SummaryRow = Prisma.InvoiceGetPayload<{ include: typeof summaryInclude }>;
+export type SummaryRow = Prisma.InvoiceGetPayload<{
+	include: typeof summaryInclude;
+}>;
 
 function totalsOf(row: SummaryRow) {
 	const items = row.items.map((item) => ({
@@ -29,7 +31,7 @@ function totalsOf(row: SummaryRow) {
 	return { totals, paid };
 }
 
-function toSummary(row: SummaryRow): InvoiceSummary {
+export function toSummary(row: SummaryRow): InvoiceSummary {
 	const { totals, paid } = totalsOf(row);
 	const dueDate = row.dueDate?.toISOString() ?? null;
 	return {

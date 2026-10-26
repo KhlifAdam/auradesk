@@ -26,7 +26,7 @@ export default async function PortalInvoicePage({
 					href={
 						invoice.projectId
 							? `/portal/projects/${invoice.projectId}`
-							: "/portal"
+							: "/portal/invoices"
 					}
 					className="flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
 				>

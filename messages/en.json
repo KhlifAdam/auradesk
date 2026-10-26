@@ -2842,7 +2842,8 @@
 			"account": "My account",
 			"profile": "Profile",
 			"settings": "Settings",
-			"studios": "My photographers"
+			"studios": "My photographers",
+			"invoices": "Invoices"
 		},
 		"projects": {
 			"greeting": "Hello {name}",
@@ -3070,6 +3071,28 @@
 			"empty": {
 				"title": "No photographer yet",
 				"description": "Studios appear here once you send them a request from their site, or they send you a booking or invite you to a project."
+			}
+		},
+		"invoices": {
+			"back": "Back to my space",
+			"title": "My invoices",
+			"description": "Everything your photographers billed you, and what is left to pay. Payment is made directly with the studio.",
+			"all": "All invoices",
+			"filter": "Filter by status",
+			"filters": {
+				"SENT": "To pay",
+				"OVERDUE": "Overdue",
+				"PAID": "Paid"
+			},
+			"due": {
+				"amount": "Left to pay",
+				"count": "Unpaid invoices",
+				"overdue": "{count, plural, one {# overdue} other {# overdue}}"
+			},
+			"empty": {
+				"title": "No invoices yet",
+				"description": "When a studio sends you an invoice, it shows up here.",
+				"noMatch": "No invoice matches this filter."
 			}
 		},
 		"next": {

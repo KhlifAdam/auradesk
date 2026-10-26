@@ -33,7 +33,8 @@ export async function InvoiceList({
 								{invoice.number}
 							</p>
 							<p className="truncate text-xs text-muted-foreground">
-								{invoice.clientName} · {date(invoice.issueDate)}
+								{invoice.label ?? invoice.clientName} ·{" "}
+								{date(invoice.issueDate)}
 								{invoice.dueDate &&
 									` · ${t("due", { date: date(invoice.dueDate) })}`}
 							</p>
