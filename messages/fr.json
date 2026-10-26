@@ -254,7 +254,8 @@
 		"deliveryBeforeEvent": "La date limite ne peut pas précéder la date.",
 		"invalidPhone": "Saisissez un numéro de téléphone valide.",
 		"invalidPrefix": "Utilisez uniquement des lettres, chiffres, tirets ou tirets bas.",
-		"invalidVideoUrl": "Collez un lien YouTube ou Vimeo."
+		"invalidVideoUrl": "Collez un lien YouTube ou Vimeo.",
+		"invalidDriveLink": "Collez un lien Google Drive (https://drive.google.com/…)."
 	},
 	"Media": {
 		"description": "Toutes les photos et vidéos de votre site public, enregistrées une fois et réutilisables partout. Vous pouvez aussi envoyer directement dans un album. Les photos clients vont dans Projets → Import.",
@@ -2652,7 +2653,8 @@
 			"submitted": "Sélection envoyée",
 			"photos": "{count, plural, =0 {Vide} one {# photo} other {# photos}}",
 			"proofs": "Épreuves",
-			"final": "Finales"
+			"final": "Finales",
+			"link": "Lien Drive"
 		},
 		"lightbox": {
 			"title": "Photo",
@@ -2676,7 +2678,9 @@
 			"description": "Les galeries restent privées jusqu'à ce que vous les partagiez.",
 			"name": "Nom",
 			"placeholder": "Sélection – cérémonie",
-			"submit": "Créer la galerie"
+			"submit": "Créer la galerie",
+			"driveUrl": "Lien Google Drive",
+			"driveHint": "Partagez d'abord le dossier avec « Tous les utilisateurs disposant du lien » dans Drive. Le client le reçoit une fois le projet livré et payé."
 		},
 		"manager": {
 			"description": "Importez des photos, puis partagez la galerie avec votre client.",
@@ -2812,6 +2816,20 @@
 			"final": "« {name} » est supprimée définitivement, avec ses sélections et commentaires. Votre client ne pourra plus la voir ni la télécharger.",
 			"cancel": "Annuler",
 			"confirm": "Supprimer"
+		},
+		"source": {
+			"files": "Importer des fichiers",
+			"drive": "Lien Google Drive"
+		},
+		"drive": {
+			"title": "Livré via Google Drive",
+			"hint": "Le client ouvre ce lien depuis son espace, comme une galerie.",
+			"url": "Lien Drive",
+			"save": "Enregistrer",
+			"saved": "Lien mis à jour.",
+			"open": "Ouvrir",
+			"invalid": "Ce n'est pas un lien Google Drive.",
+			"access": "Dans Google Drive, réglez le dossier sur « Tous les utilisateurs disposant du lien peuvent consulter » pour que votre client puisse l'ouvrir. Comme les autres finaux, le lien n'apparaît au client qu'une fois le projet livré et payé."
 		}
 	},
 	"Portal": {
@@ -3082,6 +3100,14 @@
 				"body": "Tout est livré en pleine qualité. Téléchargez-les, et pourquoi pas un livre photo imprimé ?",
 				"cta": "Ouvrir mes fichiers"
 			}
+		},
+		"drive": {
+			"title": "Vos fichiers sont prêts sur Google Drive",
+			"body": "{studio} a livré vos fichiers dans un dossier Google Drive. Ouvrez-le pour tout voir et tout télécharger en pleine qualité.",
+			"open": "Ouvrir dans Google Drive",
+			"tip": "Astuce : dans Drive, sélectionnez tout puis Télécharger pour obtenir un seul zip.",
+			"lockedTitle": "Vos fichiers arrivent bientôt",
+			"locked": "Le lien s'ouvre une fois le projet livré et entièrement payé."
 		}
 	},
 	"Privacy": {

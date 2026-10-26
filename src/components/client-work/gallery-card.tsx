@@ -1,4 +1,4 @@
-import { Heart, ImageIcon, Lock } from "lucide-react";
+import { HardDrive, Heart, ImageIcon, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -54,6 +54,13 @@ export function GalleryCard({
 						loading={eager ? "eager" : "lazy"}
 						className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
 					/>
+				) : gallery.isLink ? (
+					<span className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-gradient-to-br from-drive/15 via-success/10 to-warning/15">
+						<HardDrive className="h-8 w-8 text-drive" />
+						<span className="text-[11px] font-medium text-muted-foreground">
+							Google Drive
+						</span>
+					</span>
 				) : (
 					<ImageIcon className="absolute inset-0 m-auto h-6 w-6 text-muted-foreground" />
 				)}
@@ -83,7 +90,11 @@ export function GalleryCard({
 					<p className="truncate text-sm font-medium">{gallery.title}</p>
 				)}
 				<div className="flex shrink-0 items-center gap-2 text-[11px] text-muted-foreground">
-					<span>{t("photos", { count: gallery.itemCount })}</span>
+					<span>
+						{gallery.isLink
+							? t("link")
+							: t("photos", { count: gallery.itemCount })}
+					</span>
 					{gallery.selectedCount > 0 && (
 						<span className="flex items-center gap-0.5 text-primary">
 							<Heart className="h-3 w-3 fill-current" />

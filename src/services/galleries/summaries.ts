@@ -45,6 +45,7 @@ export async function listGallerySummaries(
 				shared: Boolean(gallery.sharedAt),
 				submitted: Boolean(gallery.submittedAt),
 				coverUrl: imageUrl,
+				isLink: gallery.externalUrl !== null,
 				cover: {
 					template: gallery.coverTemplate,
 					itemId: cover?.id ?? null,

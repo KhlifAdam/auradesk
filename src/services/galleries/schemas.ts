@@ -23,10 +23,33 @@ export const galleryViewSchema = z.object({
 
 export const galleryKindSchema = z.enum(["PROOFS", "FINAL"]);
 
+const DRIVE_HOSTS = ["drive.google.com", "docs.google.com"];
+
+/** A Google Drive folder or file link, delivered instead of uploaded files. */
+export const driveUrlSchema = z
+	.string()
+	.trim()
+	.max(2000)
+	.refine((value) => {
+		try {
+			const url = new URL(value);
+			return url.protocol === "https:" && DRIVE_HOSTS.includes(url.hostname);
+		} catch {
+			return false;
+		}
+	}, "invalidDriveLink");
+
+export const galleryLinkSchema = z.object({
+	id: idSchema,
+	externalUrl: driveUrlSchema,
+});
+
 export const createGallerySchema = z.object({
 	projectId: idSchema,
 	title: requiredText(120),
 	kind: galleryKindSchema,
+	/** Set for a Google Drive delivery: the gallery holds the link, not files. */
+	externalUrl: driveUrlSchema.optional(),
 });
 
 export const gallerySettingsSchema = z.object({

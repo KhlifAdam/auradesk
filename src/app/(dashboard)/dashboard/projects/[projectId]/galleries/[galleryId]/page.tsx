@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { GalleryDownloads } from "@/components/client-work/gallery-downloads";
 import { CollectOriginalsDialog } from "@/components/dashboard/galleries/collect/collect-originals-dialog";
 import { CoverDialog } from "@/components/dashboard/galleries/cover-dialog";
+import { DriveLinkManager } from "@/components/dashboard/galleries/drive-link-manager";
 import { GalleryPhotoGrid } from "@/components/dashboard/galleries/gallery-photo-grid";
 import { GallerySettingsDialog } from "@/components/dashboard/galleries/gallery-settings-dialog";
 import { GalleryToolbar } from "@/components/dashboard/galleries/gallery-toolbar";
@@ -38,6 +39,24 @@ export default async function GalleryManagerPage({
 	const { photographerId } = await requirePhotographer();
 	const gallery = await getOwnedGallery(photographerId, galleryId, view);
 	if (!gallery || gallery.projectId !== projectId) notFound();
+	if (gallery.isLink)
+		return (
+			<PageShell>
+				<Link
+					href={`/dashboard/projects/${projectId}`}
+					className="flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+				>
+					<ArrowLeft className="h-3.5 w-3.5" />
+					{gallery.projectTitle}
+				</Link>
+				<PageHeader
+					title={gallery.title}
+					description={gallery.description || t("description")}
+					actions={<GallerySettingsDialog gallery={gallery} />}
+				/>
+				<DriveLinkManager gallery={gallery} />
+			</PageShell>
+		);
 	const proofs = gallery.kind === "PROOFS";
 	const [insights, videoInsights, organize, picks] = await Promise.all([
 		getGalleryInsights(photographerId, gallery.id),

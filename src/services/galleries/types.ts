@@ -33,6 +33,8 @@ export interface GallerySummary {
 	shared: boolean;
 	submitted: boolean;
 	coverUrl: string | null;
+	/** Delivered as a Google Drive link instead of files. */
+	isLink: boolean;
 }
 
 /** `flagged` (photos the AI assistant flagged) is for the photographer only. */
@@ -61,6 +63,10 @@ export interface GalleryView extends PageMeta {
 	filter: GalleryFilter;
 	/** Full-quality files and downloads; otherwise previews only. */
 	originals: boolean;
+	/** Delivered as a Google Drive link instead of files. */
+	isLink: boolean;
+	/** The link itself: for the owner, and for the client once delivered and paid. */
+	externalUrl: string | null;
 	items: GalleryPhoto[];
 }
 

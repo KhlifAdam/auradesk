@@ -11,6 +11,7 @@ import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { BRAND_NAME } from "@/lib/brand";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
+import { devInboxEnabled } from "@/lib/sms/dev-inbox";
 import { getSubscription } from "@/services/billing/queries";
 import { countUnread } from "@/services/messages/queries";
 import { getStudioSummary } from "@/services/studio/queries";
@@ -42,6 +43,7 @@ export default async function DashboardLayout({
 					studioName={studio?.name ?? BRAND_NAME}
 					unreadMessages={unreadMessages}
 					user={session.user}
+					devSms={devInboxEnabled()}
 				/>
 				{/*
 			  `relative` is load-bearing: Radix form controls (checkbox, switch,

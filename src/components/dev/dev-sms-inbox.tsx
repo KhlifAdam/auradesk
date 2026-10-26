@@ -27,18 +27,28 @@ const fetchInbox = (url: string) =>
  * Development only: a stand-in phone that shows the texts the app "sends"
  * (codes, invitations), since none really leave. Opens on a new message.
  */
-export function DevSmsInbox() {
+export function DevSmsInbox({
+	placement = "floating",
+}: {
+	/**
+	 * "sidebar": part of the dashboard sidebar's footer, in the flow, so it
+	 * covers nothing. "floating": the bottom-left corner of other pages,
+	 * away from the assistant button.
+	 */
+	placement?: "floating" | "sidebar";
+}) {
 	const t = useTranslations("DevSms");
-	// In the dashboard it sits in the sidebar, just above the profile, where
-	// nothing else is; elsewhere it keeps to the bottom right.
-	const inSidebar = usePathname().startsWith("/dashboard");
+	const inSidebar = placement === "sidebar";
+	// The dashboard shows its own copy in the sidebar.
+	const pathname = usePathname();
+	const hidden = !inSidebar && pathname.startsWith("/dashboard");
 	// Pages shown inside a frame (the site preview) leave it to the page around,
 	// and don't poll at all. Unknown until mounted, so it starts off.
 	const [inFrame, setInFrame] = useState(true);
 	useEffect(() => setInFrame(window.self !== window.top), []);
 	// SWR already pauses while the tab is hidden.
 	const { data } = useSWR<{ messages: DevSms[] }>(
-		inFrame ? null : "/api/dev/sms",
+		inFrame || hidden ? null : "/api/dev/sms",
 		fetchInbox,
 		{ refreshInterval: POLL_MS },
 	);
@@ -55,7 +65,7 @@ export function DevSmsInbox() {
 		lastSeen.current = latest;
 	}, [latest]);
 
-	if (inFrame) return null;
+	if (inFrame || hidden) return null;
 
 	const copy = async (message: DevSms, code: string) => {
 		await navigator.clipboard.writeText(code);
@@ -66,14 +76,18 @@ export function DevSmsInbox() {
 	return (
 		<div
 			className={cn(
-				"fixed z-50 flex flex-col gap-2",
 				inSidebar
-					? "bottom-[5.25rem] left-2.5 items-start"
-					: "right-16 bottom-4 items-end",
+					? "relative"
+					: "fixed bottom-4 left-4 z-50 flex flex-col items-start gap-2",
 			)}
 		>
 			{open && (
-				<section className="w-80 overflow-hidden rounded-2xl border border-border bg-background/95 shadow-luminous-lg backdrop-blur-xl">
+				<section
+					className={cn(
+						"w-80 overflow-hidden rounded-2xl border border-border bg-background/95 shadow-luminous-lg backdrop-blur-xl",
+						inSidebar && "absolute bottom-full left-0 z-50 mb-2",
+					)}
+				>
 					<header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
 						<p className="flex items-center gap-1.5 text-xs font-semibold">
 							<MessageSquareText className="h-3.5 w-3.5 text-primary" />
@@ -130,7 +144,10 @@ export function DevSmsInbox() {
 				type="button"
 				onClick={() => setOpen((value) => !value)}
 				className={cn(
-					"flex items-center gap-1.5 rounded-full border border-border bg-background/90 px-3 py-1.5 text-xs font-medium shadow backdrop-blur transition-all duration-200 hover:border-primary/50",
+					"flex items-center gap-1.5 border border-border text-xs font-medium transition-all duration-200 hover:border-primary/50",
+					inSidebar
+						? "w-full rounded-lg px-2.5 py-1.5 text-muted-foreground hover:text-foreground"
+						: "rounded-full bg-background/90 px-3 py-1.5 shadow backdrop-blur",
 					open && "border-primary/50",
 				)}
 			>

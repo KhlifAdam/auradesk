@@ -20,6 +20,7 @@ import {
 import { GALLERIES_PER_PROJECT_LIMIT } from "./constants";
 import {
 	createGallerySchema,
+	galleryLinkSchema,
 	shareGallerySchema,
 	updateGallerySchema,
 } from "./schemas";
@@ -30,7 +31,7 @@ export async function createGallery(
 	const { photographerId } = await requirePhotographer();
 	const parsed = createGallerySchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
-	const { projectId, title, kind } = parsed.data;
+	const { projectId, title, kind, externalUrl } = parsed.data;
 
 	const result = await db.$transaction(async (tx) => {
 		await lockPhotographer(tx, photographerId);
@@ -42,7 +43,22 @@ export async function createGallery(
 		const count = project._count.galleries;
 		if (count >= GALLERIES_PER_PROJECT_LIMIT) return fail("galleryLimit");
 		const gallery = await tx.gallery.create({
-			data: { photographerId, projectId, title, kind, position: count },
+			data: {
+				photographerId,
+				projectId,
+				title,
+				position: count,
+				// A Drive link is a delivery: nothing to choose from or to mark.
+				...(externalUrl
+					? {
+							kind: "FINAL",
+							externalUrl,
+							selectionEnabled: false,
+							watermark: false,
+							linkSharing: false,
+						}
+					: { kind }),
+			},
 			select: { id: true },
 		});
 		return ok(gallery);
@@ -156,6 +172,24 @@ export async function shareGallery(input: unknown): Promise<ActionResult> {
 		);
 	}
 
+	revalidateClientWork();
+	return ok();
+}
+
+/** Changes the Drive link a link gallery delivers. */
+export async function updateGalleryLink(input: unknown): Promise<ActionResult> {
+	const { photographerId } = await requirePhotographer();
+	const parsed = galleryLinkSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const { count } = await db.gallery.updateMany({
+		where: {
+			id: parsed.data.id,
+			photographerId,
+			externalUrl: { not: null },
+		},
+		data: { externalUrl: parsed.data.externalUrl },
+	});
+	if (count === 0) return fail("notFound");
 	revalidateClientWork();
 	return ok();
 }

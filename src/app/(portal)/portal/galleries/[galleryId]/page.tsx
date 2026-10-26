@@ -2,6 +2,7 @@ import { ArrowLeft, Lock } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { DriveDelivery } from "@/components/client-work/drive-delivery";
 import { GalleryCover } from "@/components/client-work/gallery-cover";
 import { GalleryDownloads } from "@/components/client-work/gallery-downloads";
 import { PortalGallery } from "@/components/portal/portal-gallery";
@@ -33,6 +34,33 @@ export default async function PortalGalleryPage({
 		if (!projectId) notFound();
 		redirect(`/portal/projects/${projectId}?notice=galleryHidden`);
 	}
+
+	if (gallery.isLink)
+		return (
+			<>
+				<Link
+					href={`/portal/projects/${gallery.projectId}`}
+					className="flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+				>
+					<ArrowLeft className="h-3.5 w-3.5" />
+					{gallery.projectTitle}
+				</Link>
+				<div className="flex flex-col gap-1">
+					<h1 className="font-display text-2xl font-bold tracking-tight">
+						{gallery.title}
+					</h1>
+					{gallery.description && (
+						<p className="max-w-3xl whitespace-pre-wrap text-sm text-muted-foreground">
+							{gallery.description}
+						</p>
+					)}
+				</div>
+				<DriveDelivery
+					url={gallery.externalUrl}
+					studioName={gallery.studioName}
+				/>
+			</>
+		);
 
 	const limit = gallery.selectionLimit;
 	const hint = !gallery.selectionEnabled

@@ -254,7 +254,8 @@
 		"deliveryBeforeEvent": "The deadline can't be before the date.",
 		"invalidPhone": "Enter a valid phone number.",
 		"invalidPrefix": "Use letters, digits, dashes or underscores only.",
-		"invalidVideoUrl": "Paste a YouTube or Vimeo link."
+		"invalidVideoUrl": "Paste a YouTube or Vimeo link.",
+		"invalidDriveLink": "Paste a Google Drive link (https://drive.google.com/…)."
 	},
 	"Media": {
 		"description": "Every photo and video on your public site, stored once and reusable anywhere. You can also upload straight into an album. Client photos go in Projects → Import.",
@@ -2652,7 +2653,8 @@
 			"submitted": "Selection sent",
 			"photos": "{count, plural, =0 {Empty} one {# photo} other {# photos}}",
 			"proofs": "Proofs",
-			"final": "Finals"
+			"final": "Finals",
+			"link": "Drive link"
 		},
 		"lightbox": {
 			"title": "Photo",
@@ -2676,7 +2678,9 @@
 			"description": "Galleries stay private until you share them.",
 			"name": "Name",
 			"placeholder": "Selection – ceremony",
-			"submit": "Create gallery"
+			"submit": "Create gallery",
+			"driveUrl": "Google Drive link",
+			"driveHint": "Share the folder with \"Anyone with the link\" in Drive first. The client gets it once the project is delivered and paid."
 		},
 		"manager": {
 			"description": "Upload photos, then share the gallery with your client.",
@@ -2812,6 +2816,20 @@
 			"final": "\"{name}\" is deleted for good, with its picks and comments. Your client won't be able to see or download it any more.",
 			"cancel": "Cancel",
 			"confirm": "Delete"
+		},
+		"source": {
+			"files": "Upload files",
+			"drive": "Google Drive link"
+		},
+		"drive": {
+			"title": "Delivered via Google Drive",
+			"hint": "The client opens this link from their portal, like a gallery.",
+			"url": "Drive link",
+			"save": "Save",
+			"saved": "Link updated.",
+			"open": "Open",
+			"invalid": "This isn't a Google Drive link.",
+			"access": "In Google Drive, set the folder to \"Anyone with the link can view\" so your client can open it. Like other finals, the link only appears to the client once the project is delivered and paid."
 		}
 	},
 	"Portal": {
@@ -3082,6 +3100,14 @@
 				"body": "Everything is delivered in full quality. Download them, and why not make a printed photo book?",
 				"cta": "Open my files"
 			}
+		},
+		"drive": {
+			"title": "Your files are ready on Google Drive",
+			"body": "{studio} delivered your files in a Google Drive folder. Open it to view and download everything in full quality.",
+			"open": "Open in Google Drive",
+			"tip": "Tip: in Drive, select everything and choose Download to get one zip.",
+			"lockedTitle": "Your files are almost here",
+			"locked": "The link opens once the project is delivered and fully paid."
 		}
 	},
 	"Privacy": {

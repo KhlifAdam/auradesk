@@ -111,6 +111,10 @@ async function loadGalleryView(
 		submitted: Boolean(gallery.submittedAt),
 		filter: view,
 		originals,
+		isLink: gallery.externalUrl !== null,
+		// Like the files, the link opens once the delivery is the client's.
+		externalUrl:
+			owner || (deliveredFinal && !token) ? gallery.externalUrl : null,
 		items: await Promise.all(
 			rows.map((row) =>
 				toGalleryPhoto(row, {

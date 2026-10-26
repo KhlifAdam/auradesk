@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { DevSmsInbox } from "@/components/dev/dev-sms-inbox";
 import { UnreadBadge } from "@/components/messages/unread-badge";
 import { NAV_GROUPS } from "./nav-config";
 import { NavItem } from "./nav-item";
@@ -10,6 +11,8 @@ import { UserMenu } from "./user-menu";
 interface SidebarProps {
 	studioName: string;
 	unreadMessages: number;
+	/** Development: the stand-in SMS inbox, kept in the footer so it covers nothing. */
+	devSms?: boolean;
 	user: {
 		name: string;
 		email: string;
@@ -17,7 +20,12 @@ interface SidebarProps {
 	};
 }
 
-export function Sidebar({ studioName, unreadMessages, user }: SidebarProps) {
+export function Sidebar({
+	studioName,
+	unreadMessages,
+	user,
+	devSms,
+}: SidebarProps) {
 	const t = useTranslations("Dashboard.Nav");
 
 	return (
@@ -51,7 +59,8 @@ export function Sidebar({ studioName, unreadMessages, user }: SidebarProps) {
 			</nav>
 
 			{/* User / Footer */}
-			<div className="border-t border-border p-2.5">
+			<div className="flex flex-col gap-2 border-t border-border p-2.5">
+				{devSms && <DevSmsInbox placement="sidebar" />}
 				<UserMenu user={user} />
 			</div>
 		</aside>

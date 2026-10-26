@@ -1,13 +1,18 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MessageCircleHeart, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAssistant } from "@/components/assistant/assistant-provider";
+import {
+	LauncherEffects,
+	LauncherIcon,
+	useLauncherMotion,
+} from "@/components/assistant/launcher-motion";
 
 const GREETED_KEY = "portal-assistant-greeted";
-const GREETING_DELAY_MS = 3500;
+const GREETING_DELAY_MS = 1500;
 const GREETING_SHOWN_MS = 9000;
 
 function greetedAlready() {
@@ -27,13 +32,13 @@ function markGreeted() {
 }
 
 /**
- * The floating help button: it breathes gently, glows, and says hello once
- * per visit so clients notice they can ask. Calm when reduced motion is on.
+ * The floating help button: it floats, pulses and says hello once per visit
+ * so clients notice they can ask. Still when reduced motion is on.
  */
 export function PortalAssistantLauncher() {
 	const t = useTranslations("Assistant.portal");
 	const { open, setOpen } = useAssistant();
-	const still = useReducedMotion();
+	const { still, float } = useLauncherMotion();
 	const [greeting, setGreeting] = useState(false);
 
 	useEffect(() => {
@@ -60,10 +65,10 @@ export function PortalAssistantLauncher() {
 			{!open && (
 				<motion.div
 					key="launcher"
-					initial={{ opacity: 0, y: 16, scale: 0.9 }}
+					initial={{ opacity: 0, y: 20, scale: 0.6 }}
 					animate={{ opacity: 1, y: 0, scale: 1 }}
 					exit={{ opacity: 0, y: 16, scale: 0.9 }}
-					transition={{ duration: 0.3, ease: "easeOut" }}
+					transition={{ type: "spring", stiffness: 260, damping: 18 }}
 					className="fixed right-4 bottom-20 z-40 flex flex-col items-end gap-2 md:right-7 md:bottom-7 print:hidden"
 				>
 					<AnimatePresence>
@@ -105,46 +110,16 @@ export function PortalAssistantLauncher() {
 						onClick={launch}
 						aria-label={t("open")}
 						title={t("open")}
-						animate={still ? undefined : { y: [0, -5, 0] }}
-						transition={
-							still
-								? undefined
-								: { duration: 3.2, repeat: Infinity, ease: "easeInOut" }
-						}
-						whileHover={{ scale: 1.06 }}
+						{...float}
+						whileHover={{ scale: 1.08 }}
 						whileTap={{ scale: 0.95 }}
 						className="assistant-launcher group relative flex h-14 cursor-pointer items-center gap-2 rounded-full px-4 text-sm font-semibold text-primary-foreground md:pr-5"
 					>
-						{!still && (
-							<motion.span
-								aria-hidden
-								className="absolute inset-0 rounded-full ring-2 ring-primary/60"
-								animate={{ scale: [1, 1.35], opacity: [0.6, 0] }}
-								transition={{
-									duration: 2.2,
-									repeat: Infinity,
-									ease: "easeOut",
-									repeatDelay: 1.2,
-								}}
-							/>
-						)}
-						<motion.span
-							animate={still ? undefined : { rotate: [0, -14, 12, -8, 0] }}
-							transition={
-								still
-									? undefined
-									: {
-											duration: 1.1,
-											repeat: Infinity,
-											repeatDelay: 5,
-											ease: "easeInOut",
-										}
-							}
-							className="flex"
-						>
+						<LauncherEffects still={still} />
+						<LauncherIcon still={still}>
 							<MessageCircleHeart className="h-5 w-5" />
-						</motion.span>
-						<span className="hidden md:inline">{t("label")}</span>
+						</LauncherIcon>
+						<span className="relative hidden md:inline">{t("label")}</span>
 					</motion.button>
 				</motion.div>
 			)}

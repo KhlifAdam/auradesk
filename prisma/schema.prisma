@@ -463,6 +463,8 @@ model Gallery {
   title            String
   description      String?
   kind             GalleryKind   @default(FINAL)
+  /// A delivery hosted elsewhere (a Google Drive folder): the gallery holds this link instead of files.
+  externalUrl      String?       @map("external_url")
   position         Int           @default(0)
   selectionEnabled Boolean       @default(true) @map("selection_enabled")
   selectionLimit   Int?          @map("selection_limit")

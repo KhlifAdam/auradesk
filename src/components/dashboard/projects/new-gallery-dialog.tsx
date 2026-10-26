@@ -22,13 +22,38 @@ import {
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createGallery } from "@/services/galleries/actions";
-import { galleryKindSchema } from "@/services/galleries/schemas";
+import {
+	driveUrlSchema,
+	galleryKindSchema,
+} from "@/services/galleries/schemas";
 import { requiredText } from "@/services/shared/schemas";
 import { GalleryKindPicker } from "../galleries/gallery-kind-picker";
+import { GallerySourcePicker } from "../galleries/gallery-source-picker";
 
-const schema = z.object({ title: requiredText(120), kind: galleryKindSchema });
+const schema = z
+	.object({
+		title: requiredText(120),
+		kind: galleryKindSchema,
+		source: z.enum(["files", "drive"]),
+		externalUrl: z.string(),
+	})
+	.superRefine((values, ctx) => {
+		if (values.source !== "drive") return;
+		const url = driveUrlSchema.safeParse(values.externalUrl);
+		if (!url.success)
+			ctx.addIssue({
+				code: "custom",
+				path: ["externalUrl"],
+				message: "invalidDriveLink",
+			});
+	});
 type Values = z.infer<typeof schema>;
-const EMPTY: Values = { title: "", kind: "PROOFS" };
+const EMPTY: Values = {
+	title: "",
+	kind: "PROOFS",
+	source: "files",
+	externalUrl: "",
+};
 
 export function NewGalleryDialog({ projectId }: { projectId: string }) {
 	const t = useTranslations("Galleries.create");
@@ -42,7 +67,12 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 	const { isSubmitting } = form.formState;
 
 	async function onSubmit(values: Values) {
-		const result = await createGallery({ projectId, ...values });
+		const { source, externalUrl, ...rest } = values;
+		const result = await createGallery({
+			projectId,
+			...rest,
+			...(source === "drive" && { externalUrl }),
+		});
 		if (!result.ok) return void toast.error(errorMessage(result.error));
 		setOpen(false);
 		router.push(`/dashboard/projects/${projectId}/galleries/${result.data.id}`);
@@ -77,10 +107,23 @@ export function NewGalleryDialog({ projectId }: { projectId: string }) {
 							label={t("name")}
 							placeholder={t("placeholder")}
 						/>
-						<GalleryKindPicker
-							value={form.watch("kind")}
-							onChange={(kind) => form.setValue("kind", kind)}
+						<GallerySourcePicker
+							value={form.watch("source")}
+							onChange={(source) => form.setValue("source", source)}
 						/>
+						{form.watch("source") === "drive" ? (
+							<TextField<Values>
+								name="externalUrl"
+								label={t("driveUrl")}
+								placeholder="https://drive.google.com/drive/folders/…"
+								description={t("driveHint")}
+							/>
+						) : (
+							<GalleryKindPicker
+								value={form.watch("kind")}
+								onChange={(kind) => form.setValue("kind", kind)}
+							/>
+						)}
 						<DialogFooter>
 							<Button type="submit" size="sm" disabled={isSubmitting}>
 								{isSubmitting && (
