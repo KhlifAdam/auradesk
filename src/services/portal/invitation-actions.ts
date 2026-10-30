@@ -3,6 +3,7 @@
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requireClient } from "@/lib/auth/require-client";
 import { db } from "@/lib/db";
+import { settleClientRole } from "@/services/auth/settle-client-role";
 import { pendingFor, verifiedContact } from "@/services/portal/contacts";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { idSchema } from "@/services/shared/schemas";
@@ -31,6 +32,7 @@ async function answerInvitation(
 			: { inviteStatus: "DECLINED" },
 	});
 	if (count === 0) return fail("invitationNotFound");
+	if (accept) await settleClientRole(clientId);
 
 	revalidateClientWork();
 	return ok();

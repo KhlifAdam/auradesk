@@ -21,6 +21,7 @@ const OAUTH_ERRORS = [
 	"access_denied",
 	"unable_to_link_account",
 	"email_not_found",
+	"BANNED_USER",
 ] as const;
 
 export interface SocialLoginProps {

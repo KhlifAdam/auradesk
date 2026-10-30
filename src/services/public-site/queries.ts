@@ -34,6 +34,8 @@ export async function loadSiteData(
 export type PublicSiteResult =
 	| { status: "missing" }
 	| { status: "draft"; name: string }
+	/** The owner's account is suspended: the site is offline meanwhile. */
+	| { status: "suspended"; name: string }
 	| { status: "live"; site: SiteData };
 
 export async function getPublicSite(
@@ -42,9 +44,16 @@ export async function getPublicSite(
 ): Promise<PublicSiteResult> {
 	const studio = await db.studio.findUnique({
 		where: { slug },
-		select: { photographerId: true, published: true, name: true },
+		select: {
+			photographerId: true,
+			published: true,
+			name: true,
+			photographer: { select: { banned: true } },
+		},
 	});
 	if (!studio) return { status: "missing" };
+	if (studio.photographer.banned)
+		return { status: "suspended", name: studio.name };
 	if (!studio.published) return { status: "draft", name: studio.name };
 
 	const site = await loadSiteData(studio.photographerId, localeCandidates);

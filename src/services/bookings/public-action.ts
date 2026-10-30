@@ -33,10 +33,16 @@ export async function submitBookingRequest(
 			name: true,
 			published: true,
 			bookingEnabled: true,
-			photographer: { select: { email: true, locale: true } },
+			photographer: { select: { email: true, locale: true, banned: true } },
 		},
 	});
-	if (!studio?.published || !studio.bookingEnabled) return fail("notFound");
+	// A suspended studio takes no new requests.
+	if (
+		!studio?.published ||
+		!studio.bookingEnabled ||
+		studio.photographer.banned
+	)
+		return fail("notFound");
 	const { photographerId } = studio;
 
 	// Anonymous endpoint: cap what one studio or one address can receive.

@@ -39,8 +39,12 @@ export default async function PublicSitePage({ params, searchParams }: Props) {
 	);
 	if (result.status === "missing") notFound();
 
-	if (result.status === "draft") {
-		const t = await getTranslations("PublicSite.comingSoon");
+	if (result.status === "draft" || result.status === "suspended") {
+		const t = await getTranslations(
+			result.status === "draft"
+				? "PublicSite.comingSoon"
+				: "PublicSite.unavailable",
+		);
 		return (
 			<main className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
 				<h1 className="font-display text-3xl font-bold">

@@ -9,9 +9,31 @@ import {
  * real width (so its own breakpoints apply), then scaled to fit the space.
  */
 export const DEVICES = {
-	desktop: { width: 1280, height: null, bezel: 0, radius: 12, icon: Monitor },
-	tablet: { width: 820, height: 1180, bezel: 12, radius: 28, icon: Tablet },
-	mobile: { width: 390, height: 844, bezel: 10, radius: 40, icon: Smartphone },
+	desktop: {
+		width: 1280,
+		height: null,
+		bezel: 0,
+		radius: 12,
+		icon: Monitor,
+		iconClass: "h-4 w-4",
+	},
+	// Upright like the phone but clearly larger, so the two icons differ.
+	tablet: {
+		width: 900,
+		height: 1180,
+		bezel: 12,
+		radius: 28,
+		icon: Tablet,
+		iconClass: "h-4 w-4",
+	},
+	mobile: {
+		width: 390,
+		height: 844,
+		bezel: 10,
+		radius: 40,
+		icon: Smartphone,
+		iconClass: "h-3 w-3",
+	},
 } as const satisfies Record<PreviewDevice, unknown>;
 
 export type Device = PreviewDevice;
@@ -30,7 +52,7 @@ export interface DeviceLayout {
 /**
  * Fits a device into a box. A desktop fills the box (wider boxes show more
  * of the site, never less than its minimum width); a tablet or phone keeps
- * its proportions, centred, at the same scale (never larger than life).
+ * its proportions, centred, never shown larger than life.
  */
 export function fitDevice(
 	device: Device,
@@ -49,15 +71,11 @@ export function fitDevice(
 			radius: spec.radius,
 		};
 	}
-	// Tablet and phone share the tablet's scale, so they keep their real
-	// sizes next to each other: the phone is clearly the smaller screen.
-	const tablet = DEVICES.tablet;
-	const room = (size: number) =>
-		Math.max(0, size - 2 * (margin + tablet.bezel));
+	const room = (size: number) => Math.max(0, size - 2 * (margin + spec.bezel));
 	const scale = Math.min(
 		1,
-		room(box.width) / tablet.width,
-		room(box.height) / tablet.height,
+		room(box.width) / spec.width,
+		room(box.height) / spec.height,
 	);
 	// Small previews get a thinner frame, so it doesn't eat the screen.
 	const shrink = Math.min(1, scale * 2);

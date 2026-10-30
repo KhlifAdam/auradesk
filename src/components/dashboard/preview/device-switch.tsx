@@ -19,10 +19,14 @@ export function DeviceSwitch({
 			value={value}
 			onChange={onChange}
 			options={DEVICE_IDS.map((id) => {
-				const Icon = DEVICES[id].icon;
+				const { icon: Icon, iconClass } = DEVICES[id];
 				return {
 					value: id,
-					label: <Icon className="h-3.5 w-3.5" />,
+					label: (
+						<span title={t(id)} className="flex items-center">
+							<Icon className={iconClass} />
+						</span>
+					),
 					ariaLabel: t(id),
 				};
 			})}

@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { ROLES } from "@/lib/auth/roles";
 import { auth } from "@/lib/auth/server";
 import { db } from "@/lib/db";
+import { revalidatePublicSites } from "@/lib/public-site/cache";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
 import { logAdminAction } from "./audit";
 import { banSchema } from "./schemas";
@@ -37,6 +38,8 @@ export async function banAccount(input: unknown): Promise<ActionResult> {
 		headers: await headers(),
 	});
 	await logAdminAction(session.user, "BAN", userId, reason);
+	// Their site goes offline (and comes back on unban) straight away.
+	revalidatePublicSites();
 	revalidatePath("/admin", "layout");
 	return ok();
 }
@@ -51,6 +54,7 @@ export async function unbanAccount(input: unknown): Promise<ActionResult> {
 		headers: await headers(),
 	});
 	await logAdminAction(session.user, "UNBAN", parsed.data);
+	revalidatePublicSites();
 	revalidatePath("/admin", "layout");
 	return ok();
 }

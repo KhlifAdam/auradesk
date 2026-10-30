@@ -905,6 +905,10 @@
 				"title": "Questions & answers",
 				"subtitle": "Everything you may want to know before we work together."
 			}
+		},
+		"unavailable": {
+			"title": "{name} is temporarily unavailable",
+			"description": "This studio's site is offline for now. Please come back later."
 		}
 	},
 	"Auth": {
@@ -997,7 +1001,8 @@
 			"INVALID_PASSWORD": "Your current password is incorrect.",
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "This is your only way to sign in: add another one before disconnecting it.",
 			"SOCIAL_ACCOUNT_ALREADY_LINKED": "This account is already connected to another AuraDesk account.",
-			"CREDENTIAL_ACCOUNT_NOT_FOUND": "This account has no password yet."
+			"CREDENTIAL_ACCOUNT_NOT_FOUND": "This account has no password yet.",
+			"BANNED_USER": "This account has been suspended. Contact support if you think this is a mistake."
 		},
 		"backLink": {
 			"photographer": "Photographer space",
@@ -1065,7 +1070,8 @@
 			"generic": "Sign-in with this provider failed. Please try again.",
 			"access_denied": "Sign-in was cancelled.",
 			"unable_to_link_account": "An account already uses this email. Sign in with your password first.",
-			"email_not_found": "This provider didn't share an email address. Make one public or use another method."
+			"email_not_found": "This provider didn't share an email address. Make one public or use another method.",
+			"BANNED_USER": "This account has been suspended. Contact support if you think this is a mistake."
 		},
 		"verify": {
 			"required": "Confirm your email address to continue: a code is on its way.",

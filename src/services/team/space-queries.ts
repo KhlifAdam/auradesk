@@ -44,16 +44,23 @@ export async function countPendingTeamInvitations(email: string) {
 	});
 }
 
+/** Memberships that count: accepted, in a studio whose owner isn't suspended. */
+const activeMembership = (userId: string) => ({
+	userId,
+	status: "ACCEPTED" as const,
+	NOT: { photographer: { banned: true } },
+});
+
 /** True when the user belongs to at least one studio's team. */
 export async function isTeamMember(userId: string) {
 	const count = await db.teamMember.count({
-		where: { userId, status: "ACCEPTED" },
+		where: activeMembership(userId),
 	});
 	return count > 0;
 }
 
 const assignedWhere = (userId: string) => ({
-	member: { userId, status: "ACCEPTED" as const },
+	member: activeMembership(userId),
 });
 
 /** The projects the user is assigned to, soonest shoot first. */

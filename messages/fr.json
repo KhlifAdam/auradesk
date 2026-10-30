@@ -905,6 +905,10 @@
 				"title": "Questions fréquentes",
 				"subtitle": "Tout ce que vous voudrez savoir avant de travailler ensemble."
 			}
+		},
+		"unavailable": {
+			"title": "{name} est temporairement indisponible",
+			"description": "Le site de ce studio est hors ligne pour le moment. Revenez plus tard."
 		}
 	},
 	"Auth": {
@@ -997,7 +1001,8 @@
 			"INVALID_PASSWORD": "Votre mot de passe actuel est incorrect.",
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "C'est votre seul moyen de connexion : ajoutez-en un autre avant de le déconnecter.",
 			"SOCIAL_ACCOUNT_ALREADY_LINKED": "Ce compte est déjà connecté à un autre compte AuraDesk.",
-			"CREDENTIAL_ACCOUNT_NOT_FOUND": "Ce compte n'a pas encore de mot de passe."
+			"CREDENTIAL_ACCOUNT_NOT_FOUND": "Ce compte n'a pas encore de mot de passe.",
+			"BANNED_USER": "Ce compte a été suspendu. Contactez le support si vous pensez qu'il s'agit d'une erreur."
 		},
 		"backLink": {
 			"photographer": "Espace photographe",
@@ -1065,7 +1070,8 @@
 			"generic": "La connexion avec ce fournisseur a échoué. Veuillez réessayer.",
 			"access_denied": "La connexion a été annulée.",
 			"unable_to_link_account": "Un compte utilise déjà cet e-mail. Connectez-vous d'abord avec votre mot de passe.",
-			"email_not_found": "Ce fournisseur n'a pas partagé d'adresse e-mail. Rendez-la publique ou utilisez une autre méthode."
+			"email_not_found": "Ce fournisseur n'a pas partagé d'adresse e-mail. Rendez-la publique ou utilisez une autre méthode.",
+			"BANNED_USER": "Ce compte a été suspendu. Contactez le support si vous pensez qu'il s'agit d'une erreur."
 		},
 		"verify": {
 			"required": "Confirmez votre adresse e-mail pour continuer : un code est en route.",
