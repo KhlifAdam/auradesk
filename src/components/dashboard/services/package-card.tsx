@@ -1,4 +1,4 @@
-import { Clock, ListChecks, Package, Star } from "lucide-react";
+import { Camera, Clock, ListChecks, Package, Star } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { MediaThumb } from "@/components/dashboard/media/media-thumb";
 import { Badge } from "@/components/ui/badge";
@@ -47,10 +47,20 @@ export function PackageCard({ pkg, onSelect }: PackageCardProps) {
 					</span>
 				</div>
 				<div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-					{hours !== null && (
+					{(hours !== null || pkg.unlimitedDuration) && (
 						<span className="flex items-center gap-1">
 							<Clock className="h-3 w-3" />
-							{t("hours", { count: Number(hours.toFixed(1)) })}
+							{hours !== null
+								? t("hours", { count: Number(hours.toFixed(1)) })
+								: t("unlimitedTime")}
+						</span>
+					)}
+					{(pkg.photoCount !== null || pkg.unlimitedPhotos) && (
+						<span className="flex items-center gap-1">
+							<Camera className="h-3 w-3" />
+							{pkg.photoCount !== null
+								? t("photos", { count: pkg.photoCount })
+								: t("unlimitedPhotos")}
 						</span>
 					)}
 					<span className="flex items-center gap-1">

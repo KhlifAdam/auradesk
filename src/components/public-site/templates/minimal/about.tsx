@@ -21,6 +21,7 @@ export async function MinimalAbout({ site }: { site: SiteData }) {
 					<div className="relative h-36 w-36 overflow-hidden rounded-full ring-4 ring-[var(--s-card)] ring-offset-4 ring-offset-[var(--s-border)]">
 						<Image
 							src={image.url}
+							style={{ objectPosition: image.focus }}
 							alt={image.alt}
 							fill
 							sizes="144px"

@@ -45,7 +45,7 @@ describe("estimateProject", () => {
 			input({ media: { proofs: 900, finals: 0, selected: 120, videos: 0 } }),
 		);
 		expect(e.assumed).toMatchObject({ photos: 120, fromFiles: true });
-		expect(e.tasks.find((t) => t.key === "retouching")?.hours).toBe(5);
+		expect(e.tasks.find((t) => t.key === "retouching")?.hours).toBe(2);
 	});
 
 	it("adds video editing for video projects", () => {
@@ -58,8 +58,19 @@ describe("estimateProject", () => {
 
 	it("takes longer when the studio is busy", () => {
 		const free = estimateProject(input());
-		const busy = estimateProject(input({ workload: 4 }));
+		const busy = estimateProject(input({ workload: 5 }));
 		expect(busy.daysLeft).toBeGreaterThan(free.daysLeft);
+	});
+
+	it("expects a quicker answer on a small set of photos", () => {
+		const e = estimateProject(
+			input({
+				stage: "IMPORT",
+				media: { proofs: 20, finals: 0, selected: 0, videos: 0 },
+			}),
+		);
+		expect(e.waits).toContainEqual({ key: "selection", days: 1 });
+		expect(e.daysLeft).toBeLessThanOrEqual(3);
 	});
 
 	it("waits for the shoot, then the client's selection and approval", () => {
@@ -68,8 +79,8 @@ describe("estimateProject", () => {
 		);
 		expect(e.waits).toEqual([
 			{ key: "shoot", days: 7 },
-			{ key: "selection", days: 3 },
-			{ key: "validation", days: 2 },
+			{ key: "selection", days: 2 },
+			{ key: "validation", days: 1 },
 		]);
 		expect(e.finishDate > "2026-11-02").toBe(true);
 	});

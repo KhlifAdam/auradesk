@@ -15,6 +15,7 @@ export function SiteBrand({
 			{studio.logo && (
 				<Image
 					src={studio.logo.url}
+					style={{ objectPosition: studio.logo.focus }}
 					alt=""
 					width={36}
 					height={36}

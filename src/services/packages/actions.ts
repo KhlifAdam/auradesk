@@ -29,7 +29,13 @@ function revalidateServices() {
 }
 
 function toData({ description, ...values }: PackageValues) {
-	return { ...values, description: emptyToNull(description) };
+	return {
+		...values,
+		description: emptyToNull(description),
+		// "Unlimited" replaces the amount.
+		durationMinutes: values.unlimitedDuration ? null : values.durationMinutes,
+		photoCount: values.unlimitedPhotos ? null : values.photoCount,
+	};
 }
 
 export async function createPackage(input: unknown): Promise<ActionResult> {

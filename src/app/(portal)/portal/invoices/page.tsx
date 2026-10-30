@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { InvoiceList } from "@/components/dashboard/invoices/invoice-list";
+import { QuoteList } from "@/components/dashboard/quotes/quote-list";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
@@ -19,6 +20,7 @@ import {
 	listClientInvoicesSchema,
 } from "@/services/invoices/schemas";
 import { formatMoney } from "@/services/projects/money";
+import { listClientQuotes } from "@/services/quotes/queries";
 
 interface PortalInvoicesPageProps {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -50,6 +52,9 @@ export default async function PortalInvoicesPage({
 				fallback={<div className="h-16 animate-pulse rounded-xl bg-muted" />}
 			>
 				<Due />
+			</Suspense>
+			<Suspense fallback={null}>
+				<Quotes />
 			</Suspense>
 			<UrlSelectFilter
 				param="status"
@@ -103,6 +108,21 @@ async function Due() {
 				</dd>
 			</div>
 		</dl>
+	);
+}
+
+/** Quotes from the studios, those waiting for an answer first. */
+async function Quotes() {
+	const t = await getTranslations("Quotes.portal");
+	const { clientId } = await requireClient();
+	const quotes = await listClientQuotes(clientId);
+	if (quotes.length === 0) return null;
+
+	return (
+		<section className="flex flex-col gap-2">
+			<h2 className="text-sm font-semibold">{t("listTitle")}</h2>
+			<QuoteList quotes={quotes} hrefBase="/portal/invoices/quotes" />
+		</section>
 	);
 }
 

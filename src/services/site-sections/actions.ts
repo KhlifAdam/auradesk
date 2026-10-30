@@ -14,12 +14,17 @@ import { saveSectionsSchema } from "./schemas";
 export async function saveSiteSections(input: unknown): Promise<ActionResult> {
 	const { photographerId } = await requirePhotographer();
 	const parsed = saveSectionsSchema.safeParse(input);
-	if (!parsed.success) return failFromZod(parsed.error);
+	if (!parsed.success) {
+		// The form checks the same rules, so this is worth a trace.
+		console.error("Site sections refused:", parsed.error.issues);
+		return failFromZod(parsed.error);
+	}
 	const { sections } = parsed.data;
 
-	// Logos, photos and videos must come from the photographer's own library.
+	// Logos, photos and videos must come from the photographer's own library;
+	// one deleted from the library since it was picked is the usual cause.
 	if (!(await ownsMedia(photographerId, sectionMediaIds(sections))))
-		return fail("invalidInput");
+		return fail("sectionMediaMissing");
 
 	const { count } = await db.studio.updateMany({
 		where: { photographerId },

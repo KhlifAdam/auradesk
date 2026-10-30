@@ -1,6 +1,7 @@
 import { Play } from "lucide-react";
 import Image from "next/image";
 import { formatDuration } from "@/lib/format";
+import { focusPosition } from "@/lib/media-focus";
 import { cn } from "@/lib/utils";
 import type { MediaItem } from "@/services/media/types";
 
@@ -34,6 +35,7 @@ export function MediaThumb({
 					sizes={sizes}
 					loading={eager ? "eager" : "lazy"}
 					className="object-cover"
+					style={{ objectPosition: focusPosition(media) }}
 				/>
 			) : (
 				<>

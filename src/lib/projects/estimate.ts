@@ -40,7 +40,14 @@ const TYPICAL: Record<ServiceType, { photos: number; videoMin: number }> = {
 export const HOURS_PER_DAY = 6;
 /** Share of the delivered photos usually kept from the shoot. */
 const KEEP_RATE = 0.35;
-const WAIT_DAYS = { selection: 3, validation: 2 } as const;
+/** Photos edited an hour: batch editing with presets, not one-by-one retouching. */
+const EDITS_PER_HOUR = 60;
+/** Days the client takes to pick or approve; a small set is answered faster. */
+const WAIT_DAYS = { selection: 2, validation: 1 } as const;
+const SMALL_SET = 50;
+/** Each other project in editing slows this one a little, up to +50%. */
+const WORKLOAD_STEP = 0.1;
+const WORKLOAD_CAP = 5;
 
 export const TASKS = [
 	"import",
@@ -146,7 +153,7 @@ function taskHours(
 		case "culling":
 			return v.raw / 900;
 		case "retouching":
-			return v.photos / 24;
+			return v.photos / EDITS_PER_HOUR;
 		case "videoEditing":
 			return v.videoMinutes > 0 ? 2 + v.videoMinutes * 1.5 : 0;
 		case "export":
@@ -191,12 +198,14 @@ export function estimateProject(input: EstimateInput): Estimate {
 			? Math.max(0, daysBetween(today, input.eventDate))
 			: 0;
 	if (shootIn > 0) waits.push({ key: "shoot", days: shootIn });
+	const small = v.photos < SMALL_SET;
 	if (v.photos > 0 && at <= stageIndex("SELECTION"))
-		waits.push({ key: "selection", days: WAIT_DAYS.selection });
+		waits.push({ key: "selection", days: small ? 1 : WAIT_DAYS.selection });
 	if (at <= stageIndex("VALIDATION"))
 		waits.push({ key: "validation", days: WAIT_DAYS.validation });
 
-	const share = 1 + Math.max(0, input.workload) * 0.5;
+	const share =
+		1 + Math.min(Math.max(0, input.workload), WORKLOAD_CAP) * WORKLOAD_STEP;
 	const workDays = hoursLeft / (HOURS_PER_DAY / share);
 	const start = new Date(today.getTime() + shootIn * 86_400_000);
 	const waitDays = waits

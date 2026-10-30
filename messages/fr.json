@@ -226,7 +226,12 @@
 		"bookTooFewPages": "Le livre n'a pas assez de pages pour ce studio.",
 		"bookTooManyPages": "Le livre a trop de pages.",
 		"bookBadOption": "Une des options choisies n'est plus proposée. Choisissez à nouveau.",
-		"bookHasPayment": "Un paiement est déjà enregistré : cette commande ne peut pas être renvoyée."
+		"bookHasPayment": "Un paiement est déjà enregistré : cette commande ne peut pas être renvoyée.",
+		"quoteLocked": "Un devis accepté, refusé ou facturé ne peut plus être modifié.",
+		"quoteNotDraft": "Seul un devis brouillon permet cette action.",
+		"quoteNotInvoiceable": "Seul un devis envoyé ou accepté peut devenir une facture, une seule fois.",
+		"quoteNotOpen": "Ce devis n'attend plus de réponse.",
+		"sectionMediaMissing": "Un logo, une photo ou une vidéo de vos sections n'est plus dans votre bibliothèque. Ouvrez les sections, choisissez-le à nouveau, puis enregistrez."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -291,7 +296,8 @@
 			"save": "Enregistrer",
 			"saved": "Texte alternatif enregistré",
 			"copyLink": "Copier le lien",
-			"copied": "Lien copié"
+			"copied": "Lien copié",
+			"adjust": "Ajuster le cadrage"
 		},
 		"delete": {
 			"title": "Supprimer ce fichier ?",
@@ -312,7 +318,20 @@
 		"field": {
 			"choose": "Choisir",
 			"replace": "Remplacer",
-			"remove": "Retirer"
+			"remove": "Retirer",
+			"adjust": "Ajuster le cadrage"
+		},
+		"focus": {
+			"title": "Ajuster le cadrage",
+			"description": "Cliquez ou faites glisser sur la photo pour choisir ce qui doit rester visible (les visages, le sujet). Les couvertures et miniatures gardent ce point dans le cadre, dans l'application et sur votre site.",
+			"samples": {
+				"square": "Carré",
+				"landscape": "Large",
+				"portrait": "Portrait"
+			},
+			"center": "Recentrer",
+			"save": "Enregistrer le cadrage",
+			"saved": "Cadrage enregistré."
 		}
 	},
 	"Site": {
@@ -539,6 +558,16 @@
 					"hint": "Coordonnées et formulaire de réservation",
 					"title": "Contact"
 				}
+			},
+			"albums": {
+				"label": "Albums affichés sur le site",
+				"count": "({count} sur {total})",
+				"manage": "Gérer les albums",
+				"none": "Vous n'avez encore aucun album.",
+				"create": "Créez-en un dans Portfolio",
+				"empty": "Vide : ajoutez d'abord des photos",
+				"photos": "{count, plural, one {# photo} other {# photos}}",
+				"toggle": "Afficher « {title} » sur le site"
 			}
 		}
 	},
@@ -584,7 +613,8 @@
 			"remove": "Retirer de l'album",
 			"removed": "Retiré de l'album",
 			"fromLibrary": "Depuis vos fichiers",
-			"uploadHint": "Les photos et vidéos arrivent dans cet album et sont aussi conservées dans Tous les fichiers, prêtes à être réutilisées."
+			"uploadHint": "Les photos et vidéos arrivent dans cet album et sont aussi conservées dans Tous les fichiers, prêtes à être réutilisées.",
+			"adjust": "Ajuster le cadrage"
 		},
 		"tabs": {
 			"albums": "Albums",
@@ -613,8 +643,8 @@
 			"descriptionLabel": "Description",
 			"price": "Prix",
 			"currency": "Devise",
-			"duration": "Durée (minutes)",
-			"durationHint": "Laissez vide si elle varie.",
+			"duration": "Durée",
+			"durationHint": "En heures (1,5 = 1 h 30). Laissez vide si elle varie.",
 			"deliverables": "Livrables",
 			"deliverablePlaceholder": "ex. 300 photos retouchées",
 			"addDeliverable": "Ajouter un livrable",
@@ -630,8 +660,16 @@
 			"updated": "Formule mise à jour",
 			"deleted": "Formule supprimée",
 			"deleteTitle": "Supprimer cette formule ?",
-			"deleteDescription": "Elle sera retirée de votre site. Cette action est irréversible."
-		}
+			"deleteDescription": "Elle sera retirée de votre site. Cette action est irréversible.",
+			"hoursUnit": "heures",
+			"photos": "Photos retouchées",
+			"photosUnit": "photos",
+			"photosHint": "Laissez vide pour ne pas l'afficher.",
+			"unlimited": "Illimité"
+		},
+		"unlimitedTime": "Durée illimitée",
+		"photos": "{count, plural, one {# photo} other {# photos}}",
+		"unlimitedPhotos": "Photos illimitées"
 	},
 	"Preview": {
 		"back": "Apparence",
@@ -676,7 +714,10 @@
 			"featured": "La plus demandée",
 			"hours": "{count, plural, one {# heure} other {# heures}}",
 			"eyebrow": "Formules",
-			"enquire": "Demander un devis"
+			"enquire": "Demander un devis",
+			"unlimitedTime": "Durée illimitée",
+			"photos": "{count, plural, one {# photo} other {# photos}}",
+			"unlimitedPhotos": "Photos illimitées"
 		},
 		"about": {
 			"title": "À propos",
@@ -1502,6 +1543,15 @@
 			"intro": "{studio} a terminé l'impression de « {book} ». Il vous sera remis bientôt.",
 			"cta": "Voir la commande",
 			"text": "{studio} a terminé l'impression de « {book} ». Voir : {url}"
+		},
+		"quoteSent": {
+			"languageName": "Français",
+			"subject": "{studio} vous a envoyé le devis {number}",
+			"preheader": "Devis {number} : {amount}",
+			"heading": "Vous avez un nouveau devis",
+			"intro": "{studio} vous a envoyé le devis {number} d'un montant de {amount}. Ouvrez-le pour le lire, puis acceptez-le ou refusez-le.",
+			"cta": "Voir le devis",
+			"text": "{studio} vous a envoyé le devis {number} d'un montant de {amount}. Répondez ici : {url}"
 		}
 	},
 	"Sms": {
@@ -1580,7 +1630,23 @@
 			"search": "Rechercher un projet ou un client",
 			"allStages": "Toutes les étapes",
 			"galleries": "{count, plural, =0 {Aucune galerie} one {# galerie} other {# galeries}}",
-			"noClient": "Pas encore de client"
+			"noClient": "Pas encore de client",
+			"dateFrom": "Date de l'événement du",
+			"dateTo": "Date de l'événement au",
+			"dateClear": "Effacer les dates",
+			"sort": {
+				"label": "Trier par",
+				"toggle": "Inverser l'ordre",
+				"newest": "Plus récent d'abord",
+				"oldest": "Plus ancien d'abord",
+				"az": "A → Z",
+				"za": "Z → A",
+				"fields": {
+					"eventDate": "Date de l'événement",
+					"created": "Date de création",
+					"title": "Titre"
+				}
+			}
 		},
 		"empty": {
 			"title": "Aucun projet pour l'instant",
@@ -1895,7 +1961,8 @@
 			"reason": "Raison :",
 			"deleteTitle": "Supprimer cette réservation ?",
 			"deleteDescription": "Son historique est supprimé aussi. Un projet déjà créé à partir d'elle est conservé.",
-			"deleted": "Réservation supprimée."
+			"deleted": "Réservation supprimée.",
+			"createQuote": "Créer un devis"
 		},
 		"actions": {
 			"statusUpdated": "Statut mis à jour.",
@@ -2132,6 +2199,86 @@
 			"total": "Total",
 			"paid": "Déjà payé",
 			"balance": "Reste à payer"
+		}
+	},
+	"Quotes": {
+		"title": "Devis",
+		"description": "Les offres chiffrées que vos clients acceptent ou refusent avant le travail. Transformez-en une en facture quand vous voulez.",
+		"bookingSection": "Devis de cette réservation",
+		"tabs": {
+			"invoices": "Factures",
+			"quotes": "Devis"
+		},
+		"status": {
+			"DRAFT": "Brouillon",
+			"SENT": "En attente de réponse",
+			"ACCEPTED": "Accepté",
+			"DECLINED": "Refusé",
+			"INVOICED": "Facturé"
+		},
+		"list": {
+			"new": "Nouveau devis",
+			"search": "Rechercher par numéro ou client…",
+			"all": "Tous les devis",
+			"filter": "Filtrer par statut",
+			"validUntil": "valable jusqu'au {date}"
+		},
+		"empty": {
+			"title": "Aucun devis",
+			"description": "Créez un devis, envoyez-le à votre client, puis transformez-le en facture quand il est d'accord.",
+			"noMatch": "Aucun devis ne correspond à ces filtres."
+		},
+		"form": {
+			"back": "Retour",
+			"backToQuote": "Retour au devis",
+			"createTitle": "Nouveau devis",
+			"editTitle": "Modifier {number}",
+			"description": "Le client voit ce devis dans son espace une fois envoyé.",
+			"forBooking": "Pour la réservation « {title} ».",
+			"details": "Détails",
+			"issueDate": "Date",
+			"validUntil": "Valable jusqu'au",
+			"notes": "Notes",
+			"notesHint": "Conditions, ce qui est inclus… affiché sur le devis.",
+			"cancel": "Annuler",
+			"create": "Créer le devis",
+			"save": "Enregistrer",
+			"created": "Devis créé.",
+			"updated": "Devis mis à jour."
+		},
+		"detail": {
+			"back": "Devis",
+			"send": "Envoyer au client",
+			"sent": "Devis marqué comme envoyé.",
+			"sentEmailed": "Devis envoyé au client par email.",
+			"convert": "Transformer en facture",
+			"converted": "Facture créée à partir du devis. Vérifiez-la, puis envoyez-la.",
+			"viewInvoice": "Voir la facture",
+			"edit": "Modifier",
+			"deleteTitle": "Supprimer ce devis ?",
+			"deleteDescription": "Le brouillon sera supprimé. Action irréversible.",
+			"deleted": "Devis supprimé.",
+			"fromBooking": "Réservation : {title}",
+			"draftHint": "Brouillon : le client ne le voit pas encore. Envoyez-le quand il est prêt.",
+			"waitingHint": "Envoyé : en attente de la réponse du client dans son espace. Vous pouvez quand même le transformer en facture.",
+			"acceptedHint": "Le client a accepté ce devis le {date}. Vous pouvez le transformer en facture.",
+			"declinedHint": "Le client a refusé ce devis le {date}.",
+			"invoicedHint": "Transformé en facture {number}."
+		},
+		"document": {
+			"title": "Devis",
+			"issued": "Date",
+			"validUntil": "Valable jusqu'au",
+			"about": "Pour"
+		},
+		"portal": {
+			"back": "Factures",
+			"listTitle": "Devis",
+			"question": "Acceptez-vous ce devis ?",
+			"accept": "Accepter",
+			"decline": "Refuser",
+			"accepted": "Devis accepté. Le studio a été prévenu.",
+			"declined": "Devis refusé."
 		}
 	},
 	"Equipment": {
@@ -2597,8 +2744,18 @@
 			"AVAILABLE": "Disponible",
 			"UNAVAILABLE": "Indisponible",
 			"OTHER": "Autre",
-			"PROJECT": "Date de projet",
+			"PROJECT": "Jour de shooting (sans heure)",
 			"ESTIMATE": "Livraison prévue"
+		},
+		"guide": {
+			"button": "Légende",
+			"title": "Que signifient les couleurs",
+			"SHOOT": "Un shooting photo ou vidéo prévu.",
+			"MEETING": "Un rendez-vous avec un client.",
+			"OTHER": "Tout autre rappel.",
+			"UNAVAILABLE": "Un jour off : vous ne travaillez pas ce jour-là.",
+			"PROJECT": "La date de l'événement saisie dans le projet. Cliquez pour ajouter les heures du shooting.",
+			"ESTIMATE": "Quand un projet devrait être livré. Cliquez pour ouvrir le projet."
 		},
 		"grid": {
 			"more": "+{count} de plus",
@@ -2608,16 +2765,15 @@
 			"add": "Ajouter",
 			"allDay": "Toute la journée",
 			"empty": "Rien de prévu ce jour-là.",
-			"availability": "Disponibilité",
-			"notSet": "Non défini",
-			"schedule": "cliquez pour planifier",
+			"dayOff": "Jour off",
+			"dayOffHint": "Activez si vous ne pouvez pas travailler ce jour-là.",
+			"schedule": "cliquez pour ajouter les heures",
 			"openProject": "Ouvrir le projet",
 			"availabilityUpdated": "Disponibilité mise à jour.",
 			"status": {
-				"free": "Libre",
-				"busy": "Occupé",
-				"available": "Disponible",
-				"unavailable": "Indisponible"
+				"free": "Rien de prévu, vous êtes libre",
+				"planned": "{count, plural, one {# chose prévue} other {# choses prévues}}",
+				"dayOff": "Jour off, vous ne travaillez pas"
 			}
 		},
 		"form": {

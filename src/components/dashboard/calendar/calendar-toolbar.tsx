@@ -4,18 +4,8 @@ import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { shiftMonth } from "@/services/calendar/dates";
-import { EVENT_STYLES } from "./event-styles";
-
-const LEGEND = [
-	"SHOOT",
-	"MEETING",
-	"AVAILABLE",
-	"UNAVAILABLE",
-	"PROJECT",
-	"ESTIMATE",
-] as const;
+import { ColorGuide } from "./color-guide";
 
 const monthHref = (month: string) => `/dashboard/calendar?month=${month}`;
 
@@ -77,20 +67,8 @@ export function CalendarToolbar({
 					})}
 				</h2>
 			</div>
-			<div className="flex flex-wrap items-center gap-3">
-				<ul className="hidden items-center gap-3 md:flex">
-					{LEGEND.map((type) => (
-						<li
-							key={type}
-							className="flex items-center gap-1.5 text-[11px] text-muted-foreground"
-						>
-							<span
-								className={cn("h-2 w-2 rounded-full", EVENT_STYLES[type].dot)}
-							/>
-							{t(`types.${type}`)}
-						</li>
-					))}
-				</ul>
+			<div className="flex flex-wrap items-center gap-2">
+				<ColorGuide />
 				<Button size="sm" className="h-8 gap-1.5 text-xs" onClick={onCreate}>
 					<Plus className="h-3.5 w-3.5" />
 					{t("toolbar.newEvent")}

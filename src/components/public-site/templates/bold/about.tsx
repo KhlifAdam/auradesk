@@ -46,6 +46,7 @@ export async function BoldAbout({ site }: { site: SiteData }) {
 							<div className="group relative aspect-[3/4] overflow-hidden bg-[var(--s-border)]">
 								<Image
 									src={media.url}
+									style={{ objectPosition: media.focus }}
 									alt={media.alt}
 									fill
 									sizes="33vw"

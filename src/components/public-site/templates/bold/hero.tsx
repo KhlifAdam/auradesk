@@ -31,6 +31,7 @@ export async function BoldHero({ site }: { site: SiteData }) {
 				{cover ? (
 					<Image
 						src={cover.url}
+						style={{ objectPosition: cover.focus }}
 						alt={cover.alt}
 						fill
 						loading="eager"

@@ -51,6 +51,7 @@ export async function StudioWelcome({ site }: { site: SiteData }) {
 				<>
 					<Image
 						src={studio.cover.url}
+						style={{ objectPosition: studio.cover.focus }}
 						alt={studio.cover.alt}
 						fill
 						loading="eager"
@@ -68,6 +69,7 @@ export async function StudioWelcome({ site }: { site: SiteData }) {
 						{studio.logo && (
 							<Image
 								src={studio.logo.url}
+								style={{ objectPosition: studio.logo.focus }}
 								alt=""
 								width={44}
 								height={44}

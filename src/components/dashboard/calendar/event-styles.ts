@@ -3,7 +3,6 @@ import {
 	CalendarClock,
 	Camera,
 	CircleCheck,
-	FolderKanban,
 	type LucideIcon,
 	Sparkles,
 	Users,
@@ -45,7 +44,7 @@ export const EVENT_STYLES: Record<EntryType, EventStyle> = {
 	UNAVAILABLE: {
 		icon: Ban,
 		dot: "bg-event-unavailable",
-		chip: "bg-event-unavailable/15 text-event-unavailable hover:bg-event-unavailable/25",
+		chip: "bg-event-unavailable text-white hover:bg-event-unavailable/90",
 		bar: "bg-event-unavailable",
 	},
 	OTHER: {
@@ -56,20 +55,21 @@ export const EVENT_STYLES: Record<EntryType, EventStyle> = {
 	},
 	ESTIMATE: {
 		icon: CalendarClock,
-		dot: "bg-primary",
-		chip: "border border-dashed border-primary/50 text-primary hover:bg-primary/10",
-		bar: "bg-primary",
-	},
-	PROJECT: {
-		icon: FolderKanban,
 		dot: "bg-event-project",
-		chip: "border border-dashed border-event-project/50 text-event-project hover:bg-event-project/10",
+		chip: "border border-dashed border-event-project/60 text-event-project hover:bg-event-project/10",
 		bar: "bg-event-project",
+	},
+	// A project's event day: a shoot without times yet, hence dashed.
+	PROJECT: {
+		icon: Camera,
+		dot: "bg-event-shoot",
+		chip: "border border-dashed border-event-shoot/60 text-event-shoot hover:bg-event-shoot/10",
+		bar: "bg-event-shoot",
 	},
 };
 
 /** Day-cell background for days marked available / unavailable. */
 export const AVAILABILITY_TINT = {
 	AVAILABLE: "bg-event-available/8",
-	UNAVAILABLE: "bg-event-unavailable/8",
+	UNAVAILABLE: "bg-event-unavailable/15",
 } as const;

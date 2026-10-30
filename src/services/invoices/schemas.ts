@@ -31,7 +31,7 @@ const itemSchema = z.object({
 	),
 });
 
-const invoiceFields = z.object({
+export const invoiceFields = z.object({
 	projectId: z.string(),
 	clientId: z.string(),
 	clientName: requiredText(120),
@@ -50,7 +50,10 @@ const invoiceFields = z.object({
 	items: z.array(itemSchema).min(1, "required").max(MAX_INVOICE_ITEMS),
 });
 
-function checkDates(v: z.infer<typeof invoiceFields>, ctx: z.RefinementCtx) {
+export function checkDates(
+	v: z.infer<typeof invoiceFields>,
+	ctx: z.RefinementCtx,
+) {
 	if (v.dueDate && v.issueDate && v.dueDate < v.issueDate)
 		ctx.addIssue({
 			code: "custom",

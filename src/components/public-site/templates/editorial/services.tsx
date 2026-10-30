@@ -8,7 +8,7 @@ import { Reveal } from "../../shared/reveal";
 
 /** Numbered rows, like a menu: name and story, what's included, the price. */
 export async function EditorialServices({ site }: { site: SiteData }) {
-	const { t, price, hours } = await getPackageFormatters(site.i18n.locale);
+	const { t, price, meta } = await getPackageFormatters(site.i18n.locale);
 
 	return (
 		<section id="services" className="site-card px-6 py-24 md:px-12 md:py-32">
@@ -52,7 +52,7 @@ export async function EditorialServices({ site }: { site: SiteData }) {
 								<div className="flex flex-col gap-3 md:col-span-3 md:items-end md:text-right">
 									<span className="site-heading text-4xl">{price(pkg)}</span>
 									<span className="site-muted text-xs uppercase tracking-wider">
-										{hours(pkg)}
+										{meta(pkg)}
 									</span>
 									<a
 										href="#contact"

@@ -15,6 +15,8 @@ export interface SiteMedia {
 	alt: string;
 	width: number;
 	height: number;
+	/** CSS `object-position` keeping the focal point in view when cropped. */
+	focus: string;
 }
 
 export interface SiteStudio {
@@ -51,6 +53,9 @@ export interface SitePackage {
 	price: number;
 	currency: string;
 	durationMinutes: number | null;
+	unlimitedDuration: boolean;
+	photoCount: number | null;
+	unlimitedPhotos: boolean;
 	deliverables: string[];
 	cover: SiteMedia | null;
 	featured: boolean;

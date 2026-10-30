@@ -1,11 +1,31 @@
-import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
+import {
+	ArrowDownRight,
+	ArrowUpRight,
+	type LucideIcon,
+	Minus,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { Compared } from "@/services/overview/stats";
 
+/** Icon badge colors, from the theme tokens in globals.css. */
+const TONES = {
+	gold: "bg-primary/15 text-primary",
+	blue: "bg-event-meeting/15 text-event-meeting",
+	green: "bg-success/15 text-success",
+	red: "bg-destructive/15 text-destructive",
+	teal: "bg-event-project/15 text-event-project",
+	purple: "bg-event-other/15 text-event-other",
+	amber: "bg-event-shoot/15 text-event-shoot",
+} as const;
+
+export type KpiTone = keyof typeof TONES;
+
 interface KpiCardProps {
 	label: string;
 	value: string;
+	icon: LucideIcon;
+	tone: KpiTone;
 	/** Figure of the chosen period and the one before; omit for a snapshot. */
 	compared?: Compared;
 	/** Shown instead of a comparison, e.g. "today". */
@@ -50,6 +70,8 @@ function Delta({ compared, versus }: { compared: Compared; versus?: string }) {
 export function KpiCard({
 	label,
 	value,
+	icon: Icon,
+	tone,
 	compared,
 	hint,
 	versus,
@@ -58,8 +80,18 @@ export function KpiCard({
 }: KpiCardProps) {
 	const body = (
 		<>
-			<span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-				{label}
+			<span className="flex items-center justify-between gap-2">
+				<span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+					{label}
+				</span>
+				<span
+					className={cn(
+						"flex h-6 w-6 shrink-0 items-center justify-center rounded-md",
+						TONES[tone],
+					)}
+				>
+					<Icon className="h-3.5 w-3.5" />
+				</span>
 			</span>
 			<span
 				className={cn(

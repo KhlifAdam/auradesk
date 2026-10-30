@@ -53,7 +53,10 @@ export function EventFormFields({ projects }: { projects: ProjectOption[] }) {
 					<FormItem className="space-y-1">
 						<FormLabel className="text-xs">{t("type")}</FormLabel>
 						<div className="flex flex-wrap gap-1.5">
-							{EVENT_TYPES.map((type) => {
+							{/* "Available" is the default state; only shown on old entries. */}
+							{EVENT_TYPES.filter(
+								(type) => type !== "AVAILABLE" || field.value === type,
+							).map((type) => {
 								const { icon: Icon, chip } = EVENT_STYLES[type];
 								const active = field.value === type;
 								return (

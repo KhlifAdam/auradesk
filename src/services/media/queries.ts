@@ -19,6 +19,8 @@ export function toMediaItem(media: Media): MediaItem {
 		height: media.height,
 		durationSec: media.durationSec,
 		alt: media.alt,
+		focusX: media.focusX,
+		focusY: media.focusY,
 		createdAt: media.createdAt.toISOString(),
 	};
 }

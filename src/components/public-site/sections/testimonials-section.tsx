@@ -62,6 +62,7 @@ export async function TestimonialsSection({
 									{item.photo ? (
 										<Image
 											src={item.photo.url}
+											style={{ objectPosition: item.photo.focus }}
 											alt={item.photo.alt || item.author}
 											fill
 											sizes="44px"

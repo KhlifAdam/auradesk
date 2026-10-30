@@ -34,6 +34,9 @@ export async function listPackages(
 				? (pkg.currency as Currency)
 				: "TND",
 			durationMinutes: pkg.durationMinutes,
+			unlimitedDuration: pkg.unlimitedDuration,
+			photoCount: pkg.photoCount,
+			unlimitedPhotos: pkg.unlimitedPhotos,
 			deliverables: pkg.deliverables,
 			coverMediaId: pkg.coverMediaId,
 			active: pkg.active,

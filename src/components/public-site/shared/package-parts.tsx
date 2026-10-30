@@ -17,10 +17,22 @@ export async function getPackageFormatters(locale: Locale) {
 				currency: pkg.currency,
 				maximumFractionDigits: 0,
 			}),
-		hours: (pkg: SitePackage) =>
-			pkg.durationMinutes
-				? t("hours", { count: Number((pkg.durationMinutes / 60).toFixed(1)) })
-				: null,
+		/** Duration and photos on one line, e.g. "6 hours · Unlimited photos". */
+		meta: (pkg: SitePackage) => {
+			const time = pkg.unlimitedDuration
+				? t("unlimitedTime")
+				: pkg.durationMinutes
+					? t("hours", {
+							count: Number((pkg.durationMinutes / 60).toFixed(1)),
+						})
+					: null;
+			const photos = pkg.unlimitedPhotos
+				? t("unlimitedPhotos")
+				: pkg.photoCount
+					? t("photos", { count: pkg.photoCount })
+					: null;
+			return [time, photos].filter(Boolean).join(" · ") || null;
+		},
 	};
 }
 

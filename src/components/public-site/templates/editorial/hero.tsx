@@ -64,6 +64,7 @@ export async function EditorialHero({ site }: { site: SiteData }) {
 						{cover && (
 							<Image
 								src={cover.url}
+								style={{ objectPosition: cover.focus }}
 								alt={cover.alt}
 								fill
 								loading="eager"
@@ -78,6 +79,7 @@ export async function EditorialHero({ site }: { site: SiteData }) {
 							<div className="relative aspect-[3/4]">
 								<Image
 									src={inset.url}
+									style={{ objectPosition: inset.focus }}
 									alt={inset.alt}
 									fill
 									sizes="22vw"

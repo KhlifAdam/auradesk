@@ -1,3 +1,17 @@
+import {
+	CalendarCheck,
+	Camera,
+	CircleCheck,
+	FolderKanban,
+	FolderPlus,
+	HardDrive,
+	Inbox,
+	MessageSquare,
+	UserPlus,
+	Users,
+	Wallet,
+	WalletCards,
+} from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { formatBytes } from "@/lib/format";
@@ -17,6 +31,20 @@ const STATUS_BAR: Record<(typeof BOOKING_STATUSES)[number], string> = {
 	QUOTE_SENT: "bg-event-other",
 	CONFIRMED: "bg-success",
 	DECLINED: "bg-destructive",
+};
+
+/** One color per phase: planning, shoot, editing, client review, delivered. */
+const STAGE_BAR: Record<(typeof PROJECT_STAGES)[number], string> = {
+	BOOKING: "bg-event-meeting",
+	PREP: "bg-event-meeting",
+	SHOOTING: "bg-event-shoot",
+	IMPORT: "bg-event-other",
+	ORGANIZATION: "bg-event-other",
+	SELECTION: "bg-event-other",
+	POST_PRODUCTION: "bg-event-other",
+	EXPORT: "bg-event-other",
+	VALIDATION: "bg-event-project",
+	DELIVERY: "bg-success",
 };
 
 /** All the numbers for the chosen period, streamed in below the filter. */
@@ -46,6 +74,8 @@ export async function StatisticsSection({
 			<div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
 				<KpiCard
 					label={t("kpi.newBookings")}
+					icon={Inbox}
+					tone="gold"
 					value={number(stats.bookings.created.value)}
 					compared={stats.bookings.created}
 					versus={versus}
@@ -53,6 +83,8 @@ export async function StatisticsSection({
 				/>
 				<KpiCard
 					label={t("kpi.confirmedBookings")}
+					icon={CalendarCheck}
+					tone="green"
 					value={number(stats.bookings.confirmed.value)}
 					compared={stats.bookings.confirmed}
 					versus={versus}
@@ -60,20 +92,25 @@ export async function StatisticsSection({
 				/>
 				<KpiCard
 					label={t("kpi.newClients")}
+					icon={UserPlus}
+					tone="blue"
 					value={number(stats.clients.new.value)}
 					compared={stats.clients.new}
 					versus={versus}
 					href="/dashboard/clients"
-					accent
 				/>
 				<KpiCard
 					label={t("kpi.unread")}
+					icon={MessageSquare}
+					tone="red"
 					value={number(stats.unread)}
 					hint={t("hint.now")}
 					href="/dashboard/messages"
 				/>
 				<KpiCard
 					label={t("kpi.newProjects")}
+					icon={FolderPlus}
+					tone="purple"
 					value={number(stats.projects.created.value)}
 					compared={stats.projects.created}
 					versus={versus}
@@ -81,6 +118,8 @@ export async function StatisticsSection({
 				/>
 				<KpiCard
 					label={t("kpi.deliveredProjects")}
+					icon={CircleCheck}
+					tone="green"
 					value={number(stats.projects.delivered.value)}
 					compared={stats.projects.delivered}
 					versus={versus}
@@ -88,17 +127,23 @@ export async function StatisticsSection({
 				/>
 				<KpiCard
 					label={t("kpi.bookedValue")}
+					icon={Wallet}
+					tone="gold"
 					value={formatMoney(stats.money.booked.value, locale)}
 					compared={stats.money.booked}
 					versus={versus}
 				/>
 				<KpiCard
 					label={t("kpi.outstanding")}
+					icon={WalletCards}
+					tone="red"
 					value={formatMoney(stats.money.outstanding, locale)}
 					hint={t("hint.now")}
 				/>
 				<KpiCard
 					label={t("kpi.files")}
+					icon={HardDrive}
+					tone="teal"
 					value={number(stats.files.count.value)}
 					compared={stats.files.count}
 					versus={[versus, formatBytes(stats.files.bytes, locale)]
@@ -108,18 +153,24 @@ export async function StatisticsSection({
 				/>
 				<KpiCard
 					label={t("kpi.shootsNextWeek")}
+					icon={Camera}
+					tone="amber"
 					value={number(stats.shootsNextWeek)}
 					hint={t("hint.next7")}
 					href="/dashboard/calendar"
 				/>
 				<KpiCard
 					label={t("kpi.activeProjects")}
+					icon={FolderKanban}
+					tone="purple"
 					value={number(activeProjects)}
 					hint={t("hint.now")}
 					href="/dashboard/projects"
 				/>
 				<KpiCard
 					label={t("kpi.totalClients")}
+					icon={Users}
+					tone="blue"
 					value={number(stats.clients.total)}
 					hint={t("hint.now")}
 					href="/dashboard/clients"
@@ -155,7 +206,7 @@ export async function StatisticsSection({
 						key: stage,
 						label: tStage(stage),
 						count: stats.projects.byStage[stage] ?? 0,
-						bar: stage === "DELIVERY" ? "bg-success" : "bg-primary",
+						bar: STAGE_BAR[stage],
 					}))}
 				/>
 			</div>

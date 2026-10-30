@@ -9,7 +9,7 @@ import { Reveal } from "../../shared/reveal";
 
 /** Numbered hard-edged cards; the featured package is flooded with the accent. */
 export async function BoldServices({ site }: { site: SiteData }) {
-	const { t, price, hours } = await getPackageFormatters(site.i18n.locale);
+	const { t, price, meta } = await getPackageFormatters(site.i18n.locale);
 
 	return (
 		<section id="services" className="site-card px-6 py-24 md:px-12 md:py-32">
@@ -61,7 +61,7 @@ export async function BoldServices({ site }: { site: SiteData }) {
 								{price(pkg)}
 							</span>
 							<span className="text-xs uppercase tracking-wider opacity-70">
-								{hours(pkg)}
+								{meta(pkg)}
 							</span>
 						</div>
 						<PackageDeliverables

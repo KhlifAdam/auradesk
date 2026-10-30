@@ -3,10 +3,9 @@
 import { ArrowUpRight, CalendarCheck, MapPin, Plus } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
-import { SegmentedControl } from "@/components/dashboard/shared/segmented-control";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { BUSY_TYPES } from "@/services/calendar/constants";
 import type { CalendarEntry } from "@/services/calendar/types";
 import { EVENT_STYLES } from "./event-styles";
 import { dayAvailability, useEntryLabels } from "./use-calendar-entries";
@@ -20,18 +19,6 @@ interface DayPanelProps {
 	onOpen: (entry: CalendarEntry) => void;
 }
 
-type Toggle = "NONE" | "AVAILABLE" | "UNAVAILABLE";
-
-const isBusy = (entry: CalendarEntry) =>
-	(BUSY_TYPES as readonly string[]).includes(entry.type);
-
-function dayStatus(entries: CalendarEntry[]) {
-	const availability = dayAvailability(entries);
-	if (availability === "UNAVAILABLE") return "unavailable";
-	if (entries.some(isBusy)) return "busy";
-	return availability === "AVAILABLE" ? "available" : "free";
-}
-
 export function DayPanel({
 	day,
 	timeZone,
@@ -40,13 +27,14 @@ export function DayPanel({
 	onOpen,
 }: DayPanelProps) {
 	const t = useTranslations("Calendar.day");
-	const tTypes = useTranslations("Calendar.types");
 	const format = useFormatter();
 	const labels = useEntryLabels(timeZone);
 	const { isPending, setAvailability } = useDayAvailability(timeZone);
 
 	const marker = findDayMarker(day, entries);
-	const status = dayStatus(entries);
+	// The day-off switch already stands for the day's marker.
+	const items = entries.filter((entry) => entry !== marker);
+	const dayOff = dayAvailability(entries) === "UNAVAILABLE";
 
 	return (
 		<aside className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 lg:sticky lg:top-5 lg:self-start">
@@ -61,7 +49,11 @@ export function DayPanel({
 						})}
 					</h2>
 					<p className="text-xs text-muted-foreground">
-						{t(`status.${status}`)}
+						{dayOff
+							? t("status.dayOff")
+							: items.length > 0
+								? t("status.planned", { count: items.length })
+								: t("status.free")}
 					</p>
 				</div>
 				<Button
@@ -75,36 +67,38 @@ export function DayPanel({
 				</Button>
 			</div>
 
-			<div className="flex flex-col gap-1.5">
-				<span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-					{t("availability")}
+			{/* Days are open by default; one switch blocks the whole day. */}
+			<label
+				htmlFor="day-off"
+				className={cn(
+					"flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-border p-2.5 transition-opacity duration-200",
+					isPending && "opacity-60",
+				)}
+			>
+				<span className="flex flex-col gap-0.5">
+					<span className="text-xs font-medium">{t("dayOff")}</span>
+					<span className="text-[11px] text-muted-foreground">
+						{t("dayOffHint")}
+					</span>
 				</span>
-				<SegmentedControl<Toggle>
-					value={(marker?.type as Toggle | undefined) ?? "NONE"}
-					onChange={(value) =>
-						!isPending &&
-						setAvailability(day, entries, value === "NONE" ? null : value)
+				<Switch
+					id="day-off"
+					checked={marker?.type === "UNAVAILABLE"}
+					disabled={isPending}
+					onCheckedChange={(checked) =>
+						setAvailability(day, entries, checked ? "UNAVAILABLE" : null)
 					}
-					className={cn(
-						"w-full [&>button]:flex-1 [&>button]:justify-center",
-						isPending && "opacity-60",
-					)}
-					options={[
-						{ value: "NONE", label: t("notSet") },
-						{ value: "AVAILABLE", label: tTypes("AVAILABLE") },
-						{ value: "UNAVAILABLE", label: tTypes("UNAVAILABLE") },
-					]}
 				/>
-			</div>
+			</label>
 
-			{entries.length === 0 ? (
+			{items.length === 0 ? (
 				<div className="flex flex-col items-center gap-1.5 rounded-lg border border-dashed border-border px-3 py-6 text-center">
 					<CalendarCheck className="h-5 w-5 text-muted-foreground" />
 					<p className="text-xs text-muted-foreground">{t("empty")}</p>
 				</div>
 			) : (
 				<ul className="flex flex-col gap-1.5">
-					{entries.map((entry) => {
+					{items.map((entry) => {
 						const style = EVENT_STYLES[entry.type];
 						const Icon = style.icon;
 						return (

@@ -1,10 +1,11 @@
 "use client";
 
-import { Star, X } from "lucide-react";
+import { Crosshair, Star, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { MediaFocusDialog } from "@/components/dashboard/media/media-focus-dialog";
 import { MediaThumb } from "@/components/dashboard/media/media-thumb";
 import { SortableGrid } from "@/components/dashboard/shared/sortable-grid";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { useOptimisticOrder } from "@/hooks/use-optimistic-order";
 import { cn } from "@/lib/utils";
+import type { MediaItem } from "@/services/media/types";
 import {
 	removeAlbumItem,
 	reorderAlbumItems,
@@ -29,6 +31,7 @@ export function AlbumItemsGrid({ album }: { album: AlbumDetail }) {
 		[album.id, page],
 	);
 	const { items, setItems, reorder } = useOptimisticOrder(album.items, save);
+	const [framing, setFraming] = useState<MediaItem | null>(null);
 
 	const run = async (
 		action: Promise<{ ok: boolean; error?: string }>,
@@ -63,6 +66,20 @@ export function AlbumItemsGrid({ album }: { album: AlbumDetail }) {
 								</span>
 							)}
 							<div className="absolute right-1 top-1 flex gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+								{media.type === "IMAGE" && (
+									<Button
+										type="button"
+										size="icon"
+										variant="secondary"
+										className="h-6 w-6 bg-background/80 backdrop-blur"
+										aria-label={t("adjust")}
+										title={t("adjust")}
+										onPointerDown={(event) => event.stopPropagation()}
+										onClick={() => setFraming(media)}
+									>
+										<Crosshair className="h-3 w-3" />
+									</Button>
+								)}
 								<Button
 									type="button"
 									size="icon"
@@ -110,6 +127,13 @@ export function AlbumItemsGrid({ album }: { album: AlbumDetail }) {
 				}}
 			/>
 			<UrlPagination page={album.page} pageCount={album.pageCount} />
+			{framing && (
+				<MediaFocusDialog
+					media={framing}
+					open
+					onOpenChange={(open) => !open && setFraming(null)}
+				/>
+			)}
 		</div>
 	);
 }

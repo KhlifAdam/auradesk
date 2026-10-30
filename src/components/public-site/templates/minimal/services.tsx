@@ -8,7 +8,7 @@ import { Reveal } from "../../shared/reveal";
 
 /** Airy cards; the featured package is raised and outlined in the accent. */
 export async function MinimalServices({ site }: { site: SiteData }) {
-	const { t, price, hours } = await getPackageFormatters(site.i18n.locale);
+	const { t, price, meta } = await getPackageFormatters(site.i18n.locale);
 
 	return (
 		<section id="services" className="site-card px-6 py-24 md:px-8 md:py-32">
@@ -49,7 +49,7 @@ export async function MinimalServices({ site }: { site: SiteData }) {
 									<span className="site-heading text-4xl tracking-tight">
 										{price(pkg)}
 									</span>
-									<span className="site-muted text-xs">{hours(pkg)}</span>
+									<span className="site-muted text-xs">{meta(pkg)}</span>
 								</div>
 								<PackageDeliverables
 									items={pkg.deliverables}

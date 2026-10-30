@@ -69,7 +69,8 @@ export function SectionRow({
 	const open = opened || Boolean(errors.sections?.[index]);
 	const Icon = ICONS[kind];
 	const managedAt = MANAGED_AT[kind];
-	const editable = !isBuiltIn(kind);
+	// The portfolio opens too: it picks which albums the site shows.
+	const editable = !isBuiltIn(kind) || kind === "portfolio";
 
 	return (
 		<div

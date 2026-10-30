@@ -19,7 +19,15 @@ type PhotoSet = keyof typeof manifest;
 function photo(set: PhotoSet, index: number, alt: string): SiteMedia {
 	const photos = manifest[set];
 	const { key, width, height } = photos[index % photos.length];
-	return { id: key, type: "IMAGE", url: publicUrl(key), alt, width, height };
+	return {
+		id: key,
+		type: "IMAGE",
+		url: publicUrl(key),
+		alt,
+		width,
+		height,
+		focus: "50% 50%",
+	};
 }
 
 const ALBUMS = [
@@ -93,6 +101,9 @@ export async function buildDemoSite(
 			price,
 			currency: "EUR",
 			durationMinutes: minutes,
+			unlimitedDuration: false,
+			photoCount: null,
+			unlimitedPhotos: false,
 			deliverables: [
 				t(`packages.${key}.d1`),
 				t(`packages.${key}.d2`),
@@ -130,6 +141,7 @@ export async function buildDemoSite(
 				alt: name,
 				width: 96,
 				height: 96,
+				focus: "50% 50%",
 			},
 			cover: photo("weddings", 0, name),
 			portrait: photo("studio", 0, name),

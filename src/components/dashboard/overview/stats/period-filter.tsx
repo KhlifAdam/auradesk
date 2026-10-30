@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PERIODS, type PeriodKey } from "@/services/overview/period";
 
+// "Last 30 days" overlapped "This month", so the filter leaves it out.
+const FILTER_PERIODS = PERIODS.filter((period) => period !== "last30");
+
 interface PeriodFilterProps {
 	active: PeriodKey;
 	/** The range currently shown, to prefill the custom dates. */
@@ -46,7 +49,7 @@ export function PeriodFilter({ active, firstDay, lastDay }: PeriodFilterProps) {
 					setCustom(next === "custom");
 					if (next !== "custom") go(next);
 				}}
-				options={PERIODS.map((value) => ({
+				options={FILTER_PERIODS.map((value) => ({
 					value,
 					label: t(`periods.${value}`),
 				}))}

@@ -62,6 +62,8 @@ model User {
   clientBookings      Booking[]          @relation("ClientBookings")
   invoices            Invoice[]          @relation("PhotographerInvoices")
   clientInvoices      Invoice[]          @relation("ClientInvoices")
+  quotes              Quote[]            @relation("PhotographerQuotes")
+  clientQuotes        Quote[]            @relation("ClientQuotes")
   equipment           Equipment[]
   equipmentBookings   EquipmentBooking[]
   teamMembers         TeamMember[]       @relation("StudioTeam")
@@ -216,6 +218,10 @@ model Media {
   height         Int?
   durationSec    Float?    @map("duration_sec")
   alt            String?
+  /// Point to keep in view when the image is cropped (cover, thumbnail), in
+  /// percent of its width and height; the centre by default.
+  focusX         Float     @default(50) @map("focus_x")
+  focusY         Float     @default(50) @map("focus_y")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
 
@@ -272,6 +278,12 @@ model Package {
   price           Decimal  @db.Decimal(10, 2)
   currency        String   @default("TND")
   durationMinutes Int?     @map("duration_minutes")
+  /// No time limit; `durationMinutes` is then empty.
+  unlimitedDuration Boolean @default(false) @map("unlimited_duration")
+  /// Edited photos delivered; empty when not stated.
+  photoCount      Int?     @map("photo_count")
+  /// As many photos as the shoot gives; `photoCount` is then empty.
+  unlimitedPhotos Boolean  @default(false) @map("unlimited_photos")
   deliverables    String[] @default([])
   coverMediaId    String?  @map("cover_media_id")
   position        Int      @default(0)
@@ -426,6 +438,7 @@ model Project {
   events            CalendarEvent[]
   booking           Booking?
   invoices          Invoice[]
+  quotes            Quote[]
   equipmentBookings EquipmentBooking[]
   assignments       ProjectAssignment[]
 
@@ -773,6 +786,7 @@ model Booking {
   client       User?             @relation("ClientBookings", fields: [clientId], references: [id], onDelete: SetNull)
   project      Project?          @relation(fields: [projectId], references: [id], onDelete: SetNull)
   activities   BookingActivity[]
+  quotes       Quote[]
 
   @@index([photographerId, status, desiredDate])
   @@index([photographerId, createdAt])
@@ -883,6 +897,8 @@ model Invoice {
   payments     InvoicePayment[]
   /// The photo book order this invoice bills, if any.
   photoBook    PhotoBook?
+  /// The quote this invoice was made from, if any.
+  quote        Quote?
 
   @@unique([photographerId, number])
   @@index([photographerId, status, issueDate])
@@ -890,6 +906,76 @@ model Invoice {
   @@index([projectId])
   @@index([clientId])
   @@map("invoices")
+}
+
+// ─── Quotes ──────────────────────────────────────────────────────────────────
+// A priced offer sent before the work. The client accepts or declines it in
+// the portal; the photographer can turn it into an invoice whenever they want.
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+
+  @@map("quote_status")
+}
+
+model Quote {
+  id             String      @id @default(cuid())
+  photographerId String      @map("photographer_id")
+  bookingId      String?     @map("booking_id")
+  projectId      String?     @map("project_id")
+  /// The client's account, when they have one; lets them answer in the portal.
+  clientId       String?     @map("client_id")
+  /// DEV-2026-0001, unique per photographer.
+  number         String
+  status         QuoteStatus @default(DRAFT)
+  clientName     String      @map("client_name")
+  clientEmail    String?     @map("client_email")
+  clientPhone    String?     @map("client_phone")
+  clientAddress  String?     @map("client_address")
+  issueDate      DateTime    @map("issue_date")
+  validUntil     DateTime?   @map("valid_until")
+  /// Percentage, e.g. 19 for 19 % VAT.
+  taxRate        Decimal     @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  /// Amount taken off the subtotal, in TND, before tax.
+  discount       Decimal     @default(0) @db.Decimal(12, 3)
+  notes          String?
+  sentAt         DateTime?   @map("sent_at")
+  /// When the client accepted or declined it.
+  respondedAt    DateTime?   @map("responded_at")
+  /// Set once it has been turned into an invoice.
+  invoiceId      String?     @unique @map("invoice_id")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  photographer User        @relation("PhotographerQuotes", fields: [photographerId], references: [id], onDelete: Cascade)
+  client       User?       @relation("ClientQuotes", fields: [clientId], references: [id], onDelete: SetNull)
+  booking      Booking?    @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  project      Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  invoice      Invoice?    @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+  items        QuoteItem[]
+
+  @@unique([photographerId, number])
+  @@index([photographerId, status, issueDate])
+  @@index([bookingId])
+  @@index([clientId])
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id          String  @id @default(cuid())
+  quoteId     String  @map("quote_id")
+  description String
+  quantity    Decimal @default(1) @db.Decimal(10, 2)
+  unitPrice   Decimal @map("unit_price") @db.Decimal(12, 3)
+  position    Int     @default(0)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId, position])
+  @@map("quote_items")
 }
 
 model InvoiceItem {

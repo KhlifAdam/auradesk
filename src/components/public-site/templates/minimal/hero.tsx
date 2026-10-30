@@ -32,6 +32,7 @@ function Frame({
 			{media && (
 				<Image
 					src={media.url}
+					style={{ objectPosition: media.focus }}
 					alt={media.alt}
 					fill
 					// The collage is the top of the page: never wait to load it.

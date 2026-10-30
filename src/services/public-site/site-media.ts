@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Media } from "@/generated/prisma/client";
+import { focusPosition } from "@/lib/media-focus";
 import { publicUrl } from "@/lib/storage/r2";
 import type { SiteMedia } from "./types";
 
@@ -15,5 +16,6 @@ export function toSiteMedia(media: Media): SiteMedia {
 		alt: media.alt ?? "",
 		width: media.width ?? FALLBACK_SIZE.width,
 		height: media.height ?? FALLBACK_SIZE.height,
+		focus: focusPosition(media),
 	};
 }

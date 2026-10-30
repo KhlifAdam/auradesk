@@ -8,6 +8,7 @@ import {
 	type SectionKind,
 	type SectionsValues,
 } from "@/services/site-sections/schemas";
+import { AlbumPicker } from "./album-picker";
 import { ItemList } from "./item-list";
 import { MediaFormField } from "./media-form-field";
 
@@ -144,6 +145,8 @@ export function SectionContent({
 	kind: SectionKind;
 }) {
 	const t = useTranslations("Site.sections");
+	// The portfolio's heading comes from the site template; only albums are picked.
+	if (kind === "portfolio") return <AlbumPicker />;
 	return (
 		<div className="flex flex-col gap-4">
 			<TextField<V>

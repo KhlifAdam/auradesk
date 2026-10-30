@@ -24,6 +24,14 @@ export const packageSchema = z.object({
 		.positive("invalidNumber")
 		.max(60 * 24 * 7, "invalidNumber")
 		.nullable(),
+	unlimitedDuration: z.boolean(),
+	photoCount: z
+		.number({ error: "invalidNumber" })
+		.int("invalidNumber")
+		.positive("invalidNumber")
+		.max(100_000, "invalidNumber")
+		.nullable(),
+	unlimitedPhotos: z.boolean(),
 	deliverables: z.array(requiredText(120)).max(MAX_DELIVERABLES, "tooLong"),
 	coverMediaId: idSchema.nullable(),
 	active: z.boolean(),

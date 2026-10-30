@@ -12,6 +12,9 @@ export interface MediaItem {
 	height: number | null;
 	durationSec: number | null;
 	alt: string | null;
+	/** Point kept in view when cropped, in percent (see `focusPosition`). */
+	focusX: number;
+	focusY: number;
 	createdAt: string;
 }
 

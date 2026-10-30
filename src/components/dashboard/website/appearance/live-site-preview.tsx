@@ -35,6 +35,8 @@ export function LiveSitePreview({
 	const t = useTranslations("Site.appearance.preview");
 	const containerRef = useRef<HTMLDivElement>(null);
 	const frameRef = useRef<HTMLIFrameElement>(null);
+	// The frame's current scale, read by the wheel handler.
+	const scaleRef = useRef(1);
 	const [box, setBox] = useState({ width: 0, height: 0 });
 	const [debouncedSrc, setDebouncedSrc] = useState(src);
 	const [loading, setLoading] = useState(true);
@@ -61,6 +63,21 @@ export function LiveSitePreview({
 		if (!loading) scrollToFocus("smooth");
 	}, [loading, scrollToFocus]);
 
+	// The miniature ignores clicks, but the mouse wheel scrolls the site in it
+	// (and not the page around it).
+	useEffect(() => {
+		const element = containerRef.current;
+		if (!element || interactive) return;
+		const onWheel = (event: WheelEvent) => {
+			const frame = frameRef.current?.contentWindow;
+			if (!frame) return;
+			event.preventDefault();
+			frame.scrollBy({ top: event.deltaY / scaleRef.current });
+		};
+		element.addEventListener("wheel", onWheel, { passive: false });
+		return () => element.removeEventListener("wheel", onWheel);
+	}, [interactive]);
+
 	useEffect(() => {
 		const element = containerRef.current;
 		if (!element) return;
@@ -75,6 +92,7 @@ export function LiveSitePreview({
 	}, []);
 
 	const layout = fitDevice(device, box, interactive ? 16 : 8);
+	scaleRef.current = layout.scale || 1;
 	const isDesktop = DEVICES[device].height === null;
 
 	return (

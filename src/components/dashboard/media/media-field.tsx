@@ -1,12 +1,13 @@
 "use client";
 
-import { ImagePlus, X } from "lucide-react";
+import { Crosshair, ImagePlus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MediaFilter } from "@/services/media/schemas";
 import type { MediaItem } from "@/services/media/types";
+import { MediaFocusDialog } from "./media-focus-dialog";
 import { MediaPicker } from "./media-picker";
 import { MediaThumb } from "./media-thumb";
 
@@ -30,6 +31,7 @@ export function MediaField({
 }: MediaFieldProps) {
 	const t = useTranslations("Media.field");
 	const [open, setOpen] = useState(false);
+	const [framing, setFraming] = useState(false);
 	const [preview, setPreview] = useState<MediaItem | null>(initialMedia);
 	const current = value && preview?.id === value ? preview : null;
 
@@ -56,6 +58,18 @@ export function MediaField({
 				>
 					{current ? t("replace") : t("choose")}
 				</Button>
+				{current?.type === "IMAGE" && (
+					<Button
+						type="button"
+						variant="ghost"
+						size="sm"
+						className="h-6 gap-1 px-2 text-xs text-muted-foreground"
+						onClick={() => setFraming(true)}
+					>
+						<Crosshair className="h-3 w-3" />
+						{t("adjust")}
+					</Button>
+				)}
 				{current && (
 					<Button
 						type="button"
@@ -69,6 +83,14 @@ export function MediaField({
 					</Button>
 				)}
 			</div>
+			{current?.type === "IMAGE" && (
+				<MediaFocusDialog
+					media={current}
+					open={framing}
+					onOpenChange={setFraming}
+					onSaved={(focus) => setPreview({ ...current, ...focus })}
+				/>
+			)}
 			<MediaPicker
 				open={open}
 				onOpenChange={setOpen}

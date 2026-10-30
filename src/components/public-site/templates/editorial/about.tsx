@@ -27,6 +27,7 @@ export async function EditorialAbout({ site }: { site: SiteData }) {
 						{image && (
 							<Image
 								src={image.url}
+								style={{ objectPosition: image.focus }}
 								alt={image.alt}
 								fill
 								sizes="(min-width: 768px) 40vw, 100vw"

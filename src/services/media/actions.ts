@@ -13,6 +13,7 @@ import { listMedia, toMediaItem } from "./queries";
 import {
 	confirmUploadSchema,
 	listMediaSchema,
+	mediaFocusSchema,
 	mediaIdsSchema,
 	requestUploadSchema,
 	updateMediaSchema,
@@ -114,4 +115,24 @@ export async function fetchMediaPage(
 	const parsed = listMediaSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
 	return ok(await listMedia(photographerId, parsed.data));
+}
+
+/** Sets where a photo is framed when cropped, everywhere it is shown. */
+export async function setMediaFocus(input: unknown): Promise<ActionResult> {
+	const { photographerId } = await requirePhotographer();
+	const parsed = mediaFocusSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+
+	const { id, focusX, focusY } = parsed.data;
+	const round = (value: number) => Math.round(value * 10) / 10;
+	const { count } = await db.media.updateMany({
+		where: { id, photographerId },
+		data: { focusX: round(focusX), focusY: round(focusY) },
+	});
+	if (count === 0) return fail("notFound");
+
+	// Covers and thumbnails of this photo appear all over the dashboard.
+	revalidatePath("/dashboard", "layout");
+	revalidatePublicSites();
+	return ok();
 }

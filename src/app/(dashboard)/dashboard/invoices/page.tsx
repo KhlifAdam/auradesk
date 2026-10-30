@@ -2,6 +2,7 @@ import { Plus, Receipt } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { BillingTabs } from "@/components/dashboard/invoices/billing-tabs";
 import { InvoiceList } from "@/components/dashboard/invoices/invoice-list";
 import {
 	InvoiceStatsCards,
@@ -48,6 +49,7 @@ export default async function InvoicesPage({
 					</Button>
 				}
 			/>
+			<BillingTabs active="invoices" />
 			<Suspense fallback={<InvoiceStatsSkeleton />}>
 				<Stats />
 			</Suspense>

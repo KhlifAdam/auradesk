@@ -38,6 +38,13 @@ export const updateMediaSchema = z.object({
 	alt: z.string().trim().max(300),
 });
 
+/** The point kept in view when the image is cropped, in percent. */
+export const mediaFocusSchema = z.object({
+	id: z.string().min(1),
+	focusX: z.number().min(0).max(100),
+	focusY: z.number().min(0).max(100),
+});
+
 export const mediaIdsSchema = z.array(z.string().min(1)).min(1).max(100);
 
 export const mediaFilterSchema = z.enum(["all", "image", "video"]).catch("all");

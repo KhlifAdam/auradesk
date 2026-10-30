@@ -15,9 +15,22 @@ import {
 	type SectionsValues,
 	saveSectionsSchema,
 } from "@/services/site-sections/schemas";
+import { SectionAlbumsContext } from "./album-picker";
 import { SectionMediaContext } from "./media-form-field";
 import { SectionRow } from "./section-row";
 import { type SectionsDraft, useSectionsDraft } from "./use-sections-draft";
+
+/** An entry added but left completely blank. */
+const isBlank = (item: object) =>
+	Object.values(item).every((value) => value === "" || value === null);
+
+/** Drops blank entries, so an unused "Add" doesn't block saving. */
+const withoutBlankItems = (sections: SectionsValues["sections"]) =>
+	sections.map((section) =>
+		"items" in section
+			? { ...section, items: section.items.filter((item) => !isBlank(item)) }
+			: section,
+	) as SectionsValues["sections"];
 
 /** Order, show or hide, and fill the sections of the public site. */
 export function SectionsEditor({
@@ -51,33 +64,41 @@ export function SectionsEditor({
 	}
 
 	return (
-		<SectionMediaContext.Provider value={data.media}>
-			<Form {...form}>
-				<form
-					onSubmit={form.handleSubmit(onSubmit, () =>
-						toast.error(t("invalid")),
-					)}
-					className="flex flex-col gap-4"
-				>
-					<p className="text-xs text-muted-foreground">{t("orderHint")}</p>
-					<SortableList
-						items={fields}
-						onMove={(from, to) => {
-							focusOn(fields[from].kind);
-							move(from, to);
+		<SectionAlbumsContext.Provider value={data.albums}>
+			<SectionMediaContext.Provider value={data.media}>
+				<Form {...form}>
+					<form
+						onSubmit={(event) => {
+							form.setValue(
+								"sections",
+								withoutBlankItems(form.getValues("sections")),
+							);
+							return form.handleSubmit(onSubmit, () =>
+								toast.error(t("invalid")),
+							)(event);
 						}}
-						className="flex flex-col gap-2"
-						renderItem={(field, index, handle) => (
-							<SectionRow index={index} kind={field.kind} handle={handle} />
-						)}
-					/>
-					<FormSaveBar
-						visible={isDirty}
-						isSubmitting={isSubmitting}
-						onReset={() => form.reset()}
-					/>
-				</form>
-			</Form>
-		</SectionMediaContext.Provider>
+						className="flex flex-col gap-4"
+					>
+						<p className="text-xs text-muted-foreground">{t("orderHint")}</p>
+						<SortableList
+							items={fields}
+							onMove={(from, to) => {
+								focusOn(fields[from].kind);
+								move(from, to);
+							}}
+							className="flex flex-col gap-2"
+							renderItem={(field, index, handle) => (
+								<SectionRow index={index} kind={field.kind} handle={handle} />
+							)}
+						/>
+						<FormSaveBar
+							visible={isDirty}
+							isSubmitting={isSubmitting}
+							onReset={() => form.reset()}
+						/>
+					</form>
+				</Form>
+			</SectionMediaContext.Provider>
+		</SectionAlbumsContext.Provider>
 	);
 }

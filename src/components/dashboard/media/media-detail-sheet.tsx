@@ -1,8 +1,9 @@
 "use client";
 
-import { Copy } from "lucide-react";
+import { Copy, Crosshair } from "lucide-react";
 import Image from "next/image";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,7 @@ import { formatBytes, formatDuration } from "@/lib/format";
 import type { MediaItem } from "@/services/media/types";
 import { MediaAltForm } from "./media-alt-form";
 import { MediaDeleteButton } from "./media-delete-button";
+import { MediaFocusDialog } from "./media-focus-dialog";
 
 interface MediaDetailSheetProps {
 	media: MediaItem | null;
@@ -29,6 +31,7 @@ export function MediaDetailSheet({
 	const t = useTranslations("Media.detail");
 	const locale = useLocale();
 	const format = useFormatter();
+	const [framing, setFraming] = useState(false);
 
 	const copyUrl = async (url: string) => {
 		await navigator.clipboard.writeText(url);
@@ -70,6 +73,25 @@ export function MediaDetailSheet({
 								/>
 							)}
 						</div>
+
+						{media.type === "IMAGE" && (
+							<>
+								<Button
+									variant="outline"
+									size="sm"
+									className="w-fit gap-2"
+									onClick={() => setFraming(true)}
+								>
+									<Crosshair className="h-4 w-4" />
+									{t("adjust")}
+								</Button>
+								<MediaFocusDialog
+									media={media}
+									open={framing}
+									onOpenChange={setFraming}
+								/>
+							</>
+						)}
 
 						<dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
 							<Info label={t("size")} value={formatBytes(media.size, locale)} />

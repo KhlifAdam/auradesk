@@ -226,7 +226,12 @@
 		"bookTooFewPages": "The book has too few pages for this studio.",
 		"bookTooManyPages": "The book has too many pages.",
 		"bookBadOption": "One of the chosen options is no longer offered. Choose again.",
-		"bookHasPayment": "A payment was already recorded, so this order can't be sent back."
+		"bookHasPayment": "A payment was already recorded, so this order can't be sent back.",
+		"quoteLocked": "An answered or invoiced quote can't be changed.",
+		"quoteNotDraft": "Only a draft quote can do this.",
+		"quoteNotInvoiceable": "Only a sent or accepted quote can become an invoice, once.",
+		"quoteNotOpen": "This quote is no longer waiting for an answer.",
+		"sectionMediaMissing": "A logo, photo or video used in your sections is no longer in your library. Open the sections, pick it again, then save."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -291,7 +296,8 @@
 			"save": "Save",
 			"saved": "Alt text saved",
 			"copyLink": "Copy link",
-			"copied": "Link copied"
+			"copied": "Link copied",
+			"adjust": "Adjust framing"
 		},
 		"delete": {
 			"title": "Delete this file?",
@@ -312,7 +318,20 @@
 		"field": {
 			"choose": "Choose",
 			"replace": "Replace",
-			"remove": "Remove"
+			"remove": "Remove",
+			"adjust": "Adjust framing"
+		},
+		"focus": {
+			"title": "Adjust framing",
+			"description": "Click or drag on the photo to choose what must stay visible (faces, the subject). Covers and thumbnails keep this point in view, in the app and on your site.",
+			"samples": {
+				"square": "Square",
+				"landscape": "Wide",
+				"portrait": "Portrait"
+			},
+			"center": "Reset to centre",
+			"save": "Save framing",
+			"saved": "Framing saved."
 		}
 	},
 	"Site": {
@@ -539,6 +558,16 @@
 					"hint": "Contact details and booking form",
 					"title": "Contact"
 				}
+			},
+			"albums": {
+				"label": "Albums shown on the site",
+				"count": "({count} of {total})",
+				"manage": "Manage albums",
+				"none": "You have no albums yet.",
+				"create": "Create one in Portfolio",
+				"empty": "Empty: add photos first",
+				"photos": "{count, plural, one {# photo} other {# photos}}",
+				"toggle": "Show “{title}” on the site"
 			}
 		}
 	},
@@ -584,7 +613,8 @@
 			"remove": "Remove from album",
 			"removed": "Removed from album",
 			"fromLibrary": "From your files",
-			"uploadHint": "Photos and videos land in this album and are also kept in All files, ready to reuse."
+			"uploadHint": "Photos and videos land in this album and are also kept in All files, ready to reuse.",
+			"adjust": "Adjust framing"
 		},
 		"tabs": {
 			"albums": "Albums",
@@ -613,8 +643,8 @@
 			"descriptionLabel": "Description",
 			"price": "Price",
 			"currency": "Currency",
-			"duration": "Duration (minutes)",
-			"durationHint": "Leave empty if it varies.",
+			"duration": "Duration",
+			"durationHint": "In hours (1.5 = 1 h 30). Leave empty if it varies.",
 			"deliverables": "Deliverables",
 			"deliverablePlaceholder": "e.g. 300 edited photos",
 			"addDeliverable": "Add deliverable",
@@ -630,8 +660,16 @@
 			"updated": "Package updated",
 			"deleted": "Package deleted",
 			"deleteTitle": "Delete this package?",
-			"deleteDescription": "It will be removed from your site. This can't be undone."
-		}
+			"deleteDescription": "It will be removed from your site. This can't be undone.",
+			"hoursUnit": "hours",
+			"photos": "Edited photos",
+			"photosUnit": "photos",
+			"photosHint": "Leave empty to not show it.",
+			"unlimited": "Unlimited"
+		},
+		"unlimitedTime": "Unlimited time",
+		"photos": "{count, plural, one {# photo} other {# photos}}",
+		"unlimitedPhotos": "Unlimited photos"
 	},
 	"Preview": {
 		"back": "Appearance",
@@ -676,7 +714,10 @@
 			"featured": "Most popular",
 			"hours": "{count, plural, one {# hour} other {# hours}}",
 			"eyebrow": "Packages",
-			"enquire": "Enquire"
+			"enquire": "Enquire",
+			"unlimitedTime": "Unlimited time",
+			"photos": "{count, plural, one {# photo} other {# photos}}",
+			"unlimitedPhotos": "Unlimited photos"
 		},
 		"about": {
 			"title": "About",
@@ -1502,6 +1543,15 @@
 			"intro": "{studio} finished printing “{book}”. They'll hand it over to you soon.",
 			"cta": "View the order",
 			"text": "{studio} finished printing “{book}”. View it here: {url}"
+		},
+		"quoteSent": {
+			"languageName": "English",
+			"subject": "{studio} sent you quote {number}",
+			"preheader": "Quote {number}: {amount}",
+			"heading": "You have a new quote",
+			"intro": "{studio} sent you the quote {number} for {amount}. Open it to read it, then accept or decline it.",
+			"cta": "View the quote",
+			"text": "{studio} sent you the quote {number} for {amount}. Answer it here: {url}"
 		}
 	},
 	"Sms": {
@@ -1580,7 +1630,23 @@
 			"search": "Search projects or clients",
 			"allStages": "All stages",
 			"galleries": "{count, plural, =0 {No galleries} one {# gallery} other {# galleries}}",
-			"noClient": "No client yet"
+			"noClient": "No client yet",
+			"dateFrom": "Event date from",
+			"dateTo": "Event date to",
+			"dateClear": "Clear dates",
+			"sort": {
+				"label": "Sort by",
+				"toggle": "Switch the order",
+				"newest": "Newest first",
+				"oldest": "Oldest first",
+				"az": "A → Z",
+				"za": "Z → A",
+				"fields": {
+					"eventDate": "Event date",
+					"created": "Created date",
+					"title": "Title"
+				}
+			}
 		},
 		"empty": {
 			"title": "No projects yet",
@@ -1895,7 +1961,8 @@
 			"reason": "Reason:",
 			"deleteTitle": "Delete this booking?",
 			"deleteDescription": "Its history is deleted too. A project already created from it is kept.",
-			"deleted": "Booking deleted."
+			"deleted": "Booking deleted.",
+			"createQuote": "Create a quote"
 		},
 		"actions": {
 			"statusUpdated": "Status updated.",
@@ -2132,6 +2199,86 @@
 			"total": "Total",
 			"paid": "Paid",
 			"balance": "Balance due"
+		}
+	},
+	"Quotes": {
+		"title": "Quotes",
+		"description": "Priced offers your clients accept or decline before the work. Turn one into an invoice whenever you want.",
+		"bookingSection": "Quotes for this booking",
+		"tabs": {
+			"invoices": "Invoices",
+			"quotes": "Quotes"
+		},
+		"status": {
+			"DRAFT": "Draft",
+			"SENT": "Waiting for answer",
+			"ACCEPTED": "Accepted",
+			"DECLINED": "Declined",
+			"INVOICED": "Invoiced"
+		},
+		"list": {
+			"new": "New quote",
+			"search": "Search by number or client…",
+			"all": "All quotes",
+			"filter": "Filter by status",
+			"validUntil": "valid until {date}"
+		},
+		"empty": {
+			"title": "No quotes yet",
+			"description": "Create a quote, send it to your client, and turn it into an invoice once they agree.",
+			"noMatch": "No quotes match these filters."
+		},
+		"form": {
+			"back": "Back",
+			"backToQuote": "Back to the quote",
+			"createTitle": "New quote",
+			"editTitle": "Edit {number}",
+			"description": "The client sees this quote in their space once you send it.",
+			"forBooking": "For the booking “{title}”.",
+			"details": "Details",
+			"issueDate": "Date",
+			"validUntil": "Valid until",
+			"notes": "Notes",
+			"notesHint": "Conditions, what's included… shown on the quote.",
+			"cancel": "Cancel",
+			"create": "Create quote",
+			"save": "Save",
+			"created": "Quote created.",
+			"updated": "Quote updated."
+		},
+		"detail": {
+			"back": "Quotes",
+			"send": "Send to client",
+			"sent": "Quote marked as sent.",
+			"sentEmailed": "Quote sent to the client by email.",
+			"convert": "Turn into invoice",
+			"converted": "Invoice created from the quote. Check it, then send it.",
+			"viewInvoice": "View invoice",
+			"edit": "Edit",
+			"deleteTitle": "Delete this quote?",
+			"deleteDescription": "The draft will be removed. This can't be undone.",
+			"deleted": "Quote deleted.",
+			"fromBooking": "Booking: {title}",
+			"draftHint": "Draft: the client doesn't see it yet. Send it when it's ready.",
+			"waitingHint": "Sent: waiting for the client to accept or decline it in their space. You can still turn it into an invoice.",
+			"acceptedHint": "The client accepted this quote on {date}. You can turn it into an invoice.",
+			"declinedHint": "The client declined this quote on {date}.",
+			"invoicedHint": "Turned into invoice {number}."
+		},
+		"document": {
+			"title": "Quote",
+			"issued": "Date",
+			"validUntil": "Valid until",
+			"about": "For"
+		},
+		"portal": {
+			"back": "Invoices",
+			"listTitle": "Quotes",
+			"question": "Do you accept this quote?",
+			"accept": "Accept",
+			"decline": "Decline",
+			"accepted": "Quote accepted. The studio has been told.",
+			"declined": "Quote declined."
 		}
 	},
 	"Equipment": {
@@ -2597,8 +2744,18 @@
 			"AVAILABLE": "Available",
 			"UNAVAILABLE": "Unavailable",
 			"OTHER": "Other",
-			"PROJECT": "Project date",
+			"PROJECT": "Shoot day (no time yet)",
 			"ESTIMATE": "Expected delivery"
+		},
+		"guide": {
+			"button": "Color guide",
+			"title": "What the colors mean",
+			"SHOOT": "A photo or video shoot you planned.",
+			"MEETING": "An appointment with a client.",
+			"OTHER": "Anything else you want to remember.",
+			"UNAVAILABLE": "A day off: you can't work that day.",
+			"PROJECT": "The event date you set on a project. Click it to add the shoot's times.",
+			"ESTIMATE": "When a project should be delivered. Click it to open the project."
 		},
 		"grid": {
 			"more": "+{count} more",
@@ -2608,16 +2765,15 @@
 			"add": "Add",
 			"allDay": "All day",
 			"empty": "Nothing planned this day.",
-			"availability": "Availability",
-			"notSet": "Not set",
-			"schedule": "click to schedule",
+			"dayOff": "Day off",
+			"dayOffHint": "Turn on if you can't work this day.",
+			"schedule": "click to add times",
 			"openProject": "Open project",
 			"availabilityUpdated": "Availability updated.",
 			"status": {
-				"free": "Free",
-				"busy": "Busy",
-				"available": "Available",
-				"unavailable": "Unavailable"
+				"free": "Nothing planned, you're free",
+				"planned": "{count, plural, one {# thing planned} other {# things planned}}",
+				"dayOff": "Day off, you're not working"
 			}
 		},
 		"form": {

@@ -30,7 +30,7 @@ export interface DeviceLayout {
 /**
  * Fits a device into a box. A desktop fills the box (wider boxes show more
  * of the site, never less than its minimum width); a tablet or phone keeps
- * its proportions, centred, never shown larger than life.
+ * its proportions, centred, at the same scale (never larger than life).
  */
 export function fitDevice(
 	device: Device,
@@ -49,11 +49,15 @@ export function fitDevice(
 			radius: spec.radius,
 		};
 	}
-	const room = (size: number) => Math.max(0, size - 2 * (margin + spec.bezel));
+	// Tablet and phone share the tablet's scale, so they keep their real
+	// sizes next to each other: the phone is clearly the smaller screen.
+	const tablet = DEVICES.tablet;
+	const room = (size: number) =>
+		Math.max(0, size - 2 * (margin + tablet.bezel));
 	const scale = Math.min(
 		1,
-		room(box.width) / spec.width,
-		room(box.height) / spec.height,
+		room(box.width) / tablet.width,
+		room(box.height) / tablet.height,
 	);
 	// Small previews get a thinner frame, so it doesn't eat the screen.
 	const shrink = Math.min(1, scale * 2);

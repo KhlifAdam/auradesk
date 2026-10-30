@@ -23,6 +23,11 @@ export const albumSchema = z.object({
 
 export const updateAlbumSchema = albumSchema.extend({ id: idSchema });
 
+export const albumPublishedSchema = z.object({
+	id: idSchema,
+	published: z.boolean(),
+});
+
 export const albumItemsSchema = z.object({
 	albumId: idSchema,
 	mediaIds: z.array(idSchema).min(1).max(MAX_ALBUM_ITEMS),

@@ -75,7 +75,11 @@ export function MonthGrid({
 									!inMonth && "bg-muted/40",
 									availability && AVAILABILITY_TINT[availability],
 									day === selected &&
-										"bg-primary/5 ring-1 ring-inset ring-primary/50",
+										cn(
+											"ring-1 ring-inset ring-primary/50",
+											// A day off stays red when selected.
+											availability !== "UNAVAILABLE" && "bg-primary/5",
+										),
 								)}
 							/>
 							{/* Full-cell target under the chips selects the day. */}

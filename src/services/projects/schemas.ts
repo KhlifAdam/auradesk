@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { toE164 } from "@/lib/phone";
+import { dayKeySchema } from "@/services/calendar/dates";
 import { searchQuerySchema } from "@/services/clients/schemas";
 import {
 	dateInput,
@@ -95,10 +96,18 @@ export const inviteClientSchema = z.object({
 	contact: z.string().trim().min(1, "required").max(200, "tooLong"),
 });
 
+export const PROJECT_SORTS = ["eventDate", "created", "title"] as const;
+export type ProjectSort = (typeof PROJECT_SORTS)[number];
+
 export const listProjectsSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),
 	q: searchQuerySchema,
 	stage: stageSchema.optional().catch(undefined),
+	/** Event date range, `yyyy-MM-dd`, both days included. */
+	from: dayKeySchema.optional().catch(undefined),
+	to: dayKeySchema.optional().catch(undefined),
+	sort: z.enum(PROJECT_SORTS).optional().catch(undefined),
+	order: z.enum(["asc", "desc"]).optional().catch(undefined),
 });
 
 export type ProjectValues = z.infer<typeof projectSchema>;

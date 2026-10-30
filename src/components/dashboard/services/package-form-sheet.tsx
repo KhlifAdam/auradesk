@@ -37,6 +37,7 @@ import {
 } from "@/services/packages/actions";
 import { type PackageValues, packageSchema } from "@/services/packages/schemas";
 import type { PackageItem } from "@/services/packages/types";
+import { AmountOrUnlimitedField } from "./amount-or-unlimited-field";
 import { DeliverablesInput } from "./deliverables-input";
 import { PriceFields } from "./price-fields";
 
@@ -53,6 +54,9 @@ const EMPTY: PackageValues = {
 	price: 0,
 	currency: "TND",
 	durationMinutes: null,
+	unlimitedDuration: false,
+	photoCount: null,
+	unlimitedPhotos: false,
 	deliverables: [],
 	coverMediaId: null,
 	active: true,
@@ -123,11 +127,23 @@ export function PackageFormSheet({
 								rows={3}
 							/>
 							<PriceFields />
-							<TextField<PackageValues>
+							<AmountOrUnlimitedField
 								name="durationMinutes"
-								type="number"
+								unlimitedName="unlimitedDuration"
 								label={t("duration")}
-								description={t("durationHint")}
+								unit={t("hoursUnit")}
+								unlimitedLabel={t("unlimited")}
+								hint={t("durationHint")}
+								scale={60}
+								step={0.5}
+							/>
+							<AmountOrUnlimitedField
+								name="photoCount"
+								unlimitedName="unlimitedPhotos"
+								label={t("photos")}
+								unit={t("photosUnit")}
+								unlimitedLabel={t("unlimited")}
+								hint={t("photosHint")}
 							/>
 							<FormField
 								control={form.control}

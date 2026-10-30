@@ -2,12 +2,14 @@ import { FolderKanban, Plus } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { ProjectSortControl } from "@/components/dashboard/projects/project-sort";
 import { ProjectTable } from "@/components/dashboard/projects/project-table";
 import { StageFilter } from "@/components/dashboard/projects/stage-filter";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
+import { UrlDateRange } from "@/components/dashboard/shared/url-date-range";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { UrlSearch } from "@/components/dashboard/shared/url-search";
 import { Button } from "@/components/ui/button";
@@ -46,9 +48,27 @@ export default async function ProjectsPage({
 			<div className="flex flex-wrap items-center gap-2">
 				<UrlSearch placeholder={t("list.search")} />
 				<StageFilter active={params.stage} />
+				<UrlDateRange
+					from={params.from}
+					to={params.to}
+					labels={{
+						from: t("list.dateFrom"),
+						to: t("list.dateTo"),
+						clear: t("list.dateClear"),
+					}}
+				/>
+				<ProjectSortControl sort={params.sort} order={params.order} />
 			</div>
 			<Suspense
-				key={`${params.q}-${params.stage}-${params.page}`}
+				key={[
+					params.q,
+					params.stage,
+					params.from,
+					params.to,
+					params.sort,
+					params.order,
+					params.page,
+				].join("-")}
 				fallback={<ListSkeleton />}
 			>
 				<ProjectList params={params} />
@@ -63,7 +83,9 @@ async function ProjectList({ params }: { params: ListProjectsParams }) {
 	// Shoot days reached since the last daily run show up as Shooting now.
 	await advanceShootDays(photographerId);
 	const { items, page, pageCount } = await listProjects(photographerId, params);
-	const filtered = Boolean(params.q || params.stage);
+	const filtered = Boolean(
+		params.q || params.stage || params.from || params.to,
+	);
 
 	if (items.length === 0) {
 		return (

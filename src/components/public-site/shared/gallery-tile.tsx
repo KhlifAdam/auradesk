@@ -48,6 +48,7 @@ export function GalleryTile({
 			{media.type === "IMAGE" ? (
 				<Image
 					src={media.url}
+					style={{ objectPosition: media.focus }}
 					alt={media.alt}
 					fill
 					sizes={sizes}
@@ -60,6 +61,7 @@ export function GalleryTile({
 			) : (
 				<video
 					src={`${media.url}#t=0.1`}
+					style={{ objectPosition: media.focus }}
 					preload="metadata"
 					muted
 					playsInline
