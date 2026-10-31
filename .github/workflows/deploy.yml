@@ -78,8 +78,8 @@ jobs:
           KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          # Optional repository variable; SSH defaults to 22.
-          VPS_PORT: ${{ vars.VPS_PORT || '22' }}
+          # Optional secret; SSH defaults to 22.
+          VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
 
       - name: Upload stack files
         run: |
