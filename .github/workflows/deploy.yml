@@ -64,15 +64,27 @@ jobs:
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          # Every later ssh/scp call just uses `vps`.
+          cat > ~/.ssh/config <<EOF
+          Host vps
+            HostName $VPS_HOST
+            User $VPS_USER
+            Port $VPS_PORT
+            IdentityFile ~/.ssh/deploy_key
+            IdentitiesOnly yes
+          EOF
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          # Optional repository variable; SSH defaults to 22.
+          VPS_PORT: ${{ vars.VPS_PORT || '22' }}
 
       - name: Upload stack files
         run: |
-          SSH="ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
-          scp -i ~/.ssh/deploy_key docker-compose.prod.yml deploy/public.env scripts/deploy.sh \
-            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:$DEPLOY_DIR/"
+          SSH="ssh vps"
+          scp docker-compose.prod.yml deploy/public.env scripts/deploy.sh "vps:$DEPLOY_DIR/"
           # Owner-only files: the env holds every secret, the token pulls the private images.
           printf '%s\n' "$PRODUCTION_ENV" | $SSH "umask 077; cat > $DEPLOY_DIR/.env.new"
           printf '%s' "$GHCR_TOKEN" | $SSH "umask 077; cat > $DEPLOY_DIR/.ghcr-token"
@@ -82,5 +94,5 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+          ssh vps \
             "IMAGE_TAG=${{ github.sha }} GHCR_USER=${{ github.actor }} bash $DEPLOY_DIR/deploy.sh"
