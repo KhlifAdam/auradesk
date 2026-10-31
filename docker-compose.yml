@@ -1,18 +1,16 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:18
-    container_name: lumodesk-postgres
+    container_name: auradesk-postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: lumodesk
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
-      - lumodesk_db_data:/var/lib/postgresql
+      - auradesk_db_data:/var/lib/postgresql
     restart: unless-stopped
 
 volumes:
-  lumodesk_db_data:
+  auradesk_db_data:
