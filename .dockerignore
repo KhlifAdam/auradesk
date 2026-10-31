@@ -1,0 +1,14 @@
+.git
+.github
+.next
+.agents
+.claude
+.windsurf
+node_modules
+.env*
+!.env.example
+tests
+*.md
+docker-compose*.yml
+Dockerfile
+.dockerignore

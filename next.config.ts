@@ -10,6 +10,8 @@ const r2PublicUrl = process.env.R2_PUBLIC_URL
 	: null;
 
 const nextConfig: NextConfig = {
+	// Self-contained server for the Docker image: `.next/standalone/server.js`.
+	output: "standalone",
 	// Resolves its ffmpeg binary from its own folder at runtime: keep it unbundled.
 	serverExternalPackages: ["ffmpeg-static"],
 	// Development only: the test SMS inbox polls; its requests would drown the
