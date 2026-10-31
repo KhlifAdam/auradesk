@@ -32,7 +32,7 @@ services:
 
   app:
     image: ghcr.io/khlifadam/auradesk:${IMAGE_TAG}
-    env_file: .env
+    env_file: [public.env, .env]
     environment:
       <<: *database-url
     ports:

@@ -39,7 +39,6 @@ jobs:
           context: .
           target: runner
           push: false
-          build-args: R2_PUBLIC_URL=${{ vars.R2_PUBLIC_URL }}
           cache-from: type=gha,scope=runner
           cache-to: type=gha,scope=runner,mode=max
       - uses: docker/build-push-action@v6

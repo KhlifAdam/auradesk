@@ -38,7 +38,6 @@ jobs:
           target: runner
           push: true
           tags: ${{ env.IMAGE }}:${{ github.sha }}
-          build-args: R2_PUBLIC_URL=${{ vars.R2_PUBLIC_URL }}
           cache-from: type=gha,scope=runner
           cache-to: type=gha,scope=runner,mode=max
       - uses: docker/build-push-action@v6
@@ -72,7 +71,7 @@ jobs:
       - name: Upload stack files
         run: |
           SSH="ssh -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}"
-          scp -i ~/.ssh/deploy_key docker-compose.prod.yml scripts/deploy.sh \
+          scp -i ~/.ssh/deploy_key docker-compose.prod.yml deploy/public.env scripts/deploy.sh \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:$DEPLOY_DIR/"
           # Owner-only files: the env holds every secret, the token pulls the private images.
           printf '%s\n' "$PRODUCTION_ENV" | $SSH "umask 077; cat > $DEPLOY_DIR/.env.new"
