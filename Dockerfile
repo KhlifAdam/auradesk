@@ -18,14 +18,9 @@ CMD ["pnpm", "exec", "prisma", "migrate", "deploy"]
 
 FROM deps AS build
 COPY . .
-# `next build` imports route modules, and src/lib/env.ts validates required variables on import.
-# Placeholders for this one command only: not stored in the image, real values arrive at runtime.
 # deploy/public.env holds the public values next.config.ts reads at build time (e.g. R2_PUBLIC_URL).
-RUN set -a && . ./deploy/public.env && set +a && \
-    DATABASE_URL=postgresql://build:build@localhost:5432/build \
-    BETTER_AUTH_SECRET=build-placeholder \
-    BETTER_AUTH_URL=http://localhost:3000 \
-    pnpm build
+# Secrets are not needed here: src/lib/env.ts skips its check during `next build`.
+RUN set -a && . ./deploy/public.env && set +a && pnpm build
 
 FROM node:22-slim AS runner
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0

@@ -26,8 +26,15 @@ const r2Schema = r2CredentialsSchema.extend({
 	R2_PUBLIC_URL: z.url().transform((url) => url.replace(/\/+$/, "")),
 });
 
-/** Core server env, validated once at startup. */
-export const env = coreSchema.parse(process.env);
+/**
+ * Core server env, validated once at startup. `next build` imports route modules
+ * without the runtime secrets (the Docker image is built in CI), so the build phase
+ * skips the check; the running server still fails fast on a missing value.
+ */
+export const env =
+	process.env.NEXT_PHASE === "phase-production-build"
+		? (process.env as unknown as z.infer<typeof coreSchema>)
+		: coreSchema.parse(process.env);
 
 // Client galleries; this bucket must have no public access.
 const r2PrivateSchema = r2CredentialsSchema.extend({
