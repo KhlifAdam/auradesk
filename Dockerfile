@@ -12,6 +12,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 # One-off `prisma migrate deploy`; the runtime image does not ship the Prisma CLI.
 FROM deps AS migrate
+# Prisma's schema engine needs OpenSSL, which the slim base image lacks.
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
 CMD ["pnpm", "exec", "prisma", "migrate", "deploy"]
 
 FROM deps AS build
