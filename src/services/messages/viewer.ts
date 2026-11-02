@@ -18,6 +18,9 @@ export function ownConversations(viewer: Viewer) {
 export const unreadField = (role: MessageRole) =>
 	role === "photographer" ? "photographerUnread" : "clientUnread";
 
+export const typingField = (role: MessageRole) =>
+	role === "photographer" ? "photographerTypingAt" : "clientTypingAt";
+
 export const otherRole = (role: MessageRole): MessageRole =>
 	role === "photographer" ? "client" : "photographer";
 

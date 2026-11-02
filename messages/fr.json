@@ -1903,7 +1903,20 @@
 			"allBookings": "Toutes les réservations",
 			"noDate": "Pas encore de date",
 			"viewDetails": "Voir les détails",
-			"incomplete": "À compléter"
+			"incomplete": "À compléter",
+			"dateFrom": "Date du",
+			"dateTo": "Date au",
+			"dateClear": "Effacer les dates",
+			"sort": {
+				"label": "Trier par",
+				"toggle": "Inverser l'ordre",
+				"newest": "Plus récent d'abord",
+				"oldest": "Plus ancien d'abord",
+				"fields": {
+					"desiredDate": "Date de l'événement",
+					"created": "Date de la demande"
+				}
+			}
 		},
 		"empty": {
 			"title": "Aucune réservation",
@@ -2713,7 +2726,8 @@
 		"list": {
 			"emptyTitle": "Aucune conversation",
 			"emptyDescription": "Démarrez-en une avec un client, ou attendez qu'il vous écrive.",
-			"you": "Vous :"
+			"you": "Vous :",
+			"deleted": "Message supprimé"
 		},
 		"new": {
 			"action": "Nouveau message",
@@ -2728,11 +2742,25 @@
 			"unavailable": "Cette conversation n'est pas disponible.",
 			"empty": "Aucun message pour l'instant. Dites bonjour !",
 			"loadOlder": "Charger les messages précédents",
-			"newMessages": "Nouveaux messages"
+			"newMessages": "Nouveaux messages",
+			"typing": "est en train d'écrire…"
 		},
 		"composer": {
 			"placeholder": "Écrire un message…",
-			"send": "Envoyer"
+			"send": "Envoyer",
+			"editing": "Modification du message",
+			"cancelEdit": "Annuler la modification",
+			"save": "Enregistrer"
+		},
+		"bubble": {
+			"edit": "Modifier",
+			"delete": "Supprimer",
+			"actions": "Actions du message",
+			"edited": "modifié",
+			"deleted": "Ce message a été supprimé",
+			"deletedMine": "Vous avez supprimé ce message",
+			"deleteTitle": "Supprimer ce message ?",
+			"deleteDescription": "Il sera supprimé pour vous deux. Cette action est irréversible."
 		}
 	},
 	"Calendar": {

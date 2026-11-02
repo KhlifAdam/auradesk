@@ -1903,7 +1903,20 @@
 			"allBookings": "All bookings",
 			"noDate": "No date yet",
 			"viewDetails": "View details",
-			"incomplete": "To complete"
+			"incomplete": "To complete",
+			"dateFrom": "Date from",
+			"dateTo": "Date to",
+			"dateClear": "Clear dates",
+			"sort": {
+				"label": "Sort by",
+				"toggle": "Switch the order",
+				"newest": "Newest first",
+				"oldest": "Oldest first",
+				"fields": {
+					"desiredDate": "Event date",
+					"created": "Request date"
+				}
+			}
 		},
 		"empty": {
 			"title": "No bookings yet",
@@ -2713,7 +2726,8 @@
 		"list": {
 			"emptyTitle": "No conversations yet",
 			"emptyDescription": "Start one with a client, or wait for them to write to you.",
-			"you": "You:"
+			"you": "You:",
+			"deleted": "Message deleted"
 		},
 		"new": {
 			"action": "New message",
@@ -2728,11 +2742,25 @@
 			"unavailable": "This conversation isn't available.",
 			"empty": "No messages yet. Say hello!",
 			"loadOlder": "Load older messages",
-			"newMessages": "New messages"
+			"newMessages": "New messages",
+			"typing": "typing…"
 		},
 		"composer": {
 			"placeholder": "Write a message…",
-			"send": "Send"
+			"send": "Send",
+			"editing": "Editing message",
+			"cancelEdit": "Cancel editing",
+			"save": "Save"
+		},
+		"bubble": {
+			"edit": "Edit",
+			"delete": "Delete",
+			"actions": "Message actions",
+			"edited": "edited",
+			"deleted": "This message was deleted",
+			"deletedMine": "You deleted this message",
+			"deleteTitle": "Delete this message?",
+			"deleteDescription": "It will be removed for both of you. This can't be undone."
 		}
 	},
 	"Calendar": {

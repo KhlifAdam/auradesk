@@ -125,12 +125,35 @@ const toChatMessage = (row: {
 	senderId: string;
 	body: string;
 	createdAt: Date;
+	editedAt: Date | null;
+	deletedAt: Date | null;
 }): ChatMessage => ({
 	id: row.id,
 	senderId: row.senderId,
-	body: row.body,
+	body: row.deletedAt ? "" : row.body,
 	createdAt: row.createdAt.toISOString(),
+	editedAt: row.editedAt?.toISOString() ?? null,
+	deleted: row.deletedAt !== null,
 });
+
+/** A keystroke this recent means the person is still typing. */
+const TYPING_TTL_MS = 5000;
+
+/** Whether the other side of a conversation is typing, seen from `userId`. */
+export function isPartnerTyping(
+	row: {
+		photographerId: string;
+		photographerTypingAt: Date | null;
+		clientTypingAt: Date | null;
+	},
+	userId: string,
+): boolean {
+	const at =
+		row.photographerId === userId
+			? row.clientTypingAt
+			: row.photographerTypingAt;
+	return at ? Date.now() - at.getTime() < TYPING_TTL_MS : false;
+}
 
 /** One page of messages, oldest first; `before` pages further back. */
 export async function listMessages(

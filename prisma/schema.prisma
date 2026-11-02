@@ -271,26 +271,26 @@ model AlbumItem {
 }
 
 model Package {
-  id              String   @id @default(cuid())
-  photographerId  String   @map("photographer_id")
-  name            String
-  description     String?
-  price           Decimal  @db.Decimal(10, 2)
-  currency        String   @default("TND")
-  durationMinutes Int?     @map("duration_minutes")
+  id                String   @id @default(cuid())
+  photographerId    String   @map("photographer_id")
+  name              String
+  description       String?
+  price             Decimal  @db.Decimal(10, 2)
+  currency          String   @default("TND")
+  durationMinutes   Int?     @map("duration_minutes")
   /// No time limit; `durationMinutes` is then empty.
-  unlimitedDuration Boolean @default(false) @map("unlimited_duration")
+  unlimitedDuration Boolean  @default(false) @map("unlimited_duration")
   /// Edited photos delivered; empty when not stated.
-  photoCount      Int?     @map("photo_count")
+  photoCount        Int?     @map("photo_count")
   /// As many photos as the shoot gives; `photoCount` is then empty.
-  unlimitedPhotos Boolean  @default(false) @map("unlimited_photos")
-  deliverables    String[] @default([])
-  coverMediaId    String?  @map("cover_media_id")
-  position        Int      @default(0)
-  active          Boolean  @default(true)
-  featured        Boolean  @default(false)
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  unlimitedPhotos   Boolean  @default(false) @map("unlimited_photos")
+  deliverables      String[] @default([])
+  coverMediaId      String?  @map("cover_media_id")
+  position          Int      @default(0)
+  active            Boolean  @default(true)
+  featured          Boolean  @default(false)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   photographer User   @relation(fields: [photographerId], references: [id], onDelete: Cascade)
   cover        Media? @relation("PackageCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
@@ -669,16 +669,19 @@ model CalendarEvent {
 // unread badge never scan messages.
 
 model Conversation {
-  id                 String    @id @default(cuid())
-  photographerId     String    @map("photographer_id")
-  clientId           String    @map("client_id")
-  lastMessageAt      DateTime? @map("last_message_at")
+  id                   String    @id @default(cuid())
+  photographerId       String    @map("photographer_id")
+  clientId             String    @map("client_id")
+  lastMessageAt        DateTime? @map("last_message_at")
   /// First characters of the latest message, for the conversation list.
-  lastMessagePreview String?   @map("last_message_preview")
-  lastSenderId       String?   @map("last_sender_id")
-  photographerUnread Int       @default(0) @map("photographer_unread")
-  clientUnread       Int       @default(0) @map("client_unread")
-  createdAt          DateTime  @default(now()) @map("created_at")
+  lastMessagePreview   String?   @map("last_message_preview")
+  lastSenderId         String?   @map("last_sender_id")
+  photographerUnread   Int       @default(0) @map("photographer_unread")
+  clientUnread         Int       @default(0) @map("client_unread")
+  /// Last keystroke of each side, for the "is typing" indicator.
+  photographerTypingAt DateTime? @map("photographer_typing_at")
+  clientTypingAt       DateTime? @map("client_typing_at")
+  createdAt            DateTime  @default(now()) @map("created_at")
 
   photographer User      @relation("ConversationPhotographer", fields: [photographerId], references: [id], onDelete: Cascade)
   client       User      @relation("ConversationClient", fields: [clientId], references: [id], onDelete: Cascade)
@@ -691,11 +694,15 @@ model Conversation {
 }
 
 model Message {
-  id             String   @id @default(cuid())
-  conversationId String   @map("conversation_id")
-  senderId       String   @map("sender_id")
+  id             String    @id @default(cuid())
+  conversationId String    @map("conversation_id")
+  senderId       String    @map("sender_id")
   body           String
-  createdAt      DateTime @default(now()) @map("created_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  /// Set when the sender changed the text after sending.
+  editedAt       DateTime? @map("edited_at")
+  /// Set when the sender deleted it; `body` is then emptied.
+  deletedAt      DateTime? @map("deleted_at")
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)

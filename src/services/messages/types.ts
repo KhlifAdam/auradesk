@@ -14,14 +14,22 @@ export interface Partner {
 export interface ChatMessage {
 	id: string;
 	senderId: string;
+	/** Empty once deleted. */
 	body: string;
 	createdAt: string;
+	editedAt: string | null;
+	deleted: boolean;
 }
 
 export interface MessagePage {
 	/** Oldest first. */
 	messages: ChatMessage[];
 	hasMore: boolean;
+}
+
+/** What the poll returns: the latest messages and whether the partner is typing. */
+export interface LivePage extends MessagePage {
+	typing: boolean;
 }
 
 export interface ConversationSummary {

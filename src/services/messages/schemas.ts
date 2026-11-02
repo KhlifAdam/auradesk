@@ -27,6 +27,17 @@ export const markReadSchema = z.object({
 	as: z.enum(MESSAGE_ROLES),
 });
 
+export const editMessageSchema = z.object({
+	as: z.enum(MESSAGE_ROLES),
+	messageId: idSchema,
+	body: messageBodySchema,
+});
+
+export const deleteMessageSchema = z.object({
+	as: z.enum(MESSAGE_ROLES),
+	messageId: idSchema,
+});
+
 export const searchClientsSchema = z.string().trim().max(80);
 
 export const messagesParamsSchema = z.object({

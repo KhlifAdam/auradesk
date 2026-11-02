@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { BookingList } from "@/components/dashboard/bookings/booking-list";
+import { BookingSortControl } from "@/components/dashboard/bookings/booking-sort";
 import {
 	BookingStatsCards,
 	BookingStatsSkeleton,
@@ -12,6 +13,7 @@ import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
+import { UrlDateRange } from "@/components/dashboard/shared/url-date-range";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { UrlSearch } from "@/components/dashboard/shared/url-search";
 import { Button } from "@/components/ui/button";
@@ -52,9 +54,27 @@ export default async function BookingsPage({
 			<div className="flex flex-wrap items-center gap-2">
 				<UrlSearch placeholder={t("list.search")} />
 				<BookingStatusFilter active={params.status} />
+				<UrlDateRange
+					from={params.from}
+					to={params.to}
+					labels={{
+						from: t("list.dateFrom"),
+						to: t("list.dateTo"),
+						clear: t("list.dateClear"),
+					}}
+				/>
+				<BookingSortControl sort={params.sort} order={params.order} />
 			</div>
 			<Suspense
-				key={`${params.q}-${params.status}-${params.page}`}
+				key={[
+					params.q,
+					params.status,
+					params.from,
+					params.to,
+					params.sort,
+					params.order,
+					params.page,
+				].join("-")}
 				fallback={<ListSkeleton />}
 			>
 				<Bookings params={params} />
@@ -72,7 +92,9 @@ async function Bookings({ params }: { params: ListBookingsParams }) {
 	const t = await getTranslations("Bookings.empty");
 	const { photographerId } = await requirePhotographer();
 	const { items, page, pageCount } = await listBookings(photographerId, params);
-	const filtered = Boolean(params.q || params.status);
+	const filtered = Boolean(
+		params.q || params.status || params.from || params.to,
+	);
 
 	if (items.length === 0) {
 		return (

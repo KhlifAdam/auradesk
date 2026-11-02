@@ -3,15 +3,18 @@
 import { ArrowLeft, Loader2, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
-import { Fragment, useLayoutEffect, useRef } from "react";
+import { Fragment, useLayoutEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { PortfolioLink } from "@/components/portal/portfolio-link";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useErrorMessage } from "@/hooks/use-error-message";
 import { dayKeyIn } from "@/services/calendar/dates";
-import type { Thread } from "@/services/messages/types";
+import type { ChatMessage, Thread } from "@/services/messages/types";
 import type { Viewer } from "@/services/messages/viewer";
+import { MessageBubble } from "./message-bubble";
 import { MessageComposer } from "./message-composer";
 import { PartnerAvatar } from "./partner-avatar";
+import { TypingBubble } from "./typing-indicator";
 import { useThread } from "./use-thread";
 
 const STICK_THRESHOLD_PX = 80;
@@ -31,9 +34,35 @@ export function MessageThread({
 }: MessageThreadProps) {
 	const t = useTranslations("Messages.thread");
 	const format = useFormatter();
-	const { messages, fresh, hasMore, isLoadingOlder, loadOlder, send } =
-		useThread(thread, viewer, basePath);
+	const errorMessage = useErrorMessage();
+	const {
+		messages,
+		fresh,
+		hasMore,
+		isLoadingOlder,
+		loadOlder,
+		send,
+		edit,
+		remove,
+		notifyTyping,
+		partnerTyping,
+	} = useThread(thread, viewer, basePath);
 	const { partner } = thread;
+	const [editing, setEditing] = useState<ChatMessage | null>(null);
+
+	/** Sends a new message, or saves the one being edited. */
+	async function submit(body: string) {
+		if (!editing) return send(body);
+		const error = await edit(editing, body);
+		if (!error) setEditing(null);
+		return error;
+	}
+
+	async function deleteOne(message: ChatMessage) {
+		const error = await remove(message);
+		if (error) return void toast.error(errorMessage(error));
+		if (editing?.id === message.id) setEditing(null);
+	}
 
 	const scroller = useRef<HTMLDivElement>(null);
 	const stuckToBottom = useRef(true);
@@ -42,7 +71,7 @@ export function MessageThread({
 	useLayoutEffect(() => {
 		const el = scroller.current;
 		if (el && stuckToBottom.current) el.scrollTop = el.scrollHeight;
-	}, [lastId]);
+	}, [lastId, partnerTyping]);
 
 	async function showOlder() {
 		const el = scroller.current;
@@ -72,10 +101,16 @@ export function MessageThread({
 					<p className="truncate text-sm font-medium">
 						{partner.studioName ?? partner.name}
 					</p>
-					{partner.studioName && (
-						<p className="truncate text-xs text-muted-foreground">
-							{partner.name}
+					{partnerTyping ? (
+						<p className="truncate text-xs font-medium text-primary">
+							{t("typing")}
 						</p>
+					) : (
+						partner.studioName && (
+							<p className="truncate text-xs text-muted-foreground">
+								{partner.name}
+							</p>
+						)
 					)}
 				</div>
 				{partner.siteSlug && (
@@ -133,38 +168,25 @@ export function MessageThread({
 									<span className="h-px flex-1 bg-primary/30" />
 								</div>
 							)}
-							<div
-								className={cn("flex", mine ? "justify-end" : "justify-start")}
-							>
-								<div
-									className={cn(
-										"max-w-[80%] rounded-2xl px-3 py-1.5 text-sm transition-[font-weight,background-color] duration-700",
-										isNew && "font-bold ring-1 ring-primary/40",
-										mine
-											? "rounded-br-md bg-primary text-primary-foreground"
-											: "rounded-bl-md bg-muted text-foreground",
-									)}
-								>
-									<p className="whitespace-pre-wrap break-words">
-										{message.body}
-									</p>
-									<p
-										className={cn(
-											"mt-0.5 text-right text-[10px]",
-											mine
-												? "text-primary-foreground/70"
-												: "text-muted-foreground",
-										)}
-									>
-										{format.dateTime(date, { timeStyle: "short", timeZone })}
-									</p>
-								</div>
-							</div>
+							<MessageBubble
+								message={message}
+								mine={mine}
+								isNew={isNew}
+								timeZone={timeZone}
+								onEdit={() => setEditing(message)}
+								onDelete={() => deleteOne(message)}
+							/>
 						</Fragment>
 					);
 				})}
+				{partnerTyping && <TypingBubble />}
 			</div>
-			<MessageComposer onSend={send} />
+			<MessageComposer
+				onSend={submit}
+				onTyping={notifyTyping}
+				editing={editing}
+				onCancelEdit={() => setEditing(null)}
+			/>
 		</div>
 	);
 }

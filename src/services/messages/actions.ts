@@ -12,6 +12,8 @@ import { searchClients } from "@/services/clients/queries";
 import { CLIENT_SEARCH_LIMIT, PREVIEW_LENGTH } from "./constants";
 import { canConverse } from "./queries";
 import {
+	deleteMessageSchema,
+	editMessageSchema,
 	markReadSchema,
 	searchClientsSchema,
 	sendMessageSchema,
@@ -22,6 +24,7 @@ import {
 	otherRole,
 	ownConversations,
 	pairWith,
+	typingField,
 	unreadField,
 	type Viewer,
 } from "./viewer";
@@ -89,6 +92,8 @@ export async function sendMessage(
 				lastSenderId: viewer.id,
 				[unreadField(otherRole(as))]: { increment: 1 },
 				[unreadField(as)]: 0,
+				// Sending ends "is typing".
+				[typingField(as)]: null,
 			},
 			select: {
 				photographerUnread: true,
@@ -148,8 +153,90 @@ export async function sendMessage(
 			senderId: message.senderId,
 			body: message.body,
 			createdAt: message.createdAt.toISOString(),
+			editedAt: null,
+			deleted: false,
 		},
 	});
+}
+
+/** The viewer's own, not yet deleted message, with what its conversation shows. */
+function findOwnMessage(viewer: Viewer, messageId: string) {
+	return db.message.findFirst({
+		where: {
+			id: messageId,
+			senderId: viewer.id,
+			deletedAt: null,
+			conversation: ownConversations(viewer),
+		},
+		select: {
+			id: true,
+			createdAt: true,
+			conversationId: true,
+			conversation: { select: { lastMessageAt: true, lastSenderId: true } },
+		},
+	});
+}
+
+/** Keeps the conversation list in step when the latest message changes. */
+async function syncPreview(
+	message: NonNullable<Awaited<ReturnType<typeof findOwnMessage>>>,
+	viewer: Viewer,
+	preview: string,
+) {
+	const { lastMessageAt, lastSenderId } = message.conversation;
+	if (lastSenderId !== viewer.id) return;
+	if (lastMessageAt?.getTime() !== message.createdAt.getTime()) return;
+	await db.conversation.update({
+		where: { id: message.conversationId },
+		data: { lastMessagePreview: preview },
+	});
+}
+
+/** Changes the text of one of the viewer's own messages. */
+export async function editMessage(input: unknown): Promise<ActionResult> {
+	const parsed = editMessageSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const { as, messageId, body } = parsed.data;
+	const viewer = await resolveViewer(as);
+
+	const message = await findOwnMessage(viewer, messageId);
+	if (!message) return fail("notFound");
+	await db.message.update({
+		where: { id: message.id },
+		data: { body, editedAt: new Date() },
+	});
+	await syncPreview(message, viewer, previewOf(body));
+	return ok();
+}
+
+/** Deletes one of the viewer's own messages; the thread shows it as removed. */
+export async function deleteMessage(input: unknown): Promise<ActionResult> {
+	const parsed = deleteMessageSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const viewer = await resolveViewer(parsed.data.as);
+
+	const message = await findOwnMessage(viewer, parsed.data.messageId);
+	if (!message) return fail("notFound");
+	await db.message.update({
+		where: { id: message.id },
+		data: { body: "", deletedAt: new Date() },
+	});
+	// An empty preview is shown as "message deleted".
+	await syncPreview(message, viewer, "");
+	return ok();
+}
+
+/** Tells the other side that the viewer is typing in a conversation. */
+export async function setTyping(input: unknown): Promise<ActionResult> {
+	const parsed = markReadSchema.safeParse(input);
+	if (!parsed.success) return failFromZod(parsed.error);
+	const viewer = await resolveViewer(parsed.data.as);
+
+	await db.conversation.updateMany({
+		where: { id: parsed.data.conversationId, ...ownConversations(viewer) },
+		data: { [typingField(viewer.role)]: new Date() },
+	});
+	return ok();
 }
 
 /** Clears the viewer's unread count for a conversation they have open. */

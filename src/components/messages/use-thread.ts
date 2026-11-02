@@ -3,20 +3,24 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR, { mutate as mutateGlobal } from "swr";
-import { markConversationRead, sendMessage } from "@/services/messages/actions";
-import type {
-	ChatMessage,
-	MessagePage,
-	Thread,
-} from "@/services/messages/types";
+import {
+	deleteMessage,
+	editMessage,
+	markConversationRead,
+	sendMessage,
+	setTyping,
+} from "@/services/messages/actions";
+import type { ChatMessage, LivePage, Thread } from "@/services/messages/types";
 import type { MessageRole } from "@/services/messages/viewer";
 import { fetchJson, usePolling } from "./polling";
 import { unreadKey } from "./unread-badge";
 
-const POLL_MS = 4000;
+const POLL_MS = 2000;
+/** Typing is announced at most this often while the person keeps typing. */
+const TYPING_THROTTLE_MS = 2500;
 const SEEN_AFTER_MS = 5000;
 
-const fetchPage = fetchJson<MessagePage>;
+const fetchPage = fetchJson<LivePage>;
 
 const byTime = (a: ChatMessage, b: ChatMessage) =>
 	a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id);
@@ -33,7 +37,11 @@ export function useThread(
 ) {
 	const router = useRouter();
 	const { id } = thread;
-	const initial = { messages: thread.messages, hasMore: thread.hasMore };
+	const initial = {
+		messages: thread.messages,
+		hasMore: thread.hasMore,
+		typing: false,
+	};
 	const { signedOut, options } = usePolling(POLL_MS);
 	const { data, mutate } = useSWR(
 		id && !signedOut ? `/api/messages/${id}` : null,
@@ -45,6 +53,8 @@ export function useThread(
 	const [older, setOlder] = useState<ChatMessage[]>([]);
 	const [olderHasMore, setOlderHasMore] = useState(false);
 	const [sent, setSent] = useState<ChatMessage[]>([]);
+	// Own edits and deletions show at once, before the next poll confirms them.
+	const [patches, setPatches] = useState<Map<string, ChatMessage>>(new Map());
 	const [isLoadingOlder, setLoadingOlder] = useState(false);
 	// Messages unseen when the conversation opened stay bold for a moment.
 	const [fresh, setFresh] = useState<Set<string>>(() =>
@@ -79,8 +89,10 @@ export function useThread(
 		const unique = new Map<string, ChatMessage>();
 		for (const message of [...older, ...latest.messages, ...sent])
 			unique.set(message.id, message);
+		for (const [messageId, patch] of patches)
+			if (unique.has(messageId)) unique.set(messageId, patch);
 		return [...unique.values()].sort(byTime);
-	}, [older, latest.messages, sent]);
+	}, [older, latest.messages, sent, patches]);
 	const hasMore = older.length > 0 ? olderHasMore : latest.hasMore;
 
 	const lastIncoming = messages.findLast((m) => m.senderId !== viewer.id)?.id;
@@ -127,5 +139,57 @@ export function useThread(
 		return null;
 	}
 
-	return { messages, fresh, hasMore, isLoadingOlder, loadOlder, send };
+	function patch(message: ChatMessage, changes: Partial<ChatMessage>) {
+		setPatches((prev) =>
+			new Map(prev).set(message.id, { ...message, ...changes }),
+		);
+	}
+
+	/** Returns the error code on failure. */
+	async function edit(message: ChatMessage, body: string) {
+		const result = await editMessage({
+			as: viewer.role,
+			messageId: message.id,
+			body,
+		});
+		if (!result.ok) return result.error;
+		patch(message, { body, editedAt: new Date().toISOString() });
+		mutate();
+		router.refresh();
+		return null;
+	}
+
+	/** Returns the error code on failure. */
+	async function remove(message: ChatMessage) {
+		const result = await deleteMessage({
+			as: viewer.role,
+			messageId: message.id,
+		});
+		if (!result.ok) return result.error;
+		patch(message, { body: "", deleted: true });
+		mutate();
+		router.refresh();
+		return null;
+	}
+
+	const lastTyping = useRef(0);
+	/** Call on every keystroke; the server is told at most every few seconds. */
+	function notifyTyping() {
+		if (!id || Date.now() - lastTyping.current < TYPING_THROTTLE_MS) return;
+		lastTyping.current = Date.now();
+		setTyping({ conversationId: id, as: viewer.role });
+	}
+
+	return {
+		messages,
+		fresh,
+		hasMore,
+		isLoadingOlder,
+		loadOlder,
+		send,
+		edit,
+		remove,
+		notifyTyping,
+		partnerTyping: latest.typing,
+	};
 }

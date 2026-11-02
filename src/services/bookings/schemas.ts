@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { dayKeySchema } from "@/services/calendar/dates";
 import { searchQuerySchema } from "@/services/clients/schemas";
 import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
 import {
@@ -113,10 +114,18 @@ export const noteSchema = z.object({
 	body: requiredText(2000),
 });
 
+export const BOOKING_SORTS = ["desiredDate", "created"] as const;
+export type BookingSort = (typeof BOOKING_SORTS)[number];
+
 export const listBookingsSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),
 	q: searchQuerySchema,
 	status: bookingStatusSchema.optional().catch(undefined),
+	/** Desired date range, `yyyy-MM-dd`, both days included. */
+	from: dayKeySchema.optional().catch(undefined),
+	to: dayKeySchema.optional().catch(undefined),
+	sort: z.enum(BOOKING_SORTS).optional().catch(undefined),
+	order: z.enum(["asc", "desc"]).optional().catch(undefined),
 });
 
 /** The public site's request form: no account, so a few plain fields. */

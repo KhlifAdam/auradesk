@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getApiUser } from "@/lib/auth/api-session";
 import { db } from "@/lib/db";
-import { listMessages } from "@/services/messages/queries";
+import { isPartnerTyping, listMessages } from "@/services/messages/queries";
 
-/** Polling read: the latest messages, or an older page with `?before=<id>`. */
+/** Polling read: the latest messages (and typing state), or an older page with `?before=<id>`. */
 export async function GET(
 	request: Request,
 	{ params }: { params: Promise<{ conversationId: string }> },
@@ -18,12 +18,20 @@ export async function GET(
 			id: conversationId,
 			OR: [{ photographerId: user.id }, { clientId: user.id }],
 		},
-		select: { id: true },
+		select: {
+			photographerId: true,
+			photographerTypingAt: true,
+			clientTypingAt: true,
+		},
 	});
 	if (!member) return NextResponse.json({ error: "notFound" }, { status: 404 });
 
 	const before = new URL(request.url).searchParams.get("before") ?? undefined;
-	return NextResponse.json(await listMessages(conversationId, before), {
-		headers: { "Cache-Control": "no-store" },
-	});
+	const page = await listMessages(conversationId, before);
+	return NextResponse.json(
+		{ ...page, typing: isPartnerTyping(member, user.id) },
+		{
+			headers: { "Cache-Control": "no-store" },
+		},
+	);
 }

@@ -4,7 +4,11 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import { OPEN_STATUSES } from "./options";
-import { BOOKING_PAGE_SIZE, type ListBookingsParams } from "./schemas";
+import {
+	BOOKING_PAGE_SIZE,
+	type BookingSort,
+	type ListBookingsParams,
+} from "./schemas";
 import type {
 	BookingDetail,
 	BookingPage,
@@ -36,12 +40,33 @@ const listOrder = [
 	{ id: "asc" },
 ] satisfies Prisma.BookingOrderByWithRelationInput[];
 
+/** Dates default to soonest first, creation to newest first; undated go last. */
+function sortedOrder(
+	sort: BookingSort | undefined,
+	order?: "asc" | "desc",
+): Prisma.BookingOrderByWithRelationInput[] {
+	if (!sort && !order) return listOrder;
+	if (sort === "created")
+		return [{ createdAt: order ?? "desc" }, { id: "asc" }];
+	return [
+		{ desiredDate: { sort: order ?? "asc", nulls: "last" } },
+		{ createdAt: "desc" },
+		{ id: "asc" },
+	];
+}
+
 export async function listBookings(
 	photographerId: string,
-	{ page, q, status }: ListBookingsParams,
+	{ page, q, status, from, to, sort, order }: ListBookingsParams,
 ): Promise<BookingPage> {
 	const where: Prisma.BookingWhereInput = { photographerId };
 	if (status) where.status = status;
+	// Desired dates are stored as UTC midnights.
+	if (from || to)
+		where.desiredDate = {
+			...(from && { gte: new Date(`${from}T00:00:00.000Z`) }),
+			...(to && { lte: new Date(`${to}T00:00:00.000Z`) }),
+		};
 	if (q) {
 		where.OR = [
 			{ title: { contains: q, mode: "insensitive" } },
@@ -53,7 +78,7 @@ export async function listBookings(
 	const meta = pageMeta(page, total, BOOKING_PAGE_SIZE);
 	const rows = await db.booking.findMany({
 		where,
-		orderBy: listOrder,
+		orderBy: sortedOrder(sort, order),
 		skip: pageSkip(meta.page, BOOKING_PAGE_SIZE),
 		take: BOOKING_PAGE_SIZE,
 	});

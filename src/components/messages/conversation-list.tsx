@@ -90,7 +90,7 @@ export async function ConversationList({
 											)}
 										>
 											{conversation.lastFromMe && `${t("you")} `}
-											{conversation.preview}
+											{conversation.preview || t("deleted")}
 										</p>
 										{unread > 0 && (
 											<span className="flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
