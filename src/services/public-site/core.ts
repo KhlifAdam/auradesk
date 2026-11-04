@@ -109,6 +109,7 @@ export const fetchSiteCore = unstable_cache(
 		};
 	},
 	// Bump when the cached shape changes, so old entries are never reused.
-	["public-site-core-v3"],
+	// Media URLs are stored finished: a new media domain starts a fresh cache.
+	["public-site-core-v3", process.env.R2_PUBLIC_URL ?? ""],
 	{ tags: [PUBLIC_SITE_TAG] },
 );

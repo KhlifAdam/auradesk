@@ -15,6 +15,7 @@ export interface AdminUserDetail {
 	lastActiveAt: string | null;
 	banned: boolean;
 	banReason: string;
+	deleted: boolean;
 	studio: {
 		name: string;
 		slug: string;
@@ -49,6 +50,7 @@ export async function getAdminUserDetail(
 			createdAt: true,
 			banned: true,
 			banReason: true,
+			deletedAt: true,
 			studio: {
 				select: { name: true, slug: true, published: true, createdAt: true },
 			},
@@ -90,6 +92,7 @@ export async function getAdminUserDetail(
 		lastActiveAt: lastSession._max.updatedAt?.toISOString() ?? null,
 		banned: Boolean(user.banned),
 		banReason: user.banReason ?? "",
+		deleted: user.deletedAt !== null,
 		studio: user.studio && {
 			...user.studio,
 			createdAt: user.studio.createdAt.toISOString(),

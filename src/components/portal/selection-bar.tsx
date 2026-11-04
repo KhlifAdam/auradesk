@@ -48,7 +48,7 @@ export function SelectionBar({
 		});
 
 	return (
-		<div className="sticky bottom-4 z-20 mx-auto flex w-full max-w-xl items-center justify-between gap-3 rounded-full border border-border bg-background/85 py-2 pl-4 pr-2 shadow-luminous-lg backdrop-blur-xl">
+		<div className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-20 md:bottom-4 mx-auto flex w-full max-w-xl items-center justify-between gap-3 rounded-full border border-border bg-background/85 py-2 pl-4 pr-2 shadow-luminous-lg backdrop-blur-xl">
 			<p className="flex items-center gap-2 text-sm">
 				<Heart className="h-4 w-4 fill-primary text-primary" />
 				<span className="font-semibold tabular-nums">

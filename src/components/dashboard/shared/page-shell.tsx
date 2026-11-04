@@ -10,7 +10,9 @@ export function PageShell({
 	className?: string;
 }) {
 	return (
-		<div className={cn("flex flex-col gap-5 px-6 py-5", className)}>
+		<div
+			className={cn("flex flex-col gap-5 px-4 py-4 md:px-6 md:py-5", className)}
+		>
 			{children}
 		</div>
 	);

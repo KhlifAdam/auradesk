@@ -23,7 +23,8 @@
 			"team": "Équipe",
 			"privacy": "Confidentialité",
 			"subscription": "Abonnement",
-			"books": "Livres photo"
+			"books": "Livres photo",
+			"menu": "Menu"
 		},
 		"UserMenu": {
 			"profile": "Profil",
@@ -231,7 +232,15 @@
 		"quoteNotDraft": "Seul un devis brouillon permet cette action.",
 		"quoteNotInvoiceable": "Seul un devis envoyé ou accepté peut devenir une facture, une seule fois.",
 		"quoteNotOpen": "Ce devis n'attend plus de réponse.",
-		"sectionMediaMissing": "Un logo, une photo ou une vidéo de vos sections n'est plus dans votre bibliothèque. Ouvrez les sections, choisissez-le à nouveau, puis enregistrez."
+		"sectionMediaMissing": "Un logo, une photo ou une vidéo de vos sections n'est plus dans votre bibliothèque. Ouvrez les sections, choisissez-le à nouveau, puis enregistrez.",
+		"whatsappUnreachable": "La passerelle WhatsApp ne répond pas.",
+		"whatsappNotConnected": "WhatsApp n'est pas connecté.",
+		"whatsappNotOnWhatsapp": "Ce numéro n'a pas de compte WhatsApp.",
+		"cannotManageSelf": "Modifiez votre propre compte depuis votre page de compte.",
+		"cannotManageAdmin": "Les comptes administrateurs se gèrent en ligne de commande.",
+		"accountDeleted": "Ce compte a été supprimé.",
+		"emailTaken": "Un autre compte utilise déjà cet e-mail.",
+		"phoneTaken": "Un autre compte utilise déjà ce numéro."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -975,7 +984,7 @@
 		},
 		"shared": {
 			"emailPlaceholder": "nom@exemple.com",
-			"namePlaceholder": "Marie Dupont",
+			"namePlaceholder": "Adam Khlif",
 			"divider": "Ou continuer avec",
 			"github": "GitHub",
 			"google": "Google",
@@ -1002,7 +1011,12 @@
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "C'est votre seul moyen de connexion : ajoutez-en un autre avant de le déconnecter.",
 			"SOCIAL_ACCOUNT_ALREADY_LINKED": "Ce compte est déjà connecté à un autre compte AuraDesk.",
 			"CREDENTIAL_ACCOUNT_NOT_FOUND": "Ce compte n'a pas encore de mot de passe.",
-			"BANNED_USER": "Ce compte a été suspendu. Contactez le support si vous pensez qu'il s'agit d'une erreur."
+			"BANNED_USER": "Ce compte a été suspendu. Contactez le support si vous pensez qu'il s'agit d'une erreur.",
+			"NO_ACCOUNT_TO_LINK": "Aucun autre compte n'utilise ce contact. Vous pouvez plutôt l'ajouter à vos coordonnées.",
+			"ACCOUNT_NOT_LINKABLE": "Ce compte appartient à un studio ou à un collaborateur et ne peut pas être associé.",
+			"LINK_CONFLICT": "Ce compte a déjà un autre numéro. Connectez-vous avec lui et ajoutez-y votre numéro.",
+			"LINK_TOO_SOON": "Un code vient d'être envoyé. Attendez une minute avant d'en demander un nouveau.",
+			"IDENTITY_CHECK_REQUIRED": "Confirmez d'abord votre identité."
 		},
 		"backLink": {
 			"photographer": "Espace photographe",
@@ -1064,7 +1078,12 @@
 			"resendIn": "Nouveau code dans {seconds} s",
 			"useEmail": "Vous préférez l'e-mail ?",
 			"emailLink": "Se connecter par e-mail",
-			"useInstead": "Pas d'e-mail ? Utilisez votre numéro de téléphone"
+			"useInstead": "Pas d'e-mail ? Utilisez votre numéro de téléphone",
+			"whatsapp": {
+				"description": "Pas besoin d'e-mail. Nous vous envoyons un code sur WhatsApp.",
+				"codeDescription": "Saisissez le code envoyé au {phone} sur WhatsApp (par SMS si vous n'utilisez pas WhatsApp).",
+				"sent": "Code envoyé sur WhatsApp."
+			}
 		},
 		"oauthErrors": {
 			"generic": "La connexion avec ce fournisseur a échoué. Veuillez réessayer.",
@@ -1558,6 +1577,28 @@
 			"intro": "{studio} vous a envoyé le devis {number} d'un montant de {amount}. Ouvrez-le pour le lire, puis acceptez-le ou refusez-le.",
 			"cta": "Voir le devis",
 			"text": "{studio} vous a envoyé le devis {number} d'un montant de {amount}. Répondez ici : {url}"
+		},
+		"whatsappAlert": {
+			"languageName": "Français",
+			"subject": "WhatsApp n'envoie plus les messages AuraDesk",
+			"preheader": "Les codes de connexion partent par SMS jusqu'à la reconnexion",
+			"heading": "WhatsApp demande votre attention",
+			"intro": "Bonjour {name}, le numéro WhatsApp {number} {cause} En attendant, les codes de connexion et les notifications clients sont envoyés par SMS.",
+			"cta": "Reconnecter WhatsApp",
+			"text": "Bonjour {name}, le numéro WhatsApp {number} {cause} En attendant, les codes de connexion et les notifications clients sont envoyés par SMS. Reconnectez-le ici : {url}",
+			"unknownNumber": "associé à AuraDesk",
+			"causes": {
+				"DOWN": "est déconnecté depuis plusieurs minutes.",
+				"LOGGED_OUT": "a été dissocié (depuis le téléphone, ou par WhatsApp). Scannez un nouveau code QR pour l'associer de nouveau."
+			}
+		},
+		"emailChanged": {
+			"subject": "L'adresse e-mail de votre compte AuraDesk a changé",
+			"preheader": "Votre compte utilise maintenant {email}",
+			"heading": "Votre e-mail a été modifié",
+			"intro": "L'e-mail de votre compte AuraDesk est maintenant {email}. Si c'était vous, rien d'autre à faire. Sinon, réinitialisez votre mot de passe tout de suite.",
+			"cta": "Sécuriser mon compte",
+			"text": "L'e-mail de votre compte AuraDesk est maintenant {email}. Si ce n'était pas vous, réinitialisez votre mot de passe : {url}"
 		}
 	},
 	"Sms": {
@@ -2632,7 +2673,9 @@
 			"empty": "Aucun compte ne correspond à ces filtres.",
 			"joined": "inscrit le {date}",
 			"suspended": "Suspendu",
-			"draft": "brouillon"
+			"draft": "brouillon",
+			"deleted": "Supprimé",
+			"deletedName": "Compte supprimé"
 		},
 		"ban": {
 			"button": "Suspendre",
@@ -2647,7 +2690,8 @@
 		},
 		"nav": {
 			"overview": "Vue d'ensemble",
-			"activity": "Activité"
+			"activity": "Activité",
+			"whatsapp": "WhatsApp"
 		},
 		"growth": {
 			"title": "Inscriptions",
@@ -2674,7 +2718,12 @@
 				"UNBAN": "{actor} a réactivé <target>compte</target>",
 				"GRANT_ADMIN": "{actor} a nommé <target>compte</target> administrateur",
 				"REVOKE_ADMIN": "{actor} a retiré le rôle d'administrateur à <target>compte</target>",
-				"PAYMENT_RECORDED": "{actor} a enregistré un paiement pour <target>account</target>"
+				"PAYMENT_RECORDED": "{actor} a enregistré un paiement pour <target>account</target>",
+				"WHATSAPP_LINK_REQUESTED": "{actor} a demandé un nouveau code QR WhatsApp",
+				"WHATSAPP_UNLINKED": "{actor} a dissocié le numéro WhatsApp <target>number</target>",
+				"ROLE_CHANGED": "{actor} a changé le rôle de <target>compte</target>",
+				"ACCOUNT_UPDATED": "{actor} a modifié <target>compte</target>",
+				"ACCOUNT_DELETED": "{actor} a supprimé <target>compte</target>"
 			}
 		},
 		"detail": {
@@ -2717,7 +2766,95 @@
 			"cancel": "Annuler",
 			"recorded": "Paiement enregistré. La formule est prolongée."
 		},
-		"mainAdmin": "Administrateur principal"
+		"mainAdmin": "Administrateur principal",
+		"whatsapp": {
+			"title": "WhatsApp",
+			"description": "Le numéro WhatsApp qui envoie les codes de connexion et les notifications clients. Associez-le une fois en scannant un code QR depuis le téléphone.",
+			"disabled": "Les messages ne passent pas encore par WhatsApp : définissez SMS_PROVIDER=whatsapp sur le serveur pour utiliser le numéro associé.",
+			"fallback": "Tant que WhatsApp n'est pas connecté, ou si un client n'a pas de compte WhatsApp, les messages partent par SMS. Les administrateurs reçoivent un e-mail quand la liaison est perdue.",
+			"sender": "Numéro d'envoi",
+			"states": {
+				"CONNECTED": "Connecté",
+				"QR_PENDING": "En attente du scan",
+				"CONNECTING": "Reconnexion",
+				"LOGGED_OUT": "Non associé",
+				"unconfigured": "Non configuré",
+				"unreachable": "Passerelle injoignable"
+			},
+			"hints": {
+				"unconfigured": "La passerelle WhatsApp n'est pas configurée : définissez WA_GATEWAY_URL et WA_GATEWAY_SECRET sur le serveur.",
+				"unreachable": "La passerelle WhatsApp ne répond pas. Vérifiez que le service wa-gateway tourne.",
+				"LOGGED_OUT": "Aucun numéro WhatsApp n'est associé. Associez-en un pour envoyer les codes par WhatsApp.",
+				"CONNECTING": "La connexion a été perdue {since} et se rétablit automatiquement."
+			},
+			"connectedAs": "Envoi depuis <strong>{number}</strong>, connecté {since}.",
+			"link": "Associer un numéro",
+			"retry": "Reconnecter maintenant",
+			"lastError": "Dernière erreur : {error}",
+			"qr": {
+				"alt": "Code QR pour associer WhatsApp",
+				"title": "Scannez ce code avec le téléphone d'envoi",
+				"steps": {
+					"open": "Ouvrez WhatsApp sur le téléphone.",
+					"settings": "Allez dans Réglages (ou ⋮ sur Android), puis Appareils connectés.",
+					"link": "Touchez Connecter un appareil.",
+					"scan": "Pointez le téléphone vers ce code."
+				},
+				"refresh": "Le code se renouvelle toutes les quelques secondes ; cette page suit automatiquement."
+			},
+			"unlink": {
+				"button": "Dissocier",
+				"title": "Dissocier ce numéro WhatsApp ?",
+				"description": "Les codes et notifications partiront par SMS jusqu'à ce qu'un numéro soit de nouveau associé.",
+				"cancel": "Annuler",
+				"confirm": "Dissocier",
+				"done": "Numéro WhatsApp dissocié"
+			},
+			"test": {
+				"label": "Envoyer un message de test",
+				"hint": "À n'importe quel numéro WhatsApp, pour vérifier que les messages arrivent.",
+				"placeholder": "+216 20 123 456",
+				"send": "Envoyer",
+				"sent": "Message de test envoyé",
+				"message": "AuraDesk : ceci est un message de test. L'envoi par WhatsApp fonctionne."
+			}
+		},
+		"whatsappBanner": {
+			"DOWN": "WhatsApp est déconnecté : les codes de connexion partent par SMS.",
+			"LOGGED_OUT": "Aucun numéro WhatsApp n'est associé : les codes de connexion partent par SMS.",
+			"action": "Reconnecter WhatsApp"
+		},
+		"edit": {
+			"button": "Modifier",
+			"title": "Modifier le compte",
+			"description": "Corrigez le nom, l'e-mail ou le numéro de téléphone. Un nouvel e-mail ou numéro est vérifié à nouveau à la prochaine connexion.",
+			"name": "Nom",
+			"email": "E-mail",
+			"phone": "Téléphone",
+			"hint": "Laissez l'e-mail vide pour un compte qui se connecte uniquement avec son numéro.",
+			"submit": "Enregistrer",
+			"done": "Compte modifié"
+		},
+		"role": {
+			"button": "Rôle",
+			"label": "Changer le rôle",
+			"title": "Passer {name} en {role} ?",
+			"description": "Il est déconnecté partout et reçoit son nouveau rôle à la prochaine connexion. Ses données sont conservées.",
+			"siteOffline": "Son site public est mis hors ligne.",
+			"cancel": "Annuler",
+			"confirm": "Changer le rôle",
+			"done": "Rôle modifié"
+		},
+		"delete": {
+			"button": "Supprimer",
+			"title": "Supprimer {name} ?",
+			"description": "Le compte est anonymisé et ne pourra plus jamais se connecter. Ce qu'il partage avec d'autres (projets, factures, messages) est conservé. Cette action est définitive dans l'application.",
+			"reason": "Motif (facultatif)",
+			"typeName": "Tapez {name} pour confirmer",
+			"cancel": "Annuler",
+			"confirm": "Supprimer le compte",
+			"done": "Compte supprimé"
+		}
 	},
 	"Messages": {
 		"title": "Messagerie",
@@ -3036,12 +3173,16 @@
 			"invoices": "Factures"
 		},
 		"projects": {
-			"greeting": "Bonjour {name}",
+			"greeting": "Bonjour <accent>{name}</accent>",
 			"description": "Vos projets avec tous vos photographes, au même endroit.",
 			"galleries": "{count, plural, =0 {Aucune galerie} one {# galerie} other {# galeries}}",
 			"empty": {
 				"title": "Aucun projet pour l'instant",
 				"description": "Quand un photographe vous invite à un projet et que vous l'acceptez, il apparaît ici."
+			},
+			"linkPrompt": {
+				"title": "Vous avez déjà un compte avec votre e-mail ?",
+				"description": "Associez-le pour retrouver ici tous vos projets, factures et messages."
 			}
 		},
 		"project": {
@@ -3133,12 +3274,32 @@
 			"change": "Modifier",
 			"sendCode": "Envoyer un code",
 			"codeSent": "Code envoyé.",
-			"codePlaceholder": "Code envoyé à {to}",
+			"codeSentTo": "Saisissez le code envoyé à {to}.",
+			"codePlaceholder": "Code à 6 chiffres",
 			"confirm": "Confirmer",
 			"cancel": "Annuler",
 			"save": "Enregistrer",
 			"saved": "Enregistré.",
-			"backStep": "Retour"
+			"backStep": "Retour",
+			"link": {
+				"title": "Associer votre autre compte",
+				"hint": {
+					"email": "Vous avez déjà un compte avec votre e-mail ? Associez-le pour retrouver ici tous vos projets et messages.",
+					"phone": "Vous vous êtes déjà connecté avec votre numéro ? Associez ce compte pour tout retrouver au même endroit."
+				},
+				"action": "Associer",
+				"done": "Comptes associés. Tout se trouve maintenant dans ce compte."
+			},
+			"identity": {
+				"intro": "Pour protéger votre compte, nous envoyons d'abord un code pour vérifier que c'est bien vous.",
+				"sendCode": "Envoyer un code",
+				"codeSent": "Code envoyé.",
+				"codeSentTo": "Saisissez le code envoyé à {hint}.",
+				"password": "Votre mot de passe",
+				"code": "Code à 6 chiffres",
+				"continue": "Continuer",
+				"cancel": "Annuler"
+			}
 		},
 		"bookings": {
 			"title": "{count, plural, one {# demande de réservation} other {# demandes de réservation}}",
@@ -3174,14 +3335,16 @@
 			},
 			"answer": {
 				"title": "Votre réponse",
-				"hint": "Acceptez la proposition, ou refusez la demande.",
+				"hint": "Vérifiez la proposition ci-dessus, puis acceptez-la pour confirmer votre réservation, ou refusez la demande.",
 				"incomplete": "Le studio doit encore ajouter la date et le prix avant que vous puissiez accepter.",
 				"accept": "Accepter la proposition",
 				"accepted": "Vous avez accepté. Le studio est prévenu.",
 				"decline": "Refuser",
 				"declined": "Vous avez refusé la demande.",
 				"declineTitle": "Refuser cette demande ?",
-				"declineDescription": "Le studio sera prévenu. Vous pouvez ajouter une raison."
+				"declineDescription": "Le studio sera prévenu. Vous pouvez ajouter une raison.",
+				"waiting": "Le studio attend votre réponse. Vérifiez la proposition, puis acceptez-la.",
+				"review": "Vérifier et répondre"
 			},
 			"facts": {
 				"proposal": "La proposition du studio",
@@ -3321,6 +3484,14 @@
 			"tip": "Astuce : dans Drive, sélectionnez tout puis Télécharger pour obtenir un seul zip.",
 			"lockedTitle": "Vos fichiers arrivent bientôt",
 			"locked": "Le lien s'ouvre une fois le projet livré et entièrement payé."
+		},
+		"nav": {
+			"label": "Navigation principale",
+			"projects": "Projets",
+			"studios": "Studios",
+			"messages": "Messages",
+			"invoices": "Factures",
+			"profile": "Profil"
 		}
 	},
 	"Privacy": {
@@ -3412,14 +3583,6 @@
 			"signedOut": "Cet appareil a été déconnecté.",
 			"othersSignedOut": "{count, plural, =0 {Aucun autre appareil n'était connecté.} one {# appareil déconnecté.} other {# appareils déconnectés.}}"
 		}
-	},
-	"DevSms": {
-		"title": "SMS de test",
-		"button": "SMS de test ({count})",
-		"hint": "Développement uniquement : aucun vrai SMS n'est envoyé. Les messages arrivent ici.",
-		"empty": "Aucun message pour l'instant.",
-		"to": "À {phone}",
-		"close": "Fermer"
 	},
 	"Legal": {
 		"back": "Retour à AuraDesk",

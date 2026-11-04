@@ -8,8 +8,11 @@ import {
 	PhoneContact,
 } from "@/components/portal/account/account-contacts";
 import { AccountNameForm } from "@/components/portal/account/account-name-form";
+import { LinkAccount } from "@/components/portal/account/link-account";
 import { requireClient } from "@/lib/auth/require-client";
 import { realEmail } from "@/lib/phone";
+import { userHasPassword } from "@/services/account/queries";
+import { linkModeFor } from "@/services/account-link/link-mode";
 
 /** The client's profile: photo, name, and the ways to reach them. */
 export default async function AccountPage() {
@@ -17,6 +20,8 @@ export default async function AccountPage() {
 	const tAccount = await getTranslations("Account");
 	const { session } = await requireClient();
 	const { user } = session;
+	const hasPassword = await userHasPassword(user.id);
+	const linkMode = linkModeFor(user);
 
 	return (
 		<>
@@ -35,15 +40,18 @@ export default async function AccountPage() {
 			</div>
 			<div className="flex max-w-2xl flex-col gap-3">
 				<AvatarEditor name={user.name} image={user.image ?? null} />
-				<AccountNameForm name={user.name} />
+				{/* Keyed: a linked account brings its name, and the form must show it. */}
+				<AccountNameForm key={user.name} name={user.name} />
 				<EmailContact
 					email={realEmail(user.email)}
 					verified={user.emailVerified}
+					hasPassword={hasPassword}
 				/>
 				<PhoneContact
 					phone={user.phoneNumber ?? null}
 					verified={Boolean(user.phoneNumberVerified)}
 				/>
+				{linkMode && <LinkAccount mode={linkMode} />}
 				<LinkCard
 					href="/portal/settings"
 					icon={Settings}

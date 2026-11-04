@@ -35,6 +35,7 @@ services:
     env_file: [public.env, .env]
     environment:
       <<: *database-url
+      WA_GATEWAY_URL: http://wa-gateway:4000
     ports:
       - "127.0.0.1:${APP_PORT}:3000"
     depends_on:
@@ -42,5 +43,19 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  # Holds the one WhatsApp connection (Baileys). No published port: only `app`
+  # reaches it. Its own container, so app deploys don't drop the WhatsApp link.
+  wa-gateway:
+    # Tagged by the gateway's sources: it is only recreated when they change.
+    image: ghcr.io/khlifadam/auradesk-wa-gateway:${WA_GATEWAY_TAG}
+    environment:
+      WA_GATEWAY_SECRET: ${WA_GATEWAY_SECRET}
+      APP_WEBHOOK_URL: http://app:3000/api/internal/whatsapp
+    volumes:
+      # The WhatsApp session keys: losing them means scanning a new QR code.
+      - auradesk_wa_auth:/data
+    restart: unless-stopped
+
 volumes:
   auradesk_db_data:
+  auradesk_wa_auth:

@@ -1,9 +1,11 @@
 import { getTranslations } from "next-intl/server";
+import type { CSSProperties } from "react";
 import { AudienceChoice } from "@/components/home/audience-choice";
 import { HomeFinalCta } from "@/components/home/home-final-cta";
 import { HomeHeader } from "@/components/home/home-header";
 import { HomeHero } from "@/components/home/home-hero";
 import { HowItWorks } from "@/components/home/how-it-works";
+import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { BRAND_NAME } from "@/lib/brand";
 
 /**
@@ -14,8 +16,12 @@ export default async function HomePage() {
 	const t = await getTranslations("Home");
 
 	return (
-		<main className="relative min-h-screen overflow-hidden bg-background text-foreground selection:bg-primary/20">
-			<div className="pointer-events-none absolute inset-x-0 top-0 h-[1000px] mesh-glow" />
+		<main className="relative isolate min-h-screen overflow-hidden bg-background text-foreground selection:bg-primary/20">
+			{/* Gold for studios and teal for clients: the hub shows both. */}
+			<SpaceBackdrop
+				className="fixed"
+				style={{ "--space-alt": "var(--chart-2)" } as CSSProperties}
+			/>
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-[820px] grid-fade opacity-50 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
 
 			<HomeHeader />

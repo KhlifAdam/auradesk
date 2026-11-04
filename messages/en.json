@@ -23,7 +23,8 @@
 			"team": "Team",
 			"privacy": "Privacy & data",
 			"subscription": "Subscription",
-			"books": "Photo books"
+			"books": "Photo books",
+			"menu": "Menu"
 		},
 		"UserMenu": {
 			"profile": "Profile",
@@ -231,7 +232,15 @@
 		"quoteNotDraft": "Only a draft quote can do this.",
 		"quoteNotInvoiceable": "Only a sent or accepted quote can become an invoice, once.",
 		"quoteNotOpen": "This quote is no longer waiting for an answer.",
-		"sectionMediaMissing": "A logo, photo or video used in your sections is no longer in your library. Open the sections, pick it again, then save."
+		"sectionMediaMissing": "A logo, photo or video used in your sections is no longer in your library. Open the sections, pick it again, then save.",
+		"whatsappUnreachable": "The WhatsApp gateway doesn't answer.",
+		"whatsappNotConnected": "WhatsApp is not connected.",
+		"whatsappNotOnWhatsapp": "This number has no WhatsApp account.",
+		"cannotManageSelf": "Use your own account page to change your account.",
+		"cannotManageAdmin": "Administrator accounts are managed from the command line.",
+		"accountDeleted": "This account has been deleted.",
+		"emailTaken": "Another account already uses this email.",
+		"phoneTaken": "Another account already uses this phone number."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -975,7 +984,7 @@
 		},
 		"shared": {
 			"emailPlaceholder": "name@example.com",
-			"namePlaceholder": "Jane Smith",
+			"namePlaceholder": "Adam Khlif",
 			"divider": "Or continue with",
 			"github": "GitHub",
 			"google": "Google",
@@ -1002,7 +1011,12 @@
 			"FAILED_TO_UNLINK_LAST_ACCOUNT": "This is your only way to sign in: add another one before disconnecting it.",
 			"SOCIAL_ACCOUNT_ALREADY_LINKED": "This account is already connected to another AuraDesk account.",
 			"CREDENTIAL_ACCOUNT_NOT_FOUND": "This account has no password yet.",
-			"BANNED_USER": "This account has been suspended. Contact support if you think this is a mistake."
+			"BANNED_USER": "This account has been suspended. Contact support if you think this is a mistake.",
+			"NO_ACCOUNT_TO_LINK": "No other account uses this. You can add it in your contacts instead.",
+			"ACCOUNT_NOT_LINKABLE": "This account belongs to a studio or a collaborator and can't be linked.",
+			"LINK_CONFLICT": "That account already has another phone number. Sign in with it and add your number there.",
+			"LINK_TOO_SOON": "A code was just sent. Wait a minute before asking for a new one.",
+			"IDENTITY_CHECK_REQUIRED": "Confirm your identity first."
 		},
 		"backLink": {
 			"photographer": "Photographer space",
@@ -1064,7 +1078,12 @@
 			"resendIn": "New code in {seconds}s",
 			"useEmail": "Prefer email?",
 			"emailLink": "Sign in with email",
-			"useInstead": "No email? Use your phone number instead"
+			"useInstead": "No email? Use your phone number instead",
+			"whatsapp": {
+				"description": "No email needed. We'll send you a code on WhatsApp.",
+				"codeDescription": "Enter the code we sent to {phone} on WhatsApp (by SMS if you don't use WhatsApp).",
+				"sent": "Code sent on WhatsApp."
+			}
 		},
 		"oauthErrors": {
 			"generic": "Sign-in with this provider failed. Please try again.",
@@ -1558,6 +1577,28 @@
 			"intro": "{studio} sent you the quote {number} for {amount}. Open it to read it, then accept or decline it.",
 			"cta": "View the quote",
 			"text": "{studio} sent you the quote {number} for {amount}. Answer it here: {url}"
+		},
+		"whatsappAlert": {
+			"languageName": "English",
+			"subject": "WhatsApp is no longer sending AuraDesk messages",
+			"preheader": "Sign-in codes are going out by SMS until it is reconnected",
+			"heading": "WhatsApp needs your attention",
+			"intro": "Hi {name}, the WhatsApp number {number} {cause} Until it is reconnected, sign-in codes and client notices are sent by SMS.",
+			"cta": "Reconnect WhatsApp",
+			"text": "Hi {name}, the WhatsApp number {number} {cause} Until it is reconnected, sign-in codes and client notices are sent by SMS. Reconnect it here: {url}",
+			"unknownNumber": "linked to AuraDesk",
+			"causes": {
+				"DOWN": "has been disconnected for several minutes.",
+				"LOGGED_OUT": "was unlinked (from the phone, or by WhatsApp). Scan a new QR code to link it again."
+			}
+		},
+		"emailChanged": {
+			"subject": "Your AuraDesk email address was changed",
+			"preheader": "Your account now uses {email}",
+			"heading": "Your email was changed",
+			"intro": "The email of your AuraDesk account is now {email}. If this was you, nothing else to do. If not, reset your password right away.",
+			"cta": "Secure my account",
+			"text": "The email of your AuraDesk account is now {email}. If this wasn't you, reset your password now: {url}"
 		}
 	},
 	"Sms": {
@@ -2632,7 +2673,9 @@
 			"empty": "No account matches these filters.",
 			"joined": "joined {date}",
 			"suspended": "Suspended",
-			"draft": "draft"
+			"draft": "draft",
+			"deleted": "Deleted",
+			"deletedName": "Deleted account"
 		},
 		"ban": {
 			"button": "Suspend",
@@ -2647,7 +2690,8 @@
 		},
 		"nav": {
 			"overview": "Overview",
-			"activity": "Activity"
+			"activity": "Activity",
+			"whatsapp": "WhatsApp"
 		},
 		"growth": {
 			"title": "Sign-ups",
@@ -2674,7 +2718,12 @@
 				"UNBAN": "{actor} reactivated <target>account</target>",
 				"GRANT_ADMIN": "{actor} made <target>account</target> an administrator",
 				"REVOKE_ADMIN": "{actor} removed the administrator role from <target>account</target>",
-				"PAYMENT_RECORDED": "{actor} recorded a payment for <target>account</target>"
+				"PAYMENT_RECORDED": "{actor} recorded a payment for <target>account</target>",
+				"WHATSAPP_LINK_REQUESTED": "{actor} asked for a new WhatsApp QR code",
+				"WHATSAPP_UNLINKED": "{actor} unlinked the WhatsApp number <target>number</target>",
+				"ROLE_CHANGED": "{actor} changed the role of <target>account</target>",
+				"ACCOUNT_UPDATED": "{actor} edited <target>account</target>",
+				"ACCOUNT_DELETED": "{actor} deleted <target>account</target>"
 			}
 		},
 		"detail": {
@@ -2717,7 +2766,95 @@
 			"cancel": "Cancel",
 			"recorded": "Payment recorded. The plan is extended."
 		},
-		"mainAdmin": "Main admin"
+		"mainAdmin": "Main admin",
+		"whatsapp": {
+			"title": "WhatsApp",
+			"description": "The WhatsApp number that sends sign-in codes and client notices. Link it once by scanning a QR code from the phone.",
+			"disabled": "Messages don't go through WhatsApp yet: set SMS_PROVIDER=whatsapp on the server to use the linked number.",
+			"fallback": "While WhatsApp is not connected, or when a client has no WhatsApp account, messages go out by SMS instead. Administrators get an email when the link drops.",
+			"sender": "Sending number",
+			"states": {
+				"CONNECTED": "Connected",
+				"QR_PENDING": "Waiting for scan",
+				"CONNECTING": "Reconnecting",
+				"LOGGED_OUT": "Not linked",
+				"unconfigured": "Not set up",
+				"unreachable": "Gateway unreachable"
+			},
+			"hints": {
+				"unconfigured": "The WhatsApp gateway isn't configured: set WA_GATEWAY_URL and WA_GATEWAY_SECRET on the server.",
+				"unreachable": "The WhatsApp gateway doesn't answer. Check that the wa-gateway service is running.",
+				"LOGGED_OUT": "No WhatsApp number is linked. Link one to send codes over WhatsApp.",
+				"CONNECTING": "The connection dropped {since} and is being restored automatically."
+			},
+			"connectedAs": "Sending from <strong>{number}</strong>, connected {since}.",
+			"link": "Link a number",
+			"retry": "Reconnect now",
+			"lastError": "Last error: {error}",
+			"qr": {
+				"alt": "QR code to link WhatsApp",
+				"title": "Scan this code with the sending phone",
+				"steps": {
+					"open": "Open WhatsApp on the phone.",
+					"settings": "Go to Settings (or ⋮ on Android), then Linked devices.",
+					"link": "Tap Link a device.",
+					"scan": "Point the phone at this code."
+				},
+				"refresh": "The code renews itself every few seconds; this page follows along."
+			},
+			"unlink": {
+				"button": "Unlink",
+				"title": "Unlink this WhatsApp number?",
+				"description": "Codes and notices will go out by SMS until a number is linked again.",
+				"cancel": "Cancel",
+				"confirm": "Unlink",
+				"done": "WhatsApp number unlinked"
+			},
+			"test": {
+				"label": "Send a test message",
+				"hint": "To any WhatsApp number, to check that messages are delivered.",
+				"placeholder": "+216 20 123 456",
+				"send": "Send",
+				"sent": "Test message sent",
+				"message": "AuraDesk: this is a test message. WhatsApp delivery works."
+			}
+		},
+		"whatsappBanner": {
+			"DOWN": "WhatsApp is disconnected: sign-in codes are being sent by SMS.",
+			"LOGGED_OUT": "No WhatsApp number is linked: sign-in codes are being sent by SMS.",
+			"action": "Reconnect WhatsApp"
+		},
+		"edit": {
+			"button": "Edit",
+			"title": "Edit the account",
+			"description": "Correct the name, email or phone number. A new email or number is checked again at the next sign-in.",
+			"name": "Name",
+			"email": "Email",
+			"phone": "Phone",
+			"hint": "Leave the email empty for an account that signs in with its phone number only.",
+			"submit": "Save",
+			"done": "Account updated"
+		},
+		"role": {
+			"button": "Role",
+			"label": "Change the role",
+			"title": "Make {name} {role}?",
+			"description": "They're signed out everywhere and get the new role at their next sign-in. Their data is kept.",
+			"siteOffline": "Their public site goes offline.",
+			"cancel": "Cancel",
+			"confirm": "Change the role",
+			"done": "Role changed"
+		},
+		"delete": {
+			"button": "Delete",
+			"title": "Delete {name}?",
+			"description": "The account is anonymised and can never sign in again. What it shares with others (projects, invoices, messages) is kept. This can't be undone from the app.",
+			"reason": "Reason (optional)",
+			"typeName": "Type {name} to confirm",
+			"cancel": "Cancel",
+			"confirm": "Delete the account",
+			"done": "Account deleted"
+		}
 	},
 	"Messages": {
 		"title": "Messages",
@@ -3036,12 +3173,16 @@
 			"invoices": "Invoices"
 		},
 		"projects": {
-			"greeting": "Hello {name}",
+			"greeting": "Hello <accent>{name}</accent>",
 			"description": "Your projects with every photographer, in one place.",
 			"galleries": "{count, plural, =0 {No galleries yet} one {# gallery} other {# galleries}}",
 			"empty": {
 				"title": "No projects yet",
 				"description": "When a photographer invites you to a project and you accept it, it shows up here."
+			},
+			"linkPrompt": {
+				"title": "Already have an account with your email?",
+				"description": "Link it to find all your projects, invoices and messages here."
 			}
 		},
 		"project": {
@@ -3133,12 +3274,32 @@
 			"change": "Change",
 			"sendCode": "Send a code",
 			"codeSent": "Code sent.",
-			"codePlaceholder": "Code sent to {to}",
+			"codeSentTo": "Enter the code sent to {to}.",
+			"codePlaceholder": "6-digit code",
 			"confirm": "Confirm",
 			"cancel": "Cancel",
 			"save": "Save",
 			"saved": "Saved.",
-			"backStep": "Back"
+			"backStep": "Back",
+			"link": {
+				"title": "Link your other account",
+				"hint": {
+					"email": "Already have an account with your email? Link it to see all your projects and messages here.",
+					"phone": "Signed in with your phone number before? Link that account to see everything in one place."
+				},
+				"action": "Link",
+				"done": "Accounts linked. Everything is now in this account."
+			},
+			"identity": {
+				"intro": "To protect your account, we first send you a code to make sure it's you.",
+				"sendCode": "Send me a code",
+				"codeSent": "Code sent.",
+				"codeSentTo": "Enter the code sent to {hint}.",
+				"password": "Your password",
+				"code": "6-digit code",
+				"continue": "Continue",
+				"cancel": "Cancel"
+			}
 		},
 		"bookings": {
 			"title": "{count, plural, one {# booking request} other {# booking requests}}",
@@ -3174,14 +3335,16 @@
 			},
 			"answer": {
 				"title": "Your answer",
-				"hint": "Accept the proposal, or decline the request.",
+				"hint": "Check the proposal above, then accept it to confirm your booking, or decline the request.",
 				"incomplete": "The studio still has to add the date and the price before you can accept.",
 				"accept": "Accept the proposal",
 				"accepted": "You accepted. The studio was told.",
 				"decline": "Decline",
 				"declined": "You declined the request.",
 				"declineTitle": "Decline this request?",
-				"declineDescription": "The studio will be told. You can add a reason."
+				"declineDescription": "The studio will be told. You can add a reason.",
+				"waiting": "The studio is waiting for your answer. Check the proposal, then accept it.",
+				"review": "Review and answer"
 			},
 			"facts": {
 				"proposal": "The studio's proposal",
@@ -3321,6 +3484,14 @@
 			"tip": "Tip: in Drive, select everything and choose Download to get one zip.",
 			"lockedTitle": "Your files are almost here",
 			"locked": "The link opens once the project is delivered and fully paid."
+		},
+		"nav": {
+			"label": "Main navigation",
+			"projects": "Projects",
+			"studios": "Studios",
+			"messages": "Messages",
+			"invoices": "Invoices",
+			"profile": "Profile"
 		}
 	},
 	"Privacy": {
@@ -3412,14 +3583,6 @@
 			"signedOut": "That device was signed out.",
 			"othersSignedOut": "{count, plural, =0 {No other device was signed in.} one {# device signed out.} other {# devices signed out.}}"
 		}
-	},
-	"DevSms": {
-		"title": "Test SMS",
-		"button": "Test SMS ({count})",
-		"hint": "Development only: no real text is sent. Messages land here.",
-		"empty": "No message yet.",
-		"to": "To {phone}",
-		"close": "Close"
 	},
 	"Legal": {
 		"back": "Back to AuraDesk",

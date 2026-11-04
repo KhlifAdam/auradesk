@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { AuthShowcase } from "@/components/auth/auth-showcase";
+import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { BRAND_NAME } from "@/lib/brand";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,7 +21,8 @@ export default async function AuthLayout({
 	const t = await getTranslations("Auth.layout");
 
 	return (
-		<div className="grid h-screen grid-cols-1 overflow-hidden bg-background md:grid-cols-2">
+		<div className="relative isolate grid h-screen grid-cols-1 overflow-hidden bg-background md:grid-cols-2">
+			<SpaceBackdrop />
 			<div className="relative hidden flex-col overflow-hidden p-10 text-foreground md:flex">
 				<Link
 					href="/"
@@ -47,10 +49,11 @@ export default async function AuthLayout({
 				<AuthShowcase />
 			</div>
 
-			<div className="relative overflow-y-auto p-8 md:p-12">
-				<div className="pointer-events-none fixed right-10 top-10 h-64 w-64 rounded-full bg-primary/5 blur-[80px]" />
+			<div className="relative overflow-y-auto p-4 sm:p-8 md:p-12">
 				<div className="relative z-10 mx-auto flex min-h-full w-full max-w-[400px] items-center py-8 lg:mx-0 lg:ml-12">
-					{children}
+					<div className="w-full max-md:rounded-3xl max-md:border max-md:border-border/60 max-md:bg-card/55 max-md:p-6 max-md:shadow-luminous max-md:backdrop-blur-xl">
+						{children}
+					</div>
 				</div>
 			</div>
 		</div>

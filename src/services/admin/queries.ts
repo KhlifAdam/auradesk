@@ -24,10 +24,17 @@ export async function getPlatformStats(): Promise<PlatformStats> {
 	monthStart.setUTCDate(1);
 	monthStart.setUTCHours(0, 0, 0, 0);
 	const [roles, publishedSites, newThisMonth, banned] = await Promise.all([
-		db.user.groupBy({ by: ["role"], _count: { _all: true } }),
+		// Deleted accounts no longer count anywhere.
+		db.user.groupBy({
+			by: ["role"],
+			where: { deletedAt: null },
+			_count: { _all: true },
+		}),
 		db.studio.count({ where: { published: true } }),
-		db.user.count({ where: { createdAt: { gte: monthStart } } }),
-		db.user.count({ where: { banned: true } }),
+		db.user.count({
+			where: { createdAt: { gte: monthStart }, deletedAt: null },
+		}),
+		db.user.count({ where: { banned: true, deletedAt: null } }),
 	]);
 	const count = (role: string) =>
 		roles.find((row) => row.role === role)?._count._all ?? 0;
@@ -51,6 +58,7 @@ export interface AdminUserRow {
 	createdAt: string;
 	banned: boolean;
 	banReason: string;
+	deleted: boolean;
 	studio: { name: string; slug: string; published: boolean } | null;
 }
 
@@ -77,6 +85,7 @@ export async function listUsers({ page, q, role }: ListUsersParams) {
 			createdAt: true,
 			banned: true,
 			banReason: true,
+			deletedAt: true,
 			studio: { select: { name: true, slug: true, published: true } },
 		},
 		orderBy: [{ createdAt: "desc" }, { id: "asc" }],
@@ -95,6 +104,7 @@ export async function listUsers({ page, q, role }: ListUsersParams) {
 				createdAt: row.createdAt.toISOString(),
 				banned: Boolean(row.banned),
 				banReason: row.banReason ?? "",
+				deleted: row.deletedAt !== null,
 				studio: row.studio,
 			}),
 		),

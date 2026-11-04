@@ -1,6 +1,6 @@
 "use client";
 
-import { History, LayoutGrid } from "lucide-react";
+import { History, LayoutGrid, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
 const TABS = [
 	{ href: "/admin", key: "overview", icon: LayoutGrid },
 	{ href: "/admin/activity", key: "activity", icon: History },
+	{ href: "/admin/whatsapp", key: "whatsapp", icon: MessageCircle },
 ] as const;
 
-/** Overview / Activity tabs of the admin space. */
+/** Overview / Activity / WhatsApp tabs of the admin space. */
 export function AdminNav() {
 	const t = useTranslations("Admin.nav");
 	const pathname = usePathname();
@@ -22,7 +23,9 @@ export function AdminNav() {
 				// Account pages belong to the overview.
 				const active =
 					href === "/admin"
-						? !pathname.startsWith("/admin/activity")
+						? !TABS.some(
+								(tab) => tab.href !== "/admin" && pathname.startsWith(tab.href),
+							)
 						: pathname.startsWith(href);
 				return (
 					<Link

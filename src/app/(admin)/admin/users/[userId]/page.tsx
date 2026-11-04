@@ -3,19 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { AuditList } from "@/components/admin/audit-list";
-import { BanButton } from "@/components/admin/ban-button";
 import { SubscriptionCard } from "@/components/admin/subscription-card";
+import { UserHeader } from "@/components/admin/user-header";
 import { StatCards } from "@/components/dashboard/shared/stat-cards";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { isMainAdminEmail } from "@/lib/auth/main-admin";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { ROLES } from "@/lib/auth/roles";
 import { formatBytes } from "@/lib/format";
-import { initialsOf } from "@/lib/initials";
 import { formatPhone } from "@/lib/phone";
 import { listAdminActions } from "@/services/admin/audit";
-import type { ROLE_FILTERS } from "@/services/admin/schemas";
 import { getAdminUserDetail } from "@/services/admin/user-detail";
 import { getSubscription } from "@/services/billing/queries";
 
@@ -56,7 +51,9 @@ export default async function AdminUserPage({
 		},
 	];
 	const isStudio = user.role === ROLES.photographer;
-	const subscription = isStudio ? await getSubscription(user.id) : null;
+	// A deleted studio takes no more payments.
+	const subscription =
+		isStudio && !user.deleted ? await getSubscription(user.id) : null;
 
 	return (
 		<>
@@ -67,45 +64,7 @@ export default async function AdminUserPage({
 				<ArrowLeft className="h-3.5 w-3.5" />
 				{t("detail.back")}
 			</Link>
-			<div className="flex flex-wrap items-center gap-3">
-				<Avatar className="h-12 w-12 border border-border">
-					<AvatarImage
-						src={user.image ?? undefined}
-						alt=""
-						className="object-cover"
-					/>
-					<AvatarFallback className="bg-primary/10 text-primary">
-						{initialsOf(user.name)}
-					</AvatarFallback>
-				</Avatar>
-				<div className="flex flex-1 flex-col gap-0.5">
-					<h1 className="flex flex-wrap items-center gap-2 font-display text-xl font-bold tracking-tight">
-						{user.name}
-						<Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
-							{t(`roles.${user.role as (typeof ROLE_FILTERS)[number]}`)}
-						</Badge>
-						{isMainAdminEmail(user.email) && (
-							<Badge className="h-5 px-1.5 text-[10px]">{t("mainAdmin")}</Badge>
-						)}
-						{user.banned && (
-							<Badge
-								variant="outline"
-								className="h-5 border-destructive/40 px-1.5 text-[10px] text-destructive"
-							>
-								{t("users.suspended")}
-							</Badge>
-						)}
-					</h1>
-					{user.banReason && (
-						<p className="text-xs text-muted-foreground">
-							{t("activity.reason", { reason: user.banReason })}
-						</p>
-					)}
-				</div>
-				{user.id !== adminId && user.role !== ROLES.admin && (
-					<BanButton userId={user.id} name={user.name} banned={user.banned} />
-				)}
-			</div>
+			<UserHeader user={user} adminId={adminId} />
 			<dl className="grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-4">
 				{facts.map((fact) => (
 					<div key={fact.label} className="min-w-0">

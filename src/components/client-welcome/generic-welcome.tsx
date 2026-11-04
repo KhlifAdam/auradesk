@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { AUTH_PATHS } from "@/lib/auth/client-intent";
 import { BRAND_NAME } from "@/lib/brand";
 import { WelcomeCard, type WelcomeTone } from "./welcome-card";
@@ -18,7 +19,10 @@ export async function GenericWelcome() {
 	const t = await getTranslations("ClientWelcome");
 
 	return (
-		<main className="relative isolate flex min-h-screen flex-1 items-center justify-center overflow-hidden bg-background px-4 py-10">
+		<main
+			data-space="client"
+			className="relative isolate flex min-h-screen flex-1 items-center justify-center overflow-hidden bg-background px-4 py-10"
+		>
 			<Image
 				src="/images/auradesk-gallery.jpg"
 				alt=""
@@ -29,6 +33,7 @@ export async function GenericWelcome() {
 				className="-z-20 object-cover"
 			/>
 			<div className="absolute inset-0 -z-10 bg-background/70" />
+			<SpaceBackdrop />
 			<WelcomeCard
 				tone={TONE}
 				brand={

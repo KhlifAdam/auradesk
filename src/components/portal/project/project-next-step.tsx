@@ -63,28 +63,30 @@ export async function ProjectNextStep({
 				: null;
 
 	return (
-		<section className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/12 via-card to-card p-4">
-			<div className="flex flex-wrap items-center gap-4">
-				<span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/25">
-					<Icon className="h-5 w-5" />
-				</span>
-				<div className="flex min-w-0 flex-1 flex-col gap-0.5">
-					<span className="text-[11px] font-medium tracking-wide text-primary uppercase">
-						{t("label")}
+		<section className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/12 via-card/80 to-card/80 p-4 backdrop-blur-md">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+				<div className="flex min-w-0 flex-1 items-start gap-4">
+					<span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/25">
+						<Icon className="h-5 w-5" />
 					</span>
-					<h2 className="font-display text-base font-semibold">
-						{t(`${step}.title`)}
-					</h2>
-					<p className="text-xs text-muted-foreground">
-						{t(`${step}.body`, {
-							studio,
-							amount: formatMoney(owed, locale),
-							date: project.eventDate ? day(project.eventDate) : "—",
-						})}
-					</p>
+					<div className="flex min-w-0 flex-1 flex-col gap-0.5">
+						<span className="text-[11px] font-medium tracking-wide text-primary uppercase">
+							{t("label")}
+						</span>
+						<h2 className="font-display text-base font-semibold">
+							{t(`${step}.title`)}
+						</h2>
+						<p className="text-xs text-muted-foreground">
+							{t(`${step}.body`, {
+								studio,
+								amount: formatMoney(owed, locale),
+								date: project.eventDate ? day(project.eventDate) : "—",
+							})}
+						</p>
+					</div>
 				</div>
 				{href && (
-					<Button asChild size="sm" className="gap-1.5">
+					<Button asChild size="sm" className="w-full gap-1.5 sm:w-auto">
 						<Link href={href}>
 							{t(`${step}.cta`)}
 							<ArrowRight className="h-3.5 w-3.5" />

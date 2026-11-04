@@ -37,3 +37,11 @@ export async function getSecurityOverview(
 		})),
 	};
 }
+
+/** Whether the account signs in with a password (not only Google or a phone). */
+export async function userHasPassword(userId: string) {
+	const count = await db.account.count({
+		where: { userId, providerId: "credential" },
+	});
+	return count > 0;
+}

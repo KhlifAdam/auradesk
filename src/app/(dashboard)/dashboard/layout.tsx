@@ -6,12 +6,13 @@ import { AssistantProvider } from "@/components/assistant/assistant-provider";
 import { ASSISTANT_OPEN_COOKIE } from "@/components/assistant/open-cookie";
 import { ExpiredGate } from "@/components/dashboard/billing/expired-gate";
 import { SubscriptionBanner } from "@/components/dashboard/billing/subscription-banner";
+import { DashboardMobileNav } from "@/components/dashboard/mobile-nav/dashboard-mobile-nav";
 import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
+import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { BRAND_NAME } from "@/lib/brand";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
-import { devInboxEnabled } from "@/lib/sms/dev-inbox";
 import { getSubscription } from "@/services/billing/queries";
 import { countUnread } from "@/services/messages/queries";
 import { getStudioSummary } from "@/services/studio/queries";
@@ -37,26 +38,33 @@ export default async function DashboardLayout({
 			initialOpen={assistantOpen}
 			basePath="/dashboard/assistant"
 		>
-			<div className="flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
+			<div className="relative isolate flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
+				<SpaceBackdrop />
 				<TimeZoneSync serverTimeZone={timeZone} />
 				<Sidebar
 					studioName={studio?.name ?? BRAND_NAME}
 					unreadMessages={unreadMessages}
 					user={session.user}
-					devSms={devInboxEnabled()}
 				/>
-				{/*
-			  `relative` is load-bearing: Radix form controls (checkbox, switch,
-			  select, radio) render a hidden `position: absolute` native input.
-			  Without a positioned ancestor it escapes this scroll container and
-			  stretches the whole document, adding a second, outer scrollbar.
-			*/}
-				<main className="relative flex min-w-0 flex-1 flex-col overflow-y-auto print:overflow-visible">
-					<SubscriptionBanner subscription={subscription} />
-					<ExpiredGate expired={subscription.status === "expired"}>
-						{children}
-					</ExpiredGate>
-				</main>
+				<div className="flex min-w-0 flex-1 flex-col">
+					<DashboardMobileNav
+						studioName={studio?.name ?? BRAND_NAME}
+						unreadMessages={unreadMessages}
+						user={session.user}
+					/>
+					{/*
+				  `relative` is load-bearing: Radix form controls (checkbox, switch,
+				  select, radio) render a hidden `position: absolute` native input.
+				  Without a positioned ancestor it escapes this scroll container and
+				  stretches the whole document, adding a second, outer scrollbar.
+				*/}
+					<main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto pb-20 lg:pb-0 print:overflow-visible">
+						<SubscriptionBanner subscription={subscription} />
+						<ExpiredGate expired={subscription.status === "expired"}>
+							{children}
+						</ExpiredGate>
+					</main>
+				</div>
 				<AssistantPanel team={false} />
 			</div>
 			<AssistantFab />

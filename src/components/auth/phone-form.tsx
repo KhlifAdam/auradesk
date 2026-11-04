@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
 import { AUTH_PATHS } from "@/lib/auth/client-intent";
 import { formatPhone, toE164 } from "@/lib/phone";
+import type { CodeChannel } from "@/lib/whatsapp/code-channel";
 import { setClientIntent } from "@/services/auth/intent-actions";
 import { AudienceBadge } from "./audience-badge";
 import { AuthBackLink } from "./auth-back-link";
@@ -40,8 +41,16 @@ const paths = AUTH_PATHS.client;
  * Sign in or sign up with a phone number: a code is texted, and entering it
  * opens the account (a new number creates one). No password, no email.
  */
-export function PhoneForm({ defaultPhone = "" }: { defaultPhone?: string }) {
+export function PhoneForm({
+	defaultPhone = "",
+	channel = "sms",
+}: {
+	defaultPhone?: string;
+	/** How codes go out right now; WhatsApp falls back to SMS per number. */
+	channel?: CodeChannel;
+}) {
 	const t = useTranslations("Auth.phone");
+	const onWhatsapp = channel === "whatsapp";
 	const authError = useAuthError();
 	// The number the code was sent to; null while still asking for it.
 	const [sentTo, setSentTo] = useState<string | null>(null);
@@ -75,7 +84,7 @@ export function PhoneForm({ defaultPhone = "" }: { defaultPhone?: string }) {
 			setSentTo(number);
 			setCooldown(RESEND_SECONDS);
 			codeForm.reset({ code: "" });
-			toast.success(t("sent"));
+			toast.success(onWhatsapp ? t("whatsapp.sent") : t("sent"));
 		} catch {
 			toast.error(authError.network);
 		}
@@ -107,8 +116,10 @@ export function PhoneForm({ defaultPhone = "" }: { defaultPhone?: string }) {
 				title={t("title")}
 				description={
 					sentTo
-						? t("codeDescription", { phone: formatPhone(sentTo) })
-						: t("description")
+						? t(onWhatsapp ? "whatsapp.codeDescription" : "codeDescription", {
+								phone: formatPhone(sentTo),
+							})
+						: t(onWhatsapp ? "whatsapp.description" : "description")
 				}
 				badge={<AudienceBadge audience="client" />}
 			/>

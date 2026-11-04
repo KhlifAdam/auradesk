@@ -18,7 +18,7 @@ export async function PortalProjectCard({
 	return (
 		<Link
 			href={`/portal/projects/${project.id}`}
-			className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:border-primary/40 hover:shadow-luminous-lg"
+			className="group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-border/70 bg-card/75 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-luminous-lg active:translate-y-0"
 		>
 			<div className="flex items-start justify-between gap-3">
 				<p className="font-medium leading-snug group-hover:text-primary">
@@ -47,9 +47,9 @@ export async function PortalProjectCard({
 					{t("galleries", { count: project.sharedGalleryCount })}
 				</span>
 			</div>
-			<div className="h-1 overflow-hidden rounded-full bg-muted">
+			<div className="h-1.5 overflow-hidden rounded-full bg-muted">
 				<div
-					className="h-full rounded-full bg-primary transition-all duration-500"
+					className="h-full rounded-full bg-gradient-to-r from-primary to-chart-2 shadow-[0_0_10px_var(--primary)] transition-all duration-500"
 					style={{ width: `${progress}%` }}
 				/>
 			</div>

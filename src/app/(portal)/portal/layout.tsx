@@ -3,7 +3,9 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
 import { PortalAssistant } from "@/components/portal/assistant/portal-assistant";
+import { PortalBottomNav } from "@/components/portal/portal-bottom-nav";
 import { PortalHeader } from "@/components/portal/portal-header";
+import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requireClient } from "@/lib/auth/require-client";
 import { ROLES } from "@/lib/auth/roles";
 import { BRAND_NAME } from "@/lib/brand";
@@ -28,7 +30,11 @@ export default async function PortalLayout({
 	]);
 
 	return (
-		<div className="min-h-screen bg-background">
+		<div
+			data-space="client"
+			className="relative isolate min-h-screen bg-background"
+		>
+			<SpaceBackdrop />
 			<TimeZoneSync serverTimeZone={timeZone} />
 			<div className="contents print:hidden">
 				<PortalHeader
@@ -43,9 +49,10 @@ export default async function PortalLayout({
 					isPhotographer={session.user.role === ROLES.photographer}
 				/>
 			</div>
-			<main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 md:px-6">
+			<main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-6 pb-28 md:px-6 md:pb-10">
 				{children}
 			</main>
+			<PortalBottomNav unreadMessages={unreadMessages} />
 			<PortalAssistant />
 		</div>
 	);

@@ -33,6 +33,13 @@ export const phoneEmail = (e164: string) =>
 export const isPhoneEmail = (email: string) =>
 	email.toLowerCase().endsWith(`@${PHONE_EMAIL_DOMAIN}`);
 
-/** The email to show or send to: null for phone-only accounts. */
+/** Placeholder address of an account an admin deleted (soft delete). */
+export const deletedEmail = (userId: string) =>
+	`${userId}@deleted.auradesk.invalid`;
+
+/**
+ * The email to show or send to: null for placeholders (phone-only and deleted
+ * accounts), which all end in `.invalid` and can never receive mail.
+ */
 export const realEmail = (email: string) =>
-	isPhoneEmail(email) ? null : email;
+	email.toLowerCase().endsWith(".invalid") ? null : email;

@@ -34,7 +34,7 @@ export async function UserList({ params }: { params: ListUsersParams }) {
 									href={`/admin/users/${user.id}`}
 									className="hover:text-primary hover:underline"
 								>
-									{user.name}
+									{user.deleted ? t("users.deletedName") : user.name}
 								</Link>
 								{isMainAdminEmail(user.email) && (
 									<Badge className="ml-2 h-5 px-1.5 text-[10px]">
@@ -46,7 +46,7 @@ export async function UserList({ params }: { params: ListUsersParams }) {
 										variant="outline"
 										className="ml-2 h-5 border-destructive/40 px-1.5 text-[10px] text-destructive"
 									>
-										{t("users.suspended")}
+										{t(user.deleted ? "users.deleted" : "users.suspended")}
 									</Badge>
 								)}
 							</p>
@@ -75,7 +75,7 @@ export async function UserList({ params }: { params: ListUsersParams }) {
 						<Badge variant="secondary" className="h-5 px-1.5 text-[10px]">
 							{t(`roles.${user.role as (typeof ROLE_FILTERS)[number]}`)}
 						</Badge>
-						{user.id !== adminId && user.role !== "admin" && (
+						{user.id !== adminId && user.role !== "admin" && !user.deleted && (
 							<BanButton
 								userId={user.id}
 								name={user.name}

@@ -11,6 +11,7 @@ import {
 	headObject,
 	publicUrl,
 } from "@/lib/storage/r2";
+import { avatarPrefix, ownAvatarKey } from "./avatar-key";
 import {
 	avatarKeySchema,
 	avatarUploadSchema,
@@ -18,15 +19,6 @@ import {
 } from "./schemas";
 
 const AVATAR_TYPE = "image/jpeg";
-/** Every profile photo of an account lives under this prefix. */
-const avatarPrefix = (userId: string) => `avatars/${userId}/`;
-
-/** The key of a profile photo this app stored for the user, if it is one. */
-function ownAvatarKey(userId: string, image: string | null) {
-	const base = publicUrl("");
-	const key = image?.startsWith(base) ? image.slice(base.length) : null;
-	return key?.startsWith(avatarPrefix(userId)) ? key : null;
-}
 
 /** Revalidates every page that shows the account's name or photo. */
 function revalidateAccount() {

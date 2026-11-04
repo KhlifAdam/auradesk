@@ -29,6 +29,24 @@ export async function logAdminAction(
 	});
 }
 
+/** Records an admin's action on the platform itself (no account targeted). */
+export async function logPlatformAction(
+	actor: { id: string; name: string },
+	action: AdminAction,
+	targetName: string,
+	reason?: string | null,
+) {
+	await db.adminAuditLog.create({
+		data: {
+			actorId: actor.id,
+			actorName: actor.name,
+			action,
+			targetName,
+			reason: reason || null,
+		},
+	});
+}
+
 export const AUDIT_PAGE_SIZE = 30;
 
 /** The activity log, newest first; optionally about one account only. */

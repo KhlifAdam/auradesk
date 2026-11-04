@@ -1,0 +1,79 @@
+diff --git a/lib/Socket/messages-recv.js b/lib/Socket/messages-recv.js
+index f2003ac00ef223468c432a1bbe0a0eb02c1453b2..4225779c85d30fcb83a9f907cbed4a15d5839951 100644
+--- a/lib/Socket/messages-recv.js
++++ b/lib/Socket/messages-recv.js	
+@@ -359,7 +359,12 @@ export const makeMessagesRecvSocket = (config) => {
+         }
+     };
+     const sendMessageAck = async (node, errorCode) => {
+-        const stanza = buildAckStanza(node, errorCode, authState.creds.me.id);
++        // AuraDesk patch (upstream PR #2765): notifications arrive before pairing
++        // (e.g. companion_reg_refresh) and must be acked; only messages need `me`.
++        if (node.tag === 'message' && !authState.creds.me) {
++            throw new Error('cannot ack a message before pairing');
++        }
++        const stanza = buildAckStanza(node, errorCode, authState.creds.me?.id);
+         logger.debug({ recv: { tag: node.tag, attrs: node.attrs }, sent: stanza.attrs }, 'sent ack');
+         await sendNode(stanza);
+     };
+diff --git a/lib/Socket/socket.js b/lib/Socket/socket.js
+index ae34a8f315a0b9fd101472cc69e59624c6c63861..fbab1270052aeedd8a7dfbf2190b73cdadf29cff 100644
+--- a/lib/Socket/socket.js
++++ b/lib/Socket/socket.js	
+@@ -273,6 +273,9 @@ export const makeSocket = (config) => {
+     let epoch = 1;
+     let keepAliveReq;
+     let qrTimer;
++    // AuraDesk patch (upstream PR #2765): see the pair-device handler.
++    let currentPairingRef;
++    let refreshPairingQR = () => { };
+     let closed = false;
+     const socketEndHandlers = [];
+     /** log & process any unexpected errors */
+@@ -705,8 +708,18 @@ export const makeSocket = (config) => {
+         const refNodes = getBinaryNodeChildren(pairDeviceNode, 'ref');
+         const noiseKeyB64 = Buffer.from(creds.noiseKey.public).toString('base64');
+         const identityKeyB64 = Buffer.from(creds.signedIdentityKey.public).toString('base64');
+-        const advB64 = creds.advSecretKey;
+         let qrMs = qrTimeout || 60000; // time to let a QR live
++        // AuraDesk patch (upstream PR #2765): the adv secret is read at render
++        // time, so a companion_reg_refresh can re-render the ref on screen.
++        const renderQR = (ref) => {
++            const qr = buildPairingQRData(ref, noiseKeyB64, identityKeyB64, creds.advSecretKey, browser);
++            ev.emit('connection.update', { qr });
++        };
++        refreshPairingQR = () => {
++            if (ws.isOpen && currentPairingRef) {
++                renderQR(currentPairingRef);
++            }
++        };
+         const genPairQR = () => {
+             if (!ws.isOpen) {
+                 return;
+@@ -717,13 +730,24 @@ export const makeSocket = (config) => {
+                 return;
+             }
+             const ref = refNode.content.toString('utf-8');
+-            const qr = buildPairingQRData(ref, noiseKeyB64, identityKeyB64, advB64, browser);
+-            ev.emit('connection.update', { qr });
++            currentPairingRef = ref;
++            renderQR(ref);
+             qrTimer = setTimeout(genPairQR, qrMs);
+             qrMs = qrTimeout || 20000; // shorter subsequent qrs
+         };
+         genPairQR();
+     });
++    // AuraDesk patch (upstream PR #2765): WhatsApp retires the adv secret after a
++    // scan; a QR built on the old one never pairs. Rotate it and re-render.
++    ws.on('CB:notification,type:companion_reg_refresh', () => {
++        if (creds.me) {
++            return;
++        }
++        creds.advSecretKey = randomBytes(32).toString('base64');
++        ev.emit('creds.update', { advSecretKey: creds.advSecretKey });
++        logger.info('companion_reg_refresh: rotated adv secret, re-rendering QR');
++        refreshPairingQR();
++    });
+     // device paired for the first time
+     // if device pairs successfully, the server asks to restart the connection
+     ws.on('CB:iq,,pair-success', async (stanza) => {

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Runs on the VPS, started by the deploy workflow from the deploy directory.
-# Expects IMAGE_TAG and GHCR_USER, plus .env.new and .ghcr-token uploaded beside it.
+# Expects IMAGE_TAG, WA_GATEWAY_TAG and GHCR_USER, plus .env.new and .ghcr-token uploaded beside it.
 set -euo pipefail
 cd "$(dirname "$0")"
-: "${IMAGE_TAG:?}" "${GHCR_USER:?}"
+: "${IMAGE_TAG:?}" "${WA_GATEWAY_TAG:?}" "${GHCR_USER:?}"
 
 compose() { docker compose -f docker-compose.prod.yml "$@"; }
 
@@ -18,9 +18,10 @@ if [ -f .env ] && compose ps --status running --services | grep -qx db; then
   find backups -name 'pre-deploy-*.sql.gz' -mtime +7 -delete
 fi
 
-# The tag lives in .env so a manual `docker compose` run later targets the same version.
+# The tags live in .env so a manual `docker compose` run later targets the same version.
 mv .env.new .env
 echo "IMAGE_TAG=$IMAGE_TAG" >> .env
+echo "WA_GATEWAY_TAG=$WA_GATEWAY_TAG" >> .env
 
 compose pull
 if ! compose up -d --remove-orphans; then

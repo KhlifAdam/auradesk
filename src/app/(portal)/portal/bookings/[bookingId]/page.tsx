@@ -1,4 +1,10 @@
-import { ArrowLeft, ArrowUpRight, MessageSquare } from "lucide-react";
+import {
+	ArrowDown,
+	ArrowLeft,
+	ArrowUpRight,
+	BellRing,
+	MessageSquare,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -69,6 +75,20 @@ export default async function PortalBookingPage({
 					</Link>
 				</Button>
 			</div>
+			{booking.editable && !incomplete && (
+				<div className="flex max-w-4xl flex-wrap items-center justify-between gap-3 rounded-xl border-2 border-primary/50 bg-primary/10 px-4 py-3">
+					<p className="flex items-center gap-2 text-sm font-semibold">
+						<BellRing className="h-4 w-4 shrink-0 text-primary" />
+						{t("answer.waiting")}
+					</p>
+					<Button asChild size="sm" className="h-9 gap-1.5 px-4 text-sm">
+						<a href="#answer">
+							{t("answer.review")}
+							<ArrowDown className="h-3.5 w-3.5" />
+						</a>
+					</Button>
+				</div>
+			)}
 			{booking.status === "DECLINED" && booking.statusReason && (
 				<p className="max-w-3xl rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm">
 					<span className="font-medium">{t("reason")}</span>{" "}

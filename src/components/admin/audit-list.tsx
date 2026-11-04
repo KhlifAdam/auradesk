@@ -2,9 +2,14 @@ import {
 	Ban,
 	Banknote,
 	History,
+	QrCode,
 	RotateCcw,
 	ShieldMinus,
 	ShieldPlus,
+	Trash2,
+	Unlink,
+	UserCog,
+	UserPen,
 } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -18,6 +23,11 @@ const ICONS = {
 	GRANT_ADMIN: ShieldPlus,
 	REVOKE_ADMIN: ShieldMinus,
 	PAYMENT_RECORDED: Banknote,
+	WHATSAPP_LINK_REQUESTED: QrCode,
+	WHATSAPP_UNLINKED: Unlink,
+	ROLE_CHANGED: UserCog,
+	ACCOUNT_UPDATED: UserPen,
+	ACCOUNT_DELETED: Trash2,
 } as const;
 
 type AuditPage = Awaited<ReturnType<typeof listAdminActions>>;
@@ -49,7 +59,7 @@ export async function AuditList({ log }: { log: AuditPage }) {
 						<li key={entry.id} className="flex items-start gap-3 px-3 py-2.5">
 							<Icon
 								className={
-									entry.action === "BAN"
+									entry.action === "BAN" || entry.action === "ACCOUNT_DELETED"
 										? "mt-0.5 h-4 w-4 shrink-0 text-destructive"
 										: "mt-0.5 h-4 w-4 shrink-0 text-primary"
 								}

@@ -13,10 +13,12 @@ const parseEmail = (raw: string) =>
 export function EmailContact({
 	email,
 	verified,
+	hasPassword,
 }: {
 	/** Null for a phone-only account. */
 	email: string | null;
 	verified: boolean;
+	hasPassword: boolean;
 }) {
 	const t = useTranslations("Portal.account");
 
@@ -28,6 +30,7 @@ export function EmailContact({
 			parse={parseEmail}
 			invalidKey="invalidEmail"
 			inputType="email"
+			identity={{ hasPassword }}
 			placeholder="client@example.com"
 			request={(newEmail) =>
 				authClient.emailOtp.requestEmailChange({ newEmail })

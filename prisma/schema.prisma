@@ -30,6 +30,9 @@ model User {
   banned     Boolean?  @default(false)
   banReason  String?   @map("ban_reason")
   banExpires DateTime? @map("ban_expires")
+  /// Set when an admin deletes the account: it's anonymised and can't sign in,
+  /// but what others share with it (projects, invoices, messages) is kept.
+  deletedAt  DateTime? @map("deleted_at")
 
   studio           Studio?
   /// The photographer's AuraDesk plan (free month, then paid).
@@ -1230,8 +1233,43 @@ enum AdminAction {
   GRANT_ADMIN
   REVOKE_ADMIN
   PAYMENT_RECORDED
+  WHATSAPP_LINK_REQUESTED
+  WHATSAPP_UNLINKED
+  ROLE_CHANGED
+  ACCOUNT_UPDATED
+  ACCOUNT_DELETED
 
   @@map("admin_action")
+}
+
+// ─── WhatsApp sender ─────────────────────────────────────────────────────────
+// Codes and notices go out from a WhatsApp number the admin links with a QR
+// code. The link lives in the separate `wa-gateway` service, which reports
+// every change here so the admin area can warn about it.
+
+enum WhatsappStatus {
+  CONNECTED
+  /// Linked, but unreachable for a while (network, gateway stopped).
+  DOWN
+  /// No linked device: the admin must scan a new QR code.
+  LOGGED_OUT
+
+  @@map("whatsapp_status")
+}
+
+/// Single row (id "main"): the last status the gateway reported.
+model WhatsappConnection {
+  id          String         @id @default("main")
+  status      WhatsappStatus
+  /// The linked number in E.164, once known.
+  phoneNumber String?        @map("phone_number")
+  /// Why the link last dropped, as the gateway saw it.
+  reason      String?
+  changedAt   DateTime       @default(now()) @map("changed_at")
+  /// When the admins were emailed about the current outage; cleared on reconnect.
+  alertedAt   DateTime?      @map("alerted_at")
+
+  @@map("whatsapp_connections")
 }
 
 // ─── AuraDesk billing ─────────────────────────────────────────────────────────

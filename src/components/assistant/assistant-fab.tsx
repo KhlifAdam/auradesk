@@ -25,7 +25,7 @@ export function AssistantFab() {
 					animate={{ opacity: 1, scale: 1, y: 0 }}
 					exit={{ opacity: 0, scale: 0.8 }}
 					transition={{ type: "spring", stiffness: 260, damping: 18 }}
-					className="fixed right-8 bottom-7 z-40 print:hidden"
+					className="fixed right-4 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-40 lg:right-8 lg:bottom-7 print:hidden"
 				>
 					<motion.button
 						type="button"
@@ -35,13 +35,13 @@ export function AssistantFab() {
 						{...float}
 						whileHover={{ scale: 1.08 }}
 						whileTap={{ scale: 0.95 }}
-						className="assistant-launcher group relative flex h-12 cursor-pointer items-center gap-2 rounded-full pr-5 pl-4 text-sm font-semibold text-primary-foreground"
+						className="assistant-launcher group relative flex h-12 cursor-pointer items-center gap-2 rounded-full px-3.5 text-sm font-semibold text-primary-foreground sm:pr-5 sm:pl-4"
 					>
 						<LauncherEffects still={still} />
 						<LauncherIcon still={still}>
 							<Sparkles className="h-5 w-5" />
 						</LauncherIcon>
-						<span className="relative">{t("fabLabel")}</span>
+						<span className="relative hidden sm:inline">{t("fabLabel")}</span>
 					</motion.button>
 				</motion.div>
 			)}

@@ -1,8 +1,9 @@
 import { ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { WhatsappBanner } from "@/components/admin/whatsapp/whatsapp-banner";
 import { SpaceHeader } from "@/components/shared/space-header";
 import { ADMIN_PATHS } from "@/lib/auth/admin-paths";
 import { requireAdmin } from "@/lib/auth/require-admin";
@@ -36,6 +37,9 @@ export default async function AdminLayout({
 				isPhotographer={false}
 				loginPath={ADMIN_PATHS.login}
 			/>
+			<Suspense>
+				<WhatsappBanner />
+			</Suspense>
 			<main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-6 md:px-6">
 				<AdminNav />
 				{children}

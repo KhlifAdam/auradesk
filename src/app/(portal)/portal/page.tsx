@@ -1,6 +1,7 @@
-import { FolderOpen } from "lucide-react";
+import { FolderOpen, Link2 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
+import { type CSSProperties, Suspense } from "react";
+import { LinkCard } from "@/components/account/link-card";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { BookingRequests } from "@/components/portal/bookings/booking-requests";
@@ -12,6 +13,7 @@ import { PortalProjectCard } from "@/components/portal/portal-project-card";
 import { PortalProjectsSkeleton } from "@/components/portal/portal-skeletons";
 import { StudioHeading } from "@/components/portal/studio-heading";
 import { requireClient } from "@/lib/auth/require-client";
+import { isPhoneEmail } from "@/lib/phone";
 import {
 	getPortalHome,
 	listClientStudios,
@@ -32,22 +34,47 @@ export default async function PortalPage({ searchParams }: PortalPageProps) {
 
 	return (
 		<>
-			<div className="flex flex-wrap items-end justify-between gap-3">
-				<div className="flex flex-col gap-1">
-					<h1 className="font-display text-2xl font-bold tracking-tight">
-						{t("greeting", { name: session.user.name.split(" ")[0] })}
+			<div className="space-rise flex flex-wrap items-end justify-between gap-4">
+				<div className="flex flex-col gap-1.5">
+					<h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
+						{t.rich("greeting", {
+							name: session.user.name.split(" ")[0],
+							accent: (chunks) => (
+								<span className="bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
+									{chunks}
+								</span>
+							),
+						})}
 					</h1>
-					<p className="text-sm text-muted-foreground">{t("description")}</p>
+					<p className="text-sm text-muted-foreground md:text-base">
+						{t("description")}
+					</p>
 				</div>
 				{studios.length > 0 && <NewRequestDialog studios={studios} />}
 			</div>
-			<Suspense
-				fallback={<div className="h-36 animate-pulse rounded-xl bg-muted" />}
+			<div
+				className="space-rise"
+				style={{ "--reveal-delay": "90ms" } as CSSProperties}
 			>
-				<Home />
-			</Suspense>
+				<Suspense
+					fallback={
+						<div className="h-36 animate-pulse rounded-2xl bg-muted/60" />
+					}
+				>
+					<Home />
+				</Suspense>
+			</div>
 			{session.user.phoneNumber &&
 				session.user.name === session.user.phoneNumber && <NameCard />}
+			{/* Signed in by phone: their projects may sit on an email account. */}
+			{isPhoneEmail(session.user.email) && (
+				<LinkCard
+					href="/portal/account#link-account"
+					icon={Link2}
+					title={t("linkPrompt.title")}
+					description={t("linkPrompt.description")}
+				/>
+			)}
 			<Suspense>
 				<BookingRequests />
 			</Suspense>
@@ -88,8 +115,12 @@ async function ProjectGroups({ page }: { page: number }) {
 
 	return (
 		<div className="flex flex-col gap-8">
-			{groupByStudio(projects.items).map((group) => (
-				<section key={group[0].id} className="flex flex-col gap-3">
+			{groupByStudio(projects.items).map((group, index) => (
+				<section
+					key={group[0].id}
+					className="space-rise flex flex-col gap-3"
+					style={{ "--reveal-delay": `${180 + index * 90}ms` } as CSSProperties}
+				>
 					<StudioHeading
 						studio={group[0].studio}
 						fallbackName={group[0].photographerName}

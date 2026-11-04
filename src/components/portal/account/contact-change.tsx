@@ -19,6 +19,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { IdentityGate } from "./identity-check";
 
 type AuthResult = { error: { code?: string } | null };
 
@@ -37,6 +38,14 @@ interface ContactChangeProps {
 	request: (value: string) => Promise<AuthResult>;
 	/** Checks the code and attaches the contact to the account. */
 	confirm: (value: string, code: string) => Promise<AuthResult>;
+	/** Replaces the current contact line under the title. */
+	summary?: ReactNode;
+	/** Ask who is changing it (see `IdentityGate`) before the new contact. */
+	identity?: { hasPassword: boolean };
+	/** Replaces "Add" / "Change" on the button. */
+	actionLabel?: string;
+	/** Replaces "Saved" once the code is confirmed. */
+	successMessage?: string;
 	children?: ReactNode;
 }
 
@@ -54,6 +63,10 @@ export function ContactChange({
 	placeholder,
 	request,
 	confirm,
+	summary,
+	identity,
+	actionLabel,
+	successMessage,
 	children,
 }: ContactChangeProps) {
 	const t = useTranslations("Portal.account");
@@ -62,6 +75,7 @@ export function ContactChange({
 	const [editing, setEditing] = useState(false);
 	// What the code was sent to; null while still asking for the contact.
 	const [pending, setPending] = useState<string | null>(null);
+	const [identified, setIdentified] = useState(!identity);
 
 	const valueSchema = useMemo(
 		() =>
@@ -85,6 +99,7 @@ export function ContactChange({
 	function close() {
 		setEditing(false);
 		setPending(null);
+		setIdentified(!identity);
 		valueForm.reset();
 		codeForm.reset();
 	}
@@ -102,7 +117,7 @@ export function ContactChange({
 		if (!pending) return;
 		const { error } = await confirm(pending, code);
 		if (error) return void toast.error(authError.message(error));
-		toast.success(t("saved"));
+		toast.success(successMessage ?? t("saved"));
 		close();
 		router.refresh();
 	}
@@ -112,17 +127,19 @@ export function ContactChange({
 			<div className="flex flex-wrap items-center justify-between gap-2">
 				<div className="min-w-0">
 					<h2 className="text-xs font-medium text-muted-foreground">{title}</h2>
-					<p className="flex items-center gap-2 text-sm font-medium">
-						{current ?? (
-							<span className="text-muted-foreground">{t("none")}</span>
-						)}
-						{current && verified && (
-							<BadgeCheck
-								className="h-4 w-4 text-success"
-								aria-label={t("verified")}
-							/>
-						)}
-					</p>
+					{summary ?? (
+						<p className="flex items-center gap-2 text-sm font-medium">
+							{current ?? (
+								<span className="text-muted-foreground">{t("none")}</span>
+							)}
+							{current && verified && (
+								<BadgeCheck
+									className="h-4 w-4 text-success"
+									aria-label={t("verified")}
+								/>
+							)}
+						</p>
+					)}
 				</div>
 				{!editing && (
 					<Button
@@ -131,18 +148,29 @@ export function ContactChange({
 						className="h-8 text-xs"
 						onClick={() => setEditing(true)}
 					>
-						{current ? t("change") : t("add")}
+						{actionLabel ?? (current ? t("change") : t("add"))}
 					</Button>
 				)}
 			</div>
 			{children}
+			{editing && identity && !identified && (
+				<IdentityGate
+					hasPassword={identity.hasPassword}
+					onVerified={() => setIdentified(true)}
+					onCancel={close}
+				/>
+			)}
 			{editing &&
+				identified &&
 				(pending ? (
 					<Form {...codeForm}>
 						<form
 							onSubmit={codeForm.handleSubmit(onConfirm)}
 							className="flex flex-wrap items-start gap-2"
 						>
+							<p className="w-full text-xs text-muted-foreground">
+								{t("codeSentTo", { to: pending })}
+							</p>
 							<FormField
 								control={codeForm.control}
 								name="code"
@@ -154,8 +182,8 @@ export function ContactChange({
 												autoComplete="one-time-code"
 												autoFocus
 												maxLength={6}
-												placeholder={t("codePlaceholder", { to: pending })}
-												aria-label={t("codePlaceholder", { to: pending })}
+												placeholder={t("codePlaceholder")}
+												aria-label={t("codePlaceholder")}
 												className="h-8 w-56 text-sm tracking-widest"
 												{...field}
 												onChange={(event) =>

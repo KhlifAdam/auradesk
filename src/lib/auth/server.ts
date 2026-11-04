@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin, emailOTP, phoneNumber } from "better-auth/plugins";
 import { LOCALE_COOKIE } from "@/i18n/config";
 import { clientIntentHooks } from "@/lib/auth/client-intent-hooks";
+import { emailChangeHooks } from "@/lib/auth/email-change-guard";
 import { ROLES } from "@/lib/auth/roles";
 import { socialProvidersConfig } from "@/lib/auth/social-providers";
 import { db } from "@/lib/db";
@@ -44,6 +45,7 @@ export const auth = betterAuth({
 		provider: "postgresql",
 	}),
 	databaseHooks: clientIntentHooks,
+	hooks: emailChangeHooks,
 	user: {
 		additionalFields: {
 			locale: { type: "string", required: false, input: false },

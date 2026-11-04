@@ -12,3 +12,9 @@ export const avatarUploadSchema = z.object({
 export const avatarKeySchema = z.object({ key: z.string().min(1).max(200) });
 
 export const sessionIdSchema = idSchema;
+
+/** Proof of identity before the email changes: password (if any) and code. */
+export const identityConfirmSchema = z.object({
+	password: z.string().max(200).optional(),
+	code: z.string().regex(/^\d{6}$/, "otpLength"),
+});

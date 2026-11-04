@@ -11,12 +11,14 @@ import {
 import { AccountNameForm } from "@/components/portal/account/account-name-form";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { realEmail } from "@/lib/phone";
+import { userHasPassword } from "@/services/account/queries";
 
 /** The photographer as a person: photo, name, and how to reach them. */
 export default async function ProfilePage() {
 	const t = await getTranslations("Account");
 	const { session } = await requirePhotographer();
 	const { user } = session;
+	const hasPassword = await userHasPassword(user.id);
 
 	return (
 		<PageShell>
@@ -30,6 +32,7 @@ export default async function ProfilePage() {
 				<EmailContact
 					email={realEmail(user.email)}
 					verified={user.emailVerified}
+					hasPassword={hasPassword}
 				/>
 				<PhoneContact
 					phone={user.phoneNumber ?? null}

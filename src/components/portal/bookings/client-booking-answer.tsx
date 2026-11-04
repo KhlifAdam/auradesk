@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2 } from "lucide-react";
+import { CircleCheckBig, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
@@ -38,24 +38,28 @@ export function ClientBookingAnswer({
 		});
 
 	return (
-		<div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-			<div>
-				<h2 className="text-sm font-semibold">{t("title")}</h2>
-				<p className="text-xs text-muted-foreground">
+		<section
+			id="answer"
+			className="flex scroll-mt-24 flex-col gap-4 rounded-xl border-2 border-primary/50 bg-primary/5 p-5 shadow-sm"
+		>
+			<div className="flex flex-col gap-1">
+				<h2 className="font-display text-lg font-bold tracking-tight">
+					{t("title")}
+				</h2>
+				<p className="text-sm text-muted-foreground">
 					{incomplete ? t("incomplete") : t("hint")}
 				</p>
 			</div>
-			<div className="flex flex-wrap items-center gap-2">
+			<div className="flex flex-wrap items-center gap-3">
 				<Button
-					size="sm"
-					className="h-8 gap-1.5 text-xs"
+					className="h-11 gap-2 px-6 text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg"
 					disabled={isPending || incomplete}
 					onClick={() => answer(true)}
 				>
 					{isPending ? (
-						<Loader2 className="h-3.5 w-3.5 animate-spin" />
+						<Loader2 className="h-4 w-4 animate-spin" />
 					) : (
-						<Check className="h-3.5 w-3.5" />
+						<CircleCheckBig className="h-4 w-4" />
 					)}
 					{t("accept")}
 				</Button>
@@ -69,6 +73,6 @@ export function ClientBookingAnswer({
 					onConfirm={() => answer(false)}
 				/>
 			</div>
-		</div>
+		</section>
 	);
 }

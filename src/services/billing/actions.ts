@@ -40,9 +40,10 @@ export async function recordPayment(input: unknown): Promise<ActionResult> {
 	const { userId } = parsed.data;
 	const user = await db.user.findUnique({
 		where: { id: userId },
-		select: { role: true },
+		select: { role: true, deletedAt: true },
 	});
 	if (!user) return fail("notFound");
+	if (user.deletedAt) return fail("accountDeleted");
 	if (user.role !== ROLES.photographer) return fail("invalidInput");
 
 	const current = await getSubscription(userId);

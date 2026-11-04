@@ -12,6 +12,10 @@ const coreSchema = z.object({
 	ADMIN_EMAIL: z.email().optional(),
 	/** Bearer token the scheduler sends to /api/cron/*; unset disables them. */
 	CRON_SECRET: z.string().min(16).optional(),
+	/** The private WhatsApp gateway (wa-gateway/); used when SMS_PROVIDER=whatsapp. */
+	WA_GATEWAY_URL: z.url().optional(),
+	/** Shared with the gateway, both ways: its API and its status webhook. */
+	WA_GATEWAY_SECRET: z.string().min(32).optional(),
 });
 
 const r2CredentialsSchema = z.object({

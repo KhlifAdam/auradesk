@@ -399,3 +399,202 @@
 		transparent
 	);
 }
+
+/* ─── Two spaces, two colours ────────────────────────────────────────────────
+   Studios keep the gold of the brand; the client space turns teal (the same
+   teal the hub uses for clients). A page opts in with data-space="client";
+   it is read on <body> through :has() so menus and dialogs, which Radix
+   renders into <body>, follow the space as well. --space-alt is the second
+   hue of the animated backdrop. */
+:root {
+	--space-alt: oklch(0.72 0.16 52);
+}
+
+body:has([data-space="client"]) {
+	--primary: oklch(0.6 0.115 186);
+	--primary-foreground: oklch(0.99 0.01 186);
+	--ring: oklch(0.64 0.11 186);
+	--accent: oklch(0.94 0.035 186);
+	--accent-foreground: oklch(0.25 0.04 186);
+	--glow: oklch(0.7 0.13 186);
+	--soft: oklch(0.96 0.025 186);
+	--space-alt: oklch(0.66 0.15 255);
+}
+
+.dark body:has([data-space="client"]) {
+	--primary: oklch(0.74 0.125 178);
+	--primary-foreground: oklch(0.16 0.03 190);
+	--ring: oklch(0.7 0.11 180);
+	--accent: oklch(0.28 0.04 190);
+	--accent-foreground: oklch(0.96 0.02 186);
+	--glow: oklch(0.74 0.13 180);
+	--soft: oklch(0.2 0.03 188);
+	--space-alt: oklch(0.62 0.17 262);
+}
+
+/* ─── Animated backdrop of the two spaces ────────────────────────────────────
+   Soft light blobs drifting slowly, a faint grid, a sheen sweeping across and
+   a few bokeh lights rising like out-of-focus lamps. Colours come from the
+   space's tokens, so each space gets its own atmosphere. Transform and
+   opacity only; everything stops under reduced motion. */
+.space-blob {
+	position: absolute;
+	border-radius: 9999px;
+	filter: blur(70px);
+	will-change: transform;
+	width: clamp(20rem, 62vw, 48rem);
+	aspect-ratio: 1;
+}
+
+.space-blob-a {
+	top: -14%;
+	left: -12%;
+	background: color-mix(in oklab, var(--glow) 36%, transparent);
+	animation: space-drift-a 26s ease-in-out infinite alternate;
+}
+
+.space-blob-b {
+	top: 22%;
+	right: -16%;
+	background: color-mix(in oklab, var(--space-alt) 28%, transparent);
+	animation: space-drift-b 32s ease-in-out infinite alternate;
+}
+
+.space-blob-c {
+	bottom: -18%;
+	left: 18%;
+	background: color-mix(in oklab, var(--primary) 24%, transparent);
+	animation: space-drift-c 38s ease-in-out infinite alternate;
+}
+
+.dark .space-blob-a {
+	background: color-mix(in oklab, var(--glow) 24%, transparent);
+}
+.dark .space-blob-b {
+	background: color-mix(in oklab, var(--space-alt) 20%, transparent);
+}
+.dark .space-blob-c {
+	background: color-mix(in oklab, var(--primary) 16%, transparent);
+}
+
+.space-sheen {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		115deg,
+		transparent 35%,
+		color-mix(in oklab, var(--glow) 9%, transparent) 50%,
+		transparent 65%
+	);
+	background-size: 220% 100%;
+	animation: space-sheen 16s ease-in-out infinite;
+}
+
+.space-bokeh {
+	position: absolute;
+	bottom: -8%;
+	left: var(--x);
+	width: var(--size);
+	height: var(--size);
+	border-radius: 9999px;
+	background: radial-gradient(
+		circle,
+		color-mix(in oklab, var(--glow) 55%, transparent),
+		transparent 70%
+	);
+	opacity: 0;
+	animation: space-bokeh var(--dur) ease-in-out var(--delay) infinite;
+}
+
+@keyframes space-drift-a {
+	from {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+	to {
+		transform: translate3d(14%, 18%, 0) scale(1.18);
+	}
+}
+@keyframes space-drift-b {
+	from {
+		transform: translate3d(0, 0, 0) scale(1.1);
+	}
+	to {
+		transform: translate3d(-18%, 12%, 0) scale(0.9);
+	}
+}
+@keyframes space-drift-c {
+	from {
+		transform: translate3d(0, 0, 0) scale(0.95);
+	}
+	to {
+		transform: translate3d(22%, -16%, 0) scale(1.15);
+	}
+}
+@keyframes space-sheen {
+	0%,
+	100% {
+		background-position: 120% 0;
+	}
+	50% {
+		background-position: -20% 0;
+	}
+}
+@keyframes space-bokeh {
+	0% {
+		opacity: 0;
+		transform: translate3d(0, 0, 0) scale(0.6);
+	}
+	20% {
+		opacity: 0.7;
+	}
+	100% {
+		opacity: 0;
+		transform: translate3d(var(--drift), -75vh, 0) scale(1.4);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.space-blob,
+	.space-sheen,
+	.space-bokeh {
+		animation: none;
+	}
+	.space-bokeh {
+		display: none;
+	}
+}
+
+/* Entrance of a block: rises and fades in. Delay it with --reveal-delay. */
+@keyframes space-rise {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 14px, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+@utility space-rise {
+	animation: space-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+	animation-delay: var(--reveal-delay, 0ms);
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+/* Page change: a plain fade. No transform, so fixed bars inside the page keep working. */
+@keyframes space-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+@utility space-fade {
+	animation: space-fade 0.35s ease-out both;
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
