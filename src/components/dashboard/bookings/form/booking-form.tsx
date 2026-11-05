@@ -9,7 +9,10 @@ import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createBooking, updateBooking } from "@/services/bookings/actions";
 import { canSaveBooking } from "@/services/bookings/completeness";
-import { type BookingValues, bookingSchema } from "@/services/bookings/schemas";
+import {
+	type BookingValues,
+	bookingFormSchema,
+} from "@/services/bookings/schemas";
 import { BookingClientSection } from "./booking-client-section";
 import { BookingFormAside } from "./booking-form-aside";
 import { BookingNeedSection } from "./booking-need-section";
@@ -26,7 +29,9 @@ export function BookingForm({ initial, bookingId }: BookingFormProps) {
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
 	const form = useForm<BookingValues>({
-		resolver: zodResolver(bookingSchema),
+		resolver: zodResolver(
+			bookingFormSchema(bookingId ? initial.desiredDate : ""),
+		),
 		defaultValues: initial,
 	});
 	const cancelHref = bookingId

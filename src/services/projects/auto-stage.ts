@@ -111,7 +111,8 @@ export async function advanceShootDays(photographerId?: string) {
 			stage: { in: stagesBefore("SHOOTING") },
 			eventDate: { lte: new Date() },
 		},
-		data: { stage: "SHOOTING" },
+		// Lights the project up in the client's space (no message for this one).
+		data: { stage: "SHOOTING", clientChangedAt: new Date() },
 	});
 	return count;
 }

@@ -1,10 +1,17 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { OPEN_STATUSES } from "@/services/bookings/options";
+import {
+	clientUnseenBooking,
+	clientUnseenProject,
+} from "@/services/changes/unseen";
 import { countUnread } from "@/services/messages/queries";
 import { CLIENT_VIEWABLE_PROJECT } from "@/services/projects/visibility";
-import { type ClientIdentity, clientBookingWhere } from "./booking-queries";
+import {
+	bookingsToAnswerWhere,
+	type ClientIdentity,
+	clientBookingWhere,
+} from "./booking-queries";
 import { pendingFor, verifiedContact } from "./contacts";
 
 const LIST_LIMIT = 5;
@@ -20,15 +27,7 @@ const photographerSelect = {
 
 /** Requests the studio sent that the client still has to answer. */
 export function countBookingsToAnswer(user: ClientIdentity) {
-	return db.booking.count({
-		where: {
-			...clientBookingWhere(user),
-			sentToClientAt: { not: null },
-			status: { in: [...OPEN_STATUSES] },
-			clientAcceptedAt: null,
-			source: { not: "PORTAL" },
-		},
-	});
+	return db.booking.count({ where: bookingsToAnswerWhere(user) });
 }
 
 /** Project invitations waiting for the contacts this client has verified. */
@@ -36,6 +35,47 @@ export async function countProjectInvitations(user: ClientIdentity) {
 	const contact = verifiedContact(user);
 	if (!contact.email && !contact.phone) return 0;
 	return db.project.count({ where: pendingFor(contact) });
+}
+
+/** The client's projects that are new to them or changed since they opened them. */
+export function countNewProjects(user: ClientIdentity) {
+	return db.project.count({
+		where: { clientId: user.id, ...clientUnseenProject() },
+	});
+}
+
+/**
+ * What the client's nav badges show: each counts what is new to them or
+ * changed by the studio, and drops once they open it.
+ */
+export async function countPortalNav(user: ClientIdentity) {
+	const [newProjects, invitations, bookings, invoices, quotes] =
+		await Promise.all([
+			countNewProjects(user),
+			countProjectInvitations(user),
+			db.booking.count({
+				where: { AND: [clientBookingWhere(user), clientUnseenBooking()] },
+			}),
+			db.invoice.count({
+				where: {
+					clientId: user.id,
+					status: { in: ["SENT", "PAID"] },
+					clientSeenAt: null,
+				},
+			}),
+			db.quote.count({
+				where: {
+					clientId: user.id,
+					status: { not: "DRAFT" },
+					clientSeenAt: null,
+				},
+			}),
+		]);
+	return {
+		projects: newProjects + invitations,
+		bookings,
+		invoices: invoices + quotes,
+	};
 }
 
 /**

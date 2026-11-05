@@ -42,13 +42,11 @@ export function BookingNeedSection() {
 				<TextField<BookingValues>
 					name="desiredDate"
 					label={t("date")}
-					required
 					type="date"
 				/>
 				<TextField<BookingValues>
 					name="startTime"
 					label={t("startTime")}
-					required
 					type="time"
 				/>
 				<div className="flex flex-col gap-1.5">
@@ -65,7 +63,6 @@ export function BookingNeedSection() {
 			<TextField<BookingValues>
 				name="location"
 				label={t("location")}
-				required
 				description={t("locationHint")}
 			/>
 			<TextField<BookingValues>

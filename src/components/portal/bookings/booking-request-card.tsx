@@ -1,6 +1,7 @@
 import { CalendarDays, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { ChangePill, changeHighlight } from "@/components/shared/change-mark";
 import { cn } from "@/lib/utils";
 import type { PortalBookingSummary } from "@/services/portal/booking-queries";
 
@@ -9,6 +10,7 @@ export function requestState(booking: {
 	status: PortalBookingSummary["status"];
 	accepted: boolean;
 	requestedByClient: boolean;
+	proposedPrice: number | null;
 }) {
 	if (booking.status === "CONFIRMED")
 		return { key: "confirmed", tone: "text-success bg-success/10" } as const;
@@ -17,10 +19,13 @@ export function requestState(booking: {
 			key: "declined",
 			tone: "text-destructive bg-destructive/10",
 		} as const;
-	// Their own request, not yet answered by the studio.
+	// Accepted, or their own request the studio hasn't answered yet: once the
+	// studio proposes a price, it is the client's turn.
 	if (
 		booking.accepted ||
-		(booking.requestedByClient && booking.status === "NEW")
+		(booking.requestedByClient &&
+			booking.status === "NEW" &&
+			booking.proposedPrice === null)
 	)
 		return {
 			key: "waitingStudio",
@@ -41,11 +46,15 @@ export async function BookingRequestCard({
 	return (
 		<Link
 			href={`/portal/bookings/${booking.id}`}
-			className="group flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:border-primary/40"
+			className={cn(
+				"group flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-4 transition-all duration-300 hover:border-primary/40",
+				changeHighlight(booking.mark),
+			)}
 		>
 			<div className="min-w-0">
-				<p className="truncate font-medium group-hover:text-primary">
-					{booking.title}
+				<p className="flex items-center gap-2 font-medium group-hover:text-primary">
+					<span className="truncate">{booking.title}</span>
+					<ChangePill mark={booking.mark} />
 				</p>
 				<p className="flex items-center gap-2 text-xs text-muted-foreground">
 					<span className="truncate">{booking.studioName}</span>

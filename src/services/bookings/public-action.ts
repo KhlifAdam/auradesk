@@ -5,6 +5,7 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendBookingRequestEmail } from "@/lib/mail/send-client-notices";
+import { flagBookingForStudio } from "@/services/changes/flag";
 import { sharesProjectWith } from "@/services/clients/queries";
 import { emptyToNull } from "@/services/shared/schemas";
 import { publicRequestSchema } from "./schemas";
@@ -104,6 +105,7 @@ export async function submitBookingRequest(
 	}).catch((error) =>
 		console.error("Failed to send booking request email:", error),
 	);
+	await flagBookingForStudio(booking.id, { text: true });
 
 	revalidatePath("/dashboard", "layout");
 	return ok();

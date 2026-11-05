@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { toE164 } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { dayKeyIn, zonedToIso } from "@/services/calendar/dates";
-import { advanceProjectStage } from "@/services/projects/auto-stage";
+import { flagBookingForClient } from "@/services/changes/flag";
 import { inviteToProject } from "@/services/projects/invitations";
 import { bookingCompleteness } from "./completeness";
 import { notifyProjectCreated } from "./notify-project";
@@ -146,9 +146,8 @@ export async function confirmBooking(input: unknown): Promise<
 		});
 		return project.id;
 	});
+	// The project starts at Booking; preparation is the photographer's call.
 	if (!projectId) return fail("alreadyConfirmed");
-	// The booking is settled: the project starts at preparation.
-	await advanceProjectStage(projectId, "PREP");
 
 	// The project exists either way; a failed invite can be retried from it.
 	// Without an email or phone number there is no one to invite.
@@ -175,6 +174,8 @@ export async function confirmBooking(input: unknown): Promise<
 		);
 		invite = invited.ok && invited.data.sent ? "sent" : "failed";
 	}
+	// Lights the booking up in their space; the notices above told them.
+	await flagBookingForClient(id, {});
 
 	revalidatePath("/dashboard", "layout");
 	revalidatePath("/portal", "layout");

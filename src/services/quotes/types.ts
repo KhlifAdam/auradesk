@@ -1,3 +1,4 @@
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { InvoiceTotals } from "@/services/invoices/totals";
 import type {
 	InvoiceIssuer,
@@ -18,6 +19,8 @@ export interface QuoteSummary {
 	validUntil: string | null;
 	total: number;
 	invoiceId: string | null;
+	/** Portal only: not opened by the client yet. */
+	mark?: ChangeMark;
 }
 
 export interface QuoteDetail extends QuoteSummary {

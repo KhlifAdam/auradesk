@@ -194,7 +194,8 @@
 		"invitationNotFound": "Cette invitation n'est plus disponible.",
 		"unpaidProject": "Marquez le projet comme payé avant de le livrer.",
 		"bookingLocked": "Une réservation confirmée ne peut plus être modifiée.",
-		"bookingIncomplete": "Ajoutez la date, l'heure de début, le lieu, l'e-mail et le téléphone du client et le prix proposé avant de confirmer.",
+		"bookingIncomplete": "Ajoutez l'e-mail ou le téléphone du client, le prix proposé, la date, l'heure de début et le lieu avant de confirmer.",
+		"bookingNeedsContact": "Ajoutez le nom du client, un e-mail ou un téléphone, et le prix proposé.",
 		"alreadyConfirmed": "Cette réservation est déjà confirmée.",
 		"tooManyRequests": "Trop de demandes. Réessayez plus tard.",
 		"invalidContact": "Saisissez un e-mail ou un numéro de téléphone valide.",
@@ -260,6 +261,7 @@
 		"passwordsDontMatch": "Les mots de passe ne correspondent pas.",
 		"otpLength": "Saisissez le code à 6 chiffres.",
 		"invalidDate": "Saisissez une date valide.",
+		"dateTooEarly": "La date ne peut pas être antérieure de plus de 5 jours.",
 		"endBeforeStart": "La fin doit être après le début.",
 		"rangeTooLong": "Un événement peut durer au plus un an.",
 		"invalidTime": "Saisissez une heure valide.",
@@ -1417,7 +1419,27 @@
 		"backToSite": "Retour au site de {studio}",
 		"backHome": "Retour à l'accueil"
 	},
+	"Changes": {
+		"new": "Nouveau",
+		"updated": "Mis à jour"
+	},
 	"Mail": {
+		"changeForClient": {
+			"subject": "{who} a mis à jour « {item} »",
+			"preheader": "Ouvrez-le pour voir ce qui a changé",
+			"heading": "Du nouveau dans « {item} »",
+			"intro": "{who} a apporté des modifications à « {item} ». Ouvrez-le pour voir ce qui a changé.",
+			"cta": "Ouvrir",
+			"text": "{who} a mis à jour « {item} ». Ouvrez-le ici : {url}"
+		},
+		"changeForStudio": {
+			"subject": "{who} a mis à jour « {item} »",
+			"preheader": "Ouvrez-le pour voir ce qui a changé",
+			"heading": "Votre client a modifié « {item} »",
+			"intro": "{who} a apporté des modifications à « {item} ». Ouvrez-le pour voir ce qui a changé.",
+			"cta": "Ouvrir",
+			"text": "{who} a mis à jour « {item} ». Ouvrez-le ici : {url}"
+		},
 		"footer": {
 			"reason": "Vous recevez cet e-mail suite à une demande concernant votre compte AuraDesk.",
 			"rights": "Tous droits réservés."
@@ -1610,6 +1632,8 @@
 		}
 	},
 	"Sms": {
+		"changeForClient": "{who} a mis à jour « {item} » sur AuraDesk : {url}",
+		"changeForStudio": "{who} a mis à jour « {item} » sur AuraDesk : {url}",
 		"otp": "AuraDesk : votre code est {code}. Il expire dans {minutes} minutes. Ne le partagez pas.",
 		"projectInvitation": "{studio} vous invite au projet « {project} » sur AuraDesk. Connectez-vous avec ce numéro pour accepter : {url}",
 		"galleriesReady": "{studio} : vos photos de « {project} » sont prêtes pour la sélection : {url}",
@@ -1813,7 +1837,7 @@
 				"scope": "S’applique à tous vos projets",
 				"enabled": "Les projets avancent désormais tout seuls.",
 				"disabled": "Les projets n’avancent désormais que lorsque vous changez l’étape.",
-				"hint": "Avance tout seul : réservation confirmée → Préparation, jour du shooting → Shooting, fichiers envoyés → Import, épreuves partagées → Sélection, galerie organisée après la sélection → Organisation, sélection envoyée → Post-production, finales envoyées → Export, finales partagées → Validation. La livraison reste manuelle."
+				"hint": "Avance tout seul : jour du shooting → Shooting, fichiers envoyés → Import, épreuves partagées → Sélection, galerie organisée après la sélection → Organisation, sélection envoyée → Post-production, finales envoyées → Export, finales partagées → Validation. La livraison reste manuelle."
 			}
 		},
 		"invite": {
@@ -1980,8 +2004,8 @@
 			"backToBooking": "Retour à la réservation",
 			"cancel": "Annuler",
 			"createTitle": "Nouvelle réservation",
-			"asideHint": "Se met à jour pendant la saisie. Seuls les éléments obligatoires empêchent de confirmer.",
-			"blockedHint": "Ajoutez le nom du client et le prix proposé pour enregistrer. Le client pourra compléter le reste.",
+			"asideHint": "Se met à jour pendant la saisie. Les trois premiers sont nécessaires pour ajouter la réservation ; les autres, pour la confirmer.",
+			"blockedHint": "Ajoutez le nom du client, un e-mail ou un téléphone, et le prix proposé pour enregistrer. Le client pourra compléter le reste.",
 			"editTitle": "Modifier la réservation",
 			"description": "Enregistrez une nouvelle demande en quelques secondes. Ajoutez ce que vous savez déjà, le reste viendra au fil des échanges.",
 			"create": "Ajouter la réservation",
@@ -1994,6 +2018,7 @@
 				"linked": "Lié à un client existant",
 				"unlink": "Délier le client",
 				"newClientHint": "Nouveau client ? Saisissez ses coordonnées ci-dessous, ou choisissez-en un existant.",
+				"contactHint": "E-mail ou téléphone, au moins un. La demande y est envoyée pour que le client puisse créer son compte.",
 				"name": "Nom du client",
 				"email": "E-mail",
 				"phone": "Téléphone",
@@ -2066,7 +2091,7 @@
 			"reasonPlaceholder": "Raison (facultatif)",
 			"reopen": "Rouvrir",
 			"reopened": "Réservation rouverte.",
-			"confirmBlocked": "Ajoutez d'abord la date, l'heure de début, le lieu, l'e-mail et le téléphone du client et le prix proposé.",
+			"confirmBlocked": "Ajoutez d'abord l'e-mail ou le téléphone du client, le prix proposé, la date, l'heure de début et le lieu.",
 			"send": "Envoyer au client",
 			"sendAgain": "Renvoyer",
 			"sendNoContact": "Ajoutez d'abord l'e-mail ou le téléphone du client.",
@@ -2106,19 +2131,20 @@
 			"notes": "Notes internes",
 			"hours": "{count, plural, one {# heure} other {# heures}}",
 			"notSet": "Non renseigné",
-			"requiredToConfirm": "Obligatoire pour confirmer"
+			"toConfirm": "Nécessaire pour confirmer"
 		},
 		"checklist": {
 			"title": "Avant de pouvoir confirmer",
 			"ready": "Prête à être confirmée",
 			"complete": "Compléter la réservation",
 			"required": "Obligatoire",
+			"toConfirm": "À confirmer",
 			"recommended": "Conseillé",
 			"fields": {
+				"clientName": "Nom du client",
+				"clientContact": "E-mail ou téléphone du client",
 				"desiredDate": "Date",
 				"proposedPrice": "Prix proposé",
-				"clientPhone": "Téléphone du client",
-				"clientEmail": "E-mail du client",
 				"location": "Lieu",
 				"startTime": "Heure de début"
 			}
@@ -3282,6 +3308,8 @@
 			"sendCode": "Envoyer un code",
 			"codeSent": "Code envoyé.",
 			"codeSentTo": "Saisissez le code envoyé à {to}.",
+			"resend": "Renvoyer le code",
+			"resendIn": "Renvoyer dans {seconds} s",
 			"codePlaceholder": "Code à 6 chiffres",
 			"confirm": "Confirmer",
 			"cancel": "Annuler",
@@ -3325,11 +3353,10 @@
 				"desiredDate": "Date",
 				"proposedPrice": "Prix",
 				"location": "Lieu",
-				"clientPhone": "Votre téléphone",
 				"startTime": "Heure de début",
-				"studio": "Studio",
-				"you": "Vous"
+				"required": "Obligatoire"
 			},
+			"newBooking": "Nouvelle réservation",
 			"needsAnswer": "{count, plural, one {Une demande attend votre réponse} other {# demandes attendent votre réponse}}",
 			"review": "Consulter et répondre",
 			"others": "{count, plural, one {# autre demande} other {# autres demandes}}",
@@ -3363,7 +3390,7 @@
 			"answer": {
 				"title": "Votre réponse",
 				"hint": "Vérifiez la proposition ci-dessus, puis acceptez-la pour confirmer votre réservation, ou refusez la demande.",
-				"incomplete": "Il manque encore des informations. Une fois la date, l'heure, le lieu, le téléphone et le prix renseignés, vous pourrez accepter.",
+				"incomplete": "Il manque encore des informations. Une fois la date, l'heure, le lieu et le prix renseignés, vous pourrez accepter.",
 				"accept": "Accepter la proposition",
 				"accepted": "Vous avez accepté. Le studio est prévenu.",
 				"decline": "Refuser",
@@ -3409,9 +3436,16 @@
 			"description": "Dites au studio ce dont vous avez besoin. Il vous répondra avec une date et un prix.",
 			"studio": "Studio",
 			"service": "Type de prestation",
-			"date": "Date souhaitée (facultatif)",
-			"location": "Lieu (facultatif)",
+			"date": "Date souhaitée",
+			"media": "Média",
+			"startTime": "Heure de début",
+			"duration": "Durée en heures",
+			"location": "Lieu",
 			"locationHint": "Une adresse ou un lien Google Maps.",
+			"budget": "Votre budget (facultatif)",
+			"budgetHint": "En TND. Aide le studio à faire une offre adaptée.",
+			"advance": "Avance que vous pouvez verser (facultatif)",
+			"advanceHint": "En TND. Le studio la confirme avec le prix.",
 			"message": "Votre demande",
 			"messagePlaceholder": "Que souhaitez-vous obtenir ?",
 			"send": "Envoyer la demande",

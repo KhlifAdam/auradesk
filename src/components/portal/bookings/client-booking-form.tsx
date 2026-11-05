@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, CircleAlert, ExternalLink, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
@@ -21,9 +21,10 @@ import { updateBookingAsClient } from "@/services/bookings/client-actions";
 import { clientEditSchema } from "@/services/bookings/schemas";
 import type { PortalBookingDetail } from "@/services/portal/booking-queries";
 import { MEDIA_TYPES, serviceChoices } from "@/services/projects/options";
+import { keptOrUpcomingDate } from "@/services/shared/schemas";
 
-const formSchema = clientEditSchema.omit({ id: true });
-type FormValues = z.infer<typeof formSchema>;
+const baseFormSchema = clientEditSchema.omit({ id: true });
+type FormValues = z.infer<typeof baseFormSchema>;
 
 const isUrl = (value: string) => /^https?:\/\//i.test(value);
 
@@ -38,6 +39,12 @@ export function ClientBookingForm({
 	const tMedia = useTranslations("Projects.mediaTypes");
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
+	const storedDate = booking.desiredDate?.slice(0, 10) ?? "";
+	const formSchema = useMemo(
+		() =>
+			baseFormSchema.extend({ desiredDate: keptOrUpcomingDate(storedDate) }),
+		[storedDate],
+	);
 	const form = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -46,7 +53,7 @@ export function ClientBookingForm({
 			serviceType: booking.serviceType,
 			mediaType: booking.mediaType,
 			description: booking.description,
-			desiredDate: booking.desiredDate?.slice(0, 10) ?? "",
+			desiredDate: storedDate,
 			startTime: booking.startTime,
 			durationHours: booking.durationMinutes
 				? booking.durationMinutes / 60
@@ -116,7 +123,6 @@ export function ClientBookingForm({
 					<TextField<FormValues>
 						name="clientPhone"
 						label={t("phone")}
-						required
 						type="tel"
 						placeholder="+216 …"
 					/>

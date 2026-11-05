@@ -6,6 +6,7 @@ import { AssistantProvider } from "@/components/assistant/assistant-provider";
 import { ASSISTANT_OPEN_COOKIE } from "@/components/assistant/open-cookie";
 import { ExpiredGate } from "@/components/dashboard/billing/expired-gate";
 import { SubscriptionBanner } from "@/components/dashboard/billing/subscription-banner";
+import { StudioLiveRefresh } from "@/components/dashboard/live-counts";
 import { DashboardMobileNav } from "@/components/dashboard/mobile-nav/dashboard-mobile-nav";
 import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
@@ -41,6 +42,7 @@ export default async function DashboardLayout({
 			<div className="relative isolate flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
 				<SpaceBackdrop />
 				<TimeZoneSync serverTimeZone={timeZone} />
+				<StudioLiveRefresh />
 				<Sidebar
 					studioName={studio?.name ?? BRAND_NAME}
 					unreadMessages={unreadMessages}

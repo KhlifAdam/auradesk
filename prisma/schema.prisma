@@ -390,25 +390,32 @@ enum PaymentStatus {
 }
 
 model Project {
-  id             String             @id @default(cuid())
-  photographerId String             @map("photographer_id")
+  id              String             @id @default(cuid())
+  photographerId  String             @map("photographer_id")
   /// Set when the invited client accepts.
-  clientId       String?            @map("client_id")
+  clientId        String?            @map("client_id")
+  /// First time the client opened it; null while it is new to them (nav badge).
+  clientSeenAt    DateTime?          @map("client_seen_at")
+  /// Last change by the studio; unseen while later than `clientSeenAt`.
+  clientChangedAt DateTime?          @map("client_changed_at")
+  /// Last change by the client; unseen while later than `studioSeenAt`.
+  studioChangedAt DateTime?          @map("studio_changed_at")
+  studioSeenAt    DateTime?          @map("studio_seen_at")
   /// Lowercased address the invitation was sent to.
-  inviteEmail    String?            @map("invite_email")
+  inviteEmail     String?            @map("invite_email")
   /// E.164 number the invitation was texted to, for clients without an email.
-  invitePhone    String?            @map("invite_phone")
-  inviteStatus   InviteStatus?      @map("invite_status")
-  invitedAt      DateTime?          @map("invited_at")
-  title          String
-  description    String?
-  eventDate      DateTime?          @map("event_date")
-  location       String?
-  stage          ProjectStage       @default(BOOKING)
+  invitePhone     String?            @map("invite_phone")
+  inviteStatus    InviteStatus?      @map("invite_status")
+  invitedAt       DateTime?          @map("invited_at")
+  title           String
+  description     String?
+  eventDate       DateTime?          @map("event_date")
+  location        String?
+  stage           ProjectStage       @default(BOOKING)
   /// When the project reached DELIVERY (cleared if it moves back); feeds the statistics.
-  deliveredAt    DateTime?          @map("delivered_at")
-  serviceType    ProjectServiceType @default(OTHER) @map("service_type")
-  mediaType      ProjectMediaType   @default(PHOTO) @map("media_type")
+  deliveredAt     DateTime?          @map("delivered_at")
+  serviceType     ProjectServiceType @default(OTHER) @map("service_type")
+  mediaType       ProjectMediaType   @default(PHOTO) @map("media_type")
 
   // Client details kept on the project (the account has no phone number).
   clientPhone  String? @map("client_phone")
@@ -791,6 +798,13 @@ model Booking {
   sentToClientAt   DateTime?          @map("sent_to_client_at")
   /// The client accepted the proposal; the photographer confirms next.
   clientAcceptedAt DateTime?          @map("client_accepted_at")
+  /// First time the client opened it; null while it is new to them (nav badge).
+  clientSeenAt     DateTime?          @map("client_seen_at")
+  /// Last change by the studio; unseen while later than `clientSeenAt`.
+  clientChangedAt  DateTime?          @map("client_changed_at")
+  /// Last change by the client (or a new request); unseen while later than `studioSeenAt`.
+  studioChangedAt  DateTime?          @map("studio_changed_at")
+  studioSeenAt     DateTime?          @map("studio_seen_at")
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @updatedAt @map("updated_at")
 
@@ -898,6 +912,8 @@ model Invoice {
   discount       Decimal       @default(0) @db.Decimal(12, 3)
   notes          String?
   sentAt         DateTime?     @map("sent_at")
+  /// First time the client opened it; null while it is new to them (nav badge).
+  clientSeenAt   DateTime?     @map("client_seen_at")
   paidAt         DateTime?     @map("paid_at")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
@@ -957,6 +973,8 @@ model Quote {
   sentAt         DateTime?   @map("sent_at")
   /// When the client accepted or declined it.
   respondedAt    DateTime?   @map("responded_at")
+  /// First time the client opened it; null while it is new to them (nav badge).
+  clientSeenAt   DateTime?   @map("client_seen_at")
   /// Set once it has been turned into an invoice.
   invoiceId      String?     @unique @map("invoice_id")
   createdAt      DateTime    @default(now()) @map("created_at")

@@ -6,8 +6,11 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { toE164 } from "@/lib/phone";
+import { flagBookingForClient } from "@/services/changes/flag";
 import { sharesProjectWith } from "@/services/clients/queries";
-import { emptyToNull, idSchema } from "@/services/shared/schemas";
+import { CLIENT_SOURCES } from "@/services/portal/booking-queries";
+import { emptyToNull, idSchema, isTooEarly } from "@/services/shared/schemas";
+import { canSaveBooking } from "./completeness";
 import {
 	type BookingValues,
 	bookingSchema,
@@ -87,6 +90,7 @@ export async function createBooking(
 	const { photographerId } = await requirePhotographer();
 	const parsed = bookingSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
+	if (!canSaveBooking(parsed.data)) return fail("bookingNeedsContact");
 
 	const { clientId, ...values } = parsed.data;
 	const booking = await db.booking.create({
@@ -112,8 +116,16 @@ export async function updateBooking(input: unknown): Promise<ActionResult> {
 	const { photographerId } = await requirePhotographer();
 	const parsed = updateBookingSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
+	if (!canSaveBooking(parsed.data)) return fail("bookingNeedsContact");
 
 	const { id, clientId, ...values } = parsed.data;
+	const stored = await db.booking.findFirst({
+		where: { id, photographerId },
+		select: { desiredDate: true, status: true, source: true },
+	});
+	const storedDate = stored?.desiredDate?.toISOString().slice(0, 10) ?? "";
+	if (values.desiredDate !== storedDate && isTooEarly(values.desiredDate))
+		return fail("dateTooEarly");
 	const { count } = await db.booking.updateMany({
 		where: { id, photographerId, status: { not: "CONFIRMED" } },
 		data: {
@@ -126,10 +138,16 @@ export async function updateBooking(input: unknown): Promise<ActionResult> {
 			...(await toData(values)),
 			// New terms need a new answer from the client.
 			clientAcceptedAt: null,
+			// Answering a request the client sent moves it into discussion.
+			...(stored?.status === "NEW" &&
+				(CLIENT_SOURCES as readonly string[]).includes(stored.source) && {
+					status: "DISCUSSION" as const,
+				}),
 		},
 	});
 	if (count === 0) return fail(await whyNotEditable(photographerId, id));
 
+	await flagBookingForClient(id);
 	revalidateBookings();
 	return ok();
 }

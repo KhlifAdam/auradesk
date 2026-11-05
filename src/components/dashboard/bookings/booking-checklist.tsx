@@ -2,16 +2,11 @@ import { Circle, CircleAlert, CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
-import type { Completeness } from "@/services/bookings/completeness";
-
-const REQUIRED = [
-	"desiredDate",
-	"startTime",
-	"location",
-	"clientEmail",
-	"clientPhone",
-	"proposedPrice",
-] as const;
+import {
+	CONFIRM_FIELDS,
+	type Completeness,
+	SAVE_FIELDS,
+} from "@/services/bookings/completeness";
 
 interface BookingChecklistProps {
 	bookingId: string;
@@ -31,9 +26,7 @@ export async function BookingChecklist({
 		<section
 			className={cn(
 				"flex flex-col gap-2 rounded-xl border p-3",
-				ready
-					? "border-success/40 bg-success/5"
-					: "border-destructive/30 bg-destructive/5",
+				ready ? "border-success/40 bg-success/5" : "border-border bg-card",
 			)}
 		>
 			<div className="flex flex-wrap items-center justify-between gap-2">
@@ -48,14 +41,15 @@ export async function BookingChecklist({
 				</Link>
 			</div>
 			<ul className="grid gap-1.5 sm:grid-cols-2">
-				{REQUIRED.map((field) => {
+				{[...SAVE_FIELDS, ...CONFIRM_FIELDS].map((field) => {
 					const missing = completeness.required.includes(field);
+					const core = (SAVE_FIELDS as readonly string[]).includes(field);
 					return (
 						<Item
 							key={field}
 							label={t(`fields.${field}`)}
-							tag={t("required")}
-							state={missing ? "missing" : "done"}
+							tag={t(core ? "required" : "toConfirm")}
+							state={missing ? (core ? "missing" : "todo") : "done"}
 						/>
 					);
 				})}

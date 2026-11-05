@@ -1,3 +1,4 @@
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { MediaType, ServiceType } from "@/services/projects/options";
 import type { PageMeta } from "@/services/shared/pagination";
 import type { BookingSource, BookingStatus } from "./options";
@@ -13,6 +14,8 @@ export interface BookingSummary {
 	createdAt: string;
 	/** Something required to confirm is still missing. */
 	incomplete: boolean;
+	/** A new request or a change by the client the studio hasn't opened. */
+	mark: ChangeMark;
 }
 
 export interface BookingActivityItem {

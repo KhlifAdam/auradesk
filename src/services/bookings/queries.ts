@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { changeMark } from "@/services/changes/unseen";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import { bookingCompleteness } from "./completeness";
 import { OPEN_STATUSES } from "./options";
@@ -33,6 +34,7 @@ function toSummary(row: SummaryRow): BookingSummary {
 		proposedPrice: toNumber(row.proposedPrice),
 		createdAt: row.createdAt.toISOString(),
 		incomplete: bookingCompleteness(row).required.length > 0,
+		mark: changeMark(row.studioSeenAt, row.studioChangedAt, true),
 	};
 }
 

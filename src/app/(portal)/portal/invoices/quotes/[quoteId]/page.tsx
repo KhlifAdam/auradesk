@@ -6,6 +6,7 @@ import { PrintButton } from "@/components/invoices/print-button";
 import { QuoteDocument } from "@/components/invoices/quote-document";
 import { QuoteResponse } from "@/components/portal/quote-response";
 import { requireClient } from "@/lib/auth/require-client";
+import { markQuoteSeen } from "@/services/portal/seen";
 import { getClientQuote } from "@/services/quotes/queries";
 
 /** A quote the studio sent to the client, to accept or decline. */
@@ -19,6 +20,7 @@ export default async function PortalQuotePage({
 	const { clientId } = await requireClient();
 	const quote = await getClientQuote(clientId, quoteId);
 	if (!quote) notFound();
+	await markQuoteSeen(clientId, quote.id);
 
 	return (
 		<>

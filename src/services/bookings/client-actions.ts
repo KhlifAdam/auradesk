@@ -10,8 +10,9 @@ import {
 	sendBookingClientReplyEmail,
 } from "@/lib/mail/send-client-notices";
 import { toE164 } from "@/lib/phone";
+import { flagBookingForStudio } from "@/services/changes/flag";
 import { clientBookingWhere } from "@/services/portal/booking-queries";
-import { emptyToNull } from "@/services/shared/schemas";
+import { emptyToNull, isTooEarly } from "@/services/shared/schemas";
 import { bookingCompleteness } from "./completeness";
 import { isOpenStatus } from "./options";
 import { clientAnswerSchema, clientEditSchema } from "./schemas";
@@ -84,6 +85,9 @@ export async function updateBookingAsClient(
 	const found = await findOpenBooking(session.user, id);
 	if (!found.booking) return fail(found.error);
 	const { booking } = found;
+	const storedDate = booking.desiredDate?.toISOString().slice(0, 10) ?? "";
+	if (values.desiredDate !== storedDate && isTooEarly(values.desiredDate))
+		return fail("dateTooEarly");
 
 	const next = {
 		clientName: values.clientName,
@@ -156,6 +160,8 @@ export async function updateBookingAsClient(
 	]);
 
 	if (!recent) notifyPhotographer(booking, "updated");
+	// The email above is throttled; WhatsApp follows the "once until seen" rule.
+	await flagBookingForStudio(id, { text: true });
 	revalidate();
 	return ok();
 }
@@ -211,6 +217,7 @@ export async function answerBooking(input: unknown): Promise<ActionResult> {
 	}
 
 	notifyPhotographer(booking, accept ? "accepted" : "declined");
+	await flagBookingForStudio(id, { text: true });
 	revalidate();
 	return ok();
 }

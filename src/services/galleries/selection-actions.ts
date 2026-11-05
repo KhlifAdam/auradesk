@@ -5,6 +5,7 @@ import { requireClient } from "@/lib/auth/require-client";
 import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendSelectionSubmittedEmail } from "@/lib/mail/send-client-notices";
+import { flagProjectForStudio } from "@/services/changes/flag";
 import { advanceProjectStage } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
@@ -113,6 +114,7 @@ export async function submitSelection(input: unknown): Promise<ActionResult> {
 	);
 	// The client has chosen: editing can start.
 	await advanceProjectStage(project.id, "POST_PRODUCTION");
+	await flagProjectForStudio(project.id, { text: true });
 
 	revalidateClientWork();
 	return ok();

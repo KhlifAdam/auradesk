@@ -4,6 +4,7 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { toE164 } from "@/lib/phone";
+import { flagProjectForClient } from "@/services/changes/flag";
 import {
 	abortUploads,
 	deleteGalleryFiles,
@@ -90,6 +91,7 @@ export async function updateProject(input: unknown): Promise<ActionResult> {
 	});
 	if (count === 0) return fail("notFound");
 
+	await flagProjectForClient(id);
 	revalidateClientWork();
 	return ok();
 }
@@ -164,6 +166,7 @@ export async function updateProjectPayment(
 		},
 	});
 
+	await flagProjectForClient(id);
 	revalidateClientWork();
 	return ok();
 }

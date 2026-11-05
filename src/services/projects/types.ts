@@ -1,3 +1,4 @@
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { GallerySummary } from "@/services/galleries/types";
 import type { PageMeta } from "@/services/shared/pagination";
 import type {
@@ -35,6 +36,8 @@ export interface ProjectSummary {
 	paymentStatus: PaymentStatus;
 	galleryCount: number;
 	updatedAt: string;
+	/** Something the client did that the studio hasn't opened yet. */
+	mark: ChangeMark;
 }
 
 export interface ProjectDetail extends ProjectSummary {

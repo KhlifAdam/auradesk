@@ -6,6 +6,7 @@ import { InvoiceDocument } from "@/components/invoices/invoice-document";
 import { PrintButton } from "@/components/invoices/print-button";
 import { requireClient } from "@/lib/auth/require-client";
 import { getClientInvoice } from "@/services/invoices/queries";
+import { markInvoiceSeen } from "@/services/portal/seen";
 
 /** An invoice the studio issued to the client, ready to print or save as PDF. */
 export default async function PortalInvoicePage({
@@ -18,6 +19,7 @@ export default async function PortalInvoicePage({
 	const { clientId } = await requireClient();
 	const invoice = await getClientInvoice(clientId, invoiceId);
 	if (!invoice) notFound();
+	await markInvoiceSeen(clientId, invoice.id);
 
 	return (
 		<>

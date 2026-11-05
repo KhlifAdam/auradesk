@@ -2,6 +2,8 @@ import { CalendarDays, Images, MapPin } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { StageBadge } from "@/components/client-work/stage-badge";
+import { ChangePill, changeHighlight } from "@/components/shared/change-mark";
+import { cn } from "@/lib/utils";
 import type { PortalProject } from "@/services/portal/types";
 import { PROJECT_STAGES, stageIndex } from "@/services/projects/stages";
 
@@ -18,11 +20,15 @@ export async function PortalProjectCard({
 	return (
 		<Link
 			href={`/portal/projects/${project.id}`}
-			className="group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-border/70 bg-card/75 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-luminous-lg active:translate-y-0"
+			className={cn(
+				"group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-border/70 bg-card/75 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-luminous-lg active:translate-y-0",
+				changeHighlight(project.mark),
+			)}
 		>
 			<div className="flex items-start justify-between gap-3">
-				<p className="font-medium leading-snug group-hover:text-primary">
+				<p className="flex items-center gap-2 font-medium leading-snug group-hover:text-primary">
 					{project.title}
+					<ChangePill mark={project.mark} />
 				</p>
 				<StageBadge stage={project.stage} />
 			</div>

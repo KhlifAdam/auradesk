@@ -17,6 +17,7 @@ import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { bookingCompleteness } from "@/services/bookings/completeness";
 import { isOpenStatus } from "@/services/bookings/options";
 import { getBooking } from "@/services/bookings/queries";
+import { markBookingSeenByStudio } from "@/services/portal/seen";
 
 export default async function BookingPage({
 	params,
@@ -28,6 +29,7 @@ export default async function BookingPage({
 	const { photographerId } = await requirePhotographer();
 	const booking = await getBooking(photographerId, bookingId);
 	if (!booking) notFound();
+	await markBookingSeenByStudio(photographerId, booking.id);
 	const completeness = bookingCompleteness(booking);
 	const isOpen = isOpenStatus(booking.status);
 

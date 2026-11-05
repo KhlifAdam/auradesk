@@ -9,18 +9,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
 	bookingCompleteness,
+	CONFIRM_FIELDS,
 	canSaveBooking,
+	SAVE_FIELDS,
 } from "@/services/bookings/completeness";
 import type { BookingValues } from "@/services/bookings/schemas";
-
-const REQUIRED = [
-	"desiredDate",
-	"startTime",
-	"location",
-	"clientEmail",
-	"clientPhone",
-	"proposedPrice",
-] as const;
 
 interface BookingFormAsideProps {
 	cancelHref: string;
@@ -63,7 +56,12 @@ export function BookingFormAside({
 		startTime,
 	});
 	const ready = completeness.required.length === 0;
-	const canSubmit = canSaveBooking({ clientName, proposedPrice });
+	const canSubmit = canSaveBooking({
+		clientName,
+		clientEmail,
+		clientPhone,
+		proposedPrice,
+	});
 
 	return (
 		<aside className="flex flex-col gap-3 lg:sticky lg:top-4 lg:self-start">
@@ -78,12 +76,25 @@ export function BookingFormAside({
 				</h2>
 				<p className="text-xs text-muted-foreground">{tForm("asideHint")}</p>
 				<ul className="flex flex-col gap-1.5">
-					{REQUIRED.map((field) => (
+					<Item
+						label={t("fields.clientName")}
+						tag={t("required")}
+						state={clientName.trim() ? "done" : "missing"}
+					/>
+					{SAVE_FIELDS.map((field) => (
 						<Item
 							key={field}
 							label={t(`fields.${field}`)}
 							tag={t("required")}
 							state={completeness.required.includes(field) ? "missing" : "done"}
+						/>
+					))}
+					{CONFIRM_FIELDS.map((field) => (
+						<Item
+							key={field}
+							label={t(`fields.${field}`)}
+							tag={t("toConfirm")}
+							state={completeness.required.includes(field) ? "todo" : "done"}
 						/>
 					))}
 				</ul>

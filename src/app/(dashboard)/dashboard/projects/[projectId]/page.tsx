@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { listProjectEquipment } from "@/services/equipment/queries";
 import { listProjectInvoices } from "@/services/invoices/queries";
+import { markProjectSeenByStudio } from "@/services/portal/seen";
 import {
 	advanceShootDays,
 	isAutoAdvanceOn,
@@ -52,6 +53,7 @@ export default async function ProjectPage({
 	await advanceShootDays(photographerId);
 	const project = await getProject(photographerId, projectId);
 	if (!project) notFound();
+	await markProjectSeenByStudio(photographerId, project.id);
 	const [invoices, gear, crew, autoAdvance, estimate] = await Promise.all([
 		listProjectInvoices(photographerId, project.id),
 		listProjectEquipment(photographerId, project.id),

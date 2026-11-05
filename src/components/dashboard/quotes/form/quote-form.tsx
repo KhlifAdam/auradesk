@@ -61,42 +61,44 @@ export function QuoteForm({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex max-w-3xl flex-col gap-4"
+				className="grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]"
 			>
-				<InvoiceClientSection projectTitle={projectTitle} />
-				<InvoiceItemsSection />
-				<FormSection title={t("details")}>
-					<div className="grid gap-3 sm:grid-cols-2">
+				<div className="flex flex-col gap-4">
+					<InvoiceClientSection projectTitle={projectTitle} />
+					<InvoiceItemsSection />
+					<FormSection title={t("details")}>
+						<div className="grid gap-3 sm:grid-cols-2">
+							<TextField<QuoteValues>
+								name="issueDate"
+								label={t("issueDate")}
+								type="date"
+								required
+							/>
+							<TextField<QuoteValues>
+								name="dueDate"
+								label={t("validUntil")}
+								type="date"
+							/>
+						</div>
 						<TextField<QuoteValues>
-							name="issueDate"
-							label={t("issueDate")}
-							type="date"
-							required
+							name="notes"
+							label={t("notes")}
+							description={t("notesHint")}
+							rows={3}
 						/>
-						<TextField<QuoteValues>
-							name="dueDate"
-							label={t("validUntil")}
-							type="date"
-						/>
-					</div>
-					<TextField<QuoteValues>
-						name="notes"
-						label={t("notes")}
-						description={t("notesHint")}
-						rows={3}
-					/>
-				</FormSection>
-				<div className="sticky bottom-4 z-20 flex justify-end gap-2 rounded-xl border border-border bg-card/80 p-3 backdrop-blur-md">
-					<Button asChild type="button" variant="ghost" size="sm">
-						<Link href={backHref}>{t("cancel")}</Link>
-					</Button>
+					</FormSection>
+				</div>
+				<aside className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:sticky lg:top-4 lg:self-start">
 					<Button type="submit" size="sm" disabled={isSubmitting}>
 						{isSubmitting && (
 							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
 						)}
 						{quoteId ? t("save") : t("create")}
 					</Button>
-				</div>
+					<Button asChild type="button" variant="ghost" size="sm">
+						<Link href={backHref}>{t("cancel")}</Link>
+					</Button>
+				</aside>
 			</form>
 		</Form>
 	);

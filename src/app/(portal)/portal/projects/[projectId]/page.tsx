@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
 import { listClientProjectInvoices } from "@/services/invoices/queries";
 import { getPortalProject } from "@/services/portal/queries";
+import { markProjectSeen } from "@/services/portal/seen";
 import { isDeliveredToClient } from "@/services/projects/visibility";
 
 export default async function PortalProjectPage({
@@ -29,6 +30,8 @@ export default async function PortalProjectPage({
 	const { clientId } = await requireClient();
 	const project = await getPortalProject(clientId, projectId);
 	if (!project) notFound();
+	// Opening it clears its "new" mark on the nav.
+	await markProjectSeen(clientId, project.id);
 	const invoices = await listClientProjectInvoices(clientId, project.id);
 
 	return (

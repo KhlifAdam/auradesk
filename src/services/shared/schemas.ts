@@ -39,6 +39,29 @@ export const dateInput = z
 	.trim()
 	.refine((v) => v === "" || !Number.isNaN(Date.parse(v)), "invalidDate");
 
+/** How far back a booking may be dated; projects have no such limit (archives). */
+export const BOOKING_PAST_DAYS = 5;
+
+/** A `yyyy-MM-dd` date more than 5 days back; an empty one never is. */
+export function isTooEarly(value: string) {
+	if (value === "") return false;
+	const earliest = new Date(Date.now() - BOOKING_PAST_DAYS * 86_400_000);
+	return value < earliest.toISOString().slice(0, 10);
+}
+
+/** A date input for a new booking: empty, or no earlier than 5 days ago. */
+export const upcomingDateInput = dateInput.refine(
+	(v) => !isTooEarly(v),
+	"dateTooEarly",
+);
+
+/**
+ * The same, when editing: the date already stored is kept as it is, even once
+ * it is in the past, so it never blocks saving the other fields.
+ */
+export const keptOrUpcomingDate = (kept: string) =>
+	dateInput.refine((v) => v === kept || !isTooEarly(v), "dateTooEarly");
+
 /** `<input type="time">` value, or empty. */
 export const timeInput = z
 	.string()

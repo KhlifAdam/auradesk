@@ -1,3 +1,4 @@
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { StudioBrand } from "@/services/clients/branding";
 import type { GallerySummary } from "@/services/galleries/types";
 import type {
@@ -19,6 +20,8 @@ export interface PortalProject {
 	studio: StudioBrand | null;
 	photographerName: string;
 	sharedGalleryCount: number;
+	/** New to the client, or changed by the studio since they opened it. */
+	mark: ChangeMark;
 }
 
 export interface PortalProjectDetail extends PortalProject {

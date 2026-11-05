@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BadgeCheck, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -19,9 +19,20 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useCountdown } from "@/hooks/use-countdown";
 import { IdentityGate } from "./identity-check";
 
 type AuthResult = { error: { code?: string } | null };
+
+const RESEND_SECONDS = 60;
+
+/** Failures about the code itself; any other one is about the contact. */
+const CODE_ERRORS = new Set([
+	"INVALID_OTP",
+	"OTP_EXPIRED",
+	"OTP_NOT_FOUND",
+	"TOO_MANY_ATTEMPTS",
+]);
 
 interface ContactChangeProps {
 	title: string;
@@ -76,6 +87,10 @@ export function ContactChange({
 	// What the code was sent to; null while still asking for the contact.
 	const [pending, setPending] = useState<string | null>(null);
 	const [identified, setIdentified] = useState(!identity);
+	const resendIn = useCountdown();
+	// The code is used up even when the contact is refused (e.g. already taken),
+	// so a retry would say "no code"; it repeats the real reason instead.
+	const refusal = useRef<{ error: { code?: string }; to: string } | null>(null);
 
 	const valueSchema = useMemo(
 		() =>
@@ -109,14 +124,33 @@ export function ContactChange({
 		if (!value) return;
 		const { error } = await request(value);
 		if (error) return void toast.error(authError.message(error));
+		refusal.current = null;
 		setPending(value);
+		resendIn.start(RESEND_SECONDS);
+		toast.success(t("codeSent"));
+	}
+
+	async function onResend() {
+		if (!pending || resendIn.seconds > 0) return;
+		resendIn.start(RESEND_SECONDS);
+		const { error } = await request(pending);
+		if (error) return void toast.error(authError.message(error));
+		refusal.current = null;
+		codeForm.reset();
 		toast.success(t("codeSent"));
 	}
 
 	async function onConfirm({ code }: CodeValues) {
 		if (!pending) return;
 		const { error } = await confirm(pending, code);
-		if (error) return void toast.error(authError.message(error));
+		if (error) {
+			const kept = refusal.current;
+			if (error.code && !CODE_ERRORS.has(error.code))
+				refusal.current = { error, to: pending };
+			else if (error.code === "OTP_NOT_FOUND" && kept?.to === pending)
+				return void toast.error(authError.message(kept.error));
+			return void toast.error(authError.message(error));
+		}
 		toast.success(successMessage ?? t("saved"));
 		close();
 		router.refresh();
@@ -206,6 +240,18 @@ export function ContactChange({
 								onClick={() => setPending(null)}
 							>
 								{t("backStep")}
+							</Button>
+							<Button
+								type="button"
+								variant="ghost"
+								size="sm"
+								className="h-8 text-xs"
+								disabled={resendIn.seconds > 0}
+								onClick={onResend}
+							>
+								{resendIn.seconds > 0
+									? t("resendIn", { seconds: resendIn.seconds })
+									: t("resend")}
 							</Button>
 						</form>
 					</Form>

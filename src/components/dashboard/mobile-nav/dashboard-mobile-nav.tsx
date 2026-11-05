@@ -15,6 +15,7 @@ import { UnreadBadge } from "@/components/messages/unread-badge";
 import { BottomTabBar } from "@/components/shared/bottom-tab-bar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { StudioCountBadge } from "../live-counts";
 import { SidebarContent, type SidebarUser } from "../sidebar/sidebar-content";
 import { SidebarLogo } from "../sidebar/sidebar-logo";
 
@@ -111,6 +112,12 @@ export function DashboardMobileNav({
 						icon: FolderKanban,
 						href: "/dashboard/projects",
 						active: isActive("/dashboard/projects"),
+						badge: (
+							<StudioCountBadge
+								kind="projects"
+								className="absolute -top-1.5 -right-2.5"
+							/>
+						),
 					},
 					{
 						key: "messages",

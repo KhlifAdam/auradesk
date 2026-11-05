@@ -1,6 +1,11 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
+import {
+	ChangePill,
+	changeRowHighlight,
+} from "@/components/shared/change-mark";
+import { cn } from "@/lib/utils";
 import { formatMoney } from "@/services/projects/money";
 import type { QuoteSummary } from "@/services/quotes/types";
 import { QuoteStatusBadge } from "./quote-status-badge";
@@ -26,11 +31,15 @@ export async function QuoteList({
 				<li key={quote.id}>
 					<Link
 						href={`${hrefBase}/${quote.id}`}
-						className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50"
+						className={cn(
+							"flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50",
+							changeRowHighlight(quote.mark ?? null),
+						)}
 					>
 						<div className="min-w-0 flex-1">
-							<p className="truncate font-mono text-sm font-medium">
-								{quote.number}
+							<p className="flex items-center gap-2 font-mono text-sm font-medium">
+								<span className="truncate">{quote.number}</span>
+								<ChangePill mark={quote.mark ?? null} />
 							</p>
 							<p className="truncate text-xs text-muted-foreground">
 								{quote.label ?? quote.clientName} · {date(quote.issueDate)}

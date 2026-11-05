@@ -9,6 +9,7 @@ import {
 } from "@/components/portal/assistant/portal-assistant";
 import { PortalBottomNav } from "@/components/portal/portal-bottom-nav";
 import { PortalHeader } from "@/components/portal/portal-header";
+import { PortalLiveRefresh } from "@/components/portal/portal-live-refresh";
 import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requireClient } from "@/lib/auth/require-client";
 import { ROLES } from "@/lib/auth/roles";
@@ -16,10 +17,7 @@ import { BRAND_NAME } from "@/lib/brand";
 import { realEmail } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { countUnread } from "@/services/messages/queries";
-import {
-	countBookingsToAnswer,
-	countProjectInvitations,
-} from "@/services/portal/home-queries";
+import { countPortalNav } from "@/services/portal/home-queries";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("Portal.header");
@@ -32,13 +30,11 @@ export default async function PortalLayout({
 	children: ReactNode;
 }) {
 	const { session, clientId } = await requireClient();
-	const [timeZone, unreadMessages, toAnswer, invitations] = await Promise.all([
+	const [timeZone, unreadMessages, counts] = await Promise.all([
 		getRequestTimeZone(),
 		countUnread({ id: clientId, role: "client" }),
-		countBookingsToAnswer(session.user),
-		countProjectInvitations(session.user),
+		countPortalNav(session.user),
 	]);
-	const counts = { bookings: toAnswer, projects: invitations };
 
 	return (
 		<PortalAssistantProvider>
@@ -48,6 +44,7 @@ export default async function PortalLayout({
 			>
 				<SpaceBackdrop />
 				<TimeZoneSync serverTimeZone={timeZone} />
+				<PortalLiveRefresh initial={counts} />
 				<div className="contents print:hidden">
 					<PortalHeader
 						user={{

@@ -1,7 +1,9 @@
 import { ArrowRight, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { ChangePill, changeHighlight } from "@/components/shared/change-mark";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { PortalBookingSummary } from "@/services/portal/booking-queries";
 
 /** A request waiting on the client's answer: big, tinted, with one clear action. */
@@ -16,10 +18,16 @@ export async function BookingActionCard({
 	return (
 		<Link
 			href={`/portal/bookings/${booking.id}`}
-			className="group flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary hover:shadow-md"
+			className={cn(
+				"group flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/40 bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary hover:shadow-md",
+				changeHighlight(booking.mark),
+			)}
 		>
 			<div className="min-w-0">
-				<p className="truncate text-base font-semibold">{booking.title}</p>
+				<p className="flex items-center gap-2 text-base font-semibold">
+					<span className="truncate">{booking.title}</span>
+					<ChangePill mark={booking.mark} />
+				</p>
 				<p className="flex items-center gap-2 text-xs text-muted-foreground">
 					<span className="truncate">{booking.studioName}</span>
 					{booking.desiredDate && (

@@ -5,11 +5,13 @@ import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
 import {
 	dateInput,
 	idSchema,
+	keptOrUpcomingDate,
 	moneyAmount,
 	optionalEmail,
 	optionalText,
 	requiredText,
 	timeInput,
+	upcomingDateInput,
 } from "@/services/shared/schemas";
 import { BOOKING_SOURCES, BOOKING_STATUSES, OPEN_STATUSES } from "./options";
 
@@ -30,7 +32,7 @@ const bookingFields = {
 	serviceType: z.enum(SERVICE_TYPES),
 	mediaType: z.enum(MEDIA_TYPES),
 	description: optionalText(2000),
-	desiredDate: dateInput,
+	desiredDate: upcomingDateInput,
 	startTime: timeInput,
 	/** Hours, as typed; stored as minutes. */
 	durationHours: z
@@ -67,6 +69,12 @@ function checkBookingRules(
 
 export const bookingSchema = baseSchema.superRefine(checkBookingRules);
 
+/** The studio's form; when editing, `keptDate` is the date already stored. */
+export const bookingFormSchema = (keptDate = "") =>
+	baseSchema
+		.extend({ desiredDate: keptOrUpcomingDate(keptDate) })
+		.superRefine(checkBookingRules);
+
 /** The details a client can fill in or correct on a request sent to them. */
 export const clientEditSchema = baseSchema
 	.pick({
@@ -81,7 +89,8 @@ export const clientEditSchema = baseSchema
 		location: true,
 		clientBudget: true,
 	})
-	.extend({ id: idSchema });
+	// The stored date may be old; the action checks only a changed one.
+	.extend({ id: idSchema, desiredDate: dateInput });
 
 /** Confirming before the client accepted needs the photographer to say so. */
 export const confirmBookingSchema = z.object({
@@ -96,7 +105,8 @@ export const clientAnswerSchema = z.object({
 });
 
 export const updateBookingSchema = baseSchema
-	.extend({ id: idSchema })
+	// The stored date may be old; the action checks only a changed one.
+	.extend({ id: idSchema, desiredDate: dateInput })
 	.superRefine(checkBookingRules);
 
 export const setStatusSchema = z.object({
@@ -130,18 +140,27 @@ export const publicRequestSchema = z.object({
 	email: z.email("invalidEmail"),
 	phone: optionalText(40),
 	serviceType: z.enum(SERVICE_TYPES),
-	desiredDate: dateInput,
+	desiredDate: upcomingDateInput,
 	message: requiredText(2000),
 	/** Honeypot: humans leave it empty. */
 	website: z.string().max(0).optional(),
 });
 
-/** A client asks a studio they already work with for a new service. */
+// A plain boolean (not a type guard) keeps the field nullable while typing.
+const isSet = (value: unknown): boolean => value !== null;
+
+/** A client asks a studio they already work with: all but the money is asked for. */
 export const portalRequestSchema = z.object({
 	photographerId: idSchema,
 	serviceType: z.enum(SERVICE_TYPES),
-	desiredDate: dateInput,
-	location: optionalText(300),
+	mediaType: z.enum(MEDIA_TYPES),
+	desiredDate: upcomingDateInput.refine((v) => v !== "", "required"),
+	startTime: timeInput.refine((v) => v !== "", "required"),
+	durationHours: bookingFields.durationHours.refine(isSet, "required"),
+	location: requiredText(300),
+	clientBudget: moneyAmount,
+	/** The advance the client offers to pay; the studio can change it. */
+	plannedAdvance: moneyAmount,
 	message: requiredText(2000),
 });
 

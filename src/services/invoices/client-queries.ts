@@ -33,6 +33,7 @@ function toClientSummary(row: ClientRow) {
 	return {
 		...toSummary(row),
 		label: row.project ? `${studio} · ${row.project.title}` : studio,
+		mark: row.clientSeenAt ? null : ("new" as const),
 	};
 }
 

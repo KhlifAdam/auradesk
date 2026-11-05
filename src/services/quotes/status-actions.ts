@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendQuoteEmail } from "@/lib/mail/send-quote-email";
 import { realEmail } from "@/lib/phone";
+import { flagBookingForClient } from "@/services/changes/flag";
 import { nextInvoiceNumber } from "@/services/invoices/ledger";
 import { computeTotals } from "@/services/invoices/totals";
 import { formatMoney } from "@/services/projects/money";
@@ -79,6 +80,8 @@ export async function sendQuote(
 				]
 			: []),
 	]);
+	// The quote email below covers the email side; WhatsApp tells them too.
+	if (booking) await flagBookingForClient(booking.id, { text: true });
 
 	// Only a client with an account can answer it online.
 	const to = quote.client && realEmail(quote.client.email);

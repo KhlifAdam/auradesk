@@ -3,6 +3,7 @@ import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { realEmail } from "@/lib/phone";
+import { changeMark } from "@/services/changes/unseen";
 import { listGallerySummaries } from "@/services/galleries/summaries";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import {
@@ -43,6 +44,7 @@ function toSummary(row: ProjectRow): ProjectSummary {
 		advance: row.advance.toNumber(),
 		paymentStatus: row.paymentStatus,
 		galleryCount: row._count.galleries,
+		mark: changeMark(row.studioSeenAt, row.studioChangedAt, true),
 		updatedAt: row.updatedAt.toISOString(),
 	};
 }

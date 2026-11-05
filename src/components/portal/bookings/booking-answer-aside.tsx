@@ -39,27 +39,22 @@ export async function BookingAnswerAside({
 				<ul className="flex flex-col gap-1.5">
 					<Item
 						label={t("checklist.desiredDate")}
-						tag={t("checklist.studio")}
+						tag={t("checklist.required")}
 						state={required.includes("desiredDate") ? "missing" : "done"}
 					/>
 					<Item
 						label={t("checklist.proposedPrice")}
-						tag={t("checklist.studio")}
+						tag={t("checklist.required")}
 						state={required.includes("proposedPrice") ? "missing" : "done"}
 					/>
 					<Item
 						label={t("checklist.location")}
-						tag={t("checklist.you")}
+						tag={t("checklist.required")}
 						state={required.includes("location") ? "missing" : "done"}
 					/>
 					<Item
-						label={t("checklist.clientPhone")}
-						tag={t("checklist.you")}
-						state={required.includes("clientPhone") ? "missing" : "done"}
-					/>
-					<Item
 						label={t("checklist.startTime")}
-						tag={t("checklist.you")}
+						tag={t("checklist.required")}
 						state={required.includes("startTime") ? "missing" : "done"}
 					/>
 				</ul>

@@ -124,3 +124,19 @@ export function sendProjectStageSms(props: {
 		}),
 	});
 }
+
+/** Something changed on a booking or project (by WhatsApp when it is linked). */
+export function sendChangeSms(props: {
+	to: string;
+	locale: Locale;
+	audience: "changeForClient" | "changeForStudio";
+	who: string;
+	item: string;
+	path: string;
+}) {
+	const { to, locale, audience, path, ...vars } = props;
+	return sendSms({
+		to,
+		body: smsText(locale, audience, { ...vars, url: appUrl(path) }),
+	});
+}

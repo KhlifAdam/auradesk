@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { BookingAnswerAside } from "@/components/portal/bookings/booking-answer-aside";
+import { BookingQuotes } from "@/components/portal/bookings/booking-quotes";
 import { BookingReadonly } from "@/components/portal/bookings/booking-readonly";
 import { requestState } from "@/components/portal/bookings/booking-request-card";
 import { ClientBookingForm } from "@/components/portal/bookings/client-booking-form";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
 import { cn } from "@/lib/utils";
 import { getPortalBooking } from "@/services/portal/booking-queries";
+import { markBookingSeen } from "@/services/portal/seen";
 
 export default async function PortalBookingPage({
 	params,
@@ -23,6 +25,7 @@ export default async function PortalBookingPage({
 	const { session } = await requireClient();
 	const booking = await getPortalBooking(session.user, bookingId);
 	if (!booking) notFound();
+	await markBookingSeen(session.user, booking.id);
 
 	const state = requestState(booking);
 
@@ -86,6 +89,7 @@ export default async function PortalBookingPage({
 						{t("waitingStudioHint")}
 					</p>
 				)}
+			<BookingQuotes clientId={session.user.id} bookingId={booking.id} />
 			<div
 				className={cn(
 					"grid max-w-5xl gap-4",

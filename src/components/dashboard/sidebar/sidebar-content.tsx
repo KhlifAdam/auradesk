@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { UnreadBadge } from "@/components/messages/unread-badge";
+import { StudioCountBadge } from "../live-counts";
 import { NAV_GROUPS } from "./nav-config";
 import { NavItem } from "./nav-item";
 import { SidebarLogo } from "./sidebar-logo";
@@ -42,9 +43,11 @@ export function SidebarContent({
 								key={item.href}
 								label={t(labelKey)}
 								badge={
-									labelKey === "messages" && (
+									labelKey === "messages" ? (
 										<UnreadBadge side="photographer" initial={unreadMessages} />
-									)
+									) : labelKey === "bookings" || labelKey === "projects" ? (
+										<StudioCountBadge kind={labelKey} />
+									) : null
 								}
 								{...item}
 							/>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
+import { flagBookingForClient } from "@/services/changes/flag";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
 import { declineSchema, setStatusSchema } from "./schemas";
 
@@ -42,6 +43,7 @@ export async function setBookingStatus(input: unknown): Promise<ActionResult> {
 		}),
 	]);
 
+	await flagBookingForClient(id);
 	revalidateBookings();
 	return ok();
 }
@@ -76,6 +78,7 @@ export async function declineBooking(input: unknown): Promise<ActionResult> {
 		}),
 	]);
 
+	await flagBookingForClient(id);
 	revalidateBookings();
 	return ok();
 }
@@ -110,6 +113,7 @@ export async function reopenBooking(input: unknown): Promise<ActionResult> {
 		}),
 	]);
 
+	await flagBookingForClient(parsed.data);
 	revalidateBookings();
 	return ok();
 }

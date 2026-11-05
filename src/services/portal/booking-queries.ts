@@ -1,9 +1,11 @@
 import "server-only";
 
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import type { BookingStatus } from "@/services/bookings/options";
-import { isOpenStatus } from "@/services/bookings/options";
+import { isOpenStatus, OPEN_STATUSES } from "@/services/bookings/options";
+import { changeMark } from "@/services/changes/unseen";
 import type { MediaType, ServiceType } from "@/services/projects/options";
 import { verifiedContact } from "./contacts";
 
@@ -17,7 +19,7 @@ export interface ClientIdentity {
 }
 
 /** Requests the client made themselves, from the public site or the portal. */
-const CLIENT_SOURCES = ["WEBSITE", "PORTAL"] as const;
+export const CLIENT_SOURCES = ["WEBSITE", "PORTAL"] as const;
 
 /**
  * Bookings a client may open: those the studio sent them and those they asked
@@ -47,6 +49,30 @@ export function clientBookingWhere(
 	};
 }
 
+/**
+ * Requests waiting on the client's answer: the ones the studio sent or took
+ * up, not yet accepted. The same rule as the "needs your answer" panel.
+ */
+export function bookingsToAnswerWhere(
+	user: ClientIdentity,
+): Prisma.BookingWhereInput {
+	return {
+		AND: [
+			clientBookingWhere(user),
+			{
+				status: { in: [...OPEN_STATUSES] },
+				clientAcceptedAt: null,
+				// Their own request, not yet answered by the studio.
+				NOT: {
+					source: { in: [...CLIENT_SOURCES] },
+					status: "NEW",
+					proposedPrice: null,
+				},
+			},
+		],
+	};
+}
+
 export interface PortalBookingSummary {
 	id: string;
 	title: string;
@@ -56,6 +82,8 @@ export interface PortalBookingSummary {
 	desiredDate: string | null;
 	proposedPrice: number | null;
 	accepted: boolean;
+	/** New to the client, or changed by the studio since they opened it. */
+	mark: ChangeMark;
 	/** Asked by the client (public site or portal), not sent by the studio. */
 	requestedByClient: boolean;
 }
@@ -106,6 +134,7 @@ function toSummary(row: Row): PortalBookingSummary {
 		desiredDate: row.desiredDate?.toISOString() ?? null,
 		proposedPrice: toNumber(row.proposedPrice),
 		accepted: row.clientAcceptedAt !== null,
+		mark: changeMark(row.clientSeenAt, row.clientChangedAt),
 		requestedByClient: (CLIENT_SOURCES as readonly string[]).includes(
 			row.source,
 		),

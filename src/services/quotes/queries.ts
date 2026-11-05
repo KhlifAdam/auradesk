@@ -179,6 +179,7 @@ export async function listClientQuotes(
 	return rows.map((row) => ({
 		...toSummary(row),
 		label: row.photographer.studio?.name ?? row.photographer.name,
+		mark: row.clientSeenAt ? null : ("new" as const),
 	}));
 }
 
@@ -193,4 +194,20 @@ export async function listBookingQuotes(
 		orderBy: [{ issueDate: "desc" }, { number: "desc" }],
 	});
 	return rows.map(toSummary);
+}
+
+/** Quotes the studio sent for one booking, for the client who owns it. */
+export async function listClientBookingQuotes(
+	clientId: string,
+	bookingId: string,
+): Promise<QuoteSummary[]> {
+	const rows = await db.quote.findMany({
+		where: { clientId, bookingId, status: { not: "DRAFT" } },
+		include: summaryInclude,
+		orderBy: [{ issueDate: "desc" }, { number: "desc" }],
+	});
+	return rows.map((row) => ({
+		...toSummary(row),
+		mark: row.clientSeenAt ? null : ("new" as const),
+	}));
 }

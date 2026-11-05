@@ -6,17 +6,19 @@ import { UnreadBadge } from "@/components/messages/unread-badge";
 import { BottomTabBar } from "@/components/shared/bottom-tab-bar";
 import { NavCount } from "./nav-count";
 import { isNavActive, PORTAL_NAV, type PortalNavCounts } from "./portal-nav";
+import { usePortalCounts } from "./use-portal-counts";
 
 /** The phone's tab bar of the client space. */
 export function PortalBottomNav({
 	unreadMessages,
-	counts,
+	counts: initialCounts,
 }: {
 	unreadMessages: number;
 	counts: PortalNavCounts;
 }) {
 	const t = useTranslations("Portal.nav");
 	const pathname = usePathname();
+	const counts = usePortalCounts(initialCounts);
 
 	return (
 		<BottomTabBar

@@ -1,6 +1,11 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
+import {
+	ChangePill,
+	changeRowHighlight,
+} from "@/components/shared/change-mark";
+import { cn } from "@/lib/utils";
 import type { InvoiceSummary } from "@/services/invoices/types";
 import { formatMoney } from "@/services/projects/money";
 import { InvoiceStatusBadge } from "./invoice-status-badge";
@@ -26,11 +31,15 @@ export async function InvoiceList({
 				<li key={invoice.id}>
 					<Link
 						href={`${hrefBase}/${invoice.id}`}
-						className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50"
+						className={cn(
+							"flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50",
+							changeRowHighlight(invoice.mark ?? null),
+						)}
 					>
 						<div className="min-w-0 flex-1">
-							<p className="truncate font-mono text-sm font-medium">
-								{invoice.number}
+							<p className="flex items-center gap-2 font-mono text-sm font-medium">
+								<span className="truncate">{invoice.number}</span>
+								<ChangePill mark={invoice.mark ?? null} />
 							</p>
 							<p className="truncate text-xs text-muted-foreground">
 								{invoice.label ?? invoice.clientName} ·{" "}

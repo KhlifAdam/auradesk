@@ -1,6 +1,11 @@
 import { CalendarDays, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import {
+	ChangePill,
+	changeRowHighlight,
+} from "@/components/shared/change-mark";
+import { cn } from "@/lib/utils";
 import { isOpenStatus } from "@/services/bookings/options";
 import type { BookingSummary } from "@/services/bookings/types";
 import { BookingStatusBadge } from "./booking-status-badge";
@@ -21,10 +26,16 @@ export async function BookingList({
 				<li key={booking.id}>
 					<Link
 						href={`/dashboard/bookings/${booking.id}`}
-						className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50"
+						className={cn(
+							"flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-2.5 transition-colors duration-200 hover:bg-muted/50",
+							changeRowHighlight(booking.mark),
+						)}
 					>
 						<div className="min-w-0 flex-1">
-							<p className="truncate text-sm font-medium">{booking.title}</p>
+							<p className="flex items-center gap-2 text-sm font-medium">
+								<span className="truncate">{booking.title}</span>
+								<ChangePill mark={booking.mark} />
+							</p>
 							<p className="truncate text-xs text-muted-foreground">
 								{booking.clientName} · {tService(booking.serviceType)}
 							</p>

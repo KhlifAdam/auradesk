@@ -31,6 +31,7 @@ import { formatPhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { NavCount } from "./nav-count";
 import { isNavActive, PORTAL_NAV, type PortalNavCounts } from "./portal-nav";
+import { usePortalCounts } from "./use-portal-counts";
 
 interface PortalHeaderProps {
 	user: {
@@ -50,8 +51,9 @@ export function PortalHeader({
 	user,
 	isPhotographer,
 	unreadMessages,
-	counts,
+	counts: initialCounts,
 }: PortalHeaderProps) {
+	const counts = usePortalCounts(initialCounts);
 	const t = useTranslations("Portal.header");
 	const tNav = useTranslations("Portal.nav");
 	const router = useRouter();

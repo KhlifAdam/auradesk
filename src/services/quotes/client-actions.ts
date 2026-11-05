@@ -3,6 +3,10 @@
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requireClient } from "@/lib/auth/require-client";
 import { db } from "@/lib/db";
+import {
+	flagBookingForStudio,
+	flagProjectForStudio,
+} from "@/services/changes/flag";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { respondQuoteSchema } from "./schemas";
 
@@ -22,6 +26,12 @@ export async function respondToQuote(input: unknown): Promise<ActionResult> {
 		},
 	});
 	if (count === 0) return fail("quoteNotOpen");
+	const quote = await db.quote.findUnique({
+		where: { id },
+		select: { bookingId: true, projectId: true },
+	});
+	if (quote?.bookingId) await flagBookingForStudio(quote.bookingId);
+	else if (quote?.projectId) await flagProjectForStudio(quote.projectId);
 
 	revalidateClientWork();
 	return ok();

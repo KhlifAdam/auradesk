@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { changeMark } from "@/services/changes/unseen";
 import { studioBrandSelect, toStudioBrand } from "@/services/clients/branding";
 import { listGallerySummaries } from "@/services/galleries/summaries";
 import { addMonths } from "@/services/privacy/purge";
@@ -41,6 +42,7 @@ function toPortalProject(row: PortalRow): PortalProject {
 		photographerName: name,
 		// Shared galleries open to the client from the Selection step.
 		sharedGalleryCount: canClientView(row) ? row._count.galleries : 0,
+		mark: changeMark(row.clientSeenAt, row.clientChangedAt),
 	};
 }
 

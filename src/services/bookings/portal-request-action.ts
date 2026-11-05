@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendBookingRequestEmail } from "@/lib/mail/send-client-notices";
 import { realEmail } from "@/lib/phone";
+import { flagBookingForStudio } from "@/services/changes/flag";
 import { listClientStudios } from "@/services/portal/home-queries";
 import { emptyToNull } from "@/services/shared/schemas";
 import { portalRequestSchema } from "./schemas";
@@ -25,8 +26,18 @@ export async function requestBookingFromPortal(
 	const { session, clientId } = await requireClient();
 	const parsed = portalRequestSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
-	const { photographerId, serviceType, desiredDate, location, message } =
-		parsed.data;
+	const {
+		photographerId,
+		serviceType,
+		mediaType,
+		desiredDate,
+		startTime,
+		durationHours,
+		location,
+		clientBudget,
+		plannedAdvance,
+		message,
+	} = parsed.data;
 	const { user } = session;
 
 	const studios = await listClientStudios(user);
@@ -54,11 +65,17 @@ export async function requestBookingFromPortal(
 			clientEmail: realEmail(user.email),
 			clientPhone: user.phoneNumber ?? null,
 			serviceType,
+			mediaType,
 			description: message,
 			desiredDate: desiredDate ? new Date(desiredDate) : null,
+			startTime: emptyToNull(startTime),
+			durationMinutes: durationHours ? Math.round(durationHours * 60) : null,
 			location: emptyToNull(location),
+			clientBudget,
+			plannedAdvance,
 			// Theirs from the start: it shows in their space right away.
 			sentToClientAt: now,
+			clientSeenAt: now,
 			activities: { create: { kind: "CREATED" } },
 		},
 		select: {
@@ -77,6 +94,8 @@ export async function requestBookingFromPortal(
 		console.error("Failed to send booking request email:", error),
 	);
 
+	// New for the studio (their email is above); already seen by the client.
+	await flagBookingForStudio(booking.id, { text: true });
 	revalidatePath("/portal", "layout");
 	revalidatePath("/dashboard", "layout");
 	return ok({ id: booking.id });

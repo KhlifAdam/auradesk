@@ -192,3 +192,22 @@ export async function sendProjectCreatedEmail(props: {
 		...noticeEmail(mailCopy(locale).projectCreated, locale, vars, appUrl(path)),
 	});
 }
+
+export type ChangeAudience = "changeForClient" | "changeForStudio";
+
+/** Something changed on a booking or project: the other side is told once. */
+export async function sendChangeEmail(props: {
+	to: string;
+	locale: Locale;
+	audience: ChangeAudience;
+	/** Who made the change: the studio's name, or the client's. */
+	who: string;
+	item: string;
+	path: string;
+}) {
+	const { to, locale, audience, path, ...vars } = props;
+	await sendMail({
+		to,
+		...noticeEmail(mailCopy(locale)[audience], locale, vars, appUrl(path)),
+	});
+}

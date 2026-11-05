@@ -1,3 +1,4 @@
+import type { ChangeMark } from "@/components/shared/change-mark";
 import type { PageMeta } from "@/services/shared/pagination";
 import type {
 	InvoiceDisplayStatus,
@@ -19,6 +20,8 @@ export interface InvoiceSummary {
 	total: number;
 	paid: number;
 	balance: number;
+	/** Portal only: not opened by the client yet. */
+	mark?: ChangeMark;
 }
 
 export interface InvoiceItemDetail {

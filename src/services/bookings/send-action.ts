@@ -10,6 +10,7 @@ import { getRequestLocale } from "@/lib/mail/request-locale";
 import { sendBookingSentEmail } from "@/lib/mail/send-client-notices";
 import { toE164 } from "@/lib/phone";
 import { sendBookingSentSms } from "@/lib/sms/send-client-sms";
+import { flagBookingForClient } from "@/services/changes/flag";
 import { idSchema } from "@/services/shared/schemas";
 import { isOpenStatus } from "./options";
 
@@ -60,6 +61,8 @@ export async function sendBookingToClient(
 	]);
 
 	const notified = await notifyClient({ booking, phone });
+	// Lights it up in their space; the notice above already told them.
+	await flagBookingForClient(id, {});
 	revalidatePath("/dashboard", "layout");
 	revalidatePath("/portal", "layout");
 	return ok({ notified });

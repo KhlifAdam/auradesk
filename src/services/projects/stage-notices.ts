@@ -8,6 +8,7 @@ import {
 } from "@/lib/mail/send-client-notices";
 import { realEmail } from "@/lib/phone";
 import { sendProjectStageSms } from "@/lib/sms/send-client-sms";
+import { flagProjectForClient } from "@/services/changes/flag";
 import { type ProjectStage, stageIndex } from "./stages";
 import { CLIENT_PROOFING_STAGE, PAYMENT_GATED_STAGE } from "./visibility";
 
@@ -35,6 +36,9 @@ export async function notifyStageChange(
 	to: ProjectStage,
 ) {
 	const kind = noticeFor(from, to);
+	// Any move lights the project up for the client; the special notices below
+	// replace the generic one.
+	await flagProjectForClient(projectId, kind ? {} : undefined);
 	if (!kind) return;
 	const project = await db.project.findUnique({
 		where: { id: projectId },

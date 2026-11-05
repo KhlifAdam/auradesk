@@ -62,17 +62,16 @@ export function BookingClientSection() {
 				<TextField<BookingValues>
 					name="clientEmail"
 					label={t("email")}
-					required
 					type="email"
 				/>
 				<TextField<BookingValues>
 					name="clientPhone"
 					label={t("phone")}
-					required
 					type="tel"
 					placeholder="+216 …"
 				/>
 			</div>
+			<p className="-mt-1 text-xs text-muted-foreground">{t("contactHint")}</p>
 			<SelectField<BookingValues>
 				name="source"
 				label={t("source")}
