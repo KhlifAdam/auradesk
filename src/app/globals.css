@@ -273,15 +273,19 @@
 		);
 }
 
+/* The grid behind the welcome pages: drawn with the text colour, so it stays
+   readable on the pale light theme (--grid-line is its strength). */
 @utility grid-fade {
 	background-image:
 		linear-gradient(
-			color-mix(in oklab, var(--border) 45%, transparent) 1px,
+			color-mix(in oklab, var(--foreground) var(--grid-line, 15%), transparent)
+				1px,
 			transparent 1px
 		),
 		linear-gradient(
 			90deg,
-			color-mix(in oklab, var(--border) 45%, transparent) 1px,
+			color-mix(in oklab, var(--foreground) var(--grid-line, 15%), transparent)
+				1px,
 			transparent 1px
 		);
 	background-size: 44px 44px;
@@ -408,6 +412,11 @@
    hue of the animated backdrop. */
 :root {
 	--space-alt: oklch(0.72 0.16 52);
+	--grid-line: 8%;
+}
+
+.dark {
+	--grid-line: 4%;
 }
 
 body:has([data-space="client"]) {
@@ -433,7 +442,7 @@ body:has([data-space="client"]) {
 }
 
 /* ─── Animated backdrop of the two spaces ────────────────────────────────────
-   Soft light blobs drifting slowly, a faint grid, a sheen sweeping across and
+   Soft light blobs drifting slowly, a faint grid and
    a few bokeh lights rising like out-of-focus lamps. Colours come from the
    space's tokens, so each space gets its own atmosphere. Transform and
    opacity only; everything stops under reduced motion. */
@@ -449,45 +458,32 @@ body:has([data-space="client"]) {
 .space-blob-a {
 	top: -14%;
 	left: -12%;
-	background: color-mix(in oklab, var(--glow) 36%, transparent);
+	background: color-mix(in oklab, var(--glow) 15%, transparent);
 	animation: space-drift-a 26s ease-in-out infinite alternate;
 }
 
 .space-blob-b {
 	top: 22%;
 	right: -16%;
-	background: color-mix(in oklab, var(--space-alt) 28%, transparent);
+	background: color-mix(in oklab, var(--space-alt) 11%, transparent);
 	animation: space-drift-b 32s ease-in-out infinite alternate;
 }
 
 .space-blob-c {
 	bottom: -18%;
 	left: 18%;
-	background: color-mix(in oklab, var(--primary) 24%, transparent);
+	background: color-mix(in oklab, var(--primary) 10%, transparent);
 	animation: space-drift-c 38s ease-in-out infinite alternate;
 }
 
 .dark .space-blob-a {
-	background: color-mix(in oklab, var(--glow) 24%, transparent);
+	background: color-mix(in oklab, var(--glow) 11%, transparent);
 }
 .dark .space-blob-b {
-	background: color-mix(in oklab, var(--space-alt) 20%, transparent);
+	background: color-mix(in oklab, var(--space-alt) 9%, transparent);
 }
 .dark .space-blob-c {
-	background: color-mix(in oklab, var(--primary) 16%, transparent);
-}
-
-.space-sheen {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(
-		115deg,
-		transparent 35%,
-		color-mix(in oklab, var(--glow) 9%, transparent) 50%,
-		transparent 65%
-	);
-	background-size: 220% 100%;
-	animation: space-sheen 16s ease-in-out infinite;
+	background: color-mix(in oklab, var(--primary) 7%, transparent);
 }
 
 .space-bokeh {
@@ -499,7 +495,7 @@ body:has([data-space="client"]) {
 	border-radius: 9999px;
 	background: radial-gradient(
 		circle,
-		color-mix(in oklab, var(--glow) 55%, transparent),
+		color-mix(in oklab, var(--glow) 40%, transparent),
 		transparent 70%
 	);
 	opacity: 0;
@@ -530,15 +526,6 @@ body:has([data-space="client"]) {
 		transform: translate3d(22%, -16%, 0) scale(1.15);
 	}
 }
-@keyframes space-sheen {
-	0%,
-	100% {
-		background-position: 120% 0;
-	}
-	50% {
-		background-position: -20% 0;
-	}
-}
 @keyframes space-bokeh {
 	0% {
 		opacity: 0;
@@ -555,7 +542,6 @@ body:has([data-space="client"]) {
 
 @media (prefers-reduced-motion: reduce) {
 	.space-blob,
-	.space-sheen,
 	.space-bokeh {
 		animation: none;
 	}

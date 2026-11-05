@@ -4,8 +4,14 @@ import { getTranslations } from "next-intl/server";
 import { cn } from "@/lib/utils";
 import type { Completeness } from "@/services/bookings/completeness";
 
-const REQUIRED = ["desiredDate", "proposedPrice"] as const;
-const RECOMMENDED = ["contact", "location", "startTime"] as const;
+const REQUIRED = [
+	"desiredDate",
+	"startTime",
+	"location",
+	"clientEmail",
+	"clientPhone",
+	"proposedPrice",
+] as const;
 
 interface BookingChecklistProps {
 	bookingId: string;
@@ -53,20 +59,12 @@ export async function BookingChecklist({
 						/>
 					);
 				})}
-				{RECOMMENDED.map((field) => (
-					<Item
-						key={field}
-						label={t(`fields.${field}`)}
-						tag={t("recommended")}
-						state={completeness.recommended.includes(field) ? "todo" : "done"}
-					/>
-				))}
 			</ul>
 		</section>
 	);
 }
 
-function Item({
+export function Item({
 	label,
 	tag,
 	state,

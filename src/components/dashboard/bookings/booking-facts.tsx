@@ -71,16 +71,21 @@ export async function BookingFacts({ booking }: { booking: BookingDetail }) {
 			<Card title={t("client")}>
 				<Fact label={t("name")}>{booking.clientName}</Fact>
 				<Fact label={t("email")}>{booking.clientEmail}</Fact>
-				<Fact label={t("phone")}>{booking.clientPhone}</Fact>
+				<Fact label={t("phone")} required={!booking.clientPhone}>
+					{booking.clientPhone}
+				</Fact>
 				<Fact label={t("source")}>{tSource(booking.source)}</Fact>
 			</Card>
 			<Card title={t("need")}>
 				<Fact label={t("type")}>{tService(booking.serviceType)}</Fact>
 				<Fact label={t("media")}>{tMedia(booking.mediaType)}</Fact>
-				<Fact label={t("when")} required={!booking.desiredDate}>
+				<Fact
+					label={t("when")}
+					required={!booking.desiredDate || !booking.startTime}
+				>
 					{when}
 				</Fact>
-				<Fact label={t("where")}>
+				<Fact label={t("where")} required={!booking.location}>
 					{isUrl(booking.location) ? (
 						<a
 							href={booking.location}

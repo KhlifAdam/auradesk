@@ -37,7 +37,6 @@ export function SpaceBackdrop({
 			<span className="space-blob space-blob-b" />
 			<span className="space-blob space-blob-c" />
 			<span className="grid-fade absolute inset-0 opacity-40" />
-			<span className="space-sheen" />
 			{BOKEH.map(({ x, size, dur, delay, drift }) => (
 				<span
 					key={x}

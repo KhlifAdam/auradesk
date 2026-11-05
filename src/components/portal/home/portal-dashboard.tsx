@@ -52,7 +52,7 @@ export async function PortalDashboard({ home }: { home: PortalHome }) {
 		home.bookings > 0 && (
 			<TodoItem
 				key="bookings"
-				href="#booking-requests"
+				href="/portal/bookings"
 				icon={<Inbox className={iconClass} />}
 			>
 				{t("todo.bookings", { count: home.bookings })}

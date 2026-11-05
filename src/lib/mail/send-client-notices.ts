@@ -177,3 +177,18 @@ export async function sendProjectStageEmail(props: {
 		),
 	});
 }
+
+/** To the client, when their accepted booking is confirmed and the project is ready. */
+export async function sendProjectCreatedEmail(props: {
+	to: string;
+	locale: Locale;
+	studio: string;
+	project: string;
+	path: string;
+}) {
+	const { to, locale, path, ...vars } = props;
+	await sendMail({
+		to,
+		...noticeEmail(mailCopy(locale).projectCreated, locale, vars, appUrl(path)),
+	});
+}

@@ -6,10 +6,7 @@ import type {
 import { deleteBooking } from "@/services/bookings/actions";
 import { confirmBooking } from "@/services/bookings/confirm";
 import { sendBookingToClient } from "@/services/bookings/send-action";
-import {
-	addBookingNote,
-	declineBooking,
-} from "@/services/bookings/status-actions";
+import { declineBooking } from "@/services/bookings/status-actions";
 import {
 	createCalendarEvent,
 	deleteCalendarEvent,
@@ -60,7 +57,6 @@ function eventPayload(input: WriteToolInput<"create_calendar_event">) {
  * checks, emails and cache updates stay in one place.
  */
 export const ACTION_RUNNERS: { [N in WriteToolName]: Runner<N> } = {
-	add_booking_note: (i) => addBookingNote({ id: i.bookingId, body: i.body }),
 	update_client_notes: (i) => updateClientNotes(i),
 	create_calendar_event: (i) => createCalendarEvent(eventPayload(i)),
 	confirm_booking: (i) =>

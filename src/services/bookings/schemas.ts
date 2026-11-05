@@ -109,11 +109,6 @@ export const declineSchema = z.object({
 	reason: optionalText(500),
 });
 
-export const noteSchema = z.object({
-	id: idSchema,
-	body: requiredText(2000),
-});
-
 export const BOOKING_SORTS = ["desiredDate", "created"] as const;
 export type BookingSort = (typeof BOOKING_SORTS)[number];
 

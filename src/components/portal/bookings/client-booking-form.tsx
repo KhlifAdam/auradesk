@@ -1,23 +1,26 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { Check, CircleAlert, ExternalLink, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useCallback } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import type { z } from "zod";
+import { DurationPresets } from "@/components/dashboard/bookings/form/duration-presets";
 import {
 	SelectField,
 	TextField,
 } from "@/components/dashboard/shared/form-fields";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useAutosave } from "@/hooks/use-autosave";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { updateBookingAsClient } from "@/services/bookings/client-actions";
 import { clientEditSchema } from "@/services/bookings/schemas";
 import type { PortalBookingDetail } from "@/services/portal/booking-queries";
-import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
+import { MEDIA_TYPES, serviceChoices } from "@/services/projects/options";
 
 const formSchema = clientEditSchema.omit({ id: true });
 type FormValues = z.infer<typeof formSchema>;
@@ -52,39 +55,75 @@ export function ClientBookingForm({
 			clientBudget: booking.clientBudget,
 		},
 	});
-	const { isSubmitting, isDirty } = form.formState;
 	const location = useWatch({ control: form.control, name: "location" });
+	const serviceType = useWatch({ control: form.control, name: "serviceType" });
 
-	async function onSubmit(values: FormValues) {
-		const result = await updateBookingAsClient({ ...values, id: booking.id });
-		if (!result.ok) return void toast.error(errorMessage(result.error));
-		toast.success(t("saved"));
-		form.reset(values);
-		router.refresh();
-	}
+	const save = useCallback(
+		async (values: FormValues) => {
+			const result = await updateBookingAsClient({ ...values, id: booking.id });
+			if (!result.ok) {
+				toast.error(errorMessage(result.error));
+				return false;
+			}
+			router.refresh();
+			return true;
+		},
+		[booking.id, errorMessage, router],
+	);
+	const { status, flush } = useAutosave(form, save);
 
 	return (
 		<Form {...form}>
 			<form
-				onSubmit={form.handleSubmit(onSubmit)}
+				onSubmit={(event) => {
+					event.preventDefault();
+					void flush();
+				}}
+				onBlur={() => void flush()}
 				className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
 			>
-				<div>
-					<h2 className="text-sm font-semibold">{t("title")}</h2>
-					<p className="text-xs text-muted-foreground">{t("hint")}</p>
+				<div className="flex items-start justify-between gap-3">
+					<div>
+						<h2 className="text-sm font-semibold">{t("title")}</h2>
+						<p className="text-xs text-muted-foreground">{t("hint")}</p>
+					</div>
+					<span
+						aria-live="polite"
+						className="flex h-5 shrink-0 items-center gap-1 text-xs text-muted-foreground"
+					>
+						{status === "saving" && (
+							<>
+								<Loader2 className="h-3 w-3 animate-spin" />
+								{t("saving")}
+							</>
+						)}
+						{status === "saved" && (
+							<>
+								<Check className="h-3 w-3 text-success" />
+								{t("autosaved")}
+							</>
+						)}
+						{status === "error" && (
+							<>
+								<CircleAlert className="h-3 w-3 text-destructive" />
+								{t("saveFailed")}
+							</>
+						)}
+					</span>
 				</div>
 				<div className="grid gap-3 sm:grid-cols-2">
 					<TextField<FormValues> name="clientName" label={t("name")} />
 					<TextField<FormValues>
 						name="clientPhone"
 						label={t("phone")}
+						required
 						type="tel"
 						placeholder="+216 …"
 					/>
 					<SelectField<FormValues>
 						name="serviceType"
 						label={t("serviceType")}
-						options={SERVICE_TYPES.map((value) => ({
+						options={serviceChoices(serviceType).map((value) => ({
 							value,
 							label: tService(value),
 						}))}
@@ -104,28 +143,35 @@ export function ClientBookingForm({
 					description={t("descriptionHint")}
 					rows={3}
 				/>
-				<div className="grid gap-3 sm:grid-cols-3">
+				<div className="grid items-start gap-3 sm:grid-cols-3">
 					<TextField<FormValues>
 						name="desiredDate"
 						label={t("date")}
+						required
 						type="date"
 					/>
 					<TextField<FormValues>
 						name="startTime"
 						label={t("startTime")}
+						required
 						type="time"
 					/>
-					<TextField<FormValues>
-						name="durationHours"
-						label={t("duration")}
-						type="number"
-						step="0.5"
-					/>
+					<div className="flex flex-col gap-1.5">
+						<TextField<FormValues>
+							name="durationHours"
+							label={t("duration")}
+							type="number"
+							step="0.5"
+							min={1}
+						/>
+						<DurationPresets />
+					</div>
 				</div>
 				<div className="flex items-start gap-2">
 					<TextField<FormValues>
 						name="location"
 						label={t("location")}
+						required
 						description={t("locationHint")}
 						placeholder="https://maps.google.com/…"
 						className="flex-1"
@@ -152,14 +198,6 @@ export function ClientBookingForm({
 					step="0.001"
 					className="sm:max-w-xs"
 				/>
-				<div className="flex justify-end">
-					<Button type="submit" size="sm" disabled={isSubmitting || !isDirty}>
-						{isSubmitting && (
-							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-						)}
-						{t("save")}
-					</Button>
-				</div>
 			</form>
 		</Form>
 	);

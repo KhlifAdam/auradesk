@@ -20,7 +20,9 @@ export type ServiceType =
 	| "PORTRAIT"
 	| "ADVERTISING"
 	| "CORPORATE"
-	| "OTHER";
+	| "OTHER"
+	| "PFE"
+	| "PUB";
 export type MediaKind = "PHOTO" | "VIDEO" | "BOTH";
 
 /** Typical deliverables when the files aren't uploaded yet: photos and finished video minutes. */
@@ -34,6 +36,8 @@ const TYPICAL: Record<ServiceType, { photos: number; videoMin: number }> = {
 	ADVERTISING: { photos: 30, videoMin: 1.5 },
 	CORPORATE: { photos: 100, videoMin: 3 },
 	OTHER: { photos: 100, videoMin: 3 },
+	PFE: { photos: 60, videoMin: 2 },
+	PUB: { photos: 30, videoMin: 1.5 },
 };
 
 /** Productive hours a day a studio gives its editing, shared by the projects in progress. */

@@ -1,4 +1,5 @@
 import {
+	CalendarCheck,
 	Contact,
 	FolderOpen,
 	type LucideIcon,
@@ -8,7 +9,13 @@ import {
 } from "lucide-react";
 
 export interface PortalNavItem {
-	key: "projects" | "studios" | "messages" | "invoices" | "profile";
+	key:
+		| "projects"
+		| "bookings"
+		| "studios"
+		| "messages"
+		| "invoices"
+		| "profile";
 	href: string;
 	icon: LucideIcon;
 	/** Which pages keep this entry lit. */
@@ -21,12 +28,13 @@ export const PORTAL_NAV: PortalNavItem[] = [
 		key: "projects",
 		href: "/portal",
 		icon: FolderOpen,
-		prefixes: [
-			"/portal/projects",
-			"/portal/galleries",
-			"/portal/bookings",
-			"/portal/books",
-		],
+		prefixes: ["/portal/projects", "/portal/galleries", "/portal/books"],
+	},
+	{
+		key: "bookings",
+		href: "/portal/bookings",
+		icon: CalendarCheck,
+		prefixes: ["/portal/bookings"],
 	},
 	{
 		key: "studios",
@@ -53,6 +61,9 @@ export const PORTAL_NAV: PortalNavItem[] = [
 		prefixes: ["/portal/account", "/portal/settings"],
 	},
 ];
+
+/** Counts shown on nav entries, e.g. requests waiting for an answer. */
+export type PortalNavCounts = Partial<Record<PortalNavItem["key"], number>>;
 
 /** True when `pathname` belongs to this entry. */
 export function isNavActive(item: PortalNavItem, pathname: string) {

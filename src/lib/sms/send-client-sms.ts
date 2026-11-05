@@ -91,6 +91,21 @@ export function sendBookingSentSms(props: {
 	});
 }
 
+/** Booking confirmed and project ready, for a phone-only client. */
+export function sendProjectCreatedSms(props: {
+	to: string;
+	locale: Locale;
+	studio: string;
+	project: string;
+	path: string;
+}) {
+	const { to, locale, path, ...vars } = props;
+	return sendSms({
+		to,
+		body: smsText(locale, "projectCreated", { ...vars, url: appUrl(path) }),
+	});
+}
+
 /** Galleries open for choosing, or the project delivered, for a phone-only client. */
 export function sendProjectStageSms(props: {
 	to: string;

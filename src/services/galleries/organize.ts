@@ -39,6 +39,12 @@ export function extensionOf(filename: string) {
 	return match ? match[1].toLowerCase() : "";
 }
 
+/** The prefix of a name made by `organizedName`, or null for any other name. */
+export function prefixFromOrganizedName(filename: string) {
+	const match = filename.match(/^(.+)_\d{8}_\d{4}(?:\.[a-z0-9]{1,5})?$/i);
+	return match && prefixSchema.safeParse(match[1]).success ? match[1] : null;
+}
+
 /** A sensible default prefix from a title: "Mariage Ben Ali" → "mariage-ben-ali". */
 export function prefixFromTitle(title: string) {
 	return (

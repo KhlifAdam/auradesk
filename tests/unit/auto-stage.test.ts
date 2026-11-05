@@ -34,10 +34,14 @@ describe("stageForGalleryEvent", () => {
 	});
 
 	it("maps organizing and sharing to their steps", () => {
+		// Organizing comes after the client's selection, not before.
 		expect(stageForGalleryEvent("organized", "PROOFS", "IMPORT")).toBe(
+			"IMPORT",
+		);
+		expect(stageForGalleryEvent("organized", "PROOFS", "SELECTION")).toBe(
 			"ORGANIZATION",
 		);
-		expect(stageForGalleryEvent("shared", "PROOFS", "ORGANIZATION")).toBe(
+		expect(stageForGalleryEvent("shared", "PROOFS", "IMPORT")).toBe(
 			"SELECTION",
 		);
 		expect(stageForGalleryEvent("shared", "FINAL", "EXPORT")).toBe(

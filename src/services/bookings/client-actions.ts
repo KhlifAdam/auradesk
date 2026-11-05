@@ -16,6 +16,9 @@ import { bookingCompleteness } from "./completeness";
 import { isOpenStatus } from "./options";
 import { clientAnswerSchema, clientEditSchema } from "./schemas";
 
+/** Client edits within this window count as one change. */
+const EDIT_WINDOW_MS = 10 * 60 * 1000;
+
 /** The request, if it was sent to this client and is still theirs to answer. */
 async function findOpenBooking(
 	user: Parameters<typeof clientBookingWhere>[0],
@@ -114,23 +117,45 @@ export async function updateBookingAsClient(
 	);
 	if (changed.length === 0) return ok();
 
+	// The form saves as the client types: edits close together share one history
+	// entry, and the photographer is told once, not at every pause.
+	const recent = await db.bookingActivity.findFirst({
+		where: {
+			bookingId: id,
+			kind: "CLIENT_EDIT",
+			createdAt: { gte: new Date(Date.now() - EDIT_WINDOW_MS) },
+		},
+		orderBy: { createdAt: "desc" },
+		select: { id: true, body: true },
+	});
+
 	await db.$transaction([
 		db.booking.update({
 			where: { id },
 			data: {
 				...next,
+				status: booking.status === "NEW" ? "DISCUSSION" : undefined,
 				desiredDate: next.desiredDate ? new Date(next.desiredDate) : null,
 				// The first time they save, their account is linked: they keep
 				// access even after changing the phone number it was sent to.
 				clientId: booking.clientId ?? clientId,
 			},
 		}),
-		db.bookingActivity.create({
-			data: { bookingId: id, kind: "CLIENT_EDIT", body: changed.join(",") },
-		}),
+		recent
+			? db.bookingActivity.update({
+					where: { id: recent.id },
+					data: {
+						body: [
+							...new Set([...(recent.body ?? "").split(","), ...changed]),
+						].join(","),
+					},
+				})
+			: db.bookingActivity.create({
+					data: { bookingId: id, kind: "CLIENT_EDIT", body: changed.join(",") },
+				}),
 	]);
 
-	notifyPhotographer(booking, "updated");
+	if (!recent) notifyPhotographer(booking, "updated");
 	revalidate();
 	return ok();
 }
@@ -148,13 +173,14 @@ export async function answerBooking(input: unknown): Promise<ActionResult> {
 
 	if (accept) {
 		// Accepting a proposal that has no date or price yet would mean nothing.
-		if (bookingCompleteness(booking).required.length > 0)
+		if (bookingCompleteness(booking, { forClient: true }).required.length > 0)
 			return fail("bookingIncomplete");
 		await db.$transaction([
 			db.booking.update({
 				where: { id },
 				data: {
 					clientAcceptedAt: new Date(),
+					status: booking.status === "NEW" ? "DISCUSSION" : undefined,
 					clientId: booking.clientId ?? clientId,
 				},
 			}),

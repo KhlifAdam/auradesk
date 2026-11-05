@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { SegmentedControl } from "@/components/dashboard/shared/segmented-control";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,17 +19,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { confirmBooking } from "@/services/bookings/confirm";
-import {
-	type BookingStatus,
-	isOpenStatus,
-	OPEN_STATUSES,
-	type OpenStatus,
-} from "@/services/bookings/options";
+import type { BookingStatus } from "@/services/bookings/options";
 import { sendBookingToClient } from "@/services/bookings/send-action";
 import {
 	declineBooking,
 	reopenBooking,
-	setBookingStatus,
 } from "@/services/bookings/status-actions";
 import { DeclineDialog } from "./decline-dialog";
 
@@ -49,7 +42,7 @@ interface BookingActionsBarProps {
 	clientAccepted: boolean;
 }
 
-/** Moves the request along its commercial steps, then confirms or closes it. */
+/** Sends the request to the client, then confirms or closes it. */
 export function BookingActionsBar({
 	bookingId,
 	status,
@@ -60,7 +53,6 @@ export function BookingActionsBar({
 	clientAccepted,
 }: BookingActionsBarProps) {
 	const t = useTranslations("Bookings.actions");
-	const tStatus = useTranslations("Bookings.status");
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
 	const [isPending, startTransition] = useTransition();
@@ -120,20 +112,6 @@ export function BookingActionsBar({
 
 	return (
 		<div className="flex flex-wrap items-center gap-2">
-			<SegmentedControl<OpenStatus>
-				value={isOpenStatus(status) ? status : "NEW"}
-				onChange={(next) =>
-					!isPending &&
-					run(
-						() => setBookingStatus({ id: bookingId, status: next }),
-						() => toast.success(t("statusUpdated")),
-					)
-				}
-				options={OPEN_STATUSES.map((value) => ({
-					value,
-					label: tStatus(value),
-				}))}
-			/>
 			<Button
 				size="sm"
 				variant="outline"
@@ -189,7 +167,12 @@ export function BookingActionsBar({
 											withoutClient: !clientAccepted,
 										}),
 									(data) => {
-										if (data.invite === "sent") toast.success(t("confirmed"));
+										if (data.invite === "linked")
+											toast.success(t("confirmedLinked"));
+										else if (data.invite === "linkedSilent")
+											toast.warning(t("confirmedLinkedSilent"));
+										else if (data.invite === "sent")
+											toast.success(t("confirmed"));
 										else if (data.invite === "none")
 											toast.success(t("confirmedNoContact"));
 										else toast.warning(t("confirmedNoEmail"));

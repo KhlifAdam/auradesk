@@ -3,6 +3,7 @@ import "server-only";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
+import { bookingCompleteness } from "./completeness";
 import { OPEN_STATUSES } from "./options";
 import {
 	BOOKING_PAGE_SIZE,
@@ -31,22 +32,22 @@ function toSummary(row: SummaryRow): BookingSummary {
 		desiredDate: row.desiredDate?.toISOString() ?? null,
 		proposedPrice: toNumber(row.proposedPrice),
 		createdAt: row.createdAt.toISOString(),
+		incomplete: bookingCompleteness(row).required.length > 0,
 	};
 }
 
 const listOrder = [
-	{ desiredDate: { sort: "asc", nulls: "last" } },
 	{ createdAt: "desc" },
 	{ id: "asc" },
 ] satisfies Prisma.BookingOrderByWithRelationInput[];
 
-/** Dates default to soonest first, creation to newest first; undated go last. */
+/** Defaults to the newest request first; event dates sort soonest first, undated last. */
 function sortedOrder(
 	sort: BookingSort | undefined,
 	order?: "asc" | "desc",
 ): Prisma.BookingOrderByWithRelationInput[] {
 	if (!sort && !order) return listOrder;
-	if (sort === "created")
+	if (sort !== "desiredDate")
 		return [{ createdAt: order ?? "desc" }, { id: "asc" }];
 	return [
 		{ desiredDate: { sort: order ?? "asc", nulls: "last" } },

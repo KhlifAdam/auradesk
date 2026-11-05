@@ -1,7 +1,6 @@
 import { CalendarDays, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
-import { bookingCompleteness } from "@/services/bookings/completeness";
 import { isOpenStatus } from "@/services/bookings/options";
 import type { BookingSummary } from "@/services/bookings/types";
 import { BookingStatusBadge } from "./booking-status-badge";
@@ -40,12 +39,11 @@ export async function BookingList({
 										})
 									: t("noDate")}
 							</span>
-							{isOpenStatus(booking.status) &&
-								bookingCompleteness(booking).required.length > 0 && (
-									<span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
-										{t("incomplete")}
-									</span>
-								)}
+							{isOpenStatus(booking.status) && booking.incomplete && (
+								<span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive">
+									{t("incomplete")}
+								</span>
+							)}
 							<BookingStatusBadge status={booking.status} />
 							<span className="hidden items-center gap-0.5 text-foreground sm:flex">
 								{t("viewDetails")}

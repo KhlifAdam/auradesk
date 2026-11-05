@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { submitBookingRequest } from "@/services/bookings/public-action";
 import { publicRequestSchema } from "@/services/bookings/schemas";
-import { SERVICE_TYPES } from "@/services/projects/options";
+import { SERVICE_CHOICES } from "@/services/projects/options";
 import { useStudioSlug } from "./site-shell";
 
 const formSchema = publicRequestSchema.omit({ slug: true });
@@ -160,7 +160,7 @@ export function BookingRequest({
 								<label className="text-xs font-medium">
 									{t("service")}
 									<select className={FIELD} {...form.register("serviceType")}>
-										{SERVICE_TYPES.map((value) => (
+										{SERVICE_CHOICES.map((value) => (
 											<option key={value} value={value}>
 												{tService(value)}
 											</option>

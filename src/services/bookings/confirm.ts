@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache";
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
+import { toE164 } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { dayKeyIn, zonedToIso } from "@/services/calendar/dates";
 import { advanceProjectStage } from "@/services/projects/auto-stage";
 import { inviteToProject } from "@/services/projects/invitations";
 import { bookingCompleteness } from "./completeness";
+import { notifyProjectCreated } from "./notify-project";
 import { CONFIRMED_WITHOUT_CLIENT } from "./options";
 import { confirmBookingSchema } from "./schemas";
 
@@ -25,13 +27,15 @@ function addMinutes(time: string, minutes: number) {
 
 /**
  * Confirms a booking and opens the operational project from it: same details,
- * a calendar slot, and an invitation to the client. A request never becomes a
- * project before this point.
+ * a calendar slot, and the client. A client who already accepted the request
+ * gets the project directly; anyone else is invited to it. A request never
+ * becomes a project before this point.
  */
-export async function confirmBooking(
-	input: unknown,
-): Promise<
-	ActionResult<{ projectId: string; invite: "sent" | "failed" | "none" }>
+export async function confirmBooking(input: unknown): Promise<
+	ActionResult<{
+		projectId: string;
+		invite: "linked" | "linkedSilent" | "sent" | "failed" | "none";
+	}>
 > {
 	const { session, photographerId } = await requirePhotographer();
 	const parsed = confirmBookingSchema.safeParse(input);
@@ -70,6 +74,10 @@ export async function confirmBooking(
 				)
 			: desiredDate;
 
+	// The client accepted from their account: the project is theirs at once, with
+	// no second invitation to answer.
+	const linkedClientId = accepted ? booking.clientId : null;
+
 	const projectId = await db.$transaction(async (tx) => {
 		// Claims the booking first, so two clicks can't create two projects.
 		const claimed = await tx.booking.updateMany({
@@ -101,6 +109,13 @@ export async function confirmBooking(
 				location: booking.location,
 				price: booking.proposedPrice,
 				internalNotes: booking.internalNotes,
+				...(linkedClientId && {
+					clientId: linkedClientId,
+					inviteStatus: "ACCEPTED" as const,
+					inviteEmail: booking.clientEmail?.toLowerCase() || null,
+					invitePhone: toE164(booking.clientPhone ?? ""),
+					invitedAt: new Date(),
+				}),
 			},
 			select: { id: true },
 		});
@@ -137,10 +152,22 @@ export async function confirmBooking(
 
 	// The project exists either way; a failed invite can be retried from it.
 	// Without an email or phone number there is no one to invite.
-	let invite: "sent" | "failed" | "none" = "none";
+	let invite: "linked" | "linkedSilent" | "sent" | "failed" | "none" = "none";
+	if (linkedClientId) {
+		// Already has access: just tell them the booking is confirmed.
+		const told = await notifyProjectCreated({
+			clientId: linkedClientId,
+			photographerId,
+			projectId,
+			project: booking.title,
+			fallbackEmail: booking.clientEmail,
+			fallbackPhone: booking.clientPhone,
+		});
+		invite = told ? "linked" : "linkedSilent";
+	}
 	// By email when there is one, else texted to the phone number.
 	const contact = booking.clientEmail ?? booking.clientPhone;
-	if (contact) {
+	if (contact && !linkedClientId) {
 		const invited = await inviteToProject(
 			{ id: photographerId, email: session.user.email },
 			projectId,

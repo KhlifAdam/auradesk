@@ -28,7 +28,7 @@ import {
 	type PortalRequestValues,
 	portalRequestSchema,
 } from "@/services/bookings/schemas";
-import { SERVICE_TYPES } from "@/services/projects/options";
+import { SERVICE_CHOICES } from "@/services/projects/options";
 
 interface NewRequestDialogProps {
 	studios: { photographerId: string; name: string }[];
@@ -100,7 +100,7 @@ export function NewRequestDialog({ studios }: NewRequestDialogProps) {
 							<SelectField<PortalRequestValues>
 								name="serviceType"
 								label={t("service")}
-								options={SERVICE_TYPES.map((value) => ({
+								options={SERVICE_CHOICES.map((value) => ({
 									value,
 									label: tService(value),
 								}))}

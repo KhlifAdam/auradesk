@@ -14,11 +14,9 @@ interface ClientBookingAnswerProps {
 	bookingId: string;
 	/** The studio still has to add the date or the price. */
 	incomplete: boolean;
-	/** Unsaved changes would be lost: they must be saved first. */
-	hasUnsavedChanges?: boolean;
 }
 
-/** Accept the proposal or decline the request. */
+/** The two buttons: accept the proposal or decline the request. */
 export function ClientBookingAnswer({
 	bookingId,
 	incomplete,
@@ -38,41 +36,28 @@ export function ClientBookingAnswer({
 		});
 
 	return (
-		<section
-			id="answer"
-			className="flex scroll-mt-24 flex-col gap-4 rounded-xl border-2 border-primary/50 bg-primary/5 p-5 shadow-sm"
-		>
-			<div className="flex flex-col gap-1">
-				<h2 className="font-display text-lg font-bold tracking-tight">
-					{t("title")}
-				</h2>
-				<p className="text-sm text-muted-foreground">
-					{incomplete ? t("incomplete") : t("hint")}
-				</p>
-			</div>
-			<div className="flex flex-wrap items-center gap-3">
-				<Button
-					className="h-11 gap-2 px-6 text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg"
-					disabled={isPending || incomplete}
-					onClick={() => answer(true)}
-				>
-					{isPending ? (
-						<Loader2 className="h-4 w-4 animate-spin" />
-					) : (
-						<CircleCheckBig className="h-4 w-4" />
-					)}
-					{t("accept")}
-				</Button>
-				<DeclineDialog
-					title={t("declineTitle")}
-					description={t("declineDescription")}
-					trigger={t("decline")}
-					reason={reason}
-					onReason={setReason}
-					disabled={isPending}
-					onConfirm={() => answer(false)}
-				/>
-			</div>
-		</section>
+		<div className="flex flex-col items-stretch gap-2">
+			<Button
+				className="h-10 gap-2 text-sm font-semibold shadow-md transition-all duration-300 hover:shadow-lg"
+				disabled={isPending || incomplete}
+				onClick={() => answer(true)}
+			>
+				{isPending ? (
+					<Loader2 className="h-4 w-4 animate-spin" />
+				) : (
+					<CircleCheckBig className="h-4 w-4" />
+				)}
+				{t("accept")}
+			</Button>
+			<DeclineDialog
+				title={t("declineTitle")}
+				description={t("declineDescription")}
+				trigger={t("decline")}
+				reason={reason}
+				onReason={setReason}
+				disabled={isPending}
+				onConfirm={() => answer(false)}
+			/>
+		</div>
 	);
 }

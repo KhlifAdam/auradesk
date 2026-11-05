@@ -18,14 +18,32 @@ const photographerSelect = {
 	select: { name: true, studio: { select: { name: true } } },
 } as const;
 
+/** Requests the studio sent that the client still has to answer. */
+export function countBookingsToAnswer(user: ClientIdentity) {
+	return db.booking.count({
+		where: {
+			...clientBookingWhere(user),
+			sentToClientAt: { not: null },
+			status: { in: [...OPEN_STATUSES] },
+			clientAcceptedAt: null,
+			source: { not: "PORTAL" },
+		},
+	});
+}
+
+/** Project invitations waiting for the contacts this client has verified. */
+export async function countProjectInvitations(user: ClientIdentity) {
+	const contact = verifiedContact(user);
+	if (!contact.email && !contact.phone) return 0;
+	return db.project.count({ where: pendingFor(contact) });
+}
+
 /**
  * The client's home: the next shoot, and everything waiting on them, so the
  * portal opens on what to do rather than on a list to dig through.
  */
 export async function getPortalHome(user: ClientIdentity) {
 	const today = new Date(new Date().toISOString().slice(0, 10));
-	const contact = verifiedContact(user);
-
 	const [nextShoot, bookings, invitations, selections, balances, unread] =
 		await Promise.all([
 			db.project.findFirst({
@@ -40,19 +58,8 @@ export async function getPortalHome(user: ClientIdentity) {
 					photographer: photographerSelect,
 				},
 			}),
-			// Requests the studio sent and the client still has to answer.
-			db.booking.count({
-				where: {
-					...clientBookingWhere(user),
-					sentToClientAt: { not: null },
-					status: { in: [...OPEN_STATUSES] },
-					clientAcceptedAt: null,
-					source: { not: "PORTAL" },
-				},
-			}),
-			contact.email || contact.phone
-				? db.project.count({ where: pendingFor(contact) })
-				: 0,
+			countBookingsToAnswer(user),
+			countProjectInvitations(user),
 			// Galleries open for picking that the client hasn't sent yet.
 			db.gallery.findMany({
 				where: {

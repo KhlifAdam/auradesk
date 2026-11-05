@@ -11,6 +11,8 @@ export interface BookingSummary {
 	desiredDate: string | null;
 	proposedPrice: number | null;
 	createdAt: string;
+	/** Something required to confirm is still missing. */
+	incomplete: boolean;
 }
 
 export interface BookingActivityItem {

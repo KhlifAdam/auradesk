@@ -4,7 +4,6 @@ import { type CSSProperties, Suspense } from "react";
 import { LinkCard } from "@/components/account/link-card";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
-import { BookingRequests } from "@/components/portal/bookings/booking-requests";
 import { NewRequestDialog } from "@/components/portal/home/new-request-dialog";
 import { PortalDashboard } from "@/components/portal/home/portal-dashboard";
 import { NameCard } from "@/components/portal/name-card";
@@ -75,9 +74,6 @@ export default async function PortalPage({ searchParams }: PortalPageProps) {
 					description={t("linkPrompt.description")}
 				/>
 			)}
-			<Suspense>
-				<BookingRequests />
-			</Suspense>
 			<Suspense>
 				<PendingInvitations />
 			</Suspense>

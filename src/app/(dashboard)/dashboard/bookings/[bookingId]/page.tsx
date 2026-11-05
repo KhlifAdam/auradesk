@@ -3,9 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { BookingActionsBar } from "@/components/dashboard/bookings/booking-actions-bar";
-import { BookingActivity } from "@/components/dashboard/bookings/booking-activity";
 import { BookingChecklist } from "@/components/dashboard/bookings/booking-checklist";
 import { BookingClientStatus } from "@/components/dashboard/bookings/booking-client-status";
+import { BookingContact } from "@/components/dashboard/bookings/booking-contact";
 import { BookingDeleteButton } from "@/components/dashboard/bookings/booking-delete-button";
 import { BookingFacts } from "@/components/dashboard/bookings/booking-facts";
 import { BookingStatusBadge } from "@/components/dashboard/bookings/booking-status-badge";
@@ -112,12 +112,9 @@ export default async function BookingPage({
 				</p>
 			)}
 			<BookingQuotes bookingId={booking.id} />
-			<div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
+			<div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
 				<BookingFacts booking={booking} />
-				<BookingActivity
-					bookingId={booking.id}
-					activities={booking.activities}
-				/>
+				<BookingContact booking={booking} />
 			</div>
 		</PageShell>
 	);

@@ -60,7 +60,7 @@ describe("assistant tools", () => {
 			.filter(([, tool]) => tool.tier === "auto")
 			.map(([name]) => name);
 		expect(auto.sort()).toEqual(
-			["add_booking_note", "create_calendar_event", "update_client_notes"].sort(),
+			["create_calendar_event", "update_client_notes"].sort(),
 		);
 	});
 });

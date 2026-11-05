@@ -357,6 +357,8 @@ enum ProjectServiceType {
   ADVERTISING
   CORPORATE
   OTHER
+  PFE
+  PUB
 
   @@map("project_service_type")
 }

@@ -1,18 +1,21 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useFormContext, useWatch } from "react-hook-form";
 import {
 	SelectField,
 	TextField,
 } from "@/components/dashboard/shared/form-fields";
 import { FormSection } from "@/components/dashboard/shared/form-section";
-import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
+import { MEDIA_TYPES, serviceChoices } from "@/services/projects/options";
 import type { CreateProjectValues } from "@/services/projects/schemas";
 
 export function GeneralSection() {
 	const t = useTranslations("Projects.form");
 	const tService = useTranslations("Projects.serviceTypes");
 	const tMedia = useTranslations("Projects.mediaTypes");
+	const { control } = useFormContext<CreateProjectValues>();
+	const current = useWatch({ control, name: "serviceType" });
 
 	return (
 		<FormSection title={t("general.title")} description={t("general.hint")}>
@@ -25,7 +28,7 @@ export function GeneralSection() {
 				<SelectField<CreateProjectValues>
 					name="serviceType"
 					label={t("serviceType")}
-					options={SERVICE_TYPES.map((value) => ({
+					options={serviceChoices(current).map((value) => ({
 						value,
 						label: tService(value),
 					}))}

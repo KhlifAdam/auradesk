@@ -6,6 +6,7 @@ import {
 	countPendingInvitations,
 	listPendingInvitations,
 } from "@/services/portal/queries";
+import { AttentionPanel } from "./attention-panel";
 import { InvitationCard } from "./invitation-card";
 import { VerifyEmailCard } from "./verify-email-card";
 
@@ -31,14 +32,14 @@ export async function PendingInvitations() {
 				<VerifyEmailCard email={realAddress} count={unverifiedCount} />
 			)}
 			{invitations.length > 0 && (
-				<section id="invitations" className="flex scroll-mt-20 flex-col gap-3">
-					<h2 className="text-sm font-semibold">
-						{t("title", { count: invitations.length })}
-					</h2>
+				<AttentionPanel
+					id="invitations"
+					title={t("title", { count: invitations.length })}
+				>
 					{invitations.map((invitation) => (
 						<InvitationCard key={invitation.id} invitation={invitation} />
 					))}
-				</section>
+				</AttentionPanel>
 			)}
 		</>
 	);

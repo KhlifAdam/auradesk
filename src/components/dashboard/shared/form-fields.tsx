@@ -39,6 +39,8 @@ interface TextFieldProps<T extends FieldValues> extends BaseFieldProps<T> {
 	prefix?: ReactNode;
 	/** `step` of a number input, e.g. `0.001`. */
 	step?: string;
+	/** Lowest value of a number input (default 0). */
+	min?: number;
 }
 
 /** Compact text / textarea field bound to the surrounding react-hook-form. */
@@ -52,6 +54,7 @@ export function TextField<T extends FieldValues>({
 	rows,
 	prefix,
 	step,
+	min = 0,
 	required,
 }: TextFieldProps<T>) {
 	const { control } = useFormContext<T>();
@@ -87,7 +90,7 @@ export function TextField<T extends FieldValues>({
 								<Input
 									type={type}
 									step={step}
-									min={type === "number" ? 0 : undefined}
+									min={type === "number" ? min : undefined}
 									placeholder={placeholder}
 									className={cn("h-8 text-sm", prefix && "pl-8")}
 									{...field}

@@ -4,13 +4,16 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { UnreadBadge } from "@/components/messages/unread-badge";
 import { BottomTabBar } from "@/components/shared/bottom-tab-bar";
-import { isNavActive, PORTAL_NAV } from "./portal-nav";
+import { NavCount } from "./nav-count";
+import { isNavActive, PORTAL_NAV, type PortalNavCounts } from "./portal-nav";
 
 /** The phone's tab bar of the client space. */
 export function PortalBottomNav({
 	unreadMessages,
+	counts,
 }: {
 	unreadMessages: number;
+	counts: PortalNavCounts;
 }) {
 	const t = useTranslations("Portal.nav");
 	const pathname = usePathname();
@@ -26,13 +29,19 @@ export function PortalBottomNav({
 				icon: item.icon,
 				href: item.href,
 				active: isNavActive(item, pathname),
-				badge: item.key === "messages" && (
-					<UnreadBadge
-						side="client"
-						initial={unreadMessages}
-						className="absolute -top-1.5 -right-2.5"
-					/>
-				),
+				badge:
+					item.key === "messages" ? (
+						<UnreadBadge
+							side="client"
+							initial={unreadMessages}
+							className="absolute -top-1.5 -right-2.5"
+						/>
+					) : (
+						<NavCount
+							count={counts[item.key]}
+							className="absolute -top-1.5 -right-2.5"
+						/>
+					),
 			}))}
 		/>
 	);

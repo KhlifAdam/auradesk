@@ -20,12 +20,12 @@ interface BookingSortProps {
 
 /** Sort field and direction, kept in `?sort=&order=`. */
 export function BookingSortControl({
-	sort = "desiredDate",
+	sort = "created",
 	order,
 }: BookingSortProps) {
 	const t = useTranslations("Bookings.list.sort");
 	const update = useUpdateSearchParams();
-	// Same defaults as the query: soonest event first, newest request first.
+	// Same defaults as the query: newest request first, soonest event first.
 	const direction = order ?? (sort === "created" ? "desc" : "asc");
 	const ascending = direction === "asc";
 

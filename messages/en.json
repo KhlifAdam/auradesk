@@ -194,7 +194,7 @@
 		"invitationNotFound": "This invitation is no longer available.",
 		"unpaidProject": "Mark the project as paid before delivering it.",
 		"bookingLocked": "A confirmed booking can't be changed.",
-		"bookingIncomplete": "Add a date and a proposed price before confirming.",
+		"bookingIncomplete": "Add the date, start time, location, client email and phone, and proposed price before confirming.",
 		"alreadyConfirmed": "This booking is already confirmed.",
 		"tooManyRequests": "Too many requests. Please try again later.",
 		"invalidContact": "Enter a valid email or phone number.",
@@ -1511,6 +1511,14 @@
 			"cta": "Open the request",
 			"text": "{studio} sent you the booking request “{booking}”. Open it here: {url}"
 		},
+		"projectCreated": {
+			"subject": "{studio} confirmed your booking",
+			"preheader": "Your project “{project}” is ready",
+			"heading": "Your booking is confirmed",
+			"intro": "{studio} confirmed “{project}” and opened the project for you. Follow its progress, your galleries and your files from your space.",
+			"cta": "Open the project",
+			"text": "{studio} confirmed your booking “{project}” and opened the project for you. Open it here: {url}"
+		},
 		"bookingClientReply": {
 			"subject": "{client} {action} “{booking}”",
 			"preheader": "{client} {action}",
@@ -1608,7 +1616,8 @@
 		"projectDelivered": "{studio} delivered \"{project}\": your files are ready to download: {url}",
 		"galleryShared": "{studio} shared the gallery \"{gallery}\" with you: {url}",
 		"newMessage": "{sender} sent you a message on AuraDesk: {url}",
-		"bookingSent": "{studio} sent you a booking request \"{booking}\": {url}"
+		"bookingSent": "{studio} sent you a booking request \"{booking}\": {url}",
+		"projectCreated": "{studio} confirmed your booking \"{project}\". Follow the project here: {url}"
 	},
 	"NotFound": {
 		"code": "404",
@@ -1804,7 +1813,7 @@
 				"scope": "Applies to all your projects",
 				"enabled": "Projects now move forward on their own.",
 				"disabled": "Projects now only move when you change the stage.",
-				"hint": "Moves forward on its own: confirmed booking → Prep, shoot day → Shooting, files uploaded → Import, gallery organized → Organization, proofs shared → Selection, selection sent → Post-production, finals uploaded → Export, finals shared → Validation. Delivery stays manual."
+				"hint": "Moves forward on its own: confirmed booking → Prep, shoot day → Shooting, files uploaded → Import, proofs shared → Selection, gallery organized after the selection → Organization, selection sent → Post-production, finals uploaded → Export, finals shared → Validation. Delivery stays manual."
 			}
 		},
 		"invite": {
@@ -1841,7 +1850,9 @@
 			"PORTRAIT": "Portrait",
 			"ADVERTISING": "Advertising",
 			"CORPORATE": "Corporate",
-			"OTHER": "Other"
+			"OTHER": "Other",
+			"PFE": "PFE",
+			"PUB": "Pub"
 		},
 		"mediaTypes": {
 			"PHOTO": "Photography",
@@ -1970,7 +1981,9 @@
 			"cancel": "Cancel",
 			"createTitle": "New booking",
 			"editTitle": "Edit booking",
-			"description": "Only the client's name and a title are required. Fill in the rest as you learn it.",
+			"description": "Capture a new client request in seconds. Add what you know now and complete the rest as the conversation moves on.",
+			"asideHint": "Updates as you type. Only the required items block confirming.",
+			"blockedHint": "Add the client name and the proposed price to save. The client can fill in the rest.",
 			"create": "Add booking",
 			"save": "Save",
 			"created": "Booking added.",
@@ -1978,6 +1991,9 @@
 			"client": {
 				"title": "Client",
 				"hint": "Pick an existing client or type the contact details of a new one.",
+				"linked": "Linked to an existing client",
+				"unlink": "Unlink the client",
+				"newClientHint": "New client? Type their details below, or pick one you already have.",
 				"name": "Client name",
 				"email": "Email",
 				"phone": "Phone",
@@ -1996,6 +2012,8 @@
 				"date": "Wished date",
 				"startTime": "Start time",
 				"duration": "Estimated duration (hours)",
+				"hours": "{count}h",
+				"endsAt": "Ends around {time}",
 				"location": "Location",
 				"locationHint": "An address or a Google Maps link, if known.",
 				"nameHint": "Optional. If empty, it is built from the type and the client's name.",
@@ -2007,12 +2025,12 @@
 				"budget": "Client's budget",
 				"price": "Proposed price",
 				"advance": "Planned advance",
+				"advanceQuick": "Advance as a share of the price:",
 				"deadline": "Reply deadline",
 				"notes": "Internal notes",
 				"notesHint": "Only you can see these.",
 				"neededToConfirm": "Needed to confirm the booking."
-			},
-			"requiredNote": "Fields marked * are required. The date and the proposed price are needed to confirm the booking."
+			}
 		},
 		"detail": {
 			"back": "All bookings",
@@ -2028,10 +2046,12 @@
 			"statusUpdated": "Status updated.",
 			"confirm": "Confirm booking",
 			"confirmTitle": "Confirm this booking?",
-			"confirmDescription": "A project is created from it with the same details, a slot is added to your calendar, and the client is invited if you gave an email.",
+			"confirmDescription": "A project is created from it with the same details, a slot is added to your calendar, and the client gets access to it (an invitation is only sent if they haven't accepted yet).",
 			"confirmAction": "Confirm and create the project",
 			"back": "Back",
 			"confirmed": "Booking confirmed, project created and client invited.",
+			"confirmedLinked": "Booking confirmed and project created. The client already has access to it and was notified.",
+			"confirmedLinkedSilent": "Booking confirmed and project created. The client already has access, but the notification couldn't be sent.",
 			"confirmedNoContact": "Booking confirmed and project created. No client contact, so no invitation was sent.",
 			"confirmedNoEmail": "Booking confirmed and project created. No invitation email was sent.",
 			"decline": "Decline",
@@ -2046,7 +2066,7 @@
 			"reasonPlaceholder": "Reason (optional)",
 			"reopen": "Reopen",
 			"reopened": "Booking reopened.",
-			"confirmBlocked": "Add the date and the proposed price first.",
+			"confirmBlocked": "Add the date, start time, location, client email and phone, and proposed price first.",
 			"send": "Send to client",
 			"sendAgain": "Send again",
 			"sendNoContact": "Add the client's email or phone number first.",
@@ -2055,29 +2075,15 @@
 			"confirmNotAccepted": "The client hasn't reviewed and accepted this request yet. Send it to them first, or confirm anyway if you agreed outside the app (by phone or in person).",
 			"confirmWithoutClient": "Confirm without the client's approval"
 		},
-		"activity": {
-			"title": "History",
-			"placeholder": "Add a follow-up: info requested, alternative date offered…",
-			"add": "Add note",
-			"created": "Request created",
-			"statusChanged": "Status: {status}",
-			"sent": "Sent to the client",
-			"clientAccepted": "The client accepted",
-			"clientDeclined": "The client declined",
-			"clientEdited": "The client updated: {fields}",
-			"fields": {
-				"description": "description",
-				"desiredDate": "date",
-				"startTime": "start time",
-				"durationMinutes": "duration",
-				"location": "location",
-				"clientBudget": "budget",
-				"clientName": "name",
-				"clientPhone": "phone",
-				"serviceType": "service",
-				"mediaType": "media"
-			},
-			"confirmedWithoutClient": "Confirmed without the client's approval"
+		"contact": {
+			"title": "Contact the client",
+			"message": "Message in the app",
+			"call": "Call",
+			"whatsapp": "WhatsApp",
+			"email": "Send an email",
+			"profile": "Open the client's page",
+			"none": "No email or phone number yet. Add one by editing the booking.",
+			"received": "Request received on {date}"
 		},
 		"facts": {
 			"client": "Client",
@@ -2111,7 +2117,8 @@
 			"fields": {
 				"desiredDate": "Date",
 				"proposedPrice": "Proposed price",
-				"contact": "Client email or phone",
+				"clientPhone": "Client phone number",
+				"clientEmail": "Client email",
 				"location": "Location",
 				"startTime": "Start time"
 			}
@@ -3303,10 +3310,29 @@
 		},
 		"bookings": {
 			"title": "{count, plural, one {# booking request} other {# booking requests}}",
-			"back": "My projects",
+			"back": "My bookings",
+			"pageTitle": "Your bookings",
+			"pageDescription": "Requests from your studios: answer the ones waiting, and follow the rest.",
+			"empty": {
+				"title": "No booking requests yet",
+				"description": "When a studio sends you a request, or you ask one for a service, it shows up here."
+			},
 			"reason": "Reason:",
 			"openProject": "Open the project",
 			"waitingStudioHint": "You accepted. The studio will confirm the booking and open the project.",
+			"checklist": {
+				"title": "Before you can accept",
+				"desiredDate": "Date",
+				"proposedPrice": "Price",
+				"location": "Location",
+				"clientPhone": "Your phone number",
+				"startTime": "Start time",
+				"studio": "Studio",
+				"you": "You"
+			},
+			"needsAnswer": "{count, plural, one {A request needs your answer} other {# requests need your answer}}",
+			"review": "Review and answer",
+			"others": "{count, plural, one {# other request} other {# other requests}}",
 			"state": {
 				"toAnswer": "Awaiting your answer",
 				"waitingStudio": "Waiting for the studio",
@@ -3315,7 +3341,10 @@
 			},
 			"form": {
 				"title": "Your details",
-				"hint": "Check the request, then fill in or correct what concerns you. The studio is told when you save.",
+				"hint": "Check the request, then fill in or correct what concerns you. Your changes are saved automatically.",
+				"saving": "Saving…",
+				"autosaved": "All changes saved",
+				"saveFailed": "Couldn't save",
 				"description": "What you need",
 				"descriptionHint": "Describe what you would like to get.",
 				"date": "Date",
@@ -3326,8 +3355,6 @@
 				"openMap": "Open the map",
 				"budget": "Your budget",
 				"budgetHint": "Optional, in TND.",
-				"save": "Save my details",
-				"saved": "Your details were saved.",
 				"name": "Your name",
 				"phone": "Phone",
 				"serviceType": "Service",
@@ -3336,15 +3363,13 @@
 			"answer": {
 				"title": "Your answer",
 				"hint": "Check the proposal above, then accept it to confirm your booking, or decline the request.",
-				"incomplete": "The studio still has to add the date and the price before you can accept.",
+				"incomplete": "Some details are still missing. Once the date, time, place, phone and price are set, you can accept.",
 				"accept": "Accept the proposal",
 				"accepted": "You accepted. The studio was told.",
 				"decline": "Decline",
 				"declined": "You declined the request.",
 				"declineTitle": "Decline this request?",
-				"declineDescription": "The studio will be told. You can add a reason.",
-				"waiting": "The studio is waiting for your answer. Check the proposal, then accept it.",
-				"review": "Review and answer"
+				"declineDescription": "The studio will be told. You can add a reason."
 			},
 			"facts": {
 				"proposal": "The studio's proposal",
@@ -3488,6 +3513,7 @@
 		"nav": {
 			"label": "Main navigation",
 			"projects": "Projects",
+			"bookings": "Bookings",
 			"studios": "Studios",
 			"messages": "Messages",
 			"invoices": "Invoices",
@@ -3906,7 +3932,6 @@
 			"delete": "Delete",
 			"notFound": "This item no longer exists or isn't yours.",
 			"titles": {
-				"add_booking_note": "Add a note to the request",
 				"update_client_notes": "Update the client's notes",
 				"create_calendar_event": "Add to the calendar",
 				"confirm_booking": "Confirm the booking",

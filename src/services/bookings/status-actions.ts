@@ -5,7 +5,7 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
-import { declineSchema, noteSchema, setStatusSchema } from "./schemas";
+import { declineSchema, setStatusSchema } from "./schemas";
 
 /** The booking and the lists that show it. */
 function revalidateBookings() {
@@ -109,24 +109,6 @@ export async function reopenBooking(input: unknown): Promise<ActionResult> {
 			},
 		}),
 	]);
-
-	revalidateBookings();
-	return ok();
-}
-
-/** A follow-up entry in the history: info requested, alternative date offered… */
-export async function addBookingNote(input: unknown): Promise<ActionResult> {
-	const { photographerId } = await requirePhotographer();
-	const parsed = noteSchema.safeParse(input);
-	if (!parsed.success) return failFromZod(parsed.error);
-
-	const { id, body } = parsed.data;
-	const exists = await db.booking.count({ where: { id, photographerId } });
-	if (!exists) return fail("notFound");
-
-	await db.bookingActivity.create({
-		data: { bookingId: id, kind: "NOTE", body },
-	});
 
 	revalidateBookings();
 	return ok();

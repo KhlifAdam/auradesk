@@ -1,68 +1,30 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import { Maximize2, Plus, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import type { AssistantUIMessage } from "@/lib/ai/assistant/tools";
-import { cn } from "@/lib/utils";
 import { loadThread } from "@/services/assistant/actions";
 import { useAssistant } from "./assistant-provider";
+import { AssistantShell } from "./assistant-shell";
 import { ChatView } from "./chat/chat-view";
 import { HistoryMenu } from "./history-menu";
 
-const DESKTOP = "(min-width: 1024px)";
-
-function useIsDesktop() {
-	return useSyncExternalStore(
-		(onChange) => {
-			const query = window.matchMedia(DESKTOP);
-			query.addEventListener("change", onChange);
-			return () => query.removeEventListener("change", onChange);
-		},
-		() => window.matchMedia(DESKTOP).matches,
-		() => true,
-	);
-}
-
 /**
- * The assistant beside the page. On wide screens it takes its own column, so
- * the page shrinks instead of being covered; on small ones it fills the screen.
+ * The studio's assistant: docked beside the page on wide screens (the page
+ * shrinks instead of being covered), a floating bubble on phones and tablets.
  */
 export function AssistantPanel({ team }: { team: boolean }) {
+	const t = useTranslations("Assistant.panel");
 	const { open } = useAssistant();
-	const desktop = useIsDesktop();
 
 	return (
-		<AnimatePresence initial={false}>
-			{open && (
-				<motion.aside
-					key="assistant-panel"
-					initial={desktop ? { width: 0 } : { x: "100%" }}
-					animate={desktop ? { width: "auto" } : { x: 0 }}
-					exit={desktop ? { width: 0 } : { x: "100%" }}
-					transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
-					className={cn(
-						"overflow-hidden border-border print:hidden",
-						desktop
-							? "relative h-full shrink-0 border-l"
-							: "fixed inset-0 z-50",
-					)}
-				>
-					<div
-						className={cn(
-							"assistant-glass assistant-aura flex h-full flex-col",
-							desktop ? "w-(--assistant-panel-width)" : "w-full",
-						)}
-					>
-						<PanelHeader />
-						<PanelChat team={team} />
-					</div>
-				</motion.aside>
-			)}
-		</AnimatePresence>
+		<AssistantShell open={open} label={t("title")} dock="column">
+			<PanelHeader />
+			<PanelChat team={team} />
+		</AssistantShell>
 	);
 }
 

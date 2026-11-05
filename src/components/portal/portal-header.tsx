@@ -29,7 +29,8 @@ import { BRAND_NAME } from "@/lib/brand";
 import { initialsOf } from "@/lib/initials";
 import { formatPhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
-import { isNavActive, PORTAL_NAV } from "./portal-nav";
+import { NavCount } from "./nav-count";
+import { isNavActive, PORTAL_NAV, type PortalNavCounts } from "./portal-nav";
 
 interface PortalHeaderProps {
 	user: {
@@ -41,12 +42,15 @@ interface PortalHeaderProps {
 	/** Photographers get a way back; others can open a studio. */
 	isPhotographer: boolean;
 	unreadMessages: number;
+	/** Waiting items per nav entry (requests to answer, invitations). */
+	counts: PortalNavCounts;
 }
 
 export function PortalHeader({
 	user,
 	isPhotographer,
 	unreadMessages,
+	counts,
 }: PortalHeaderProps) {
 	const t = useTranslations("Portal.header");
 	const tNav = useTranslations("Portal.nav");
@@ -107,6 +111,7 @@ export function PortalHeader({
 										className="relative"
 									/>
 								)}
+								<NavCount count={counts[item.key]} className="relative" />
 							</Link>
 						);
 					})}

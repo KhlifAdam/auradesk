@@ -1,22 +1,15 @@
-import {
-	ArrowDown,
-	ArrowLeft,
-	ArrowUpRight,
-	BellRing,
-	MessageSquare,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { BookingAnswerAside } from "@/components/portal/bookings/booking-answer-aside";
 import { BookingReadonly } from "@/components/portal/bookings/booking-readonly";
 import { requestState } from "@/components/portal/bookings/booking-request-card";
-import { ClientBookingAnswer } from "@/components/portal/bookings/client-booking-answer";
 import { ClientBookingForm } from "@/components/portal/bookings/client-booking-form";
 import { PortfolioLink } from "@/components/portal/portfolio-link";
 import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
 import { cn } from "@/lib/utils";
-import { bookingCompleteness } from "@/services/bookings/completeness";
 import { getPortalBooking } from "@/services/portal/booking-queries";
 
 export default async function PortalBookingPage({
@@ -32,16 +25,11 @@ export default async function PortalBookingPage({
 	if (!booking) notFound();
 
 	const state = requestState(booking);
-	const incomplete =
-		bookingCompleteness({
-			desiredDate: booking.desiredDate,
-			proposedPrice: booking.proposedPrice,
-		}).required.length > 0;
 
 	return (
 		<>
 			<Link
-				href="/portal"
+				href="/portal/bookings"
 				className="flex w-fit items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
 			>
 				<ArrowLeft className="h-3.5 w-3.5" />
@@ -75,20 +63,6 @@ export default async function PortalBookingPage({
 					</Link>
 				</Button>
 			</div>
-			{booking.editable && !incomplete && (
-				<div className="flex max-w-4xl flex-wrap items-center justify-between gap-3 rounded-xl border-2 border-primary/50 bg-primary/10 px-4 py-3">
-					<p className="flex items-center gap-2 text-sm font-semibold">
-						<BellRing className="h-4 w-4 shrink-0 text-primary" />
-						{t("answer.waiting")}
-					</p>
-					<Button asChild size="sm" className="h-9 gap-1.5 px-4 text-sm">
-						<a href="#answer">
-							{t("answer.review")}
-							<ArrowDown className="h-3.5 w-3.5" />
-						</a>
-					</Button>
-				</div>
-			)}
 			{booking.status === "DECLINED" && booking.statusReason && (
 				<p className="max-w-3xl rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm">
 					<span className="font-medium">{t("reason")}</span>{" "}
@@ -112,17 +86,20 @@ export default async function PortalBookingPage({
 						{t("waitingStudioHint")}
 					</p>
 				)}
-			<div className="grid max-w-4xl gap-4">
-				<BookingReadonly booking={booking} showClientPart={!booking.editable} />
-				{booking.editable && (
-					<>
-						<ClientBookingForm booking={booking} />
-						<ClientBookingAnswer
-							bookingId={booking.id}
-							incomplete={incomplete}
-						/>
-					</>
+			<div
+				className={cn(
+					"grid max-w-5xl gap-4",
+					booking.editable && "lg:grid-cols-[minmax(0,1fr)_17rem]",
 				)}
+			>
+				<div className="grid gap-4">
+					<BookingReadonly
+						booking={booking}
+						showClientPart={!booking.editable}
+					/>
+					{booking.editable && <ClientBookingForm booking={booking} />}
+				</div>
+				{booking.editable && <BookingAnswerAside booking={booking} />}
 			</div>
 		</>
 	);

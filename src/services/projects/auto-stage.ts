@@ -28,7 +28,11 @@ export function stageForGalleryEvent(
 				? "EXPORT"
 				: "IMPORT";
 		case "organized":
-			return "ORGANIZATION";
+			// The picks are organized once the client has chosen; organizing
+			// before the proofs go out doesn't move the project.
+			return stageIndex(current) >= stageIndex("SELECTION")
+				? "ORGANIZATION"
+				: current;
 		case "shared":
 			// Proofs go out to choose from; finals go out to approve.
 			return kind === "PROOFS" ? CLIENT_PROOFING_STAGE : "VALIDATION";

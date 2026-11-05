@@ -22,7 +22,7 @@ export default async function HomePage() {
 				className="fixed"
 				style={{ "--space-alt": "var(--chart-2)" } as CSSProperties}
 			/>
-			<div className="pointer-events-none absolute inset-x-0 top-0 h-[820px] grid-fade opacity-50 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
+			<div className="pointer-events-none absolute inset-x-0 top-0 h-[820px] grid-fade opacity-100 [mask-image:radial-gradient(ellipse_at_top,black_35%,transparent_75%)]" />
 
 			<HomeHeader />
 			<HomeHero />
