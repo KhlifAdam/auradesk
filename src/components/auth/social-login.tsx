@@ -89,6 +89,8 @@ export function SocialLogin({
 							key={id}
 							variant="outline"
 							type="button"
+							// The space's colour (gold for studios, green for clients), not the blue accent.
+							className="transition-colors duration-300 hover:border-primary/60 hover:bg-primary/10 hover:text-foreground"
 							disabled={disabled || pending !== null}
 							onClick={() => signIn(id)}
 						>

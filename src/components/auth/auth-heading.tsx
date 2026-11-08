@@ -14,7 +14,7 @@ export function AuthHeading({
 	highlights?: string;
 }) {
 	return (
-		<div className="flex flex-col items-center space-y-2 text-center">
+		<div className="flex flex-col items-center space-y-1.5 text-center">
 			{badge}
 			<h1 className="text-3xl font-semibold tracking-tight text-foreground">
 				{title}

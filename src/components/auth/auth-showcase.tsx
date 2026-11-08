@@ -25,8 +25,9 @@ export function AuthShowcase() {
 	return (
 		<div className="pointer-events-none absolute inset-0 flex items-center justify-center lg:justify-end lg:pr-24">
 			<div className="absolute right-1/4 top-1/4 h-32 w-32 rounded-full bg-primary/30 blur-[60px]" />
-			<div className="absolute bottom-1/4 left-1/4 h-40 w-40 rounded-full bg-chart-2/20 blur-[60px]" />
-			<div className="relative aspect-[4/5] w-full max-w-md -rotate-3 overflow-hidden rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-out">
+			<div className="absolute bottom-1/4 left-1/4 h-40 w-40 rounded-full bg-glow/20 blur-[60px]" />
+			{/* Its own GPU layer, so the tilt doesn't blur the photo when repainted. */}
+			<div className="relative aspect-[4/5] w-full max-w-md -rotate-3 transform-gpu overflow-hidden [backface-visibility:hidden] rounded-[2.5rem] border border-white/10 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] transition-transform duration-700 ease-out">
 				<Image
 					key={audience}
 					src={IMAGES[audience]}

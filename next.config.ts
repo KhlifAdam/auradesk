@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
 		return [{ source: "/(.*)", headers: securityHeaders }];
 	},
 	images: {
+		// A photography product: photos are served sharp. The default (75) is
+		// coerced to the closest allowed value, so every <Image> gets 90; at 75
+		// already-compressed JPEGs were visibly smudged by the second encode.
+		qualities: [90],
 		remotePatterns: r2PublicUrl
 			? [
 					{

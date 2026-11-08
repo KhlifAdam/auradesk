@@ -49,8 +49,8 @@ export default async function AuthLayout({
 				<AuthShowcase />
 			</div>
 
-			<div className="relative overflow-y-auto p-4 sm:p-8 md:p-12">
-				<div className="relative z-10 mx-auto flex min-h-full w-full max-w-[400px] items-center py-8 lg:mx-0 lg:ml-12">
+			<div className="relative overflow-y-auto p-4 sm:p-6">
+				<div className="relative z-10 mx-auto flex min-h-full w-full max-w-[440px] items-center lg:mx-0 lg:ml-12">
 					<div className="w-full max-md:rounded-3xl max-md:border max-md:border-border/60 max-md:bg-card/55 max-md:p-6 max-md:shadow-luminous max-md:backdrop-blur-xl">
 						{children}
 					</div>

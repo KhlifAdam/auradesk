@@ -102,7 +102,8 @@
 	--destructive: oklch(0.577 0.245 27.325);
 	--destructive-foreground: oklch(0.984 0.003 247.858);
 	--border: oklch(0.89 0.015 260);
-	--input: oklch(0.929 0.013 255.508);
+	/* Field borders: dark enough that an empty field is obvious. */
+	--input: oklch(0.84 0.018 260);
 	--ring: oklch(0.72 0.12 80);
 	--chart-1: oklch(0.646 0.222 41.116);
 	--chart-2: oklch(0.6 0.118 184.704);
@@ -149,7 +150,7 @@
 	--destructive: oklch(0.704 0.191 22.216);
 	--destructive-foreground: oklch(0.984 0.003 247.858);
 	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
+	--input: oklch(1 0 0 / 20%);
 	--ring: oklch(0.72 0.12 80);
 	--chart-1: oklch(0.488 0.243 264.376);
 	--chart-2: oklch(0.696 0.17 162.48);
@@ -409,9 +410,9 @@
    teal the hub uses for clients). A page opts in with data-space="client";
    it is read on <body> through :has() so menus and dialogs, which Radix
    renders into <body>, follow the space as well. --space-alt is the second
-   hue of the animated backdrop. */
+   hue of the animated backdrop, kept in the same family as --glow. */
 :root {
-	--space-alt: oklch(0.72 0.16 52);
+	--space-alt: oklch(0.74 0.15 70);
 	--grid-line: 8%;
 }
 
@@ -427,7 +428,7 @@ body:has([data-space="client"]) {
 	--accent-foreground: oklch(0.25 0.04 186);
 	--glow: oklch(0.7 0.13 186);
 	--soft: oklch(0.96 0.025 186);
-	--space-alt: oklch(0.66 0.15 255);
+	--space-alt: oklch(0.68 0.14 158);
 }
 
 .dark body:has([data-space="client"]) {
@@ -438,12 +439,12 @@ body:has([data-space="client"]) {
 	--accent-foreground: oklch(0.96 0.02 186);
 	--glow: oklch(0.74 0.13 180);
 	--soft: oklch(0.2 0.03 188);
-	--space-alt: oklch(0.62 0.17 262);
+	--space-alt: oklch(0.66 0.15 160);
 }
 
 /* ─── Animated backdrop of the two spaces ────────────────────────────────────
-   Soft light blobs drifting slowly, a faint grid and
-   a few bokeh lights rising like out-of-focus lamps. Colours come from the
+   Soft light blobs of the space's own hues floating slowly over a faint
+   grid: only golds for studios, only greens for clients. Colours come from the
    space's tokens, so each space gets its own atmosphere. Transform and
    opacity only; everything stops under reduced motion. */
 .space-blob {
@@ -459,47 +460,31 @@ body:has([data-space="client"]) {
 	top: -14%;
 	left: -12%;
 	background: color-mix(in oklab, var(--glow) 15%, transparent);
-	animation: space-drift-a 26s ease-in-out infinite alternate;
+	animation: space-drift-a 20s ease-in-out infinite alternate;
 }
 
 .space-blob-b {
 	top: 22%;
 	right: -16%;
 	background: color-mix(in oklab, var(--space-alt) 11%, transparent);
-	animation: space-drift-b 32s ease-in-out infinite alternate;
+	animation: space-drift-b 24s ease-in-out infinite alternate;
 }
 
 .space-blob-c {
 	bottom: -18%;
 	left: 18%;
 	background: color-mix(in oklab, var(--primary) 10%, transparent);
-	animation: space-drift-c 38s ease-in-out infinite alternate;
+	animation: space-drift-c 28s ease-in-out infinite alternate;
 }
 
 .dark .space-blob-a {
-	background: color-mix(in oklab, var(--glow) 11%, transparent);
+	background: color-mix(in oklab, var(--glow) 14%, transparent);
 }
 .dark .space-blob-b {
-	background: color-mix(in oklab, var(--space-alt) 9%, transparent);
+	background: color-mix(in oklab, var(--space-alt) 12%, transparent);
 }
 .dark .space-blob-c {
-	background: color-mix(in oklab, var(--primary) 7%, transparent);
-}
-
-.space-bokeh {
-	position: absolute;
-	bottom: -8%;
-	left: var(--x);
-	width: var(--size);
-	height: var(--size);
-	border-radius: 9999px;
-	background: radial-gradient(
-		circle,
-		color-mix(in oklab, var(--glow) 40%, transparent),
-		transparent 70%
-	);
-	opacity: 0;
-	animation: space-bokeh var(--dur) ease-in-out var(--delay) infinite;
+	background: color-mix(in oklab, var(--primary) 10%, transparent);
 }
 
 @keyframes space-drift-a {
@@ -526,27 +511,9 @@ body:has([data-space="client"]) {
 		transform: translate3d(22%, -16%, 0) scale(1.15);
 	}
 }
-@keyframes space-bokeh {
-	0% {
-		opacity: 0;
-		transform: translate3d(0, 0, 0) scale(0.6);
-	}
-	20% {
-		opacity: 0.7;
-	}
-	100% {
-		opacity: 0;
-		transform: translate3d(var(--drift), -75vh, 0) scale(1.4);
-	}
-}
-
 @media (prefers-reduced-motion: reduce) {
-	.space-blob,
-	.space-bokeh {
+	.space-blob {
 		animation: none;
-	}
-	.space-bokeh {
-		display: none;
 	}
 }
 

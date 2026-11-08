@@ -88,7 +88,7 @@ export function RegisterForm({
 	}
 
 	return (
-		<div className="flex flex-col space-y-6">
+		<div className="flex flex-col space-y-4">
 			<AuthBackLink audience={audience} />
 			<AuthHeading
 				title={t(isClient ? "client.register.title" : "register.title")}
@@ -99,9 +99,9 @@ export function RegisterForm({
 				highlights={t(`highlights.${audience}`)}
 			/>
 
-			<div className="grid gap-6">
+			<div className="grid gap-4">
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+					<form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-3">
 						{isClient && (
 							<FormField
 								control={form.control}
@@ -182,7 +182,7 @@ export function RegisterForm({
 								</FormItem>
 							)}
 						/>
-						<Button disabled={isSubmitting} className="mt-2">
+						<Button disabled={isSubmitting} className="mt-1">
 							{isSubmitting && (
 								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 							)}
@@ -198,26 +198,28 @@ export function RegisterForm({
 				/>
 			</div>
 
-			{isClient && (
-				<p className="text-center text-sm text-muted-foreground">
+			<div className="space-y-2">
+				{isClient && (
+					<p className="text-center text-sm text-muted-foreground">
+						<Link
+							href={AUTH_PATHS.client.phone}
+							className="font-medium text-primary underline-offset-4 hover:underline"
+						>
+							{t("phone.useInstead")}
+						</Link>
+					</p>
+				)}
+
+				<p className="px-8 text-center text-sm text-muted-foreground">
+					{t("register.haveAccount")}{" "}
 					<Link
-						href={AUTH_PATHS.client.phone}
-						className="font-medium text-primary underline-offset-4 hover:underline"
+						href={paths.login}
+						className="underline underline-offset-4 hover:text-primary"
 					>
-						{t("phone.useInstead")}
+						{t("register.signIn")}
 					</Link>
 				</p>
-			)}
-
-			<p className="px-8 text-center text-sm text-muted-foreground">
-				{t("register.haveAccount")}{" "}
-				<Link
-					href={paths.login}
-					className="underline underline-offset-4 hover:text-primary"
-				>
-					{t("register.signIn")}
-				</Link>
-			</p>
+			</div>
 		</div>
 	);
 }
