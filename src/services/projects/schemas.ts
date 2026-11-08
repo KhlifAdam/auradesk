@@ -96,8 +96,10 @@ export const inviteClientSchema = z.object({
 	contact: z.string().trim().min(1, "required").max(200, "tooLong"),
 });
 
-export const PROJECT_SORTS = ["eventDate", "created", "title"] as const;
+export const PROJECT_SORTS = ["created", "eventDate", "title"] as const;
 export type ProjectSort = (typeof PROJECT_SORTS)[number];
+/** Without `?sort=`, the latest created projects come first. */
+export const DEFAULT_PROJECT_SORT: ProjectSort = "created";
 
 export const listProjectsSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),

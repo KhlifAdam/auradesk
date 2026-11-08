@@ -7,6 +7,7 @@ import {
 	deleteGalleryFiles,
 	findUploadSessions,
 } from "@/services/galleries/cleanup";
+import { deleteAttachmentFiles } from "@/services/messages/attachment-files";
 
 /** Purged per run, so one run stays short; the next one takes the rest. */
 const GALLERIES_PER_RUN = 200;
@@ -90,18 +91,30 @@ async function deleteGalleries(ids: string[]) {
  * once the user is deleted, the cascade leaves nothing to find them by.
  */
 export async function collectAccountFiles(userId: string) {
-	const [galleryFiles, uploads, media, avatars] = await Promise.all([
-		db.galleryItem.findMany({
-			where: { photographerId: userId },
-			select: { key: true, previewKey: true },
-		}),
-		findUploadSessions({ photographerId: userId }),
-		db.media.findMany({
-			where: { photographerId: userId },
-			select: { key: true },
-		}),
-		db.user.findUnique({ where: { id: userId }, select: { image: true } }),
-	]);
+	const [galleryFiles, uploads, media, avatars, attachments] =
+		await Promise.all([
+			db.galleryItem.findMany({
+				where: { photographerId: userId },
+				select: { key: true, previewKey: true },
+			}),
+			findUploadSessions({ photographerId: userId }),
+			db.media.findMany({
+				where: { photographerId: userId },
+				select: { key: true },
+			}),
+			db.user.findUnique({ where: { id: userId }, select: { image: true } }),
+			// Their conversations go with them, both sides' files included.
+			db.messageAttachment.findMany({
+				where: {
+					message: {
+						conversation: {
+							OR: [{ photographerId: userId }, { clientId: userId }],
+						},
+					},
+				},
+				select: { key: true },
+			}),
+		]);
 	// The profile photo, when it is one this app stored (not Google's).
 	const base = publicUrl("");
 	const avatar = avatars?.image?.startsWith(`${base}avatars/${userId}/`)
@@ -111,6 +124,7 @@ export async function collectAccountFiles(userId: string) {
 		galleryFiles,
 		uploads,
 		mediaKeys: [...media.map((m) => m.key), ...(avatar ? [avatar] : [])],
+		attachmentKeys: attachments.map((a) => a.key),
 	};
 }
 
@@ -121,6 +135,7 @@ export async function deleteAccountFiles(
 	await Promise.all([
 		deleteGalleryFiles(files.galleryFiles),
 		abortUploads(files.uploads),
+		deleteAttachmentFiles(files.attachmentKeys),
 		files.mediaKeys.length > 0
 			? deleteObjects(files.mediaKeys).catch((error) =>
 					console.error("Failed to delete public R2 objects:", error),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { idSchema } from "@/services/shared/schemas";
+import { attachmentFileSchema, sentAttachmentSchema } from "./attachments";
 import { MESSAGE_MAX_LENGTH } from "./constants";
 import { MESSAGE_ROLES } from "./viewer";
 
@@ -9,8 +10,10 @@ export const messageBodySchema = z
 	.min(1, "required")
 	.max(MESSAGE_MAX_LENGTH, "tooLong");
 
-/** The form only holds the text. */
-export const composerSchema = z.object({ body: messageBodySchema });
+/** The form only holds the text; it may be empty when a file goes along. */
+export const composerSchema = z.object({
+	body: z.string().trim().max(MESSAGE_MAX_LENGTH, "tooLong"),
+});
 
 /** Targets an existing conversation, or a partner to start one with. */
 export const sendMessageSchema = z
@@ -18,9 +21,16 @@ export const sendMessageSchema = z
 		as: z.enum(MESSAGE_ROLES),
 		conversationId: idSchema.nullable(),
 		partnerId: idSchema.nullable(),
-		body: messageBodySchema,
+		body: z.string().trim().max(MESSAGE_MAX_LENGTH, "tooLong"),
+		attachment: sentAttachmentSchema.nullable().default(null),
 	})
-	.refine((v) => v.conversationId || v.partnerId, "invalidInput");
+	.refine((v) => v.conversationId || v.partnerId, "invalidInput")
+	.refine((v) => v.body.length > 0 || v.attachment, "required");
+
+/** Asks where to upload a file before sending it. */
+export const startAttachmentSchema = attachmentFileSchema.extend({
+	as: z.enum(MESSAGE_ROLES),
+});
 
 export const markReadSchema = z.object({
 	conversationId: idSchema,

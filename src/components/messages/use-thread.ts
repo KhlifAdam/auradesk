@@ -10,6 +10,7 @@ import {
 	sendMessage,
 	setTyping,
 } from "@/services/messages/actions";
+import type { SentAttachment } from "@/services/messages/attachments";
 import type { ChatMessage, LivePage, Thread } from "@/services/messages/types";
 import type { MessageRole } from "@/services/messages/viewer";
 import { fetchJson, usePolling } from "./polling";
@@ -121,12 +122,13 @@ export function useThread(
 	}
 
 	/** Returns the error code on failure. */
-	async function send(body: string) {
+	async function send(body: string, attachment: SentAttachment | null = null) {
 		const result = await sendMessage({
 			as: viewer.role,
 			conversationId: id,
 			partnerId: id ? null : thread.partner.id,
 			body,
+			attachment,
 		});
 		if (!result.ok) return result.error;
 		setSent((prev) => [...prev, result.data.message]);
@@ -166,7 +168,7 @@ export function useThread(
 			messageId: message.id,
 		});
 		if (!result.ok) return result.error;
-		patch(message, { body: "", deleted: true });
+		patch(message, { body: "", deleted: true, attachment: null });
 		mutate();
 		router.refresh();
 		return null;

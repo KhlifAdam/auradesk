@@ -8,6 +8,7 @@ import { listGallerySummaries } from "@/services/galleries/summaries";
 import { projectDiscount } from "@/services/invoices/ledger";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import {
+	DEFAULT_PROJECT_SORT,
 	type ListProjectsParams,
 	PROJECT_PAGE_SIZE,
 	type ProjectSort,
@@ -69,7 +70,15 @@ function projectOrder(
 
 export async function listProjects(
 	photographerId: string,
-	{ page, q, stage, from, to, sort = "eventDate", order }: ListProjectsParams,
+	{
+		page,
+		q,
+		stage,
+		from,
+		to,
+		sort = DEFAULT_PROJECT_SORT,
+		order,
+	}: ListProjectsParams,
 	clientId?: string,
 ): Promise<ProjectPage> {
 	const where: Prisma.ProjectWhereInput = { photographerId };

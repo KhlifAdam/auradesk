@@ -1,7 +1,6 @@
 "use server";
 
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
-import { requireClient } from "@/lib/auth/require-client";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
@@ -9,8 +8,11 @@ import { sendNewMessageEmail } from "@/lib/mail/send-client-notices";
 import { realEmail } from "@/lib/phone";
 import { sendNewMessageSms } from "@/lib/sms/send-client-sms";
 import { searchClients } from "@/services/clients/queries";
+import { deleteAttachmentFiles, verifiedAttachment } from "./attachment-files";
+import { attachmentPreview } from "./attachments";
 import { CLIENT_SEARCH_LIMIT, PREVIEW_LENGTH } from "./constants";
-import { canConverse } from "./queries";
+import { canConverse, toChatMessage } from "./queries";
+import { resolveViewer } from "./resolve-viewer";
 import {
 	deleteMessageSchema,
 	editMessageSchema,
@@ -20,7 +22,6 @@ import {
 } from "./schemas";
 import type { ChatMessage } from "./types";
 import {
-	type MessageRole,
 	otherRole,
 	ownConversations,
 	pairWith,
@@ -28,12 +29,6 @@ import {
 	unreadField,
 	type Viewer,
 } from "./viewer";
-
-async function resolveViewer(role: MessageRole): Promise<Viewer> {
-	if (role === "photographer")
-		return { id: (await requirePhotographer()).photographerId, role };
-	return { id: (await requireClient()).clientId, role };
-}
 
 /** The conversation to write in; a first message creates it, if the pair may talk. */
 async function resolveConversation(
@@ -73,22 +68,36 @@ export async function sendMessage(
 ): Promise<ActionResult<{ conversationId: string; message: ChatMessage }>> {
 	const parsed = sendMessageSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
-	const { as, conversationId, partnerId, body } = parsed.data;
+	const { as, conversationId, partnerId, body, attachment } = parsed.data;
 	const viewer = await resolveViewer(as);
 
+	const file = attachment && (await verifiedAttachment(viewer.id, attachment));
+	if (attachment && !file) return fail("uploadMissing");
 	const id = await resolveConversation(viewer, conversationId, partnerId);
 	if (!id) return fail("notFound");
+	const preview = previewOf(
+		body ||
+			(file
+				? attachmentPreview(file.kind, file.filename, file.durationMs ?? null)
+				: ""),
+	);
 
 	const { message, conversation } = await db.$transaction(async (tx) => {
 		const created = await tx.message.create({
-			data: { conversationId: id, senderId: viewer.id, body },
+			data: {
+				conversationId: id,
+				senderId: viewer.id,
+				body,
+				...(file && { attachment: { create: file } }),
+			},
+			include: { attachment: true },
 		});
 		// Writing means the sender has read everything so far.
 		const updated = await tx.conversation.update({
 			where: { id },
 			data: {
 				lastMessageAt: created.createdAt,
-				lastMessagePreview: previewOf(body),
+				lastMessagePreview: preview,
 				lastSenderId: viewer.id,
 				[unreadField(otherRole(as))]: { increment: 1 },
 				[unreadField(as)]: 0,
@@ -135,7 +144,7 @@ export async function sendMessage(
 					to: to.email,
 					locale,
 					sender,
-					preview: previewOf(body),
+					preview,
 					path,
 				})
 			: to.phoneNumber
@@ -146,17 +155,7 @@ export async function sendMessage(
 		);
 	}
 
-	return ok({
-		conversationId: id,
-		message: {
-			id: message.id,
-			senderId: message.senderId,
-			body: message.body,
-			createdAt: message.createdAt.toISOString(),
-			editedAt: null,
-			deleted: false,
-		},
-	});
+	return ok({ conversationId: id, message: await toChatMessage(message) });
 }
 
 /** The viewer's own, not yet deleted message, with what its conversation shows. */
@@ -172,6 +171,7 @@ function findOwnMessage(viewer: Viewer, messageId: string) {
 			id: true,
 			createdAt: true,
 			conversationId: true,
+			attachment: { select: { kind: true, key: true } },
 			conversation: { select: { lastMessageAt: true, lastSenderId: true } },
 		},
 	});
@@ -201,6 +201,8 @@ export async function editMessage(input: unknown): Promise<ActionResult> {
 
 	const message = await findOwnMessage(viewer, messageId);
 	if (!message) return fail("notFound");
+	// A voice message has no text to change.
+	if (message.attachment?.kind === "VOICE") return fail("invalidInput");
 	await db.message.update({
 		where: { id: message.id },
 		data: { body, editedAt: new Date() },
@@ -219,8 +221,14 @@ export async function deleteMessage(input: unknown): Promise<ActionResult> {
 	if (!message) return fail("notFound");
 	await db.message.update({
 		where: { id: message.id },
-		data: { body: "", deletedAt: new Date() },
+		data: {
+			body: "",
+			deletedAt: new Date(),
+			// The file goes with it, from the bucket too.
+			...(message.attachment && { attachment: { delete: true } }),
+		},
 	});
+	if (message.attachment) await deleteAttachmentFiles([message.attachment.key]);
 	// An empty preview is shown as "message deleted".
 	await syncPreview(message, viewer, "");
 	return ok();

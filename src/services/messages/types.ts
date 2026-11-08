@@ -1,4 +1,5 @@
 import type { PageMeta } from "@/services/shared/pagination";
+import type { AttachmentKindValue } from "./attachments";
 
 /** The other side of a conversation. */
 export interface Partner {
@@ -11,14 +12,27 @@ export interface Partner {
 	siteSlug: string | null;
 }
 
+/** A file or voice message; `url` is a short-lived signed link. */
+export interface ChatAttachment {
+	id: string;
+	kind: AttachmentKindValue;
+	filename: string;
+	mimeType: string;
+	size: number;
+	durationMs: number | null;
+	url: string;
+}
+
 export interface ChatMessage {
 	id: string;
 	senderId: string;
-	/** Empty once deleted. */
+	/** Empty once deleted, or when only a file was sent. */
 	body: string;
 	createdAt: string;
 	editedAt: string | null;
 	deleted: boolean;
+	/** Null once deleted. */
+	attachment: ChatAttachment | null;
 }
 
 export interface MessagePage {

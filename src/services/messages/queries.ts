@@ -4,6 +4,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { clientBookingWhere } from "@/services/portal/booking-queries";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
+import { toChatAttachment } from "./attachment-files";
 import { CONVERSATION_PAGE_SIZE, MESSAGE_PAGE_SIZE } from "./constants";
 import type {
 	ChatMessage,
@@ -120,20 +121,21 @@ export async function listConversations(
 	return { ...meta, items: rows.map((row) => toSummary(row, viewer)) };
 }
 
-const toChatMessage = (row: {
-	id: string;
-	senderId: string;
-	body: string;
-	createdAt: Date;
-	editedAt: Date | null;
-	deletedAt: Date | null;
-}): ChatMessage => ({
+type MessageRow = Prisma.MessageGetPayload<{
+	include: { attachment: true };
+}>;
+
+export const toChatMessage = async (row: MessageRow): Promise<ChatMessage> => ({
 	id: row.id,
 	senderId: row.senderId,
 	body: row.deletedAt ? "" : row.body,
 	createdAt: row.createdAt.toISOString(),
 	editedAt: row.editedAt?.toISOString() ?? null,
 	deleted: row.deletedAt !== null,
+	attachment:
+		row.attachment && !row.deletedAt
+			? await toChatAttachment(row.attachment)
+			: null,
 });
 
 /** A keystroke this recent means the person is still typing. */
@@ -178,9 +180,13 @@ export async function listMessages(
 		where: { conversationId, ...cursor },
 		orderBy: [{ createdAt: "desc" }, { id: "desc" }],
 		take: MESSAGE_PAGE_SIZE + 1,
+		include: { attachment: true },
 	});
+	const page = await Promise.all(
+		rows.slice(0, MESSAGE_PAGE_SIZE).map(toChatMessage),
+	);
 	return {
-		messages: rows.slice(0, MESSAGE_PAGE_SIZE).map(toChatMessage).reverse(),
+		messages: page.reverse(),
 		hasMore: rows.length > MESSAGE_PAGE_SIZE,
 	};
 }

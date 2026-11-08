@@ -2927,7 +2927,18 @@
 			"send": "Envoyer",
 			"editing": "Modification du message",
 			"cancelEdit": "Annuler la modification",
-			"save": "Enregistrer"
+			"save": "Enregistrer",
+			"captionPlaceholder": "Ajouter un message (facultatif)…",
+			"attach": "Joindre un fichier",
+			"removeFile": "Retirer le fichier",
+			"uploading": "Envoi… {percent} %",
+			"record": "Enregistrer un message vocal",
+			"recording": "Enregistrement…",
+			"sendingVoice": "Envoi…",
+			"cancelRecording": "Annuler l'enregistrement",
+			"stopAndSend": "Envoyer le message vocal",
+			"micDenied": "Autorisez le micro dans votre navigateur pour enregistrer un message vocal.",
+			"micUnsupported": "Votre navigateur ne peut pas enregistrer de messages vocaux."
 		},
 		"bubble": {
 			"edit": "Modifier",
@@ -2937,7 +2948,12 @@
 			"deleted": "Ce message a été supprimé",
 			"deletedMine": "Vous avez supprimé ce message",
 			"deleteTitle": "Supprimer ce message ?",
-			"deleteDescription": "Il sera supprimé pour vous deux. Cette action est irréversible."
+			"deleteDescription": "Il sera supprimé pour vous deux. Cette action est irréversible.",
+			"voice": "Message vocal",
+			"play": "Lire",
+			"pause": "Pause",
+			"openImage": "Ouvrir la photo",
+			"download": "Télécharger"
 		}
 	},
 	"Calendar": {

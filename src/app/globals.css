@@ -584,3 +584,43 @@ body:has([data-space="client"]) {
 		animation: none;
 	}
 }
+
+/*
+ * Voice message seek bar: the played part is filled up to --voice-progress.
+ * "mine" sits on the primary bubble, "theirs" on the muted one.
+ */
+@utility voice-range {
+	background: linear-gradient(
+		to right,
+		var(--voice-fill) var(--voice-progress, 0%),
+		var(--voice-track) var(--voice-progress, 0%)
+	);
+	&::-webkit-slider-thumb {
+		appearance: none;
+		width: 10px;
+		height: 10px;
+		border-radius: 9999px;
+		background: var(--voice-fill);
+	}
+	&::-moz-range-thumb {
+		width: 10px;
+		height: 10px;
+		border: 0;
+		border-radius: 9999px;
+		background: var(--voice-fill);
+	}
+}
+
+@utility voice-range-mine {
+	--voice-fill: var(--primary-foreground);
+	--voice-track: color-mix(
+		in oklab,
+		var(--primary-foreground) 30%,
+		transparent
+	);
+}
+
+@utility voice-range-theirs {
+	--voice-fill: var(--primary);
+	--voice-track: color-mix(in oklab, var(--foreground) 15%, transparent);
+}

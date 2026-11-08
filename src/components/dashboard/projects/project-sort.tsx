@@ -11,7 +11,11 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useUpdateSearchParams } from "@/hooks/use-update-search-params";
-import { PROJECT_SORTS, type ProjectSort } from "@/services/projects/schemas";
+import {
+	DEFAULT_PROJECT_SORT,
+	PROJECT_SORTS,
+	type ProjectSort,
+} from "@/services/projects/schemas";
 
 interface ProjectSortProps {
 	sort?: ProjectSort;
@@ -20,7 +24,7 @@ interface ProjectSortProps {
 
 /** Sort field and direction, kept in `?sort=&order=`. */
 export function ProjectSortControl({
-	sort = "eventDate",
+	sort = DEFAULT_PROJECT_SORT,
 	order,
 }: ProjectSortProps) {
 	const t = useTranslations("Projects.list.sort");

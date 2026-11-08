@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { ChatMessage } from "@/services/messages/types";
+import { MessageAttachment } from "./message-attachment";
 
 interface MessageBubbleProps {
 	message: ChatMessage;
@@ -47,6 +48,8 @@ export function MessageBubble({
 	const [isPending, startTransition] = useTransition();
 	const date = new Date(message.createdAt);
 	const canChange = mine && !message.deleted;
+	// A voice message has no text to change.
+	const canEdit = canChange && message.attachment?.kind !== "VOICE";
 
 	return (
 		<div
@@ -72,7 +75,14 @@ export function MessageBubble({
 						{t(mine ? "deletedMine" : "deleted")}
 					</p>
 				) : (
-					<p className="whitespace-pre-wrap break-words">{message.body}</p>
+					<>
+						{message.attachment && (
+							<MessageAttachment attachment={message.attachment} mine={mine} />
+						)}
+						{message.body && (
+							<p className="whitespace-pre-wrap break-words">{message.body}</p>
+						)}
+					</>
 				)}
 				<p
 					className={cn(
@@ -95,10 +105,12 @@ export function MessageBubble({
 						<MoreHorizontal className="h-4 w-4" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align={mine ? "end" : "start"}>
-						<DropdownMenuItem className="text-xs" onSelect={onEdit}>
-							<Pencil className="h-3.5 w-3.5" />
-							{t("edit")}
-						</DropdownMenuItem>
+						{canEdit && (
+							<DropdownMenuItem className="text-xs" onSelect={onEdit}>
+								<Pencil className="h-3.5 w-3.5" />
+								{t("edit")}
+							</DropdownMenuItem>
+						)}
 						<DropdownMenuItem
 							className="text-xs text-destructive focus:text-destructive"
 							onSelect={() => setConfirming(true)}

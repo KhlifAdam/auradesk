@@ -2927,7 +2927,18 @@
 			"send": "Send",
 			"editing": "Editing message",
 			"cancelEdit": "Cancel editing",
-			"save": "Save"
+			"save": "Save",
+			"captionPlaceholder": "Add a message (optional)…",
+			"attach": "Attach a file",
+			"removeFile": "Remove the file",
+			"uploading": "Sending… {percent}%",
+			"record": "Record a voice message",
+			"recording": "Recording…",
+			"sendingVoice": "Sending…",
+			"cancelRecording": "Cancel the recording",
+			"stopAndSend": "Send the voice message",
+			"micDenied": "Allow the microphone in your browser to record a voice message.",
+			"micUnsupported": "Your browser can't record voice messages."
 		},
 		"bubble": {
 			"edit": "Edit",
@@ -2937,7 +2948,12 @@
 			"deleted": "This message was deleted",
 			"deletedMine": "You deleted this message",
 			"deleteTitle": "Delete this message?",
-			"deleteDescription": "It will be removed for both of you. This can't be undone."
+			"deleteDescription": "It will be removed for both of you. This can't be undone.",
+			"voice": "Voice message",
+			"play": "Play",
+			"pause": "Pause",
+			"openImage": "Open the photo",
+			"download": "Download"
 		}
 	},
 	"Calendar": {

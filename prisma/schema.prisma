@@ -716,11 +716,38 @@ model Message {
   /// Set when the sender deleted it; `body` is then emptied.
   deletedAt      DateTime? @map("deleted_at")
 
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  attachment   MessageAttachment?
 
   @@index([conversationId, createdAt, id])
   @@map("messages")
+}
+
+enum AttachmentKind {
+  IMAGE
+  /// A voice message recorded in the composer.
+  VOICE
+  FILE
+}
+
+/// A file or voice message sent with a message, stored in the private bucket
+/// under `messages/<senderId>/`. Removed with its message.
+model MessageAttachment {
+  id         String         @id @default(cuid())
+  messageId  String         @unique @map("message_id")
+  key        String         @unique
+  kind       AttachmentKind
+  filename   String
+  mimeType   String         @map("mime_type")
+  size       Int
+  /// Length of a voice message.
+  durationMs Int?           @map("duration_ms")
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@map("message_attachments")
 }
 
 // ─── Bookings ────────────────────────────────────────────────────────────────

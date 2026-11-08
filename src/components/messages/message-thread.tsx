@@ -9,6 +9,7 @@ import { PortfolioLink } from "@/components/portal/portfolio-link";
 import { Button } from "@/components/ui/button";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { dayKeyIn } from "@/services/calendar/dates";
+import type { SentAttachment } from "@/services/messages/attachments";
 import type { ChatMessage, Thread } from "@/services/messages/types";
 import type { Viewer } from "@/services/messages/viewer";
 import { MessageBubble } from "./message-bubble";
@@ -51,8 +52,8 @@ export function MessageThread({
 	const [editing, setEditing] = useState<ChatMessage | null>(null);
 
 	/** Sends a new message, or saves the one being edited. */
-	async function submit(body: string) {
-		if (!editing) return send(body);
+	async function submit(body: string, attachment: SentAttachment | null) {
+		if (!editing) return send(body, attachment);
 		const error = await edit(editing, body);
 		if (!error) setEditing(null);
 		return error;
@@ -182,6 +183,7 @@ export function MessageThread({
 				{partnerTyping && <TypingBubble />}
 			</div>
 			<MessageComposer
+				role={viewer.role}
 				onSend={submit}
 				onTyping={notifyTyping}
 				editing={editing}
