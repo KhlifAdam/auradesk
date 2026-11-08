@@ -13,6 +13,8 @@ const num = (value: { toNumber(): number }) => value.toNumber();
 export const summaryInclude = {
 	items: { orderBy: [{ position: "asc" }, { id: "asc" }] },
 	payments: { orderBy: [{ paidAt: "asc" }, { id: "asc" }] },
+	project: { select: { title: true } },
+	photoBook: { select: { title: true } },
 } satisfies Prisma.InvoiceInclude;
 
 export type SummaryRow = Prisma.InvoiceGetPayload<{
@@ -31,6 +33,13 @@ function totalsOf(row: SummaryRow) {
 	return { totals, paid };
 }
 
+/** The book first: a book invoice is also linked to the book's project. */
+function subjectOf(row: SummaryRow): Pick<InvoiceSummary, "subject" | "kind"> {
+	if (row.photoBook) return { subject: row.photoBook.title, kind: "book" };
+	if (row.project) return { subject: row.project.title, kind: "project" };
+	return { subject: row.items[0]?.description || null, kind: "custom" };
+}
+
 export function toSummary(row: SummaryRow): InvoiceSummary {
 	const { totals, paid } = totalsOf(row);
 	const dueDate = row.dueDate?.toISOString() ?? null;
@@ -40,6 +49,7 @@ export function toSummary(row: SummaryRow): InvoiceSummary {
 		status: row.status,
 		displayStatus: displayStatus(row.status, dueDate),
 		clientName: row.clientName,
+		...subjectOf(row),
 		issueDate: row.issueDate.toISOString(),
 		dueDate,
 		total: totals.total,
@@ -69,6 +79,8 @@ function listWhere(
 			{ number: { contains: q, mode: "insensitive" } },
 			{ clientName: { contains: q, mode: "insensitive" } },
 			{ clientEmail: { contains: q, mode: "insensitive" } },
+			{ project: { title: { contains: q, mode: "insensitive" } } },
+			{ photoBook: { title: { contains: q, mode: "insensitive" } } },
 		];
 	}
 	return where;

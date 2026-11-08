@@ -10,7 +10,12 @@ export async function ProjectFinanceCard({
 }) {
 	const t = await getTranslations("Projects.facts");
 	const locale = await getLocale();
-	const remaining = amountRemaining(project.price, project.advance);
+	const remaining = amountRemaining(
+		project.price,
+		project.advance,
+		project.discount,
+	);
+	const hasDiscount = project.discount > 0;
 	const money = (value: number | null) =>
 		value === null ? "—" : formatMoney(value, locale);
 
@@ -25,9 +30,14 @@ export async function ProjectFinanceCard({
 					status={project.paymentStatus}
 				/>
 			</div>
-			<dl className="grid grid-cols-3 gap-3">
+			<dl
+				className={`grid gap-3 ${hasDiscount ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"}`}
+			>
 				{[
 					[t("price"), money(project.price)],
+					...(hasDiscount
+						? [[t("discount"), `− ${money(project.discount)}`]]
+						: []),
 					[t("advance"), money(project.advance)],
 					[t("remaining"), money(remaining)],
 				].map(([label, value]) => (

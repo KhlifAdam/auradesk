@@ -7,13 +7,19 @@ import type {
 } from "./options";
 import type { InvoiceTotals } from "./totals";
 
+/** What an invoice bills: a project, a photo book order, or free lines. */
+export type InvoiceKind = "project" | "book" | "custom";
+
 export interface InvoiceSummary {
 	id: string;
 	number: string;
 	status: InvoiceStatus;
 	displayStatus: InvoiceDisplayStatus;
 	clientName: string;
-	/** Portal only: the studio and project, shown instead of the client. */
+	/** What it bills, shown as the row title: the project, book or first line. */
+	subject: string | null;
+	kind: InvoiceKind;
+	/** Portal only: the studio, shown instead of the client. */
 	label?: string;
 	issueDate: string;
 	dueDate: string | null;

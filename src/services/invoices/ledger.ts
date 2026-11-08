@@ -65,9 +65,22 @@ export async function settleInvoice(tx: Tx, invoiceId: string) {
 		});
 }
 
+/** Discounts granted on the project's issued invoices, in TND. */
+export async function projectDiscount(
+	client: Pick<Tx, "invoice">,
+	projectId: string,
+) {
+	const sum = await client.invoice.aggregate({
+		where: { projectId, status: { in: ["SENT", "PAID"] } },
+		_sum: { discount: true },
+	});
+	return sum._sum.discount ? roundMoney(num(sum._sum.discount)) : 0;
+}
+
 /**
  * Once a project has payments on issued invoices, they are its source of
- * truth: the advance becomes what was paid, and the payment status follows.
+ * truth: the advance becomes what was paid, and the payment status follows
+ * (a discount lowers what is owed).
  */
 export async function syncProjectPayment(tx: Tx, projectId: string | null) {
 	if (!projectId) return;
@@ -84,12 +97,14 @@ export async function syncProjectPayment(tx: Tx, projectId: string | null) {
 
 	const paid = payments._sum.amount ? num(payments._sum.amount) : 0;
 	const price = project.price ? num(project.price) : null;
+	const discount = await projectDiscount(tx, projectId);
 	await tx.project.update({
 		where: { id: projectId },
 		data: {
 			advance: paid,
 			paymentStatus:
-				suggestPaymentStatus(price, paid) ?? (paid > 0 ? "PARTIAL" : "UNPAID"),
+				suggestPaymentStatus(price, paid, discount) ??
+				(paid > 0 ? "PARTIAL" : "UNPAID"),
 		},
 	});
 }

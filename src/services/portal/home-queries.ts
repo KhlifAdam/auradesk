@@ -6,6 +6,7 @@ import {
 	clientUnseenProject,
 } from "@/services/changes/unseen";
 import { countUnread } from "@/services/messages/queries";
+import { amountRemaining } from "@/services/projects/money";
 import { CLIENT_VIEWABLE_PROJECT } from "@/services/projects/visibility";
 import {
 	bookingsToAnswerWhere,
@@ -120,7 +121,16 @@ export async function getPortalHome(user: ClientIdentity) {
 				},
 				orderBy: [{ eventDate: "asc" }, { id: "asc" }],
 				take: LIST_LIMIT,
-				select: { id: true, title: true, price: true, advance: true },
+				select: {
+					id: true,
+					title: true,
+					price: true,
+					advance: true,
+					invoices: {
+						where: { status: { in: ["SENT", "PAID"] } },
+						select: { discount: true },
+					},
+				},
 			}),
 			countUnread({ id: user.id, role: "client" }),
 		]);
@@ -144,10 +154,15 @@ export async function getPortalHome(user: ClientIdentity) {
 		balances: balances.map((project) => ({
 			projectId: project.id,
 			title: project.title,
-			remaining: Math.max(
-				0,
-				(project.price?.toNumber() ?? 0) - project.advance.toNumber(),
-			),
+			remaining:
+				amountRemaining(
+					project.price?.toNumber() ?? 0,
+					project.advance.toNumber(),
+					project.invoices.reduce(
+						(sum, invoice) => sum + invoice.discount.toNumber(),
+						0,
+					),
+				) ?? 0,
 		})),
 		unread,
 	};

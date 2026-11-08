@@ -10,7 +10,6 @@ import type { InvoicePage } from "./types";
 
 const clientInclude = {
 	...summaryInclude,
-	project: { select: { title: true } },
 	photographer: { select: { name: true, studio: { select: { name: true } } } },
 } satisfies Prisma.InvoiceInclude;
 
@@ -29,10 +28,9 @@ function clientWhere(
 }
 
 function toClientSummary(row: ClientRow) {
-	const studio = row.photographer.studio?.name ?? row.photographer.name;
 	return {
 		...toSummary(row),
-		label: row.project ? `${studio} · ${row.project.title}` : studio,
+		label: row.photographer.studio?.name ?? row.photographer.name,
 		mark: row.clientSeenAt ? null : ("new" as const),
 	};
 }

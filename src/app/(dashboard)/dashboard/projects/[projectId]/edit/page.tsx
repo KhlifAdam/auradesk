@@ -32,6 +32,7 @@ export default async function EditProjectPage({
 			<PageHeader title={t("editTitle")} description={project.title} />
 			<ProjectForm
 				projectId={project.id}
+				discount={project.discount}
 				initial={{
 					...projectToValues(project),
 					clientEmail: "",

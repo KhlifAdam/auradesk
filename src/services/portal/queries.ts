@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { changeMark } from "@/services/changes/unseen";
 import { studioBrandSelect, toStudioBrand } from "@/services/clients/branding";
 import { listGallerySummaries } from "@/services/galleries/summaries";
+import { projectDiscount } from "@/services/invoices/ledger";
 import { addMonths } from "@/services/privacy/purge";
 import {
 	canClientView,
@@ -99,6 +100,7 @@ export async function getPortalProject(
 		deliveryDeadline: row.deliveryDeadline?.toISOString() ?? null,
 		price: row.price?.toNumber() ?? null,
 		advance: row.advance.toNumber(),
+		discount: await projectDiscount(db, id),
 		paymentStatus: row.paymentStatus,
 		delivered: isDeliveredToClient(row),
 		galleriesDeleteAt: await galleriesDeleteAt(row),

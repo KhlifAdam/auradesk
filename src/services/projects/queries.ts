@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { realEmail } from "@/lib/phone";
 import { changeMark } from "@/services/changes/unseen";
 import { listGallerySummaries } from "@/services/galleries/summaries";
+import { projectDiscount } from "@/services/invoices/ledger";
 import { pageMeta, pageSkip } from "@/services/shared/pagination";
 import {
 	type ListProjectsParams,
@@ -125,6 +126,7 @@ export async function getProject(
 		deliveryDeadline: row.deliveryDeadline?.toISOString() ?? null,
 		equipment: row.equipment ?? "",
 		financialNotes: row.financialNotes ?? "",
+		discount: await projectDiscount(db, id),
 		team: row.team ?? "",
 		internalNotes: row.internalNotes ?? "",
 		galleries: await listGallerySummaries({ projectId: id, photographerId }),

@@ -40,7 +40,11 @@ export async function ProjectOverview({
 			? `${project.startTime} – ${project.endTime}`
 			: project.startTime
 		: null;
-	const remaining = amountRemaining(project.price, project.advance);
+	const remaining = amountRemaining(
+		project.price,
+		project.advance,
+		project.discount,
+	);
 	const money = (value: number | null) =>
 		value === null ? "—" : formatMoney(value, locale);
 
@@ -88,13 +92,16 @@ export async function ProjectOverview({
 					<dl className="flex flex-col gap-1.5 text-sm">
 						{[
 							[t("price"), money(project.price)],
+							...(project.discount > 0
+								? [[t("discount"), `− ${money(project.discount)}`]]
+								: []),
 							[t("paid"), money(project.advance)],
 							[t("remaining"), money(remaining)],
-						].map(([label, value], index) => (
+						].map(([label, value], index, rows) => (
 							<div
 								key={label}
 								className={
-									index === 2
+									index === rows.length - 1
 										? "flex justify-between border-t border-border pt-1.5 font-semibold"
 										: "flex justify-between"
 								}

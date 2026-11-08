@@ -31,3 +31,14 @@ describe("suggestPaymentStatus", () => {
 		expect(suggestPaymentStatus(200, 300)).toBe("PAID");
 	});
 });
+
+describe("discounts", () => {
+	it("lower what is owed", () => {
+		expect(amountRemaining(100, 80, 20)).toBe(0);
+		expect(amountRemaining(100, 50, 20)).toBe(30);
+	});
+	it("count as paid once the rest is paid", () => {
+		expect(suggestPaymentStatus(100, 80, 20)).toBe("PAID");
+		expect(suggestPaymentStatus(100, 50, 20)).toBe("PARTIAL");
+	});
+});

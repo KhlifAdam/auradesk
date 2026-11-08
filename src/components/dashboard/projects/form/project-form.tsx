@@ -25,9 +25,15 @@ interface ProjectFormProps {
 	initial: CreateProjectValues;
 	/** Edit mode when set. */
 	projectId?: string;
+	/** Discounts on the project's issued invoices (edit mode). */
+	discount?: number;
 }
 
-export function ProjectForm({ initial, projectId }: ProjectFormProps) {
+export function ProjectForm({
+	initial,
+	projectId,
+	discount = 0,
+}: ProjectFormProps) {
 	const t = useTranslations("Projects.form");
 	const router = useRouter();
 	const errorMessage = useErrorMessage();
@@ -70,7 +76,7 @@ export function ProjectForm({ initial, projectId }: ProjectFormProps) {
 				<GeneralSection />
 				<ClientSection isEdit={Boolean(projectId)} />
 				<PlanningSection />
-				<FinanceSection />
+				<FinanceSection discount={discount} />
 				<TeamSection />
 				<div className="sticky bottom-4 z-20 flex justify-end gap-2 rounded-xl border border-border bg-card/80 p-3 backdrop-blur-md">
 					<Button asChild type="button" variant="ghost" size="sm">

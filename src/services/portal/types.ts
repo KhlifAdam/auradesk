@@ -35,6 +35,8 @@ export interface PortalProjectDetail extends PortalProject {
 	deliveryDeadline: string | null;
 	price: number | null;
 	advance: number;
+	/** Discounts granted on the project's issued invoices. */
+	discount: number;
 	paymentStatus: PaymentStatus;
 	/** Delivered and paid: the files are visible and can be downloaded. */
 	delivered: boolean;

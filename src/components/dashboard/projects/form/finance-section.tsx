@@ -16,13 +16,14 @@ import {
 import { CURRENCY, PAYMENT_STATUSES } from "@/services/projects/options";
 import type { CreateProjectValues } from "@/services/projects/schemas";
 
-export function FinanceSection() {
+/** `discount`: what the project's issued invoices took off the price. */
+export function FinanceSection({ discount = 0 }: { discount?: number }) {
 	const t = useTranslations("Projects.form.finance");
 	const tStatus = useTranslations("Projects.payment.status");
 	const locale = useLocale();
 	const { control, setValue } = useFormContext<CreateProjectValues>();
 	const [price, advance] = useWatch({ control, name: ["price", "advance"] });
-	const remaining = amountRemaining(price, advance);
+	const remaining = amountRemaining(price, advance, discount);
 
 	// Follow the amounts as they are typed; a saved status is left alone until
 	// the photographer edits an amount.
@@ -34,9 +35,9 @@ export function FinanceSection() {
 		)
 			return;
 		previous.current = { price, advance };
-		const suggested = suggestPaymentStatus(price, advance);
+		const suggested = suggestPaymentStatus(price, advance, discount);
 		if (suggested) setValue("paymentStatus", suggested, { shouldDirty: true });
-	}, [price, advance, setValue]);
+	}, [price, advance, discount, setValue]);
 
 	return (
 		<FormSection

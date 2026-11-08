@@ -1910,6 +1910,7 @@
 			"finance": "Finances",
 			"price": "Prix",
 			"advance": "Avance",
+			"discount": "Remise",
 			"remaining": "Reste à payer"
 		},
 		"import": {
@@ -2180,11 +2181,17 @@
 		},
 		"list": {
 			"new": "Nouvelle facture",
-			"search": "Rechercher par numéro ou client…",
+			"search": "Rechercher par numéro, client ou projet…",
 			"all": "Toutes les factures",
 			"filter": "Filtrer par statut",
 			"due": "échéance {date}",
-			"balance": "reste {amount}"
+			"balance": "reste {amount}",
+			"untitled": "Sans description",
+			"kind": {
+				"project": "Projet",
+				"book": "Livre photo",
+				"custom": "Autre"
+			}
 		},
 		"empty": {
 			"title": "Aucune facture pour l'instant",
@@ -3234,6 +3241,7 @@
 				"deadline": "Livraison prévue le",
 				"payment": "Paiement",
 				"price": "Prix",
+				"discount": "Remise",
 				"paid": "Déjà payé",
 				"remaining": "Reste à payer",
 				"paymentHint": "Les fichiers sont livrés une fois le paiement complet."
@@ -3869,6 +3877,7 @@
 	"Assistant": {
 		"fab": "Demander à l'assistant",
 		"fabLabel": "Demander à l'IA",
+		"fabDrag": "glisser pour déplacer",
 		"panel": {
 			"title": "Assistant",
 			"newChat": "Nouvelle conversation",
@@ -4112,7 +4121,8 @@
 			"close": "Fermer",
 			"greetingTitle": "Bonjour 👋",
 			"greeting": "Une question sur vos photos, la livraison ou vos factures ? Demandez-moi.",
-			"dismiss": "Fermer"
+			"dismiss": "Fermer",
+			"drag": "glisser pour déplacer"
 		},
 		"client": {
 			"projects": "Vos projets",

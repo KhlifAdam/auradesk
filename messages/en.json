@@ -1910,6 +1910,7 @@
 			"finance": "Finances",
 			"price": "Price",
 			"advance": "Advance",
+			"discount": "Discount",
 			"remaining": "Remaining"
 		},
 		"import": {
@@ -2180,11 +2181,17 @@
 		},
 		"list": {
 			"new": "New invoice",
-			"search": "Search by number or client…",
+			"search": "Search by number, client or project…",
 			"all": "All invoices",
 			"filter": "Filter by status",
 			"due": "due {date}",
-			"balance": "{amount} left"
+			"balance": "{amount} left",
+			"untitled": "No description",
+			"kind": {
+				"project": "Project",
+				"book": "Photo book",
+				"custom": "Other"
+			}
 		},
 		"empty": {
 			"title": "No invoices yet",
@@ -3234,6 +3241,7 @@
 				"deadline": "Delivery planned for",
 				"payment": "Payment",
 				"price": "Price",
+				"discount": "Discount",
 				"paid": "Already paid",
 				"remaining": "Left to pay",
 				"paymentHint": "Files are delivered once the payment is complete."
@@ -3869,6 +3877,7 @@
 	"Assistant": {
 		"fab": "Ask the assistant",
 		"fabLabel": "Ask AI",
+		"fabDrag": "drag to move",
 		"panel": {
 			"title": "Assistant",
 			"newChat": "New conversation",
@@ -4112,7 +4121,8 @@
 			"close": "Close",
 			"greetingTitle": "Hi there 👋",
 			"greeting": "Questions about your photos, delivery or invoices? Ask me.",
-			"dismiss": "Dismiss"
+			"dismiss": "Dismiss",
+			"drag": "drag to move"
 		},
 		"client": {
 			"projects": "Your projects",

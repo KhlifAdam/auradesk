@@ -54,6 +54,8 @@ export interface ProjectDetail extends ProjectSummary {
 	deliveryDeadline: string | null;
 	equipment: string;
 	financialNotes: string;
+	/** Discounts granted on the project's issued invoices. */
+	discount: number;
 	team: string;
 	internalNotes: string;
 	galleries: GallerySummary[];
