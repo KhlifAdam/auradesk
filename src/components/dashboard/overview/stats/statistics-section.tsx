@@ -71,7 +71,8 @@ export async function StatisticsSection({
 
 	return (
 		<div className="flex flex-col gap-3">
-			<div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+			{/* Six a row on wide screens: the twelve figures take two rows. */}
+			<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
 				<KpiCard
 					label={t("kpi.newBookings")}
 					icon={Inbox}
@@ -178,7 +179,7 @@ export async function StatisticsSection({
 			</div>
 
 			<div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-				<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 xl:col-span-2">
+				<section className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 xl:col-span-2">
 					<h2 className="text-sm font-semibold">{t("chart.title")}</h2>
 					<ActivityChart
 						series={stats.series}
@@ -217,17 +218,17 @@ export async function StatisticsSection({
 export function StatisticsSkeleton() {
 	return (
 		<div className="flex flex-col gap-3">
-			<div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+			<div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
 				{Array.from({ length: 12 }, (_, i) => `kpi-${i}`).map((key) => (
 					<div
 						key={key}
-						className="h-[74px] animate-pulse rounded-xl border border-border bg-card"
+						className="h-[66px] animate-pulse rounded-xl border border-border bg-card"
 					/>
 				))}
 			</div>
 			<div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-				<div className="h-72 animate-pulse rounded-xl border border-border bg-card xl:col-span-2" />
-				<div className="h-72 animate-pulse rounded-xl border border-border bg-card" />
+				<div className="h-56 animate-pulse rounded-xl border border-border bg-card xl:col-span-2" />
+				<div className="h-56 animate-pulse rounded-xl border border-border bg-card" />
 			</div>
 		</div>
 	);

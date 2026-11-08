@@ -3,7 +3,6 @@
 import { SidebarContent, type SidebarUser } from "./sidebar-content";
 
 interface SidebarProps {
-	studioName: string;
 	unreadMessages: number;
 	user: SidebarUser;
 }

@@ -1,10 +1,11 @@
 import { CalendarDays, MapPin } from "lucide-react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { ShowMoreList } from "@/components/shared/show-more-list";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import type { OverviewStats } from "@/services/overview/stats";
 
-/** The next shootings on the calendar, nearest first. */
+/** The next shootings on the calendar, nearest first; the first few, the rest on demand. */
 export async function UpcomingShoots({
 	shoots,
 }: {
@@ -15,7 +16,7 @@ export async function UpcomingShoots({
 	const timeZone = await getRequestTimeZone();
 
 	return (
-		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+		<section className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3">
 			<div className="flex items-center justify-between">
 				<h2 className="text-sm font-semibold">{t("title")}</h2>
 				<Link
@@ -26,11 +27,11 @@ export async function UpcomingShoots({
 				</Link>
 			</div>
 			{shoots.length === 0 ? (
-				<p className="py-4 text-center text-xs text-muted-foreground">
+				<p className="py-3 text-center text-xs text-muted-foreground">
 					{t("empty")}
 				</p>
 			) : (
-				<ul className="flex flex-col divide-y divide-border">
+				<ShowMoreList className="flex flex-col divide-y divide-border">
 					{shoots.map((shoot) => (
 						<li key={shoot.id} className="py-2 first:pt-0 last:pb-0">
 							<Link
@@ -64,7 +65,7 @@ export async function UpcomingShoots({
 							</Link>
 						</li>
 					))}
-				</ul>
+				</ShowMoreList>
 			)}
 		</section>
 	);

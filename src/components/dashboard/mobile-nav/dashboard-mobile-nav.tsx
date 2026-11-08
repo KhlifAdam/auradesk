@@ -20,7 +20,6 @@ import { SidebarContent, type SidebarUser } from "../sidebar/sidebar-content";
 import { SidebarLogo } from "../sidebar/sidebar-logo";
 
 interface DashboardMobileNavProps {
-	studioName: string;
 	unreadMessages: number;
 	user: SidebarUser;
 }
@@ -30,7 +29,6 @@ interface DashboardMobileNavProps {
  * side sheet, and a tab bar with the places used every day.
  */
 export function DashboardMobileNav({
-	studioName,
 	unreadMessages,
 	user,
 }: DashboardMobileNavProps) {
@@ -56,7 +54,7 @@ export function DashboardMobileNav({
 					<Menu className="h-5 w-5" />
 				</Button>
 				<Link href="/dashboard" className="min-w-0 flex-1">
-					<SidebarLogo name={studioName} />
+					<SidebarLogo />
 				</Link>
 				<Button variant="ghost" size="icon" asChild>
 					<Link
@@ -80,11 +78,7 @@ export function DashboardMobileNav({
 					className="flex w-72 flex-col gap-0 bg-card p-0 sm:max-w-72"
 				>
 					<SheetTitle className="sr-only">{t("menu")}</SheetTitle>
-					<SidebarContent
-						studioName={studioName}
-						unreadMessages={unreadMessages}
-						user={user}
-					/>
+					<SidebarContent unreadMessages={unreadMessages} user={user} />
 				</SheetContent>
 			</Sheet>
 

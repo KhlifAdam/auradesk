@@ -81,12 +81,12 @@ export function KpiCard({
 	const body = (
 		<>
 			<span className="flex items-center justify-between gap-2">
-				<span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+				<span className="truncate text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
 					{label}
 				</span>
 				<span
 					className={cn(
-						"flex h-6 w-6 shrink-0 items-center justify-center rounded-md",
+						"flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-transform duration-300 ease-out group-hover:-rotate-6 group-hover:scale-115",
 						TONES[tone],
 					)}
 				>
@@ -95,8 +95,8 @@ export function KpiCard({
 			</span>
 			<span
 				className={cn(
-					"font-display text-xl font-bold tracking-tight",
-					accent ? "text-primary" : "text-foreground",
+					"font-display text-lg font-bold tracking-tight transition-colors duration-300",
+					accent ? "text-primary" : "text-foreground group-hover:text-primary",
 				)}
 			>
 				{value}
@@ -110,17 +110,12 @@ export function KpiCard({
 			)}
 		</>
 	);
+	// Hover: lifts a little, glows gold, the icon tilts and the figure turns gold.
 	const className =
-		"flex flex-col gap-0.5 rounded-xl border border-border bg-card px-4 py-3";
+		"group flex min-w-0 flex-col gap-0.5 rounded-xl border border-border bg-card px-3 py-2.5 lift-hover";
 
 	return href ? (
-		<Link
-			href={href}
-			className={cn(
-				className,
-				"transition-colors duration-200 hover:border-primary/40",
-			)}
-		>
+		<Link href={href} className={className}>
 			{body}
 		</Link>
 	) : (

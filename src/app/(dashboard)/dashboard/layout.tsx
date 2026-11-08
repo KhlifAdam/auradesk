@@ -12,11 +12,9 @@ import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
 import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
-import { BRAND_NAME } from "@/lib/brand";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { getSubscription } from "@/services/billing/queries";
 import { countUnread } from "@/services/messages/queries";
-import { getStudioSummary } from "@/services/studio/queries";
 
 export default async function DashboardLayout({
 	children,
@@ -24,9 +22,8 @@ export default async function DashboardLayout({
 	children: ReactNode;
 }) {
 	const { session, photographerId } = await requirePhotographer();
-	const [studio, timeZone, unreadMessages, subscription, cookieStore] =
+	const [timeZone, unreadMessages, subscription, cookieStore] =
 		await Promise.all([
-			getStudioSummary(photographerId),
 			getRequestTimeZone(),
 			countUnread({ id: photographerId, role: "photographer" }),
 			getSubscription(photographerId),
@@ -43,14 +40,9 @@ export default async function DashboardLayout({
 				<SpaceBackdrop />
 				<TimeZoneSync serverTimeZone={timeZone} />
 				<StudioLiveRefresh />
-				<Sidebar
-					studioName={studio?.name ?? BRAND_NAME}
-					unreadMessages={unreadMessages}
-					user={session.user}
-				/>
+				<Sidebar unreadMessages={unreadMessages} user={session.user} />
 				<div className="flex min-w-0 flex-1 flex-col">
 					<DashboardMobileNav
-						studioName={studio?.name ?? BRAND_NAME}
 						unreadMessages={unreadMessages}
 						user={session.user}
 					/>

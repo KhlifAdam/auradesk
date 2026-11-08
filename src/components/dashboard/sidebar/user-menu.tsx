@@ -58,9 +58,9 @@ export function UserMenu({ user }: UserMenuProps) {
 			<DropdownMenuTrigger asChild>
 				<button
 					type="button"
-					className="flex w-full items-center gap-3 rounded-xl p-2 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+					className="flex w-full items-center gap-3 rounded-xl p-1.5 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				>
-					<Avatar className="h-9 w-9 border border-border">
+					<Avatar className="h-8 w-8 border border-border">
 						<AvatarImage src={user.image ?? undefined} alt={user.name} />
 						<AvatarFallback className="bg-primary/10 text-primary">
 							{initials}

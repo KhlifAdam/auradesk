@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
+import { ShowMoreList } from "@/components/shared/show-more-list";
 import { Skeleton } from "@/components/ui/skeleton";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import type { CollectReason } from "@/lib/money/collect";
@@ -25,7 +26,7 @@ const TONE: Record<CollectReason, string> = {
 	open: "bg-muted text-muted-foreground",
 };
 
-/** What the studio is owed, and the next few amounts to collect, most pressing first. */
+/** What the studio is owed, and the amounts to collect, most pressing first; the first few, the rest on demand. */
 export async function MoneyCard() {
 	const t = await getTranslations("Money");
 	const locale = await getLocale();
@@ -63,7 +64,7 @@ export async function MoneyCard() {
 			{money.items.length === 0 ? (
 				<p className="text-xs text-muted-foreground">{t("allPaid")}</p>
 			) : (
-				<ul className="flex flex-col divide-y divide-border/60">
+				<ShowMoreList className="flex flex-col divide-y divide-border/60">
 					{money.items.map((item) => {
 						const Icon = ICONS[item.kind];
 						return (
@@ -95,7 +96,7 @@ export async function MoneyCard() {
 							</li>
 						);
 					})}
-				</ul>
+				</ShowMoreList>
 			)}
 			{money.total > money.items.length && (
 				<p className="text-[11px] text-muted-foreground">

@@ -6,11 +6,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { ShowMoreList } from "@/components/shared/show-more-list";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { cn } from "@/lib/utils";
 import { getAssistantReminders } from "@/services/ai/reminders";
 
-/** What the studio assistant suggests doing now, most urgent first. */
+/** What the studio assistant suggests doing now, most urgent first; the first few, the rest on demand. */
 export async function AssistantCard() {
 	const t = await getTranslations("Ai.reminders");
 	const { photographerId } = await requirePhotographer();
@@ -33,7 +34,7 @@ export async function AssistantCard() {
 					{t("allClear")}
 				</p>
 			) : (
-				<ul className="flex flex-col divide-y divide-border/60">
+				<ShowMoreList className="flex flex-col divide-y divide-border/60">
 					{reminders.map((reminder) => (
 						<li key={`${reminder.kind}-${reminder.href}`}>
 							<Link
@@ -53,7 +54,7 @@ export async function AssistantCard() {
 							</Link>
 						</li>
 					))}
-				</ul>
+				</ShowMoreList>
 			)}
 		</section>
 	);

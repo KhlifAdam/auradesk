@@ -30,7 +30,8 @@ export function NavItem({
 		<Link
 			href={href}
 			className={cn(
-				"flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all duration-200",
+				// Rows share the sidebar's height (28–44px), so there is no empty space below.
+				"flex max-h-11 min-h-7 flex-1 items-center gap-2.5 rounded-lg px-2.5 py-1 text-sm font-medium transition-all duration-200",
 				isActive
 					? "bg-primary/10 text-primary"
 					: "text-muted-foreground hover:bg-muted hover:text-foreground",

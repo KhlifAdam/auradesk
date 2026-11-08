@@ -11,7 +11,10 @@ import {
 	MoneyCardSkeleton,
 } from "@/components/dashboard/overview/money-card";
 import { OverviewHeader } from "@/components/dashboard/overview/overview-header";
-import { SetupChecklist } from "@/components/dashboard/overview/setup-checklist";
+import {
+	isSetupComplete,
+	SetupChecklist,
+} from "@/components/dashboard/overview/setup-checklist";
 import { StatCard } from "@/components/dashboard/overview/stat-card";
 import { PeriodFilter } from "@/components/dashboard/overview/stats/period-filter";
 import {
@@ -50,6 +53,7 @@ export default async function OverviewPage({
 	// Weeks start on Monday in French and on Sunday in English, as in the calendar.
 	const period = resolvePeriod(params, timeZone, locale === "fr" ? 1 : 0);
 	const siteStatus = !studio ? "notSetUp" : studio.published ? "live" : "draft";
+	const setupDone = isSetupComplete(overview);
 
 	return (
 		<PageShell>
@@ -58,7 +62,7 @@ export default async function OverviewPage({
 				hasStudio={studio !== null}
 			/>
 
-			<div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+			<div className="grid grid-cols-1 items-start gap-3 xl:grid-cols-2">
 				<Suspense fallback={<AssistantCardSkeleton />}>
 					<AssistantCard />
 				</Suspense>
@@ -86,7 +90,7 @@ export default async function OverviewPage({
 
 			<section className="flex flex-col gap-3">
 				<h2 className="text-sm font-semibold">{t("website.title")}</h2>
-				<div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+				<div className="grid grid-cols-2 gap-2 xl:grid-cols-4">
 					<StatCard label={t("stats.media")} value={String(counts.media)} />
 					<StatCard
 						label={t("stats.albums")}
@@ -108,12 +112,16 @@ export default async function OverviewPage({
 						accent={siteStatus === "live"}
 					/>
 				</div>
-				<div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-					<SetupChecklist overview={overview} />
-					<div className="xl:col-span-2">
-						<LatestUploads items={overview.latestMedia} />
+				{setupDone ? (
+					<LatestUploads items={overview.latestMedia} />
+				) : (
+					<div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+						<SetupChecklist overview={overview} />
+						<div className="xl:col-span-2">
+							<LatestUploads items={overview.latestMedia} />
+						</div>
 					</div>
-				</div>
+				)}
 			</section>
 		</PageShell>
 	);

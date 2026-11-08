@@ -164,6 +164,10 @@
 			"action": "Supprimer",
 			"cancel": "Annuler",
 			"confirm": "Supprimer"
+		},
+		"showMore": {
+			"more": "Voir {count} de plus",
+			"less": "Voir moins"
 		}
 	},
 	"Errors": {

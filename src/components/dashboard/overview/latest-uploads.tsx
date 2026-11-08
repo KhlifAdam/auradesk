@@ -9,7 +9,7 @@ export function LatestUploads({ items }: { items: MediaItem[] }) {
 	const t = useTranslations("Dashboard.Overview.latest");
 
 	return (
-		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+		<section className="flex flex-col gap-2.5 rounded-xl border border-border bg-card p-3">
 			<header className="flex items-center justify-between gap-2">
 				<h2 className="text-sm font-semibold">{t("title")}</h2>
 				{items.length > 0 && (

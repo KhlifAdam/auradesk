@@ -19,6 +19,11 @@ function getSteps({ studio, counts }: Overview) {
 	] as const;
 }
 
+/** Every setup step done: the overview then drops the checklist. */
+export function isSetupComplete(overview: Overview) {
+	return getSteps(overview).every((step) => step.done);
+}
+
 export function SetupChecklist({ overview }: { overview: Overview }) {
 	const t = useTranslations("Dashboard.Overview.checklist");
 	const steps = getSteps(overview);
@@ -26,7 +31,7 @@ export function SetupChecklist({ overview }: { overview: Overview }) {
 	const isComplete = done === steps.length;
 
 	return (
-		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+		<section className="flex flex-col gap-2.5 rounded-xl border border-border bg-card p-3">
 			<header className="flex items-center justify-between gap-2">
 				<h2 className="text-sm font-semibold">{t("title")}</h2>
 				<span className="text-xs text-muted-foreground">

@@ -46,7 +46,7 @@ export function ActivityChart({ series, granularity }: ActivityChartProps) {
 
 	return (
 		<div className="relative">
-			<ChartContainer config={config} className="h-56 w-full">
+			<ChartContainer config={config} className="h-44 w-full">
 				<BarChart data={series} margin={{ left: -20, right: 4, top: 4 }}>
 					<CartesianGrid vertical={false} strokeDasharray="3 3" />
 					<XAxis

@@ -14,7 +14,7 @@ export function StatCard({
 	accent = false,
 }: StatCardProps) {
 	return (
-		<div className="relative flex flex-col gap-1 overflow-hidden rounded-xl border border-border bg-card px-4 py-3">
+		<div className="group relative flex flex-col gap-0.5 overflow-hidden rounded-xl border border-border bg-card px-3 py-2.5 lift-hover">
 			{accent && (
 				<div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-primary via-primary/60 to-transparent" />
 			)}
@@ -23,8 +23,8 @@ export function StatCard({
 			</span>
 			<span
 				className={cn(
-					"text-xl font-bold tracking-tight",
-					accent ? "text-primary" : "text-foreground",
+					"text-lg font-bold tracking-tight transition-colors duration-300",
+					accent ? "text-primary" : "text-foreground group-hover:text-primary",
 				)}
 			>
 				{value}

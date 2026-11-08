@@ -1,13 +1,13 @@
-import { Aperture } from "lucide-react";
+import { BrandMark } from "@/components/landing/brand-mark";
+import { BRAND_NAME } from "@/lib/brand";
 
-export function SidebarLogo({ name }: { name: string }) {
+/** The product's mark at the top of the studio menu; the person shows at the bottom. */
+export function SidebarLogo() {
 	return (
-		<div className="flex items-center gap-2.5 px-2 py-1">
-			<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-luminous">
-				<Aperture className="h-4 w-4" />
-			</div>
-			<span className="truncate text-sm font-semibold tracking-tight text-foreground">
-				{name}
+		<div className="flex items-center gap-3 px-1.5">
+			<BrandMark size="lg" />
+			<span className="truncate font-display text-lg font-bold tracking-tight text-foreground">
+				{BRAND_NAME}
 			</span>
 		</div>
 	);
