@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { LanguageSubmenu } from "@/components/dashboard/sidebar/language-submenu";
 import { ThemeSubmenu } from "@/components/dashboard/sidebar/theme-submenu";
+import { BrandMark } from "@/components/landing/brand-mark";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -17,13 +18,14 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth/client";
+import { BRAND_NAME } from "@/lib/brand";
 import { initialsOf } from "@/lib/initials";
 
 interface SpaceHeaderProps {
-	/** The space's name, already translated. */
+	/** The space's name, already translated; shown under the brand. */
 	title: string;
 	home: string;
-	/** Rendered icon (a component can't cross from a server layout). */
+	/** Rendered icon next to the space's name (a component can't cross from a server layout). */
 	icon: ReactNode;
 	user: { name: string; email: string; image?: string | null };
 	/** Photographers get a way back to their own studio. */
@@ -32,7 +34,7 @@ interface SpaceHeaderProps {
 	loginPath?: string;
 }
 
-/** Top bar of a standalone space (team, admin): its name and the account menu. */
+/** Top bar of a standalone space (team, admin): AuraDesk, the space's name under it, and the account menu. */
 export function SpaceHeader({
 	title,
 	home,
@@ -54,12 +56,21 @@ export function SpaceHeader({
 
 	return (
 		<header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
-			<div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
-				<Link href={home} className="flex items-center gap-2">
-					<span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
-						{icon}
+			<div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
+				<Link
+					href={home}
+					className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
+				>
+					<BrandMark size="lg" />
+					<span className="flex flex-col leading-tight">
+						<span className="font-display text-base font-bold tracking-tight">
+							{BRAND_NAME}
+						</span>
+						<span className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground [&_svg]:h-3 [&_svg]:w-3">
+							{icon}
+							{title}
+						</span>
 					</span>
-					<span className="text-sm font-semibold">{title}</span>
 				</Link>
 				<DropdownMenu>
 					<DropdownMenuTrigger className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

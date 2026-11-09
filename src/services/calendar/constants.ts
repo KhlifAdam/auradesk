@@ -16,6 +16,15 @@ export const BUSY_TYPES = [
 	"UNAVAILABLE",
 ] as const satisfies CalendarEventType[];
 
+/** Types that can belong to a project; the others never link to one. */
+export const PROJECT_TYPES = [
+	"SHOOT",
+	"MEETING",
+] as const satisfies CalendarEventType[];
+
+export const canLinkProject = (type: CalendarEventType) =>
+	(PROJECT_TYPES as readonly CalendarEventType[]).includes(type);
+
 /** Longest event span, in days. */
 export const MAX_EVENT_DAYS = 366;
 

@@ -7,8 +7,6 @@ import type { CalendarEntry } from "@/services/calendar/types";
 import { AVAILABILITY_TINT, EVENT_STYLES } from "./event-styles";
 import { dayAvailability, useEntryLabels } from "./use-calendar-entries";
 
-const VISIBLE_CHIPS = 3;
-
 interface MonthGridProps {
 	month: string;
 	days: string[];
@@ -58,7 +56,6 @@ export function MonthGrid({
 					const entries = byDay.get(day) ?? [];
 					const availability = dayAvailability(entries);
 					const inMonth = day.startsWith(month);
-					const hidden = entries.length - VISIBLE_CHIPS;
 					const dateLabel = format.dateTime(utcNoon(day), {
 						dateStyle: "full",
 						timeZone: "UTC",
@@ -101,14 +98,16 @@ export function MonthGrid({
 								>
 									{Number(day.slice(8))}
 								</span>
-								<button
-									type="button"
-									aria-label={t("addOn", { date: dateLabel })}
-									onClick={() => onCreate(day)}
-									className="pointer-events-auto hidden h-5 w-5 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-200 hover:bg-muted hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 sm:flex"
-								>
-									<Plus className="h-3 w-3" />
-								</button>
+								{availability !== "UNAVAILABLE" && (
+									<button
+										type="button"
+										aria-label={t("addOn", { date: dateLabel })}
+										onClick={() => onCreate(day)}
+										className="pointer-events-auto hidden h-5 w-5 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity duration-200 hover:bg-muted hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100 sm:flex"
+									>
+										<Plus className="h-3 w-3" />
+									</button>
+								)}
 							</div>
 							{/* Phones: colored dots only. */}
 							<div className="pointer-events-none relative flex flex-wrap gap-0.5 px-0.5 sm:hidden">
@@ -122,8 +121,9 @@ export function MonthGrid({
 									/>
 								))}
 							</div>
-							<div className="relative hidden flex-col gap-0.5 sm:flex">
-								{entries.slice(0, VISIBLE_CHIPS).map((entry) => {
+							{/* Every event is listed; past three chips the list scrolls. */}
+							<div className="scrollbar-thin relative hidden max-h-[3.75rem] flex-col gap-0.5 overflow-y-auto pr-0.5 sm:flex">
+								{entries.map((entry) => {
 									const time = labels.startTime(entry, day);
 									return (
 										<button
@@ -131,7 +131,7 @@ export function MonthGrid({
 											type="button"
 											onClick={() => onOpen(entry)}
 											className={cn(
-												"flex items-center gap-1 truncate rounded px-1 py-px text-left text-[11px] font-medium leading-4 transition-colors duration-200",
+												"flex shrink-0 items-center gap-1 truncate rounded px-1 py-px text-left text-[11px] font-medium leading-4 transition-colors duration-200",
 												EVENT_STYLES[entry.type].chip,
 											)}
 										>
@@ -142,15 +142,6 @@ export function MonthGrid({
 										</button>
 									);
 								})}
-								{hidden > 0 && (
-									<button
-										type="button"
-										onClick={() => onSelect(day)}
-										className="px-1 text-left text-[11px] text-muted-foreground hover:text-foreground"
-									>
-										{t("more", { count: hidden })}
-									</button>
-								)}
 							</div>
 						</div>
 					);

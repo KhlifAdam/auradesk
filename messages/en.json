@@ -171,6 +171,8 @@
 		}
 	},
 	"Errors": {
+		"dayOff": "This day is marked as a day off. Turn off “Day off” before planning something.",
+		"dayNotFree": "This day already has events. Move or delete them before taking the day off.",
 		"generic": "Something went wrong. Please try again.",
 		"invalidInput": "Some of the information is invalid.",
 		"notFound": "This item no longer exists.",
@@ -2964,6 +2966,7 @@
 		"title": "Calendar",
 		"description": "Your shoots, meetings and the days you're available or not.",
 		"toolbar": {
+			"pickMonth": "Choose a month and year",
 			"today": "Today",
 			"previous": "Previous month",
 			"next": "Next month",
@@ -2998,6 +3001,7 @@
 			"empty": "Nothing planned this day.",
 			"dayOff": "Day off",
 			"dayOffHint": "Turn on if you can't work this day.",
+			"dayOffLocked": "This day is off. Turn off “Day off” to plan something.",
 			"schedule": "click to add times",
 			"openProject": "Open project",
 			"availabilityUpdated": "Availability updated.",

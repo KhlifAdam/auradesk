@@ -5,7 +5,12 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
-import { BUSY_TYPES, type CalendarEventType, DAY_MS } from "./constants";
+import {
+	BUSY_TYPES,
+	type CalendarEventType,
+	canLinkProject,
+} from "./constants";
+import { dayOffClash, eventSpan, overlaps } from "./day-off";
 import {
 	type EventPayload,
 	eventPayloadSchema,
@@ -26,7 +31,7 @@ function toData(event: EventPayload) {
 		endsAt: new Date(event.endsAt),
 		location: emptyToNull(event.location),
 		notes: emptyToNull(event.notes),
-		projectId: emptyToNull(event.projectId),
+		projectId: canLinkProject(event.type) ? emptyToNull(event.projectId) : null,
 	};
 }
 
@@ -46,18 +51,13 @@ async function countConflicts(
 	excludeId: string,
 ) {
 	if (!isBusy(event.type)) return 0;
-	const start = new Date(event.startsAt);
-	const end = new Date(Date.parse(event.endsAt) + (event.allDay ? DAY_MS : 0));
+	const { start, end } = eventSpan(event);
 	return db.calendarEvent.count({
 		where: {
 			photographerId,
 			id: { not: excludeId },
 			type: { in: [...BUSY_TYPES] },
-			startsAt: { lt: end },
-			OR: [
-				{ allDay: false, endsAt: { gt: start } },
-				{ allDay: true, endsAt: { gt: new Date(start.getTime() - DAY_MS) } },
-			],
+			...overlaps(start, end),
 		},
 	});
 }
@@ -73,6 +73,8 @@ export async function createCalendarEvent(input: unknown): Promise<SaveResult> {
 	if (!parsed.success) return failFromZod(parsed.error);
 	if (!(await ownsProject(photographerId, parsed.data.projectId)))
 		return fail("notFound");
+	const clash = await dayOffClash(photographerId, parsed.data);
+	if (clash) return fail(clash);
 
 	const { id } = await db.calendarEvent.create({
 		data: { photographerId, ...toData(parsed.data) },
@@ -91,6 +93,8 @@ export async function updateCalendarEvent(input: unknown): Promise<SaveResult> {
 	const { id, event } = parsed.data;
 	if (!(await ownsProject(photographerId, event.projectId)))
 		return fail("notFound");
+	const clash = await dayOffClash(photographerId, event, id);
+	if (clash) return fail(clash);
 	const { count } = await db.calendarEvent.updateMany({
 		where: { id, photographerId },
 		data: toData(event),

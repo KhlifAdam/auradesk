@@ -274,6 +274,13 @@
 		);
 }
 
+/* A slim, muted scrollbar for small scroll areas (calendar day cells…). */
+@utility scrollbar-thin {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent)
+		transparent;
+}
+
 /* The grid behind the welcome pages: drawn with the text colour, so it stays
    readable on the pale light theme (--grid-line is its strength). */
 @utility grid-fade {

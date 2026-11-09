@@ -21,7 +21,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { EVENT_TYPES } from "@/services/calendar/constants";
+import { canLinkProject, EVENT_TYPES } from "@/services/calendar/constants";
 import type { EventFormValues } from "@/services/calendar/schemas";
 import type { ProjectOption } from "@/services/calendar/types";
 import { EVENT_STYLES } from "./event-styles";
@@ -33,10 +33,12 @@ export function EventFormFields({ projects }: { projects: ProjectOption[] }) {
 	const t = useTranslations("Calendar.form");
 	const tTypes = useTranslations("Calendar.types");
 	const { control, getValues, setValue } = useFormContext<EventFormValues>();
-	const [allDay, startDate] = useWatch({
+	const [allDay, startDate, type] = useWatch({
 		control,
-		name: ["allDay", "startDate"],
+		name: ["allDay", "startDate", "type"],
 	});
+	// Only shoots and meetings belong to a project.
+	const linkable = canLinkProject(type);
 
 	// Keep the end on or after the start when the start moves forward.
 	useEffect(() => {
@@ -125,37 +127,39 @@ export function EventFormFields({ projects }: { projects: ProjectOption[] }) {
 					</>
 				)}
 			</div>
-			<div className="grid grid-cols-2 gap-3">
+			<div className={cn("grid gap-3", linkable && "grid-cols-2")}>
 				<TextField<EventFormValues> name="location" label={t("location")} />
-				<FormField
-					control={control}
-					name="projectId"
-					render={({ field }) => (
-						<FormItem className="space-y-1">
-							<FormLabel className="text-xs">{t("project")}</FormLabel>
-							<Select
-								value={field.value || NO_PROJECT}
-								onValueChange={(value) =>
-									field.onChange(value === NO_PROJECT ? "" : value)
-								}
-							>
-								<FormControl>
-									<SelectTrigger className="h-8 w-full text-sm">
-										<SelectValue />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									<SelectItem value={NO_PROJECT}>{t("noProject")}</SelectItem>
-									{projects.map((project) => (
-										<SelectItem key={project.id} value={project.id}>
-											{project.title}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</FormItem>
-					)}
-				/>
+				{linkable && (
+					<FormField
+						control={control}
+						name="projectId"
+						render={({ field }) => (
+							<FormItem className="space-y-1">
+								<FormLabel className="text-xs">{t("project")}</FormLabel>
+								<Select
+									value={field.value || NO_PROJECT}
+									onValueChange={(value) =>
+										field.onChange(value === NO_PROJECT ? "" : value)
+									}
+								>
+									<FormControl>
+										<SelectTrigger className="h-8 w-full text-sm">
+											<SelectValue />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										<SelectItem value={NO_PROJECT}>{t("noProject")}</SelectItem>
+										{projects.map((project) => (
+											<SelectItem key={project.id} value={project.id}>
+												{project.title}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</FormItem>
+						)}
+					/>
+				)}
 			</div>
 			<TextField<EventFormValues> name="notes" label={t("notes")} rows={3} />
 		</>

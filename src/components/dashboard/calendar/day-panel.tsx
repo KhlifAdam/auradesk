@@ -1,9 +1,8 @@
 "use client";
 
-import { ArrowUpRight, CalendarCheck, MapPin, Plus } from "lucide-react";
+import { ArrowUpRight, CalendarCheck, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useFormatter, useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import type { CalendarEntry } from "@/services/calendar/types";
@@ -15,17 +14,10 @@ interface DayPanelProps {
 	day: string;
 	timeZone: string;
 	entries: CalendarEntry[];
-	onCreate: (day: string) => void;
 	onOpen: (entry: CalendarEntry) => void;
 }
 
-export function DayPanel({
-	day,
-	timeZone,
-	entries,
-	onCreate,
-	onOpen,
-}: DayPanelProps) {
+export function DayPanel({ day, timeZone, entries, onOpen }: DayPanelProps) {
 	const t = useTranslations("Calendar.day");
 	const format = useFormatter();
 	const labels = useEntryLabels(timeZone);
@@ -38,33 +30,22 @@ export function DayPanel({
 
 	return (
 		<aside className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 lg:sticky lg:top-5 lg:self-start">
-			<div className="flex items-start justify-between gap-2">
-				<div className="flex flex-col gap-0.5">
-					<h2 className="font-display text-sm font-semibold capitalize">
-						{format.dateTime(new Date(`${day}T12:00:00.000Z`), {
-							weekday: "long",
-							day: "numeric",
-							month: "long",
-							timeZone: "UTC",
-						})}
-					</h2>
-					<p className="text-xs text-muted-foreground">
-						{dayOff
-							? t("status.dayOff")
-							: items.length > 0
-								? t("status.planned", { count: items.length })
-								: t("status.free")}
-					</p>
-				</div>
-				<Button
-					size="sm"
-					variant="outline"
-					className="h-7 gap-1 px-2 text-xs"
-					onClick={() => onCreate(day)}
-				>
-					<Plus className="h-3.5 w-3.5" />
-					{t("add")}
-				</Button>
+			<div className="flex flex-col gap-0.5">
+				<h2 className="font-display text-sm font-semibold capitalize">
+					{format.dateTime(new Date(`${day}T12:00:00.000Z`), {
+						weekday: "long",
+						day: "numeric",
+						month: "long",
+						timeZone: "UTC",
+					})}
+				</h2>
+				<p className="text-xs text-muted-foreground">
+					{dayOff
+						? t("status.dayOff")
+						: items.length > 0
+							? t("status.planned", { count: items.length })
+							: t("status.free")}
+				</p>
 			</div>
 
 			{/* Days are open by default; one switch blocks the whole day. */}

@@ -171,6 +171,8 @@
 		}
 	},
 	"Errors": {
+		"dayOff": "Ce jour est marqué comme jour off. Désactivez « Jour off » avant de planifier quelque chose.",
+		"dayNotFree": "Ce jour contient déjà des évènements. Déplacez-les ou supprimez-les avant de mettre ce jour en jour off.",
 		"generic": "Une erreur est survenue. Veuillez réessayer.",
 		"invalidInput": "Certaines informations sont invalides.",
 		"notFound": "Cet élément n'existe plus.",
@@ -2964,6 +2966,7 @@
 		"title": "Calendrier",
 		"description": "Vos shootings, rendez-vous et les jours où vous êtes disponible ou non.",
 		"toolbar": {
+			"pickMonth": "Choisir un mois et une année",
 			"today": "Aujourd'hui",
 			"previous": "Mois précédent",
 			"next": "Mois suivant",
@@ -2998,6 +3001,7 @@
 			"empty": "Rien de prévu ce jour-là.",
 			"dayOff": "Jour off",
 			"dayOffHint": "Activez si vous ne pouvez pas travailler ce jour-là.",
+			"dayOffLocked": "Ce jour est un jour off. Désactivez « Jour off » pour planifier quelque chose.",
 			"schedule": "cliquez pour ajouter les heures",
 			"openProject": "Ouvrir le projet",
 			"availabilityUpdated": "Disponibilité mise à jour.",

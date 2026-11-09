@@ -2,10 +2,11 @@
 
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { shiftMonth } from "@/services/calendar/dates";
 import { ColorGuide } from "./color-guide";
+import { MonthPicker } from "./month-picker";
 
 const monthHref = (month: string) => `/dashboard/calendar?month=${month}`;
 
@@ -23,7 +24,6 @@ export function CalendarToolbar({
 	onCreate,
 }: CalendarToolbarProps) {
 	const t = useTranslations("Calendar");
-	const format = useFormatter();
 	const thisMonth = today.slice(0, 7);
 
 	return (
@@ -59,13 +59,7 @@ export function CalendarToolbar({
 						<Link href={monthHref(thisMonth)}>{t("toolbar.today")}</Link>
 					</Button>
 				)}
-				<h2 className="ml-1.5 font-display text-base font-semibold capitalize">
-					{format.dateTime(new Date(`${month}-15T12:00:00.000Z`), {
-						month: "long",
-						year: "numeric",
-						timeZone: "UTC",
-					})}
-				</h2>
+				<MonthPicker month={month} today={today} href={monthHref} />
 			</div>
 			<div className="flex flex-wrap items-center gap-2">
 				<ColorGuide />

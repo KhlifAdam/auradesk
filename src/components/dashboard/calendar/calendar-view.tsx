@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { toast } from "sonner";
 import { monthGridDays } from "@/services/calendar/dates";
 import { entryToValues, newEventValues } from "@/services/calendar/form-values";
 import type { CalendarEntry, ProjectOption } from "@/services/calendar/types";
@@ -9,7 +11,7 @@ import { CalendarToolbar } from "./calendar-toolbar";
 import { DayPanel } from "./day-panel";
 import { type EventDraft, EventFormDialog } from "./event-form-dialog";
 import { MonthGrid } from "./month-grid";
-import { useEntriesByDay } from "./use-calendar-entries";
+import { dayAvailability, useEntriesByDay } from "./use-calendar-entries";
 
 interface CalendarViewProps {
 	month: string;
@@ -29,6 +31,7 @@ export function CalendarView({
 	entries,
 	projects,
 }: CalendarViewProps) {
+	const t = useTranslations("Calendar.day");
 	const router = useRouter();
 	const days = monthGridDays(month, weekStartsOn);
 	const byDay = useEntriesByDay(entries, timeZone);
@@ -39,6 +42,9 @@ export function CalendarView({
 
 	const create = (day: string) => {
 		setSelected(day);
+		// Nothing can be planned on a day off; the server enforces it too.
+		if (dayAvailability(byDay.get(day) ?? []) === "UNAVAILABLE")
+			return void toast.info(t("dayOffLocked"));
 		setDraft({ values: newEventValues(day) });
 	};
 	// A project date opens a new event already linked to that project.
@@ -75,7 +81,6 @@ export function CalendarView({
 					day={selected}
 					timeZone={timeZone}
 					entries={byDay.get(selected) ?? []}
-					onCreate={create}
 					onOpen={open}
 				/>
 			</div>
