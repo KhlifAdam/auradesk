@@ -5,7 +5,7 @@ import { CalendarPlus, Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -72,6 +72,13 @@ export function BookingDialog(fixed: Fixed) {
 		defaultValues: defaults(),
 	});
 	const kind = useWatch({ control: form.control, name: "kind" });
+	const startDate = useWatch({ control: form.control, name: "startDate" });
+	// Moving the start past the end brings the end along.
+	useEffect(() => {
+		const end = form.getValues("endDate");
+		if (startDate && (!end || end < startDate))
+			form.setValue("endDate", startDate, { shouldValidate: true });
+	}, [startDate, form]);
 	const { isSubmitting } = form.formState;
 
 	async function onSubmit(values: EquipmentBookingValues) {
@@ -115,6 +122,13 @@ export function BookingDialog(fixed: Fixed) {
 						}
 						onPick={(option) => {
 							field.onChange(option.id);
+							// A project's shoot day becomes the booking's days.
+							if (name === "projectId" && option.detail) {
+								form.setValue("startDate", option.detail);
+								form.setValue("endDate", option.detail, {
+									shouldValidate: true,
+								});
+							}
 							setLabels((current) => ({
 								...current,
 								[name === "equipmentId" ? "equipment" : "project"]:
@@ -196,7 +210,7 @@ export function BookingDialog(fixed: Fixed) {
 									name="amount"
 									label={t(kind === "RENTAL_OUT" ? "fee" : "cost")}
 									type="number"
-									step="0.001"
+									step="any"
 								/>
 							</div>
 						)}

@@ -92,7 +92,7 @@ export function PaymentDialog({
 								name="amount"
 								label={t("amount")}
 								type="number"
-								step="0.001"
+								step="any"
 								required
 							/>
 							<TextField<PaymentValues>

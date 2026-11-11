@@ -10,7 +10,7 @@ import {
 } from "@/components/dashboard/bookings/booking-stats";
 import { BookingStatusFilter } from "@/components/dashboard/bookings/booking-status-filter";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
-import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
+import { CardGridSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { UrlDateRange } from "@/components/dashboard/shared/url-date-range";
@@ -75,7 +75,7 @@ export default async function BookingsPage({
 					params.order,
 					params.page,
 				].join("-")}
-				fallback={<ListSkeleton />}
+				fallback={<CardGridSkeleton />}
 			>
 				<Bookings params={params} />
 			</Suspense>

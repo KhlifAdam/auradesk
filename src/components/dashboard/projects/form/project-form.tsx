@@ -1,13 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import {
+	FORM_WITH_SIDE,
+	FormSideActions,
+} from "@/components/dashboard/shared/form-side-actions";
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createProject, updateProject } from "@/services/projects/actions";
@@ -69,26 +70,20 @@ export function ProjectForm({
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex max-w-3xl flex-col gap-4"
-			>
-				<GeneralSection />
-				<ClientSection isEdit={Boolean(projectId)} />
-				<PlanningSection />
-				<FinanceSection discount={discount} />
-				<TeamSection />
-				<div className="sticky bottom-4 z-20 flex justify-end gap-2 rounded-xl border border-border bg-card/80 p-3 backdrop-blur-md">
-					<Button asChild type="button" variant="ghost" size="sm">
-						<Link href={cancelHref}>{t("cancel")}</Link>
-					</Button>
-					<Button type="submit" size="sm" disabled={isSubmitting}>
-						{isSubmitting && (
-							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-						)}
-						{projectId ? t("save") : t("create")}
-					</Button>
+			<form onSubmit={form.handleSubmit(onSubmit)} className={FORM_WITH_SIDE}>
+				<div className="flex flex-col gap-4">
+					<GeneralSection />
+					<ClientSection isEdit={Boolean(projectId)} />
+					<PlanningSection />
+					<FinanceSection discount={discount} />
+					<TeamSection />
 				</div>
+				<FormSideActions
+					cancelHref={cancelHref}
+					cancelLabel={t("cancel")}
+					submitLabel={projectId ? t("save") : t("create")}
+					submitting={isSubmitting}
+				/>
 			</form>
 		</Form>
 	);

@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { isProjectUpdate } from "@/services/changes/project-updates";
 import { changeMark } from "@/services/changes/unseen";
 import { studioBrandSelect, toStudioBrand } from "@/services/clients/branding";
 import { listGallerySummaries } from "@/services/galleries/summaries";
@@ -32,6 +33,7 @@ type PortalRow = Prisma.ProjectGetPayload<{ include: typeof portalInclude }>;
 
 function toPortalProject(row: PortalRow): PortalProject {
 	const { studio, name } = row.photographer;
+	const mark = changeMark(row.clientSeenAt, row.clientChangedAt);
 	return {
 		id: row.id,
 		title: row.title,
@@ -43,7 +45,11 @@ function toPortalProject(row: PortalRow): PortalProject {
 		photographerName: name,
 		// Shared galleries open to the client from the Selection step.
 		sharedGalleryCount: canClientView(row) ? row._count.galleries : 0,
-		mark: changeMark(row.clientSeenAt, row.clientChangedAt),
+		mark,
+		update:
+			mark === "updated" && isProjectUpdate(row.clientUpdate)
+				? row.clientUpdate
+				: null,
 	};
 }
 

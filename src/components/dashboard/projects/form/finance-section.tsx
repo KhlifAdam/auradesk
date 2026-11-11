@@ -49,13 +49,13 @@ export function FinanceSection({ discount = 0 }: { discount?: number }) {
 					name="price"
 					label={t("price")}
 					type="number"
-					step="0.001"
+					step="any"
 				/>
 				<TextField<CreateProjectValues>
 					name="advance"
 					label={t("advance")}
 					type="number"
-					step="0.001"
+					step="any"
 				/>
 				<div className="space-y-1">
 					<p className="text-xs font-medium">{t("remaining")}</p>

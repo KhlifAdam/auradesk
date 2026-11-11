@@ -17,7 +17,7 @@ import {
 
 export const INVOICE_PAGE_SIZE = 20;
 
-const itemSchema = z.object({
+export const itemSchema = z.object({
 	description: requiredText(300),
 	quantity: z
 		.number("invalidNumber")
@@ -31,6 +31,12 @@ const itemSchema = z.object({
 	),
 });
 
+export const taxRateSchema = z
+	.number("invalidNumber")
+	.min(0, "invalidNumber")
+	.max(100, "invalidNumber")
+	.nullable();
+
 export const invoiceFields = z.object({
 	projectId: z.string(),
 	clientId: z.string(),
@@ -40,11 +46,7 @@ export const invoiceFields = z.object({
 	clientAddress: optionalText(300),
 	issueDate: dateInput.refine((v) => v !== "", "required"),
 	dueDate: dateInput,
-	taxRate: z
-		.number("invalidNumber")
-		.min(0, "invalidNumber")
-		.max(100, "invalidNumber")
-		.nullable(),
+	taxRate: taxRateSchema,
 	discount: moneyAmount,
 	notes: optionalText(2000),
 	items: z.array(itemSchema).min(1, "required").max(MAX_INVOICE_ITEMS),

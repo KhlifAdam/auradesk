@@ -34,10 +34,20 @@ export default async function PortalQuotePage({
 				</Link>
 				<PrintButton />
 			</div>
-			{quote.status === "SENT" && !quote.invoiceId && (
-				<QuoteResponse quoteId={quote.id} />
-			)}
-			<QuoteDocument quote={quote} />
+			{/* The quote on the left, the client's answer beside it. */}
+			<div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_17rem]">
+				<QuoteDocument quote={quote} />
+				<aside className="print:hidden lg:sticky lg:top-4 lg:self-start">
+					<QuoteResponse
+						quoteId={quote.id}
+						status={quote.status}
+						invoiced={quote.invoiceId !== null}
+						respondedAt={quote.respondedAt}
+						clientNote={quote.clientNote}
+						bookingId={quote.bookingId}
+					/>
+				</aside>
+			</div>
 		</>
 	);
 }

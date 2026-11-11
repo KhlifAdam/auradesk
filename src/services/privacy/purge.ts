@@ -8,6 +8,7 @@ import {
 	findUploadSessions,
 } from "@/services/galleries/cleanup";
 import { deleteAttachmentFiles } from "@/services/messages/attachment-files";
+import { DELIVERED_STAGES } from "@/services/projects/stages";
 
 /** Purged per run, so one run stays short; the next one takes the rest. */
 const GALLERIES_PER_RUN = 200;
@@ -58,7 +59,7 @@ export async function purgeDeliveredProofs(now = new Date()) {
 		where: {
 			kind: "PROOFS",
 			project: {
-				stage: "DELIVERY",
+				stage: { in: [...DELIVERED_STAGES] },
 				deliveredAt: {
 					lt: new Date(now.getTime() - PROOFS_GRACE_DAYS * DAY_MS),
 				},

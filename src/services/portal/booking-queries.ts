@@ -5,7 +5,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import type { BookingStatus } from "@/services/bookings/options";
 import { isOpenStatus, OPEN_STATUSES } from "@/services/bookings/options";
-import { changeMark } from "@/services/changes/unseen";
+import { clientBookingMark } from "@/services/changes/unseen";
 import type { MediaType, ServiceType } from "@/services/projects/options";
 import { verifiedContact } from "./contacts";
 
@@ -134,7 +134,7 @@ function toSummary(row: Row): PortalBookingSummary {
 		desiredDate: row.desiredDate?.toISOString() ?? null,
 		proposedPrice: toNumber(row.proposedPrice),
 		accepted: row.clientAcceptedAt !== null,
-		mark: changeMark(row.clientSeenAt, row.clientChangedAt),
+		mark: clientBookingMark(row),
 		requestedByClient: (CLIENT_SOURCES as readonly string[]).includes(
 			row.source,
 		),

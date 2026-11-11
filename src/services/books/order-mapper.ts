@@ -12,6 +12,9 @@ interface OrderRow {
 	total: { toNumber(): number } | null;
 	statusNote: string;
 	submittedAt: Date | null;
+	changeRequest: string;
+	changeRequestedAt: Date | null;
+	awaitingApprovalAt: Date | null;
 }
 
 /** The order side of a stored book, with its stored JSON checked on the way out. */
@@ -30,6 +33,9 @@ export function toBookOrder(
 		total: row.total?.toNumber() ?? null,
 		statusNote: row.statusNote,
 		submittedAt: row.submittedAt?.toISOString() ?? null,
+		changeRequest: row.changeRequest,
+		changeRequestedAt: row.changeRequestedAt?.toISOString() ?? null,
+		awaitingApproval: row.awaitingApprovalAt !== null,
 		invoice,
 	};
 }

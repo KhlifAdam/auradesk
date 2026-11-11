@@ -18,6 +18,8 @@ describe("isDeliveredToClient", () => {
 	it("needs both delivery and payment", () => {
 		expect(isDeliveredToClient({ stage: "DELIVERY", paymentStatus: "PAID" })).toBe(true);
 		expect(isDeliveredToClient({ stage: "DELIVERY", paymentStatus: "PARTIAL" })).toBe(false);
-		expect(isDeliveredToClient({ stage: "VALIDATION", paymentStatus: "PAID" })).toBe(false);
+		expect(isDeliveredToClient({ stage: "EXPORT", paymentStatus: "PAID" })).toBe(false);
+		// The files stay open once the project is closed.
+		expect(isDeliveredToClient({ stage: "COMPLETED", paymentStatus: "PAID" })).toBe(true);
 	});
 });

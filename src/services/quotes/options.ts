@@ -19,11 +19,11 @@ export const quoteDisplayStatus = (
 	invoiceId: string | null,
 ): QuoteDisplayStatus => (invoiceId ? "INVOICED" : status);
 
-/** Sent or accepted quotes can become an invoice, once. */
+/** Only a quote the client accepted can become an invoice, once. */
 export const canInvoiceQuote = (
 	status: QuoteStatus,
 	invoiceId: string | null,
-) => !invoiceId && (status === "SENT" || status === "ACCEPTED");
+) => !invoiceId && status === "ACCEPTED";
 
 /** Days a new quote stays valid. */
 export const QUOTE_VALID_DAYS = 30;

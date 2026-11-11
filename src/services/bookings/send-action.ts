@@ -11,7 +11,11 @@ import { sendBookingSentEmail } from "@/lib/mail/send-client-notices";
 import { toE164 } from "@/lib/phone";
 import { sendBookingSentSms } from "@/lib/sms/send-client-sms";
 import { flagBookingForClient } from "@/services/changes/flag";
+import { createQuote } from "@/services/quotes/actions";
+import { emptyQuoteValues } from "@/services/quotes/form-values";
+import { quotePrefillFromBooking } from "@/services/quotes/prefill";
 import { idSchema } from "@/services/shared/schemas";
+import { latestBookingQuote } from "./booking-quote";
 import { isOpenStatus } from "./options";
 
 /**
@@ -40,7 +44,19 @@ export async function sendBookingToClient(
 	const phone = booking.clientPhone ? toE164(booking.clientPhone) : null;
 	if (!booking.clientEmail && !phone) return fail("bookingNoContact");
 
+	// The price goes out as the booking's quote, made from it if there is none.
+	const quote = await ensureBookingQuote(photographerId, id);
+
 	await db.$transaction([
+		...(quote
+			? [
+					db.quote.update({
+						where: { id: quote.id },
+						// One answer from the client covers the booking and its quote.
+						data: { status: "SENT", sentAt: new Date(), respondedAt: null },
+					}),
+				]
+			: []),
 		db.booking.update({
 			where: { id },
 			data: {
@@ -66,6 +82,19 @@ export async function sendBookingToClient(
 	revalidatePath("/dashboard", "layout");
 	revalidatePath("/portal", "layout");
 	return ok({ notified });
+}
+
+/** The booking's open quote, created from the booking when there is none. */
+async function ensureBookingQuote(photographerId: string, bookingId: string) {
+	const current = await latestBookingQuote(db, bookingId);
+	if (current && current.status !== "DECLINED")
+		return current.invoiceId ? null : current;
+	const prefill = await quotePrefillFromBooking(photographerId, bookingId);
+	if (!prefill) return null;
+	const created = await createQuote(emptyQuoteValues(prefill.values));
+	// Without a price there is nothing to quote yet: the booking goes alone.
+	if (!created.ok) return null;
+	return latestBookingQuote(db, bookingId);
 }
 
 type BookingWithStudio = Prisma.BookingGetPayload<{

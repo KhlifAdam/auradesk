@@ -1,6 +1,14 @@
 "use client";
 
-import { Check, Info, Loader2, Printer, Truck, Undo2 } from "lucide-react";
+import {
+	Check,
+	Clock,
+	Info,
+	Loader2,
+	Printer,
+	Truck,
+	Undo2,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
@@ -23,6 +31,8 @@ interface Props {
 	/** The price worked out from the studio's list. */
 	calculated: number;
 	invoicePaid: boolean;
+	/** Printing waits until the client approves the studio's new design. */
+	awaitingApproval: boolean;
 	busy: boolean;
 	onAdvance: (to: AdvanceTo) => void;
 }
@@ -33,6 +43,7 @@ export function OrderActionsPanel({
 	status,
 	calculated,
 	invoicePaid,
+	awaitingApproval,
 	busy,
 	onAdvance,
 }: Props) {
@@ -66,10 +77,17 @@ export function OrderActionsPanel({
 		READY: { to: "DELIVERED", label: t("deliver"), Icon: Truck },
 	} as const;
 	const next = status === "SUBMITTED" ? null : step[status];
+	const blocked = awaitingApproval && status === "ACCEPTED";
 
 	return (
 		<div className="flex flex-col gap-3">
 			<p className="text-sm">{t(`hint.${status}`)}</p>
+			{awaitingApproval && (
+				<p className="flex items-start gap-2 rounded-lg border border-event-meeting/40 bg-event-meeting/10 px-3 py-2 text-xs">
+					<Clock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-event-meeting" />
+					{t("awaitingApproval")}
+				</p>
+			)}
 			{status !== "SUBMITTED" && !invoicePaid && (
 				<p className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs">
 					<Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -117,7 +135,7 @@ export function OrderActionsPanel({
 				<Button
 					size="sm"
 					className="w-fit gap-1.5"
-					disabled={pending}
+					disabled={pending || blocked}
 					onClick={() => onAdvance(next.to)}
 				>
 					{icon(<next.Icon className="h-3.5 w-3.5" />)}

@@ -17,28 +17,22 @@ export function BookingQuoteSection() {
 
 	return (
 		<FormSection
-			title={t("title")}
-			description={t("hint", { currency: CURRENCY })}
+			title={t("termsTitle")}
+			description={t("termsHint", { currency: CURRENCY })}
 		>
-			<div className="grid gap-3 sm:grid-cols-3">
+			{/* The price is the total of the quote lines above. */}
+			<div className="grid gap-3 sm:grid-cols-2">
 				<TextField<BookingValues>
 					name="clientBudget"
 					label={t("budget")}
 					type="number"
-					step="0.001"
-				/>
-				<TextField<BookingValues>
-					name="proposedPrice"
-					label={t("price")}
-					required
-					type="number"
-					step="0.001"
+					step="any"
 				/>
 				<TextField<BookingValues>
 					name="plannedAdvance"
 					label={t("advance")}
 					type="number"
-					step="0.001"
+					step="any"
 				/>
 			</div>
 			{price ? (

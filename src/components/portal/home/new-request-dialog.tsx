@@ -154,14 +154,14 @@ export function NewRequestDialog({ studios }: NewRequestDialogProps) {
 								label={t("budget")}
 								description={t("budgetHint")}
 								type="number"
-								step="0.001"
+								step="any"
 							/>
 							<TextField<PortalRequestValues>
 								name="plannedAdvance"
 								label={t("advance")}
 								description={t("advanceHint")}
 								type="number"
-								step="0.001"
+								step="any"
 							/>
 						</div>
 						<TextField<PortalRequestValues>

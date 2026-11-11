@@ -1,9 +1,8 @@
-import { BookImage, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { BookImage } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { BookStatusBadge } from "@/components/books/book-status-badge";
 import { listProjectBooksForStudio } from "@/services/books/order-queries";
 import { NewBookDialog } from "./new-book-dialog";
+import { OrderList } from "./order-list";
 
 /** The project's photo books (orders and drafts), and a way to make one for the client. */
 export async function ProjectBooksSection({
@@ -31,24 +30,7 @@ export async function ProjectBooksSection({
 					{canCreate ? t("empty") : t("notDelivered")}
 				</p>
 			) : (
-				<ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-					{books.map((book) => (
-						<li key={book.id}>
-							<Link
-								href={`/dashboard/books/${book.id}`}
-								className="flex items-center justify-between gap-3 px-3 py-2.5 transition-colors hover:bg-muted/50"
-							>
-								<span className="truncate text-sm font-medium">
-									{book.title}
-								</span>
-								<span className="flex items-center gap-2">
-									<BookStatusBadge status={book.status} />
-									<ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-								</span>
-							</Link>
-						</li>
-					))}
-				</ul>
+				<OrderList orders={books} hideProject />
 			)}
 		</section>
 	);

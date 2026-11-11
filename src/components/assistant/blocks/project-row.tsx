@@ -40,7 +40,13 @@ export function ProjectRowItem({ project }: { project: ProjectRow }) {
 							.join(" · ")}
 					</p>
 				</div>
-				<Pill tone={project.stage === "DELIVERY" ? "success" : "primary"}>
+				<Pill
+					tone={
+						project.stage === "DELIVERY" || project.stage === "COMPLETED"
+							? "success"
+							: "primary"
+					}
+				>
 					{tStage(project.stage)}
 				</Pill>
 				<ChevronDown

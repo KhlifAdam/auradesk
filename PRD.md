@@ -27,7 +27,7 @@ Application web avec deux espaces complémentaires :
 - **Site Public :** Portfolio catégorisé, packages, formulaire de booking.
 - **Gestion Commerciale :** Demandes, devis personnalisés, facturation.
 - **Planification :** Calendrier (conflits, réunions, shootings).
-- **Gestion de Projets (Workflow) :** Booking -> Prep -> Shooting -> Import -> Orga -> Selection -> Post-Prod -> Export -> Validation -> Delivery.
+- **Gestion de Projets (Workflow) :** Booking -> Prep -> Shooting -> Import -> Selection -> Orga -> Post-Prod -> Export -> Delivery (le client reçoit ses fichiers, une fois payé) -> Completed (clôturé une fois le client satisfait).
 - **Gestion des Médias :** Organisation chronologique/sources, renommage automatique.
 - **Gestion du Matériel & Locations :** Inventaire, statut, dates de location.
 - **Livraison Client :** Galeries privées sécurisées, sélection/commentaires par le client.

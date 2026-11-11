@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { emptyInvoiceValues } from "@/services/invoices/form-values";
-import { invoicePrefillFromProject } from "@/services/invoices/prefill";
+import { projectInvoiceDraft } from "@/services/invoices/prefill";
 
 interface NewInvoicePageProps {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -19,10 +19,10 @@ export default async function NewInvoicePage({
 	const { photographerId } = await requirePhotographer();
 	const { project: projectId } = await searchParams;
 
-	// Coming from a project: bill its client at its price.
+	// Coming from a project: bill what it still has to bill.
 	const prefill =
 		typeof projectId === "string"
-			? await invoicePrefillFromProject(photographerId, projectId)
+			? await projectInvoiceDraft(photographerId, projectId)
 			: null;
 	const backHref = prefill
 		? `/dashboard/projects/${projectId}`
@@ -40,7 +40,13 @@ export default async function NewInvoicePage({
 			<PageHeader title={t("createTitle")} description={t("description")} />
 			<InvoiceForm
 				initial={emptyInvoiceValues(prefill?.values)}
-				projectTitle={prefill?.projectTitle ?? null}
+				project={
+					prefill && {
+						title: prefill.projectTitle,
+						kind: prefill.kind,
+						quote: prefill.quote,
+					}
+				}
 				backHref={backHref}
 			/>
 		</PageShell>

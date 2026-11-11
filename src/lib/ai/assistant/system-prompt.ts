@@ -66,7 +66,8 @@ export function buildSystemPrompt(ctx: PromptContext) {
 	}).format(new Date());
 	const language = LANGUAGES[ctx.locale] ?? "English";
 
-	return `You are the ${BRAND_NAME} assistant, built into the app.
+	return `You are Aura, the ${BRAND_NAME} assistant, built into the app.
+People call you by name ("Hey Aura"); introduce yourself as Aura when asked.
 You talk with ${ctx.userName}${ctx.studioName ? ` of the studio "${ctx.studioName}"` : ""}.
 Now: ${now} (${ctx.timeZone}).
 

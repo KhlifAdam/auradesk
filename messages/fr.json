@@ -8,7 +8,7 @@
 			"workspace": "Espace de travail",
 			"website": "Site web",
 			"overview": "Aperçu",
-			"assistant": "Assistant IA",
+			"assistant": "Aura",
 			"calendar": "Calendrier",
 			"bookings": "Réservations",
 			"clients": "Clients",
@@ -116,7 +116,7 @@
 					"newProjects": "Nouveaux projets",
 					"deliveredProjects": "Projets livrés",
 					"bookedValue": "Valeur réservée",
-					"outstanding": "Reste à encaisser",
+					"outstanding": "Reste dû",
 					"files": "Fichiers importés",
 					"shootsNextWeek": "Shootings à faire",
 					"activeProjects": "Projets en cours",
@@ -237,7 +237,7 @@
 		"bookHasPayment": "Un paiement est déjà enregistré : cette commande ne peut pas être renvoyée.",
 		"quoteLocked": "Un devis accepté, refusé ou facturé ne peut plus être modifié.",
 		"quoteNotDraft": "Seul un devis brouillon permet cette action.",
-		"quoteNotInvoiceable": "Seul un devis envoyé ou accepté peut devenir une facture, une seule fois.",
+		"quoteNotInvoiceable": "Seul un devis accepté par le client peut devenir une facture, une seule fois.",
 		"quoteNotOpen": "Ce devis n'attend plus de réponse.",
 		"sectionMediaMissing": "Un logo, une photo ou une vidéo de vos sections n'est plus dans votre bibliothèque. Ouvrez les sections, choisissez-le à nouveau, puis enregistrez.",
 		"whatsappUnreachable": "La passerelle WhatsApp ne répond pas.",
@@ -247,7 +247,11 @@
 		"cannotManageAdmin": "Les comptes administrateurs se gèrent en ligne de commande.",
 		"accountDeleted": "Ce compte a été supprimé.",
 		"emailTaken": "Un autre compte utilise déjà cet e-mail.",
-		"phoneTaken": "Un autre compte utilise déjà ce numéro."
+		"phoneTaken": "Un autre compte utilise déjà ce numéro.",
+		"bookPricePaid": "Un paiement a déjà été reçu pour cette commande : son prix ne peut plus changer. Gardez le même nombre de pages et le même format.",
+		"bookAwaitingClient": "Le client n'a pas encore approuvé la nouvelle mise en page : l'impression ne peut pas commencer.",
+		"bookingQuoteNotAccepted": "Le client n'a pas encore accepté le devis. Envoyez-lui la réservation, ou confirmez sans lui.",
+		"quoteBookingNotConfirmed": "Cette réservation n'est pas encore confirmée : le devis ne peut pas encore devenir une facture. Confirmez d'abord la réservation, la facture sera alors rattachée à son projet."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -1056,12 +1060,6 @@
 				"name": "Nom complet"
 			}
 		},
-		"startStudio": {
-			"title": "Ouvrez votre studio",
-			"description": "{email} est un compte client. Vous pouvez aussi gérer votre propre studio avec : même connexion, deux espaces.",
-			"submit": "Créer mon studio",
-			"back": "Retour à mon espace client"
-		},
 		"badge": {
 			"photographer": "Studio",
 			"client": "Espace client"
@@ -1190,7 +1188,7 @@
 				"editorialAlt": "Galerie éditoriale"
 			},
 			"ai": {
-				"title": "Assistant IA",
+				"title": "Aura, votre assistante IA",
 				"description": "Rédigez des e-mails, sélectionnez des galeries et planifiez en quelques secondes.",
 				"ready": "Votre relance est prête à être envoyée."
 			},
@@ -1704,17 +1702,19 @@
 			"PREP": "Préparation",
 			"SHOOTING": "Shooting",
 			"IMPORT": "Import",
-			"ORGANIZATION": "Organisation",
 			"SELECTION": "Sélection",
+			"ORGANIZATION": "Organisation",
 			"POST_PRODUCTION": "Post-production",
 			"EXPORT": "Export",
-			"VALIDATION": "Validation",
-			"DELIVERY": "Livré"
+			"DELIVERY": "Livré",
+			"COMPLETED": "Terminé"
 		},
 		"list": {
 			"new": "Nouveau projet",
 			"search": "Rechercher un projet ou un client",
 			"allStages": "Toutes les étapes",
+			"allPayments": "Tous les paiements",
+			"paymentFilter": "Filtrer par paiement",
 			"galleries": "{count, plural, =0 {Aucune galerie} one {# galerie} other {# galeries}}",
 			"noClient": "Pas encore de client",
 			"dateFrom": "Date de l'événement du",
@@ -1843,7 +1843,7 @@
 				"scope": "S’applique à tous vos projets",
 				"enabled": "Les projets avancent désormais tout seuls.",
 				"disabled": "Les projets n’avancent désormais que lorsque vous changez l’étape.",
-				"hint": "Avance tout seul : jour du shooting → Shooting, fichiers envoyés → Import, épreuves partagées → Sélection, galerie organisée après la sélection → Organisation, sélection envoyée → Post-production, finales envoyées → Export, finales partagées → Validation. La livraison reste manuelle."
+				"hint": "Avance tout seul : jour du shooting → Shooting, fichiers envoyés → Import, épreuves partagées → Sélection, galerie organisée après la sélection → Organisation, sélection envoyée → Post-production, finales envoyées → Export, finales partagées → Export. La livraison reste manuelle, et vous passez le projet en Terminé une fois le client satisfait des fichiers."
 			}
 		},
 		"invite": {
@@ -1953,6 +1953,12 @@
 		"stagesByMedia": {
 			"VIDEO": "Montage vidéo",
 			"BOTH": "Retouche & montage vidéo"
+		},
+		"quote": {
+			"accepted": "Le client a accepté le devis {number} ({amount}).",
+			"open": "Voir le devis",
+			"toInvoice": "Créer la facture depuis le devis",
+			"converted": "Facture créée à partir du devis."
 		}
 	},
 	"Bookings": {
@@ -1985,7 +1991,6 @@
 			"filter": "Filtrer les réservations",
 			"allBookings": "Toutes les réservations",
 			"noDate": "Pas encore de date",
-			"viewDetails": "Voir les détails",
 			"incomplete": "À compléter",
 			"dateFrom": "Date du",
 			"dateTo": "Date au",
@@ -2061,7 +2066,15 @@
 				"deadline": "Date limite de réponse",
 				"notes": "Notes internes",
 				"notesHint": "Vous seul pouvez les voir.",
-				"neededToConfirm": "Nécessaire pour confirmer la réservation."
+				"neededToConfirm": "Nécessaire pour confirmer la réservation.",
+				"termsTitle": "Budget, acompte et réponse",
+				"termsHint": "Montants en {currency}. Le prix est le total des lignes ci-dessus."
+			},
+			"steps": {
+				"request": "La demande",
+				"quote": "Le devis",
+				"next": "Suivant : le devis",
+				"back": "Retour à la demande"
 			}
 		},
 		"detail": {
@@ -2160,6 +2173,23 @@
 			"notSent": "Pas encore envoyée au client. Il doit la consulter et l'accepter avant que vous confirmiez.",
 			"waiting": "Envoyée au client le {date}. En attente de sa réponse.",
 			"accepted": "Le client a accepté le {date}. Vous pouvez confirmer."
+		},
+		"quote": {
+			"title": "Devis {number}",
+			"titleNone": "Devis",
+			"create": "Créer le devis",
+			"edit": "Modifier le devis",
+			"open": "Ouvrir",
+			"total": "Total",
+			"hint": {
+				"none": "Pas encore de devis. Il est créé à partir du prix de la réservation quand vous l'envoyez au client. Créez-le maintenant pour ajouter des options (drone, reel…).",
+				"DRAFT": "Pas encore envoyé : il part chez le client avec la réservation.",
+				"SENT": "Envoyé avec la réservation : en attente de la réponse du client.",
+				"ACCEPTED": "Le client a accepté ce devis. Vous pouvez confirmer la réservation.",
+				"DECLINED": "Le client a refusé ce prix. Modifiez le devis, puis renvoyez la réservation.",
+				"confirmed": "La réservation est confirmée : ce devis appartient maintenant à son projet."
+			},
+			"clientNote": "Message du client :"
 		}
 	},
 	"Invoices": {
@@ -2182,8 +2212,9 @@
 		"stats": {
 			"invoiced": "Facturé",
 			"collected": "Encaissé",
-			"outstanding": "Reste à encaisser",
-			"overdueCount": "Factures en retard"
+			"outstanding": "Factures impayées",
+			"overdueCount": "Factures en retard",
+			"notInvoiced": "Pas encore facturé"
 		},
 		"list": {
 			"new": "Nouvelle facture",
@@ -2196,7 +2227,7 @@
 			"kind": {
 				"project": "Projet",
 				"book": "Livre photo",
-				"custom": "Autre"
+				"custom": "Indépendante"
 			}
 		},
 		"empty": {
@@ -2305,6 +2336,23 @@
 			"total": "Total",
 			"paid": "Déjà payé",
 			"balance": "Reste à payer"
+		},
+		"draft": {
+			"pick": "Pour un projet…",
+			"search": "Chercher un projet ou un client",
+			"noMatch": "Aucun projet trouvé.",
+			"standalone": "Sans projet : une facture indépendante (tirages, locations, ventes en plus).",
+			"forProject": "Pour le projet « {title} »",
+			"unlink": "En faire une facture indépendante",
+			"openHint": "{count, plural, one {Ce client a un projet encore à facturer :} other {Ce client a # projets encore à facturer :}}",
+			"openQuote": "Ouvrir le devis",
+			"balanceLine": "Solde · {title}",
+			"kind": {
+				"quote": "Lignes reprises du devis accepté {number}. Vous pouvez aussi transformer directement le devis en facture.",
+				"full": "Facturation du prix du projet, TVA comprise. Un acompte déjà reçu devient son premier paiement.",
+				"balance": "Une partie de ce projet est déjà facturée : cette ligne est ce qu'il reste à facturer.",
+				"invoiced": "Ce projet est déjà entièrement facturé. Ne facturez ici qu'un supplément."
+			}
 		}
 	},
 	"Quotes": {
@@ -2366,10 +2414,12 @@
 			"deleted": "Devis supprimé.",
 			"fromBooking": "Réservation : {title}",
 			"draftHint": "Brouillon : le client ne le voit pas encore. Envoyez-le quand il est prêt.",
-			"waitingHint": "Envoyé : en attente de la réponse du client dans son espace. Vous pouvez quand même le transformer en facture.",
+			"waitingHint": "Envoyé : en attente de la réponse du client dans son espace. Dès qu'il l'accepte, vous pourrez le transformer en facture.",
 			"acceptedHint": "Le client a accepté ce devis le {date}. Vous pouvez le transformer en facture.",
 			"declinedHint": "Le client a refusé ce devis le {date}.",
-			"invoicedHint": "Transformé en facture {number}."
+			"invoicedHint": "Transformé en facture {number}.",
+			"clientNote": "Message du client :",
+			"acceptedBookingHint": "Le client a accepté ce devis le {date}. Confirmez la réservation : le projet est créé et vous pourrez facturer ce devis depuis celui-ci."
 		},
 		"document": {
 			"title": "Devis",
@@ -2384,7 +2434,17 @@
 			"accept": "Accepter",
 			"decline": "Refuser",
 			"accepted": "Devis accepté. Le studio a été prévenu.",
-			"declined": "Devis refusé."
+			"declined": "Devis refusé.",
+			"noteLabel": "Un mot pour le studio (facultatif)",
+			"notePlaceholder": "Ex. : peut-on retirer le drone ? La date est-elle flexible ?",
+			"noteHint": "Votre message accompagne votre réponse et arrive aussi dans vos messages avec le studio.",
+			"youAccepted": "Vous avez accepté ce devis.",
+			"youDeclined": "Vous avez refusé ce devis.",
+			"closed": "Ce devis est clôturé.",
+			"noteAccepted": "J'ai accepté le devis {number}. Mon message :\n{note}",
+			"noteDeclined": "J'ai refusé le devis {number}. Mon message :\n{note}",
+			"acceptedComplete": "Prix accepté. Complétez maintenant votre demande : date, heure et lieu.",
+			"openRequest": "Ouvrir votre demande"
 		}
 	},
 	"Equipment": {
@@ -2529,7 +2589,8 @@
 			"markReturned": "Rendu",
 			"markedReturned": "Marqué comme rendu",
 			"remove": "Supprimer la réservation",
-			"removed": "Réservation supprimée"
+			"removed": "Réservation supprimée",
+			"sameDays": "{count, plural, one {Mêmes jours qu'une autre} other {Mêmes jours que # autres}}"
 		},
 		"project": {
 			"title": "Matériel",
@@ -2992,11 +3053,9 @@
 			"ESTIMATE": "Quand un projet devrait être livré. Cliquez pour ouvrir le projet."
 		},
 		"grid": {
-			"more": "+{count} de plus",
 			"addOn": "Ajouter un événement le {date}"
 		},
 		"day": {
-			"add": "Ajouter",
 			"allDay": "Toute la journée",
 			"empty": "Rien de prévu ce jour-là.",
 			"dayOff": "Jour off",
@@ -3226,9 +3285,7 @@
 	"Portal": {
 		"header": {
 			"title": "Espace client",
-			"dashboard": "Mon tableau de bord",
 			"logout": "Se déconnecter",
-			"createStudio": "Créer votre studio",
 			"messages": "Messagerie",
 			"account": "Mon compte",
 			"profile": "Profil",
@@ -3446,6 +3503,13 @@
 				"notSet": "Non renseigné",
 				"name": "Nom",
 				"phone": "Téléphone"
+			},
+			"quote": {
+				"title": "Devis {number}",
+				"open": "Ouvrir",
+				"total": "Total",
+				"hint": "Accepter cette demande accepte aussi ce devis.",
+				"completeHint": "Vous avez accepté ce prix. Complétez les informations manquantes ci-dessous (date, heure, lieu), puis acceptez la demande pour que le studio puisse la confirmer."
 			}
 		},
 		"home": {
@@ -3584,6 +3648,25 @@
 			"messages": "Messages",
 			"invoices": "Factures",
 			"profile": "Profil"
+		},
+		"updates": {
+			"short": {
+				"delivered": "Livré",
+				"proofs": "Épreuves prêtes",
+				"stage": "Nouvelle étape",
+				"payment": "Paiement",
+				"details": "Infos mises à jour",
+				"book": "Livre photo"
+			},
+			"banner": {
+				"delivered": "{studio} a livré vos photos. Vous pouvez les télécharger ci-dessous.",
+				"proofs": "Vos épreuves sont prêtes : ouvrez une galerie ci-dessous et choisissez vos favorites.",
+				"stage": "Votre projet est passé à l'étape « {stage} ».",
+				"payment": "{studio} a mis à jour le paiement de votre projet.",
+				"details": "{studio} a mis à jour les informations de votre projet (date, lieu, prix…).",
+				"book": "Votre livre photo « {title} » est maintenant : {status}.",
+				"openBook": "Ouvrir le livre"
+			}
 		}
 	},
 	"Privacy": {
@@ -3899,11 +3982,11 @@
 		}
 	},
 	"Assistant": {
-		"fab": "Demander à l'assistant",
-		"fabLabel": "Demander à l'IA",
+		"fab": "Demander à Aura",
+		"fabLabel": "Demander à Aura",
 		"fabDrag": "glisser pour déplacer",
 		"panel": {
-			"title": "Assistant",
+			"title": "Aura",
 			"newChat": "Nouvelle conversation",
 			"history": "Conversations récentes",
 			"noHistory": "Aucune conversation pour l'instant.",
@@ -3912,7 +3995,7 @@
 			"close": "Fermer"
 		},
 		"page": {
-			"title": "Assistant IA",
+			"title": "Aura",
 			"newChat": "Nouvelle",
 			"noThreads": "Vos conversations apparaîtront ici.",
 			"actions": "Actions de la conversation",
@@ -3960,8 +4043,8 @@
 			"generic": "Une erreur est survenue. Veuillez réessayer.",
 			"dailyLimit": "Vous avez atteint la limite de questions pour aujourd'hui. Elle se réinitialise sous 24 heures.",
 			"tooLong": "Ce message est trop long.",
-			"expired": "Votre abonnement a expiré. Renouvelez-le pour utiliser l'assistant.",
-			"assistantUnavailable": "L'assistant n'est pas configuré sur ce serveur.",
+			"expired": "Votre abonnement a expiré. Renouvelez-le pour utiliser Aura.",
+			"assistantUnavailable": "Aura n'est pas configurée sur ce serveur.",
 			"retry": "Réessayer"
 		},
 		"working": {
@@ -4134,12 +4217,13 @@
 				"clientSummary": "Fais-moi un résumé du client {name}.",
 				"messageClient": "Écris un message à {name}.",
 				"reply": "Aide-moi à répondre à {name}."
-			}
+			},
+			"unpaidInvoices": "Factures impayées"
 		},
 		"portal": {
 			"label": "Besoin d'aide ?",
-			"open": "Ouvrir l'assistant",
-			"title": "Votre assistant",
+			"open": "Ouvrir Aura",
+			"title": "Aura",
 			"status": "Disponible jour et nuit",
 			"newChat": "Nouvelle conversation",
 			"close": "Fermer",
@@ -4177,6 +4261,12 @@
 			"studios": "Vos studios",
 			"noStudios": "Aucun studio pour l'instant.",
 			"website": "Site web"
+		},
+		"wakeWord": {
+			"off": "« Hey Aura » est désactivé : cliquez pour qu'Aura réponde quand vous le dites",
+			"starting": "Démarrage de « Hey Aura »…",
+			"listening": "À l'écoute de « Hey Aura » sur cet appareil. Cliquez pour désactiver",
+			"error": "« Hey Aura » n'a pas pu démarrer (micro refusé, ou non configuré sur ce serveur). Cliquez pour désactiver"
 		}
 	},
 	"PhotoBook": {
@@ -4306,7 +4396,9 @@
 				"reset": "Réinitialiser"
 			},
 			"pickHintSelected": "Cliquez sur une photo pour la placer dans l'emplacement sélectionné.",
-			"sentBack": "{studio} vous a renvoyé le livre : {note}"
+			"sentBack": "{studio} vous a renvoyé le livre : {note}",
+			"orderDone": "Terminé",
+			"orderNote": "Vous modifiez la commande du client avant l'impression. Changer le nombre de pages ou le format recalcule le prix et met à jour la facture. Dès que l'impression commence, la mise en page est verrouillée."
 		},
 		"status": {
 			"DRAFT": "Brouillon",
@@ -4314,7 +4406,8 @@
 			"ACCEPTED": "Accepté",
 			"IN_PRODUCTION": "Impression",
 			"READY": "Prêt",
-			"DELIVERED": "Livré"
+			"DELIVERED": "Livré",
+			"awaitingApproval": "En attente d'approbation"
 		},
 		"order": {
 			"button": "Commander ce livre",
@@ -4376,6 +4469,28 @@
 			"extra": "Option",
 			"adjustment": "Ajustement du prix",
 			"note": "Livre photo imprimé « {title} »."
+		},
+		"messages": {
+			"changeRequest": "Demande de modification pour le livre photo « {title} » :\n{note}",
+			"approved": "J'approuve la nouvelle mise en page du livre photo « {title} ». Vous pouvez l'imprimer.",
+			"updated": "J'ai mis à jour votre livre photo « {title} ». Vérifiez-le dans votre espace et approuvez-le, ou demandez une autre modification."
+		},
+		"change": {
+			"contact": "Contacter {studio}",
+			"updated": "{studio} a mis à jour votre livre. Vérifiez-le ci-dessous, puis approuvez-le ou demandez une autre modification. L'impression commence après votre approbation.",
+			"requested": "Votre demande : « {note} ». {studio} va mettre à jour votre livre et vous demander de l'approuver.",
+			"approve": "Approuver la mise en page",
+			"approvedToast": "Mise en page approuvée. Le studio peut l'imprimer.",
+			"ask": "Demander une modification",
+			"askAgain": "Demander une autre modification",
+			"dialogTitle": "Demander une modification",
+			"dialogDescription": "Dites à {studio} ce qu'il faut changer. Le studio mettra à jour votre livre et vous demandera de l'approuver avant l'impression.",
+			"placeholder": "Ex. : remplacer la photo de la page 4, mettre la photo de groupe en couverture…",
+			"send": "Envoyer la demande",
+			"sentToast": "Demande envoyée au studio.",
+			"invoiceAwaiting": "Le studio a mis à jour ce livre : ouvrez-le pour approuver la nouvelle mise en page.",
+			"invoiceOpen": "Ouvrez le livre pour le voir ou demander une modification.",
+			"invoiceClosed": "Ouvrez le livre pour suivre son impression."
 		}
 	},
 	"BookOrders": {
@@ -4427,7 +4542,8 @@
 				"SENT": "Impayée",
 				"PAID": "Payée",
 				"CANCELLED": "Annulée"
-			}
+			},
+			"changeRequested": "Modification demandée"
 		},
 		"detail": {
 			"back": "Toutes les commandes",
@@ -4442,7 +4558,10 @@
 			"client": "Client",
 			"name": "Nom",
 			"email": "E-mail",
-			"phone": "Téléphone"
+			"phone": "Téléphone",
+			"editDesign": "Modifier la mise en page",
+			"lockedHint": "L'impression a commencé : la mise en page ne peut plus changer.",
+			"changeRequest": "{client} a demandé une modification : « {note} ». Utilisez « Modifier la mise en page », puis « Terminé » pour l'envoyer en approbation."
 		},
 		"pdf": {
 			"button": "Télécharger le PDF prêt à imprimer",
@@ -4474,7 +4593,8 @@
 			"notePlaceholder": "Que doit modifier le client ?",
 			"cancel": "Annuler",
 			"unpaidNote": "Pas encore payé. Ce n'est pas un problème : imprimez maintenant et encaissez à la remise du livre. On vous le demandera à la livraison.",
-			"deliveredPaid": "Livré et paiement enregistré."
+			"deliveredPaid": "Livré et paiement enregistré.",
+			"awaitingApproval": "Vous avez modifié la mise en page. L'impression pourra commencer dès que le client l'aura approuvée."
 		},
 		"new": {
 			"button": "Nouveau livre photo",
@@ -4524,6 +4644,14 @@
 			"deliveringSoon": "Livraison proche",
 			"dueSoon": "{days, plural, =0 {Échéance aujourd'hui} one {Échéance demain} other {Échéance dans # jours}}",
 			"open": "En cours"
+		},
+		"explain": "Factures impayées plus les prix des projets pas encore facturés. Chaque montant n'est compté qu'une fois ; les devis et brouillons ne sont pas encore dus.",
+		"rows": {
+			"invoice": "Facture · {client}",
+			"bookLabel": "Livre photo « {title} »",
+			"book": "Facture {number} · {client}",
+			"project": "Pas encore facturé · {client}",
+			"projectRest": "Reste à facturer · {client}"
 		}
 	},
 	"Estimate": {
@@ -4550,8 +4678,7 @@
 		},
 		"waits": {
 			"shoot": "Séance dans {days, plural, one {# jour} other {# jours}}",
-			"selection": "Sélection client ~{days} jours",
-			"validation": "Validation client ~{days} jours"
+			"selection": "Sélection client ~{days} jours"
 		},
 		"basis": {
 			"files": "D'après les fichiers importés : environ {photos} photos à livrer.",

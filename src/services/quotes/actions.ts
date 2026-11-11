@@ -8,6 +8,7 @@ import { toE164 } from "@/lib/phone";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockPhotographer } from "@/services/shared/lock-rows";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
+import { quoteTotalOf } from "./quote-total";
 import { type QuoteValues, quoteSchema, updateQuoteSchema } from "./schemas";
 
 const toDate = (value: string) => (value ? new Date(value) : null);
@@ -111,7 +112,7 @@ export async function createQuote(
 		// Serializes numbering, so two quotes never get the same number.
 		await lockPhotographer(tx, photographerId);
 		const year = new Date(parsed.data.issueDate).getUTCFullYear();
-		return tx.quote.create({
+		const created = await tx.quote.create({
 			data: {
 				photographerId,
 				...links,
@@ -121,13 +122,19 @@ export async function createQuote(
 			},
 			select: { id: true },
 		});
+		await syncBookingPrice(tx, created.id);
+		return created;
 	});
 
 	revalidateClientWork();
 	return ok(quote);
 }
 
-/** Drafts and sent quotes can change; once answered or invoiced they are final. */
+/**
+ * Drafts and sent quotes can change; once answered or invoiced they are final.
+ * A booking's quote stays editable until the booking is confirmed: changing
+ * one the client already saw takes it back to a draft, to be sent again.
+ */
 export async function updateQuote(input: unknown): Promise<ActionResult> {
 	const { photographerId } = await requirePhotographer();
 	const parsed = updateQuoteSchema.safeParse(input);
@@ -140,23 +147,67 @@ export async function updateQuote(input: unknown): Promise<ActionResult> {
 	const error = await db.$transaction(async (tx) => {
 		const current = await tx.quote.findFirst({
 			where: { id, photographerId },
-			select: { status: true, invoiceId: true },
+			select: {
+				status: true,
+				invoiceId: true,
+				booking: { select: { id: true, status: true, projectId: true } },
+			},
 		});
 		if (!current) return "notFound";
-		if (current.invoiceId || !["DRAFT", "SENT"].includes(current.status))
-			return "quoteLocked";
+		const booking = current.booking;
+		const openBooking =
+			booking !== null && booking.status !== "CONFIRMED" && !booking.projectId;
+		const editable =
+			["DRAFT", "SENT"].includes(current.status) ||
+			(openBooking && current.status === "ACCEPTED");
+		if (current.invoiceId || !editable) return "quoteLocked";
+		// The client answered another version: they answer this one again.
+		const resend = openBooking && current.status !== "DRAFT";
 
 		await tx.quoteItem.deleteMany({ where: { quoteId: id } });
 		await tx.quote.update({
 			where: { id },
-			data: { ...links, ...toData(values), items: { create: toItems(values) } },
+			data: {
+				...links,
+				...toData(values),
+				items: { create: toItems(values) },
+				...(resend && { status: "DRAFT", sentAt: null, respondedAt: null }),
+			},
 		});
+		if (resend && booking)
+			await tx.booking.update({
+				where: { id: booking.id },
+				data: { clientAcceptedAt: null },
+			});
+		await syncBookingPrice(tx, id);
 		return null;
 	});
 	if (error) return fail(error);
 
 	revalidateClientWork();
 	return ok();
+}
+
+/** A booking's price is its quote's total, until the booking is confirmed. */
+async function syncBookingPrice(tx: Prisma.TransactionClient, quoteId: string) {
+	const quote = await tx.quote.findUnique({
+		where: { id: quoteId },
+		select: {
+			bookingId: true,
+			discount: true,
+			taxRate: true,
+			items: { select: { description: true, quantity: true, unitPrice: true } },
+		},
+	});
+	if (!quote?.bookingId) return;
+	await tx.booking.updateMany({
+		where: {
+			id: quote.bookingId,
+			projectId: null,
+			status: { not: "CONFIRMED" },
+		},
+		data: { proposedPrice: quoteTotalOf(quote) },
+	});
 }
 
 /** Only drafts are deleted. */

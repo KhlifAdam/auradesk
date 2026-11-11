@@ -1,14 +1,34 @@
+import { CARD_GRID } from "./card-grid";
 import { PageHeaderSkeleton } from "./page-header";
 import { PageShell } from "./page-shell";
 
 /** Loading state for list pages: header, toolbar and rows. */
-export function ListPageSkeleton({ rows = 6 }: { rows?: number }) {
+export function ListPageSkeleton({
+	rows = 6,
+	cards = false,
+}: {
+	rows?: number;
+	/** Card grid pages (Services, Bookings, Photo books) instead of rows. */
+	cards?: boolean;
+}) {
 	return (
 		<PageShell>
 			<PageHeaderSkeleton />
 			<div className="h-8 w-72 animate-pulse rounded-lg bg-muted" />
-			<ListSkeleton rows={rows} />
+			{cards ? <CardGridSkeleton /> : <ListSkeleton rows={rows} />}
 		</PageShell>
+	);
+}
+
+/** Loading state for a card grid. */
+export function CardGridSkeleton({ count = 5 }: { count?: number }) {
+	return (
+		<div className={CARD_GRID}>
+			{Array.from({ length: count }, (_, i) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: static placeholders
+				<div key={i} className="h-52 animate-pulse rounded-lg bg-muted" />
+			))}
+		</div>
 	);
 }
 

@@ -18,6 +18,8 @@ export const updateQuoteSchema = quoteFields
 export const respondQuoteSchema = z.object({
 	id: idSchema,
 	accept: z.boolean(),
+	/** Optional words for the studio with the answer. */
+	note: z.string().trim().max(1000, "tooLong").default(""),
 });
 
 export const listQuotesSchema = z.object({

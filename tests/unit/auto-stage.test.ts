@@ -44,8 +44,9 @@ describe("stageForGalleryEvent", () => {
 		expect(stageForGalleryEvent("shared", "PROOFS", "IMPORT")).toBe(
 			"SELECTION",
 		);
-		expect(stageForGalleryEvent("shared", "FINAL", "EXPORT")).toBe(
-			"VALIDATION",
+		// Finals going out means the edit is exported; delivery stays manual.
+		expect(stageForGalleryEvent("shared", "FINAL", "POST_PRODUCTION")).toBe(
+			"EXPORT",
 		);
 	});
 });

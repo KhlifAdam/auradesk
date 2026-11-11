@@ -8,11 +8,20 @@ export const PROJECT_STAGES = [
 	"ORGANIZATION",
 	"POST_PRODUCTION",
 	"EXPORT",
-	"VALIDATION",
 	"DELIVERY",
+	"COMPLETED",
 ] as const;
 
 export type ProjectStage = (typeof PROJECT_STAGES)[number];
 
 export const stageIndex = (stage: ProjectStage) =>
 	PROJECT_STAGES.indexOf(stage);
+
+/**
+ * Delivery and beyond: the client has their files. Completed closes the
+ * project once they are happy with them.
+ */
+export const DELIVERED_STAGES = PROJECT_STAGES.slice(stageIndex("DELIVERY"));
+
+export const isDeliveredStage = (stage: ProjectStage) =>
+	stageIndex(stage) >= stageIndex("DELIVERY");

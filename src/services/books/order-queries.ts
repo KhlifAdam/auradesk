@@ -23,9 +23,12 @@ import {
 export async function listBookOrders(
 	photographerId: string,
 	{ page, q, status }: ListOrdersParams,
+	/** Narrows the list to one project's books (project page). */
+	projectId?: string,
 ): Promise<StudioOrderPage> {
 	const where: Prisma.PhotoBookWhereInput = {
 		photographerId,
+		...(projectId && { projectId }),
 		AND: [
 			{
 				OR: [
@@ -60,10 +63,20 @@ export async function listBookOrders(
 			invoice: { select: { number: true, status: true } },
 		},
 	});
+	const designs = rows.map((row) => parseBookDesign(row.design));
+	const coverId = (i: number) => {
+		const design = designs[i];
+		return (design.success && design.data.cover.itemId) || null;
+	};
+	const covers = await getOrderPhotos(
+		photographerId,
+		rows.flatMap((_, i) => coverId(i) ?? []),
+	);
 	return {
 		...meta,
-		items: rows.map((row) => {
-			const design = parseBookDesign(row.design);
+		items: rows.map((row, i) => {
+			const design = designs[i];
+			const cover = coverId(i);
 			return {
 				id: row.id,
 				title: row.title,
@@ -75,6 +88,9 @@ export async function listBookOrders(
 				total: row.total?.toNumber() ?? null,
 				submittedAt: row.submittedAt?.toISOString() ?? null,
 				invoice: row.invoice,
+				coverUrl: (cover && covers[cover]?.url) || null,
+				awaitingApproval: row.awaitingApprovalAt !== null,
+				changeRequested: row.changeRequest !== "",
 			};
 		}),
 	};
@@ -151,13 +167,10 @@ export async function listProjectBooksForStudio(
 	photographerId: string,
 	projectId: string,
 ) {
-	return db.photoBook.findMany({
-		where: {
-			photographerId,
-			projectId,
-			OR: [{ status: { in: [...ORDER_STATUSES] } }, { createdByStudio: true }],
-		},
-		orderBy: { updatedAt: "desc" },
-		select: { id: true, title: true, status: true, copies: true },
-	});
+	const { items } = await listBookOrders(
+		photographerId,
+		{ page: 1, q: "" },
+		projectId,
+	);
+	return items;
 }

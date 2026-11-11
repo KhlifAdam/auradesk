@@ -21,6 +21,8 @@ interface QuoteActionsProps {
 	quoteId: string;
 	status: QuoteStatus;
 	invoiceId: string | null;
+	/** A booking's quote whose booking isn't confirmed: no invoice yet. */
+	waitsForBooking: boolean;
 }
 
 /** What can be done with the quote now: send, edit, or turn it into an invoice. */
@@ -28,6 +30,7 @@ export function QuoteActions({
 	quoteId,
 	status,
 	invoiceId,
+	waitsForBooking,
 }: QuoteActionsProps) {
 	const t = useTranslations("Quotes.detail");
 	const router = useRouter();
@@ -78,7 +81,7 @@ export function QuoteActions({
 					</Button>
 				</>
 			)}
-			{canInvoiceQuote(status, invoiceId) && (
+			{canInvoiceQuote(status, invoiceId) && !waitsForBooking && (
 				<Button
 					size="sm"
 					className="h-7 gap-1.5 text-xs"

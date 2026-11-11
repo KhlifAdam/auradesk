@@ -6,6 +6,7 @@ import { BookingForm } from "@/components/dashboard/bookings/form/booking-form";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
+import { getBookingQuote } from "@/services/bookings/booking-quote";
 import { bookingToValues } from "@/services/bookings/form-values";
 import { getBooking } from "@/services/bookings/queries";
 
@@ -15,6 +16,7 @@ export default async function EditBookingPage({
 	params: Promise<{ bookingId: string }>;
 }) {
 	const t = await getTranslations("Bookings.form");
+	const tService = await getTranslations("Projects.serviceTypes");
 	const { bookingId } = await params;
 	const { photographerId } = await requirePhotographer();
 	const booking = await getBooking(photographerId, bookingId);
@@ -33,7 +35,14 @@ export default async function EditBookingPage({
 				{t("backToBooking")}
 			</Link>
 			<PageHeader title={t("editTitle")} description={booking.title} />
-			<BookingForm bookingId={booking.id} initial={bookingToValues(booking)} />
+			<BookingForm
+				bookingId={booking.id}
+				initial={bookingToValues(
+					booking,
+					await getBookingQuote({ photographerId }, booking.id),
+					tService(booking.serviceType),
+				)}
+			/>
 		</PageShell>
 	);
 }

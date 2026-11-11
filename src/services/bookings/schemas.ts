@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { dayKeySchema } from "@/services/calendar/dates";
 import { searchQuerySchema } from "@/services/clients/schemas";
+import { MAX_INVOICE_ITEMS } from "@/services/invoices/options";
+import { itemSchema, taxRateSchema } from "@/services/invoices/schemas";
 import { MEDIA_TYPES, SERVICE_TYPES } from "@/services/projects/options";
 import {
 	dateInput,
@@ -47,6 +49,10 @@ const bookingFields = {
 	plannedAdvance: moneyAmount,
 	responseDeadline: dateInput,
 	internalNotes: optionalText(2000),
+	// Its quote: every cost as a line; the price is their total.
+	items: z.array(itemSchema).min(1, "required").max(MAX_INVOICE_ITEMS),
+	discount: moneyAmount,
+	taxRate: taxRateSchema,
 };
 
 const baseSchema = z.object(bookingFields);

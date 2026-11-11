@@ -15,7 +15,7 @@ interface StageTimelineProps {
 	/** Makes each step clickable (photographer only). */
 	onSelect?: (stage: ProjectStage) => void;
 	disabled?: boolean;
-	/** Steps that can't be picked, with the reason shown on hover. */
+	/** This step and the ones after it can't be picked; the reason shows on hover. */
 	locked?: { stage: ProjectStage; reason: string };
 	/** Video projects call post-production what it is: video editing. */
 	media?: MediaKind;
@@ -32,6 +32,8 @@ export function StageTimeline({
 	const t = useTranslations("Projects.stages");
 	const tMedia = useTranslations("Projects.stagesByMedia");
 	const current = stageIndex(stage);
+	const isLocked = (step: ProjectStage) =>
+		locked !== undefined && stageIndex(step) >= stageIndex(locked.stage);
 	const label = (step: ProjectStage) =>
 		step === "POST_PRODUCTION" && (media === "VIDEO" || media === "BOTH")
 			? tMedia(media)
@@ -75,10 +77,8 @@ export function StageTimeline({
 						{onSelect ? (
 							<button
 								type="button"
-								disabled={
-									disabled || state === "current" || locked?.stage === step
-								}
-								title={locked?.stage === step ? locked.reason : undefined}
+								disabled={disabled || state === "current" || isLocked(step)}
+								title={isLocked(step) ? locked?.reason : undefined}
 								onClick={() => onSelect(step)}
 								className="flex w-full flex-col items-center gap-1 rounded-lg p-1.5 transition-colors hover:bg-muted disabled:cursor-default disabled:hover:bg-transparent"
 							>

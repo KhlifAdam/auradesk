@@ -1,26 +1,31 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { TextField } from "@/components/dashboard/shared/form-fields";
 import { FormSection } from "@/components/dashboard/shared/form-section";
-import { Button } from "@/components/ui/button";
+import {
+	FORM_WITH_SIDE,
+	FormSideActions,
+} from "@/components/dashboard/shared/form-side-actions";
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createInvoice, updateInvoice } from "@/services/invoices/actions";
 import { type InvoiceValues, invoiceSchema } from "@/services/invoices/schemas";
 import { InvoiceClientSection } from "./invoice-client-section";
 import { InvoiceItemsSection } from "./invoice-items-section";
+import {
+	InvoiceProjectField,
+	type LinkedProject,
+} from "./invoice-project-field";
 
 interface InvoiceFormProps {
 	initial: InvoiceValues;
-	/** Title of the linked project, for its chip. */
-	projectTitle: string | null;
+	/** The linked project, and what the prefilled lines are. */
+	project: LinkedProject | null;
 	/** Edit mode when set. */
 	invoiceId?: string;
 	/** Where Cancel goes back to. */
@@ -29,7 +34,7 @@ interface InvoiceFormProps {
 
 export function InvoiceForm({
 	initial,
-	projectTitle,
+	project,
 	invoiceId,
 	backHref,
 }: InvoiceFormProps) {
@@ -58,44 +63,41 @@ export function InvoiceForm({
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex max-w-3xl flex-col gap-4"
-			>
-				<InvoiceClientSection projectTitle={projectTitle} />
-				<InvoiceItemsSection />
-				<FormSection title={t("details.title")}>
-					<div className="grid gap-3 sm:grid-cols-2">
-						<TextField<InvoiceValues>
-							name="issueDate"
-							label={t("details.issueDate")}
-							type="date"
-							required
-						/>
-						<TextField<InvoiceValues>
-							name="dueDate"
-							label={t("details.dueDate")}
-							type="date"
-						/>
-					</div>
-					<TextField<InvoiceValues>
-						name="notes"
-						label={t("details.notes")}
-						description={t("details.notesHint")}
-						rows={3}
+			<form onSubmit={form.handleSubmit(onSubmit)} className={FORM_WITH_SIDE}>
+				<div className="flex flex-col gap-4">
+					<InvoiceClientSection
+						projectTitle={project?.title ?? null}
+						projectField={<InvoiceProjectField initial={project} />}
 					/>
-				</FormSection>
-				<div className="sticky bottom-4 z-20 flex justify-end gap-2 rounded-xl border border-border bg-card/80 p-3 backdrop-blur-md">
-					<Button asChild type="button" variant="ghost" size="sm">
-						<Link href={backHref}>{t("cancel")}</Link>
-					</Button>
-					<Button type="submit" size="sm" disabled={isSubmitting}>
-						{isSubmitting && (
-							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-						)}
-						{invoiceId ? t("save") : t("create")}
-					</Button>
+					<InvoiceItemsSection />
+					<FormSection title={t("details.title")}>
+						<div className="grid gap-3 sm:grid-cols-2">
+							<TextField<InvoiceValues>
+								name="issueDate"
+								label={t("details.issueDate")}
+								type="date"
+								required
+							/>
+							<TextField<InvoiceValues>
+								name="dueDate"
+								label={t("details.dueDate")}
+								type="date"
+							/>
+						</div>
+						<TextField<InvoiceValues>
+							name="notes"
+							label={t("details.notes")}
+							description={t("details.notesHint")}
+							rows={3}
+						/>
+					</FormSection>
 				</div>
+				<FormSideActions
+					cancelHref={backHref}
+					cancelLabel={t("cancel")}
+					submitLabel={invoiceId ? t("save") : t("create")}
+					submitting={isSubmitting}
+				/>
 			</form>
 		</Form>
 	);

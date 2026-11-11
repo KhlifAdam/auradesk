@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAssistant } from "@/components/assistant/assistant-provider";
 import { AssistantShell } from "@/components/assistant/assistant-shell";
 import { ChatView } from "@/components/assistant/chat/chat-view";
+import { WakeWordToggle } from "@/components/assistant/wake-word-toggle";
 import { Button } from "@/components/ui/button";
 import type { AssistantUIMessage } from "@/lib/ai/assistant/tools";
 import { loadPortalThread } from "@/services/assistant/actions";
@@ -82,6 +83,7 @@ export function PortalAssistantPanel() {
 				<h2 className="flex-1 font-display text-sm font-semibold">
 					{t("title")}
 				</h2>
+				<WakeWordToggle />
 				<Button
 					type="button"
 					size="icon"

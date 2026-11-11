@@ -38,6 +38,18 @@ export const BLOCKING_KINDS = [
 	"MAINTENANCE",
 ] as const satisfies EquipmentBookingKind[];
 
+/**
+ * What a new booking can't overlap. Your own shoots can share an item on the
+ * same days (a morning and an evening shoot); lending it out or a repair
+ * takes it away, so those clash with everything that keeps it busy.
+ */
+export function clashingKinds(kind: EquipmentBookingKind) {
+	if (!(BLOCKING_KINDS as readonly string[]).includes(kind)) return [];
+	return kind === "PROJECT"
+		? BLOCKING_KINDS.filter((k) => k !== "PROJECT")
+		: [...BLOCKING_KINDS];
+}
+
 /** Where an item is right now. */
 export type Availability =
 	| "AVAILABLE"

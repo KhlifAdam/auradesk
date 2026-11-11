@@ -38,7 +38,8 @@ export async function quotePrefillFromBooking(
 		clientPhone: booking.clientPhone ?? "",
 		items: [
 			{
-				description: `${tService(booking.serviceType)} · ${booking.title}`,
+				// The service sold; the client is already on the quote.
+				description: tService(booking.serviceType),
 				quantity: 1,
 				unitPrice: booking.proposedPrice?.toNumber() ?? null,
 			},

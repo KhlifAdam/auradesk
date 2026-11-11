@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquareWarning, Wand2 } from "lucide-react";
+import { Info, MessageSquareWarning, Wand2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import {
 } from "@/lib/books/design-reducer";
 import { firstEmptySlot, placedFor, placedSlots } from "@/lib/books/geometry";
 import { loadBookPhotos, saveBook } from "@/services/books/actions";
+import { saveOrderDesign } from "@/services/books/order-edit-actions";
 import {
 	loadStudioBookPhotos,
 	saveStudioBook,
@@ -26,6 +27,7 @@ import { BookSettings } from "./book-settings";
 import { isLowResolution, type PanMove } from "./book-slot";
 import { DeleteBookButton } from "./delete-book-button";
 import { OrderBookDialog } from "./order-book-dialog";
+import { OrderDoneButton } from "./order-done-button";
 import { COVER, PageStrip } from "./page-strip";
 import { PageWorkspace } from "./page-workspace";
 import { PhotoTray } from "./photo-tray";
@@ -36,17 +38,29 @@ import { useBookTray } from "./use-book-tray";
 const UNKNOWN_PHOTO = { w: 3, h: 2 };
 
 /**
+ * Who is editing: the client their draft, the studio a draft it makes for the
+ * client, or the studio an order it hasn't started printing.
+ */
+export type EditorMode = "client" | "studio" | "order";
+
+const SAVE = {
+	client: saveBook,
+	studio: saveStudioBook,
+	order: saveOrderDesign,
+};
+
+/**
  * The photo book editor: photos on the left, the spread being edited in the
  * middle, the spreads along the bottom. Everything saves by itself.
  */
 export function BookEditor({
 	book,
-	studio = false,
+	mode = "client",
 }: {
 	book: BookView;
-	/** The studio is designing it for the client: it saves and orders through the studio's actions. */
-	studio?: boolean;
+	mode?: EditorMode;
 }) {
+	const studio = mode !== "client";
 	const t = useTranslations("PhotoBook.editor");
 	const errorMessage = useErrorMessage();
 	const onSaveError = useCallback(
@@ -57,7 +71,7 @@ export function BookEditor({
 		book.id,
 		book.design,
 		onSaveError,
-		studio ? saveStudioBook : saveBook,
+		SAVE[mode],
 	);
 	const tray = useBookTray(
 		book.projectId,
@@ -147,30 +161,53 @@ export function BookEditor({
 		<div className="flex flex-col gap-4">
 			<BookHeader
 				backHref={
-					studio ? "/dashboard/books" : `/portal/projects/${book.projectId}`
+					mode === "order"
+						? `/dashboard/books/${book.id}`
+						: studio
+							? "/dashboard/books"
+							: `/portal/projects/${book.projectId}`
 				}
 				projectTitle={book.projectTitle}
 				title={design.title}
 				status={status}
 				lowResolution={lowResolution}
 				action={
-					<>
-						{studio && (
-							<DeleteBookButton bookId={book.id} title={design.title} studio />
-						)}
-						<OrderBookDialog
+					mode === "order" ? (
+						<OrderDoneButton
 							bookId={book.id}
-							studioName={book.studioName}
-							priceList={book.priceList}
-							format={design.format}
-							pages={pageCount(design)}
-							hasCover={Boolean(design.cover.itemId)}
-							studio={studio}
 							flush={flush}
+							disabled={status === "error"}
+							changed={design !== book.design}
 						/>
-					</>
+					) : (
+						<>
+							{studio && (
+								<DeleteBookButton
+									bookId={book.id}
+									title={design.title}
+									studio
+								/>
+							)}
+							<OrderBookDialog
+								bookId={book.id}
+								studioName={book.studioName}
+								priceList={book.priceList}
+								format={design.format}
+								pages={pageCount(design)}
+								hasCover={Boolean(design.cover.itemId)}
+								studio={studio}
+								flush={flush}
+							/>
+						</>
+					)
 				}
 			/>
+			{mode === "order" && (
+				<p className="flex items-start gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+					<Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+					{t("orderNote")}
+				</p>
+			)}
 			{!studio && book.order.statusNote && (
 				<p className="flex items-start gap-2 rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
 					<MessageSquareWarning className="mt-0.5 h-4 w-4 shrink-0 text-warning" />

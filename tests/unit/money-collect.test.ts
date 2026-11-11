@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
 	type CollectItem,
+	invoiceGross,
 	invoiceReason,
 	projectReason,
+	projectRemainder,
 	rankToCollect,
 } from "@/lib/money/collect";
 import { clientNextStep } from "@/lib/projects/client-next-step";
@@ -11,6 +13,62 @@ const today = new Date("2026-10-26T09:00:00Z");
 const day = (iso: string) => new Date(`${iso}T00:00:00Z`);
 
 describe("money to collect", () => {
+	it("counts a project without invoices as its price minus the advance", () => {
+		expect(
+			projectRemainder({
+				price: 1000,
+				advance: 300,
+				invoicedGross: 0,
+				hasIssuedInvoices: false,
+			}),
+		).toBe(700);
+	});
+
+	it("keeps the part of a price not invoiced yet", () => {
+		// A 300 deposit invoice on a 1,000 project: 700 is still to bill.
+		expect(
+			projectRemainder({
+				price: 1000,
+				advance: 100,
+				invoicedGross: 300,
+				hasIssuedInvoices: true,
+			}),
+		).toBe(700);
+	});
+
+	it("compares a price with tax to what invoices bill with tax", () => {
+		// Price 773.5 = 650 + 19% tax, billed by one invoice: nothing left.
+		expect(invoiceGross(650, 19)).toBe(773.5);
+		expect(
+			projectRemainder({
+				price: 773.5,
+				advance: 0,
+				invoicedGross: invoiceGross(650, 19),
+				hasIssuedInvoices: true,
+			}),
+		).toBe(0);
+	});
+
+	it("leaves nothing on a fully invoiced project, discount or not", () => {
+		// Billed 1,000 with a 100 discount: the invoice owes 900, the project 0.
+		expect(
+			projectRemainder({
+				price: 1000,
+				advance: 0,
+				invoicedGross: 1000,
+				hasIssuedInvoices: true,
+			}),
+		).toBe(0);
+		expect(
+			projectRemainder({
+				price: 1000,
+				advance: 0,
+				invoicedGross: 1200,
+				hasIssuedInvoices: true,
+			}),
+		).toBe(0);
+	});
+
 	it("reads an invoice's urgency", () => {
 		expect(invoiceReason(day("2026-10-20"), null, today)).toEqual({
 			reason: "overdue",
@@ -32,7 +90,10 @@ describe("money to collect", () => {
 		expect(projectReason("DELIVERY", null, today).reason).toBe(
 			"deliveredUnpaid",
 		);
-		expect(projectReason("VALIDATION", null, today).reason).toBe(
+		expect(projectReason("COMPLETED", null, today).reason).toBe(
+			"deliveredUnpaid",
+		);
+		expect(projectReason("EXPORT", null, today).reason).toBe(
 			"deliveringSoon",
 		);
 		expect(projectReason("PREP", day("2026-10-28"), today)).toEqual({
@@ -46,6 +107,7 @@ describe("money to collect", () => {
 			kind: "invoice",
 			id,
 			label: id,
+			detail: "",
 			clientName: "",
 			amount: 100,
 			reason: "open",

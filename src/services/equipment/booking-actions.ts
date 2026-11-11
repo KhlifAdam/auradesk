@@ -4,13 +4,13 @@ import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { emptyToNull } from "@/services/shared/schemas";
-import { BLOCKING_KINDS } from "./options";
+import { clashingKinds } from "./options";
 import { revalidateEquipment } from "./revalidate";
 import { bookingRefSchema, equipmentBookingSchema } from "./schemas";
 
 /**
- * Books an item for a period. A blocking booking can't overlap another one
- * of the same item (unless that one came back before this starts).
+ * Books an item for a period. It can't overlap a booking that takes the item
+ * away (see `clashingKinds`), unless that one came back before this starts.
  */
 export async function createEquipmentBooking(
 	input: unknown,
@@ -42,13 +42,13 @@ export async function createEquipmentBooking(
 				: null;
 		if (kind === "PROJECT" && !project) return "notFound";
 
-		const blocking = (BLOCKING_KINDS as readonly string[]).includes(kind);
+		const clashWith = clashingKinds(kind);
 		const clash =
-			blocking &&
+			clashWith.length > 0 &&
 			(await tx.equipmentBooking.count({
 				where: {
 					equipmentId,
-					kind: { in: [...BLOCKING_KINDS] },
+					kind: { in: clashWith },
 					startDate: { lte: endDate },
 					endDate: { gte: startDate },
 					OR: [{ returnedAt: null }, { returnedAt: { gt: startDate } }],

@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight, FileText, Pencil } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -8,8 +8,8 @@ import { BookingClientStatus } from "@/components/dashboard/bookings/booking-cli
 import { BookingContact } from "@/components/dashboard/bookings/booking-contact";
 import { BookingDeleteButton } from "@/components/dashboard/bookings/booking-delete-button";
 import { BookingFacts } from "@/components/dashboard/bookings/booking-facts";
+import { BookingQuoteCard } from "@/components/dashboard/bookings/booking-quote-card";
 import { BookingStatusBadge } from "@/components/dashboard/bookings/booking-status-badge";
-import { BookingQuotes } from "@/components/dashboard/quotes/booking-quotes";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { Button } from "@/components/ui/button";
@@ -49,21 +49,6 @@ export default async function BookingPage({
 					<>
 						<BookingStatusBadge status={booking.status} />
 						<BookingDeleteButton bookingId={booking.id} />
-						{booking.status !== "DECLINED" && (
-							<Button
-								asChild
-								size="sm"
-								variant="outline"
-								className="h-7 gap-1.5 text-xs"
-							>
-								<Link
-									href={`/dashboard/invoices/quotes/new?booking=${booking.id}`}
-								>
-									<FileText className="h-3.5 w-3.5" />
-									{t("createQuote")}
-								</Link>
-							</Button>
-						)}
 						{booking.status !== "CONFIRMED" && (
 							<Button
 								asChild
@@ -113,7 +98,10 @@ export default async function BookingPage({
 					{booking.statusReason}
 				</p>
 			)}
-			<BookingQuotes bookingId={booking.id} />
+			<BookingQuoteCard
+				bookingId={booking.id}
+				confirmed={booking.status === "CONFIRMED"}
+			/>
 			<div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
 				<BookingFacts booking={booking} />
 				<BookingContact booking={booking} />

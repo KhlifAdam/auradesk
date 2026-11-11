@@ -1,13 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-	Camera,
-	LayoutDashboard,
-	LogOut,
-	Settings,
-	UserRound,
-} from "lucide-react";
+import { LogOut, Settings, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -40,8 +34,6 @@ interface PortalHeaderProps {
 		phoneNumber?: string | null;
 		image?: string | null;
 	};
-	/** Photographers get a way back; others can open a studio. */
-	isPhotographer: boolean;
 	unreadMessages: number;
 	/** Waiting items per nav entry (requests to answer, invitations). */
 	counts: PortalNavCounts;
@@ -49,7 +41,6 @@ interface PortalHeaderProps {
 
 export function PortalHeader({
 	user,
-	isPhotographer,
 	unreadMessages,
 	counts: initialCounts,
 }: PortalHeaderProps) {
@@ -154,19 +145,6 @@ export function PortalHeader({
 									<Settings className="mr-2 h-4 w-4" />
 									{t("settings")}
 								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuItem asChild className="cursor-pointer">
-								{isPhotographer ? (
-									<Link href="/dashboard">
-										<LayoutDashboard className="mr-2 h-4 w-4" />
-										{t("dashboard")}
-									</Link>
-								) : (
-									<Link href="/start-studio">
-										<Camera className="mr-2 h-4 w-4" />
-										{t("createStudio")}
-									</Link>
-								)}
 							</DropdownMenuItem>
 							<LanguageSubmenu />
 							<ThemeSubmenu />

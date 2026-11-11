@@ -13,6 +13,7 @@ export async function PortalProjectCard({
 	project: PortalProject;
 }) {
 	const t = await getTranslations("Portal.projects");
+	const tUpdates = await getTranslations("Portal.updates.short");
 	const format = await getFormatter();
 	const progress =
 		((stageIndex(project.stage) + 1) / PROJECT_STAGES.length) * 100;
@@ -28,7 +29,14 @@ export async function PortalProjectCard({
 			<div className="flex items-start justify-between gap-3">
 				<p className="flex items-center gap-2 font-medium leading-snug group-hover:text-primary">
 					{project.title}
-					<ChangePill mark={project.mark} />
+					{project.update ? (
+						// Says what changed rather than just "Updated".
+						<span className="shrink-0 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-foreground">
+							{tUpdates(project.update)}
+						</span>
+					) : (
+						<ChangePill mark={project.mark} />
+					)}
 				</p>
 				<StageBadge stage={project.stage} />
 			</div>

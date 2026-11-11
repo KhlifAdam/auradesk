@@ -21,7 +21,7 @@ import {
 	updateStageSchema,
 } from "./schemas";
 import { notifyStageChange } from "./stage-notices";
-import { PAYMENT_GATED_STAGE } from "./visibility";
+import { isDeliveredStage } from "./stages";
 
 const toDate = (value: string) => (value ? new Date(value) : null);
 
@@ -91,7 +91,7 @@ export async function updateProject(input: unknown): Promise<ActionResult> {
 	});
 	if (count === 0) return fail("notFound");
 
-	await flagProjectForClient(id);
+	await flagProjectForClient(id, undefined, "details");
 	revalidateClientWork();
 	return ok();
 }
@@ -106,20 +106,22 @@ export async function updateProjectStage(
 	const { id, stage } = parsed.data;
 	const current = await db.project.findFirst({
 		where: { id, photographerId },
-		select: { stage: true },
+		select: { stage: true, deliveredAt: true },
 	});
 	if (!current) return fail("notFound");
+	const delivered = isDeliveredStage(stage);
 	// The paid check is part of the write, so it can't race with a payment edit.
 	const { count } = await db.project.updateMany({
 		where: {
 			id,
 			photographerId,
-			...(stage === PAYMENT_GATED_STAGE && { paymentStatus: "PAID" as const }),
+			...(delivered && { paymentStatus: "PAID" as const }),
 		},
-		// Delivery is dated for the statistics; moving back clears it.
+		// Delivery is dated for the statistics; completing keeps that date and
+		// moving back before delivery clears it.
 		data: {
 			stage,
-			deliveredAt: stage === PAYMENT_GATED_STAGE ? new Date() : null,
+			deliveredAt: delivered ? (current.deliveredAt ?? new Date()) : null,
 		},
 	});
 	if (count === 0) return fail("unpaidProject");
@@ -166,7 +168,7 @@ export async function updateProjectPayment(
 		},
 	});
 
-	await flagProjectForClient(id);
+	await flagProjectForClient(id, undefined, "payment");
 	revalidateClientWork();
 	return ok();
 }

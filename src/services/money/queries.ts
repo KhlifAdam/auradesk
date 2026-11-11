@@ -1,10 +1,13 @@
 import "server-only";
 
+import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import {
 	type CollectItem,
+	invoiceGross,
 	invoiceReason,
 	projectReason,
+	projectRemainder,
 	rankToCollect,
 } from "@/lib/money/collect";
 import { computeTotals, roundMoney } from "@/services/invoices/totals";
@@ -25,9 +28,15 @@ interface InvoiceRow {
 }
 
 export interface MoneyOverview {
-	/** Everything still owed: unpaid invoices plus unbilled project balances. */
+	/**
+	 * Everything still owed, each amount once: the unpaid part of sent
+	 * invoices (project, standalone, photo book) plus the part of project
+	 * prices not invoiced yet. Drafts and quotes aren't owed yet.
+	 */
 	toCollect: number;
 	overdue: { count: number; amount: number };
+	/** Project prices not invoiced yet (part of `toCollect`). */
+	notInvoiced: number;
 	collectedThisMonth: number;
 	/** What to chase, most pressing first. */
 	items: CollectItem[];
@@ -57,13 +66,13 @@ export async function getMoneyOverview(
 			LEFT JOIN photo_books b ON b.invoice_id = i.id
 			LEFT JOIN projects pr ON pr.id = i.project_id
 			WHERE i.photographer_id = ${photographerId} AND i.status = 'SENT'`,
-		// A project billed through an invoice is counted there, not twice.
+		// Its invoices are counted as invoices; the project only for the part of
+		// its price they don't bill yet (see `projectRemainder`).
 		db.project.findMany({
 			where: {
 				photographerId,
 				price: { not: null },
 				paymentStatus: { not: "PAID" },
-				invoices: { none: { status: { in: ["SENT", "PAID"] } } },
 			},
 			select: {
 				id: true,
@@ -74,6 +83,13 @@ export async function getMoneyOverview(
 				eventDate: true,
 				contactName: true,
 				client: { select: { name: true } },
+				invoices: {
+					where: { status: { in: ["SENT", "PAID"] } },
+					select: {
+						taxRate: true,
+						items: { select: { quantity: true, unitPrice: true } },
+					},
+				},
 			},
 		}),
 		db.invoicePayment.aggregate({
@@ -85,6 +101,7 @@ export async function getMoneyOverview(
 		}),
 	]);
 
+	const t = await getTranslations("Money");
 	const items: CollectItem[] = [];
 	for (const row of invoices) {
 		const { total } = computeTotals(
@@ -98,9 +115,13 @@ export async function getMoneyOverview(
 		items.push({
 			kind: row.book_id ? "book" : "invoice",
 			id: row.id,
-			label: [row.number, row.book_title ?? row.project_title]
-				.filter(Boolean)
-				.join(" · "),
+			// A photo book is billed on its own, apart from its project.
+			label: row.book_id
+				? t("rows.bookLabel", { title: row.book_title ?? "" })
+				: [row.number, row.project_title].filter(Boolean).join(" · "),
+			detail: row.book_id
+				? t("rows.book", { number: row.number, client: row.client_name })
+				: t("rows.invoice", { client: row.client_name }),
 			clientName: row.client_name,
 			amount,
 			...invoiceReason(row.due_date, book, today),
@@ -110,15 +131,35 @@ export async function getMoneyOverview(
 		});
 	}
 	for (const project of projects) {
-		const amount = roundMoney(
-			(project.price?.toNumber() ?? 0) - project.advance.toNumber(),
-		);
+		const hasIssuedInvoices = project.invoices.length > 0;
+		const amount = projectRemainder({
+			price: project.price?.toNumber() ?? 0,
+			advance: project.advance.toNumber(),
+			invoicedGross: project.invoices.reduce(
+				(sum, invoice) =>
+					sum +
+					invoiceGross(
+						invoice.items.reduce(
+							(lines, item) =>
+								lines + item.quantity.toNumber() * item.unitPrice.toNumber(),
+							0,
+						),
+						invoice.taxRate.toNumber(),
+					),
+				0,
+			),
+			hasIssuedInvoices,
+		});
 		if (amount <= 0) continue;
+		const clientName = project.client?.name ?? project.contactName ?? "";
 		items.push({
 			kind: "project",
 			id: project.id,
 			label: project.title,
-			clientName: project.client?.name ?? project.contactName ?? "",
+			detail: t(hasIssuedInvoices ? "rows.projectRest" : "rows.project", {
+				client: clientName,
+			}),
+			clientName,
 			amount,
 			...projectReason(project.stage, project.eventDate, today),
 			href: `/dashboard/projects/${project.id}`,
@@ -129,6 +170,11 @@ export async function getMoneyOverview(
 	const overdue = ranked.filter((i) => i.reason === "overdue");
 	return {
 		toCollect: roundMoney(ranked.reduce((sum, i) => sum + i.amount, 0)),
+		notInvoiced: roundMoney(
+			ranked
+				.filter((i) => i.kind === "project")
+				.reduce((sum, i) => sum + i.amount, 0),
+		),
 		overdue: {
 			count: overdue.length,
 			amount: roundMoney(overdue.reduce((sum, i) => sum + i.amount, 0)),

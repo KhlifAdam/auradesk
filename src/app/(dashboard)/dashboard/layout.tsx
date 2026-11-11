@@ -12,6 +12,7 @@ import { Sidebar } from "@/components/dashboard/sidebar/sidebar";
 import { TimeZoneSync } from "@/components/dashboard/time-zone-sync";
 import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
+import { env } from "@/lib/env";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { getSubscription } from "@/services/billing/queries";
 import { countUnread } from "@/services/messages/queries";
@@ -35,6 +36,7 @@ export default async function DashboardLayout({
 		<AssistantProvider
 			initialOpen={assistantOpen}
 			basePath="/dashboard/assistant"
+			wakeWordKey={env.PICOVOICE_ACCESS_KEY ?? null}
 		>
 			<div className="relative isolate flex h-screen overflow-hidden bg-background print:block print:h-auto print:overflow-visible">
 				<SpaceBackdrop />

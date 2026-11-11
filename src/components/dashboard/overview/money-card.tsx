@@ -61,6 +61,7 @@ export async function MoneyCard() {
 					success
 				/>
 			</div>
+			<p className="text-[11px] text-muted-foreground">{t("explain")}</p>
 			{money.items.length === 0 ? (
 				<p className="text-xs text-muted-foreground">{t("allPaid")}</p>
 			) : (
@@ -77,7 +78,7 @@ export async function MoneyCard() {
 									<span className="flex min-w-0 flex-1 flex-col">
 										<span className="truncate font-medium">{item.label}</span>
 										<span className="truncate text-[11px] text-muted-foreground">
-											{item.clientName}
+											{item.detail}
 										</span>
 									</span>
 									<span

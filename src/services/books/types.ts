@@ -72,6 +72,11 @@ export interface BookOrder {
 	/** The studio's note when it sent the book back. */
 	statusNote: string;
 	submittedAt: string | null;
+	/** The client's open request to change the book, empty when none. */
+	changeRequest: string;
+	changeRequestedAt: string | null;
+	/** The studio changed the design; printing waits for the client's approval. */
+	awaitingApproval: boolean;
 	invoice: BookInvoice | null;
 }
 
@@ -100,6 +105,12 @@ export interface StudioOrderSummary {
 	total: number | null;
 	submittedAt: string | null;
 	invoice: Pick<BookInvoice, "number" | "status"> | null;
+	/** A light copy of the cover photo, when the design has one. */
+	coverUrl: string | null;
+	/** The studio changed the design; the client hasn't approved it yet. */
+	awaitingApproval: boolean;
+	/** The client asked for a change that is still open. */
+	changeRequested: boolean;
 }
 
 export interface StudioOrderPage {

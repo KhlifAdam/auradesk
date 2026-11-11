@@ -28,6 +28,8 @@ interface Props {
 	invoicePaid: boolean;
 	/** What is still owed, shown when asking at delivery. */
 	balance: string;
+	/** The studio changed the design; printing waits for the client. */
+	awaitingApproval: boolean;
 }
 
 const ADVANCES: readonly string[] = ORDER_STATUSES.slice(2);
@@ -39,6 +41,7 @@ export function OrderWorkflow({
 	calculated,
 	invoicePaid,
 	balance,
+	awaitingApproval,
 }: Props) {
 	const t = useTranslations("BookOrders.deliver");
 	const tMethods = useTranslations("Invoices.methods");
@@ -60,6 +63,7 @@ export function OrderWorkflow({
 				status={status}
 				calculated={calculated}
 				invoicePaid={invoicePaid}
+				awaitingApproval={awaitingApproval}
 				busy={flow.pending}
 				onAdvance={flow.advance}
 			/>

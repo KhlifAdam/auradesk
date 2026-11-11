@@ -3,6 +3,7 @@
 import { Briefcase, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
+import { CARD_GRID } from "@/components/dashboard/shared/card-grid";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { SortableGrid } from "@/components/dashboard/shared/sortable-grid";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
@@ -57,7 +58,7 @@ export function PackageList({ packages }: { packages: PackagePage }) {
 			<SortableGrid
 				items={items}
 				onReorder={reorder}
-				className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+				className={CARD_GRID}
 				renderItem={(pkg) => (
 					<PackageCard pkg={pkg} onSelect={() => setEditingId(pkg.id)} />
 				)}

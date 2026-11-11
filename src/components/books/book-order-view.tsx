@@ -12,6 +12,7 @@ import { pageCount } from "@/lib/books/design";
 import { withdrawBook } from "@/services/books/order-actions";
 import type { BookView } from "@/services/books/types";
 import { formatMoney } from "@/services/projects/money";
+import { BookChangePanel } from "./book-change-panel";
 import { BookStatusBadge } from "./book-status-badge";
 import { OrderTimeline } from "./order-timeline";
 import { QuoteSummary } from "./quote-summary";
@@ -70,7 +71,11 @@ export function BookOrderView({ book }: { book: BookView }) {
 						{design.title}
 					</h1>
 				</div>
-				<BookStatusBadge status={order.status} className="mt-1" />
+				<BookStatusBadge
+					status={order.status}
+					awaitingApproval={order.awaitingApproval}
+					className="mt-1"
+				/>
 			</header>
 
 			<section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
@@ -112,6 +117,7 @@ export function BookOrderView({ book }: { book: BookView }) {
 						</Button>
 					)}
 				</div>
+				<BookChangePanel book={book} />
 				{invoice && invoice.status !== "PAID" && (
 					<p className="text-xs text-muted-foreground">
 						{t("balance", {

@@ -19,7 +19,7 @@ import { BOOKING_STATUSES } from "@/services/bookings/options";
 import type { Period } from "@/services/overview/period";
 import { getOverviewStats } from "@/services/overview/stats";
 import { formatMoney } from "@/services/projects/money";
-import { PROJECT_STAGES } from "@/services/projects/stages";
+import { isDeliveredStage, PROJECT_STAGES } from "@/services/projects/stages";
 import { ActivityChart } from "./activity-chart";
 import { BreakdownCard } from "./breakdown-card";
 import { KpiCard } from "./kpi-card";
@@ -43,8 +43,8 @@ const STAGE_BAR: Record<(typeof PROJECT_STAGES)[number], string> = {
 	SELECTION: "bg-event-other",
 	POST_PRODUCTION: "bg-event-other",
 	EXPORT: "bg-event-other",
-	VALIDATION: "bg-event-project",
-	DELIVERY: "bg-success",
+	DELIVERY: "bg-event-project",
+	COMPLETED: "bg-success",
 };
 
 /** All the numbers for the chosen period, streamed in below the filter. */
@@ -64,10 +64,9 @@ export async function StatisticsSection({
 
 	const versus = period.previous ? t("vsPrevious") : undefined;
 	const number = (value: number) => value.toLocaleString(locale);
-	const activeProjects = PROJECT_STAGES.filter((s) => s !== "DELIVERY").reduce(
-		(sum, stage) => sum + (stats.projects.byStage[stage] ?? 0),
-		0,
-	);
+	const activeProjects = PROJECT_STAGES.filter(
+		(s) => !isDeliveredStage(s),
+	).reduce((sum, stage) => sum + (stats.projects.byStage[stage] ?? 0), 0);
 
 	return (
 		<div className="flex flex-col gap-3">

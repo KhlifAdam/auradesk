@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { InvoiceSection } from "@/components/invoices/invoice-section";
 import { ProjectNextStep } from "@/components/portal/project/project-next-step";
 import { ProjectOverview } from "@/components/portal/project/project-overview";
+import { ProjectUpdateBanner } from "@/components/portal/project/project-update-banner";
 import { StudioHeading } from "@/components/portal/studio-heading";
 import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth/require-client";
@@ -65,6 +66,11 @@ export default async function PortalProjectPage({
 					{project.title}
 				</h1>
 			</div>
+			<ProjectUpdateBanner
+				project={project}
+				studio={project.studio?.name ?? project.photographerName}
+				clientId={clientId}
+			/>
 			<ProjectNextStep project={project} invoices={invoices} />
 			<ProjectOverview project={project} />
 			<section className="rounded-xl border border-border bg-card p-3">

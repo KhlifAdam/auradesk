@@ -54,6 +54,12 @@ export async function ProjectNextStep({
 			timeZone: "UTC",
 		});
 	const studio = project.studio?.name ?? project.photographerName;
+	// Titles and texts may both name the studio, an amount or the date.
+	const values = {
+		studio,
+		amount: formatMoney(owed, locale),
+		date: project.eventDate ? day(project.eventDate) : "—",
+	};
 
 	const href =
 		step === "chooseFiles" || step === "downloadFiles"
@@ -74,14 +80,10 @@ export async function ProjectNextStep({
 							{t("label")}
 						</span>
 						<h2 className="font-display text-base font-semibold">
-							{t(`${step}.title`)}
+							{t(`${step}.title`, values)}
 						</h2>
 						<p className="text-xs text-muted-foreground">
-							{t(`${step}.body`, {
-								studio,
-								amount: formatMoney(owed, locale),
-								date: project.eventDate ? day(project.eventDate) : "—",
-							})}
+							{t(`${step}.body`, values)}
 						</p>
 					</div>
 				</div>

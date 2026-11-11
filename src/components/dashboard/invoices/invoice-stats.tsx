@@ -8,15 +8,23 @@ const CARDS = [
 	{ key: "collected", tone: "text-success" },
 	{ key: "outstanding", tone: "text-primary" },
 	{ key: "overdueCount", tone: "text-destructive" },
+	{ key: "notInvoiced", tone: "text-event-meeting" },
 ] as const;
 
-/** Invoiced, collected, still to collect and late invoices at a glance. */
-export async function InvoiceStatsCards({ stats }: { stats: InvoiceStats }) {
+/**
+ * Invoiced, collected, unpaid and late invoices at a glance, plus the
+ * project prices not invoiced yet (the same figure as the overview's).
+ */
+export async function InvoiceStatsCards({
+	stats,
+}: {
+	stats: InvoiceStats & { notInvoiced: number };
+}) {
 	const t = await getTranslations("Invoices.stats");
 	const locale = await getLocale();
 
 	return (
-		<dl className="grid grid-cols-2 gap-3 md:grid-cols-4">
+		<dl className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
 			{CARDS.map(({ key, tone }) => (
 				<div
 					key={key}
@@ -36,7 +44,7 @@ export async function InvoiceStatsCards({ stats }: { stats: InvoiceStats }) {
 
 export function InvoiceStatsSkeleton() {
 	return (
-		<div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+		<div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
 			{CARDS.map(({ key }) => (
 				<div
 					key={key}

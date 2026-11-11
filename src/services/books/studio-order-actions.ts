@@ -13,6 +13,7 @@ import {
 } from "@/lib/mail/send-book-notices";
 import { sendInvoiceEmail } from "@/lib/mail/send-invoice-email";
 import { realEmail } from "@/lib/phone";
+import { type Channels, flagProjectForClient } from "@/services/changes/flag";
 import { invoiceBalance } from "@/services/invoices/ledger";
 import { formatMoney } from "@/services/projects/money";
 import { revalidateClientWork } from "@/services/projects/revalidate";
@@ -22,6 +23,14 @@ import {
 	advanceSchema,
 	sendBackSchema,
 } from "./order-schemas";
+
+/**
+ * A step on the book lights its project up for the client ("Photo book"),
+ * told by email or text unless this step already sent its own email.
+ */
+function flagBookStep(projectId: string, channels?: Channels) {
+	return flagProjectForClient(projectId, channels, "book");
+}
 
 function revalidateOrder(bookId: string, projectId: string) {
 	revalidatePath("/dashboard/books", "layout");
@@ -112,6 +121,7 @@ export async function acceptBookOrder(
 			});
 	}
 
+	await flagBookStep(book.projectId, {});
 	revalidateOrder(book.id, book.projectId);
 	return ok({ emailed });
 }
@@ -151,6 +161,9 @@ export async function sendBackBookOrder(input: unknown): Promise<ActionResult> {
 				invoiceId: null,
 				submittedAt: null,
 				statusNote: parsed.data.note,
+				changeRequest: "",
+				changeRequestedAt: null,
+				awaitingApprovalAt: null,
 			},
 		});
 		return count === 0 ? "bookWrongStatus" : null;
@@ -175,6 +188,7 @@ export async function sendBackBookOrder(input: unknown): Promise<ActionResult> {
 		);
 	}
 
+	await flagBookStep(book.projectId, {});
 	revalidateOrder(book.id, book.projectId);
 	return ok();
 }
@@ -197,9 +211,16 @@ export async function advanceBookOrder(input: unknown): Promise<ActionResult> {
 		include: { client: clientContact },
 	});
 	if (!book) return fail("bookWrongStatus");
+	// A design the studio changed waits for the client's approval.
+	if (to === "IN_PRODUCTION" && book.awaitingApprovalAt)
+		return fail("bookAwaitingClient");
 
 	const { count } = await db.photoBook.updateMany({
-		where: { id, status: FROM[to] },
+		where: {
+			id,
+			status: FROM[to],
+			...(to === "IN_PRODUCTION" && { awaitingApprovalAt: null }),
+		},
 		data: { status: to },
 	});
 	if (count === 0) return fail("bookWrongStatus");
@@ -219,6 +240,8 @@ export async function advanceBookOrder(input: unknown): Promise<ActionResult> {
 		}).catch((e) => console.error("Failed to send the book ready email:", e));
 	}
 
+	// "Ready" has its own email above; printing and delivery use the notice.
+	await flagBookStep(book.projectId, to === "READY" ? {} : undefined);
 	revalidateOrder(id, book.projectId);
 	return ok();
 }

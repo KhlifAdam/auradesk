@@ -13,6 +13,7 @@ import { toE164 } from "@/lib/phone";
 import { flagBookingForStudio } from "@/services/changes/flag";
 import { clientBookingWhere } from "@/services/portal/booking-queries";
 import { emptyToNull, isTooEarly } from "@/services/shared/schemas";
+import { answerBookingQuote } from "./booking-quote";
 import { bookingCompleteness } from "./completeness";
 import { isOpenStatus } from "./options";
 import { clientAnswerSchema, clientEditSchema } from "./schemas";
@@ -216,6 +217,8 @@ export async function answerBooking(input: unknown): Promise<ActionResult> {
 		]);
 	}
 
+	// One answer: accepting the request accepts its quote, declining declines it.
+	await answerBookingQuote(db, id, accept);
 	notifyPhotographer(booking, accept ? "accepted" : "declined");
 	await flagBookingForStudio(id, { text: true });
 	revalidate();

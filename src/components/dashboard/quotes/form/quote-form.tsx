@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -11,7 +9,10 @@ import { InvoiceClientSection } from "@/components/dashboard/invoices/form/invoi
 import { InvoiceItemsSection } from "@/components/dashboard/invoices/form/invoice-items-section";
 import { TextField } from "@/components/dashboard/shared/form-fields";
 import { FormSection } from "@/components/dashboard/shared/form-section";
-import { Button } from "@/components/ui/button";
+import {
+	FORM_WITH_SIDE,
+	FormSideActions,
+} from "@/components/dashboard/shared/form-side-actions";
 import { Form } from "@/components/ui/form";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { createQuote, updateQuote } from "@/services/quotes/actions";
@@ -59,10 +60,7 @@ export function QuoteForm({
 
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="grid max-w-5xl gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]"
-			>
+			<form onSubmit={form.handleSubmit(onSubmit)} className={FORM_WITH_SIDE}>
 				<div className="flex flex-col gap-4">
 					<InvoiceClientSection projectTitle={projectTitle} />
 					<InvoiceItemsSection />
@@ -88,17 +86,12 @@ export function QuoteForm({
 						/>
 					</FormSection>
 				</div>
-				<aside className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 lg:sticky lg:top-4 lg:self-start">
-					<Button type="submit" size="sm" disabled={isSubmitting}>
-						{isSubmitting && (
-							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-						)}
-						{quoteId ? t("save") : t("create")}
-					</Button>
-					<Button asChild type="button" variant="ghost" size="sm">
-						<Link href={backHref}>{t("cancel")}</Link>
-					</Button>
-				</aside>
+				<FormSideActions
+					cancelHref={backHref}
+					cancelLabel={t("cancel")}
+					submitLabel={quoteId ? t("save") : t("create")}
+					submitting={isSubmitting}
+				/>
 			</form>
 		</Form>
 	);

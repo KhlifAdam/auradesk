@@ -39,7 +39,11 @@ export default async function EditInvoicePage({
 			/>
 			<InvoiceForm
 				initial={invoiceToValues(invoice)}
-				projectTitle={invoice.projectTitle}
+				project={
+					invoice.projectTitle
+						? { title: invoice.projectTitle, kind: null, quote: null }
+						: null
+				}
 				invoiceId={invoice.id}
 				backHref={backHref}
 			/>

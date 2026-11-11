@@ -1,4 +1,5 @@
 import type { ChangeMark } from "@/components/shared/change-mark";
+import type { ProjectUpdate } from "@/services/changes/project-updates";
 import type { StudioBrand } from "@/services/clients/branding";
 import type { GallerySummary } from "@/services/galleries/types";
 import type {
@@ -22,6 +23,8 @@ export interface PortalProject {
 	sharedGalleryCount: number;
 	/** New to the client, or changed by the studio since they opened it. */
 	mark: ChangeMark;
+	/** Why it is marked "updated": what the studio changed since they last looked. */
+	update: ProjectUpdate | null;
 }
 
 export interface PortalProjectDetail extends PortalProject {

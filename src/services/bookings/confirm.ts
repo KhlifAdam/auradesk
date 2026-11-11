@@ -8,7 +8,9 @@ import { toE164 } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { dayKeyIn, zonedToIso } from "@/services/calendar/dates";
 import { flagBookingForClient } from "@/services/changes/flag";
+import { syncProjectPayment } from "@/services/invoices/ledger";
 import { inviteToProject } from "@/services/projects/invitations";
+import { latestBookingQuote, quoteTotalOf } from "./booking-quote";
 import { bookingCompleteness } from "./completeness";
 import { notifyProjectCreated } from "./notify-project";
 import { CONFIRMED_WITHOUT_CLIENT } from "./options";
@@ -55,6 +57,15 @@ export async function confirmBooking(input: unknown): Promise<
 	// photographer explicitly confirms without them.
 	const accepted = booking.clientAcceptedAt !== null;
 	if (!accepted && !withoutClient) return fail("bookingNotAccepted");
+	// The price was proposed as a quote: the client must have accepted it.
+	// Accepting the request accepts the quote that went with it (sending or
+	// editing either one asks for a new answer), so a sent quote on an
+	// accepted request counts as accepted and is recorded so below.
+	const quote = await latestBookingQuote(db, id);
+	const quoteAccepted =
+		quote?.status === "ACCEPTED" || (quote?.status === "SENT" && accepted);
+	if (quote && !quoteAccepted && !withoutClient)
+		return fail("bookingQuoteNotAccepted");
 	const { desiredDate } = booking;
 	if (!desiredDate) return fail("bookingIncomplete");
 
@@ -107,7 +118,8 @@ export async function confirmBooking(input: unknown): Promise<
 				startTime,
 				endTime,
 				location: booking.location,
-				price: booking.proposedPrice,
+				// What the client accepted, extras included.
+				price: quote ? quoteTotalOf(quote) : booking.proposedPrice,
 				internalNotes: booking.internalNotes,
 				...(linkedClientId && {
 					clientId: linkedClientId,
@@ -123,6 +135,28 @@ export async function confirmBooking(input: unknown): Promise<
 			where: { id },
 			data: { projectId: project.id },
 		});
+		// The quote follows the project, where it becomes the invoice.
+		if (quote)
+			await tx.quote.update({
+				where: { id: quote.id },
+				data: {
+					projectId: project.id,
+					...(quote.status === "SENT" &&
+						accepted && {
+							status: "ACCEPTED" as const,
+							respondedAt: booking.clientAcceptedAt,
+						}),
+				},
+			});
+		// An invoice already made from that quote belongs to the project too,
+		// and what was paid on it becomes the project's payment.
+		if (quote?.invoiceId) {
+			await tx.invoice.update({
+				where: { id: quote.invoiceId },
+				data: { projectId: project.id },
+			});
+			await syncProjectPayment(tx, project.id);
+		}
 		await tx.calendarEvent.create({
 			data: {
 				photographerId,

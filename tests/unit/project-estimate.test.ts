@@ -73,14 +73,14 @@ describe("estimateProject", () => {
 		expect(e.daysLeft).toBeLessThanOrEqual(3);
 	});
 
-	it("waits for the shoot, then the client's selection and approval", () => {
+	it("waits for the shoot, then the client's selection", () => {
 		const e = estimateProject(
 			input({ stage: "PREP", eventDate: new Date("2026-11-02T00:00:00Z") }),
 		);
+		// No approval wait: the client sees the finals once they are delivered.
 		expect(e.waits).toEqual([
 			{ key: "shoot", days: 7 },
 			{ key: "selection", days: 2 },
-			{ key: "validation", days: 1 },
 		]);
 		expect(e.finishDate > "2026-11-02").toBe(true);
 	});

@@ -26,20 +26,18 @@ interface BookInvoiceInput {
 }
 
 /**
- * Bills an accepted photo book order: one line per part of the price, times
- * the copies. A higher price than quoted is a line of its own; a lower one a
- * discount. Not tied to the project, so it never disturbs the project's own
- * payment (which keeps the client's photos unlocked). Sent at once.
+ * The invoice lines of a book order: one per part of the price, times the
+ * copies. A higher price than quoted is a line of its own; a lower one a
+ * discount.
  */
-export async function createBookInvoice(
-	tx: Prisma.TransactionClient,
-	input: BookInvoiceInput,
+export async function bookInvoiceLines(
+	input: Pick<
+		BookInvoiceInput,
+		"title" | "pages" | "format" | "quote" | "total"
+	>,
 ) {
 	const t = await getTranslations("PhotoBook.invoice");
 	const { quote, total } = input;
-	await lockPhotographer(tx, input.photographerId);
-	const today = new Date(new Date().toISOString().slice(0, 10));
-
 	const describe = (line: Quote["lines"][number]) => {
 		switch (line.kind) {
 			case "base":
@@ -70,6 +68,25 @@ export async function createBookInvoice(
 			quantity: 1,
 			unitPrice: difference,
 		});
+	return {
+		items: items.map((item, position) => ({ ...item, position })),
+		discount: difference < 0 ? -difference : 0,
+	};
+}
+
+/**
+ * Bills an accepted photo book order. Not tied to the project, so it never
+ * disturbs the project's own payment (which keeps the client's photos
+ * unlocked). Sent at once.
+ */
+export async function createBookInvoice(
+	tx: Prisma.TransactionClient,
+	input: BookInvoiceInput,
+) {
+	const t = await getTranslations("PhotoBook.invoice");
+	const { items, discount } = await bookInvoiceLines(input);
+	await lockPhotographer(tx, input.photographerId);
+	const today = new Date(new Date().toISOString().slice(0, 10));
 
 	return tx.invoice.create({
 		data: {
@@ -88,11 +105,9 @@ export async function createBookInvoice(
 			issueDate: today,
 			dueDate: new Date(today.getTime() + DUE_DAYS * DAY_MS),
 			taxRate: 0,
-			discount: difference < 0 ? -difference : 0,
+			discount,
 			notes: t("note", { title: input.title }),
-			items: {
-				create: items.map((item, position) => ({ ...item, position })),
-			},
+			items: { create: items },
 		},
 		select: { id: true, number: true },
 	});

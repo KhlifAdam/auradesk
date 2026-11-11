@@ -66,25 +66,14 @@ export async function createBookFor(
 }
 
 /**
- * Saves a book's design. Photos that aren't the client's delivered ones (or
+ * A design safe to store: photos that aren't the client's delivered ones (or
  * were removed since) are emptied, so a design never points at someone else's
- * files, and an old reference can't make saving fail for good. `where` says
- * whose book it is: the client's or the studio's.
+ * files, and an old reference can't make saving fail for good.
  */
-export async function saveDesign(
-	where: Prisma.PhotoBookWhereInput,
+export async function cleanDesign(
+	book: { clientId: string; projectId: string },
 	design: BookDesign,
-): Promise<ActionResult> {
-	const book = await db.photoBook.findFirst({
-		where,
-		select: { id: true, projectId: true, clientId: true, status: true },
-	});
-	if (!book) return fail("notFound");
-	// Once sent to the studio, the design is what they print: it can't change.
-	if (book.status !== "DRAFT") return fail("bookLocked");
-	const project = await getBookableProject(book.clientId, book.projectId);
-	if (!project) return fail("notFound");
-
+): Promise<BookDesign> {
 	const clean = normalizeDesign(design);
 	const valid = new Set(
 		(
@@ -97,9 +86,28 @@ export async function saveDesign(
 			})
 		).map((item) => item.id),
 	);
-	const safe = mapAllSlots(clean, (slot) =>
+	return mapAllSlots(clean, (slot) =>
 		slot.itemId && valid.has(slot.itemId) ? slot : slotOf(null),
 	);
+}
+
+/** Saves a draft's design. `where` says whose book it is: the client's or the studio's. */
+export async function saveDesign(
+	where: Prisma.PhotoBookWhereInput,
+	design: BookDesign,
+): Promise<ActionResult> {
+	const book = await db.photoBook.findFirst({
+		where,
+		select: { id: true, projectId: true, clientId: true, status: true },
+	});
+	if (!book) return fail("notFound");
+	// Once sent to the studio, the design is what they print: only the
+	// studio may still change it, before printing (see order-edit-actions).
+	if (book.status !== "DRAFT") return fail("bookLocked");
+	const project = await getBookableProject(book.clientId, book.projectId);
+	if (!project) return fail("notFound");
+
+	const safe = await cleanDesign(book, design);
 	await db.photoBook.update({
 		where: { id: book.id },
 		data: { title: safe.title || project.title, design: safe },

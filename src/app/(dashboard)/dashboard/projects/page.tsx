@@ -2,19 +2,22 @@ import { FolderKanban, Plus } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { ProjectCards } from "@/components/dashboard/projects/project-cards";
 import { ProjectSortControl } from "@/components/dashboard/projects/project-sort";
-import { ProjectTable } from "@/components/dashboard/projects/project-table";
 import { StageFilter } from "@/components/dashboard/projects/stage-filter";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
-import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
+import { CardGridSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { UrlDateRange } from "@/components/dashboard/shared/url-date-range";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
 import { UrlSearch } from "@/components/dashboard/shared/url-search";
+import { UrlSelectFilter } from "@/components/dashboard/shared/url-select-filter";
 import { Button } from "@/components/ui/button";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { advanceShootDays } from "@/services/projects/auto-stage";
+import { getProjectCovers } from "@/services/projects/covers";
+import { PAYMENT_STATUSES } from "@/services/projects/options";
 import { listProjects } from "@/services/projects/queries";
 import {
 	type ListProjectsParams,
@@ -29,6 +32,7 @@ export default async function ProjectsPage({
 	searchParams,
 }: ProjectsPageProps) {
 	const t = await getTranslations("Projects");
+	const tPayment = await getTranslations("Projects.payment.status");
 	const params = listProjectsSchema.parse(await searchParams);
 
 	return (
@@ -48,6 +52,16 @@ export default async function ProjectsPage({
 			<div className="flex flex-wrap items-center gap-2">
 				<UrlSearch placeholder={t("list.search")} />
 				<StageFilter active={params.stage} />
+				<UrlSelectFilter
+					param="payment"
+					active={params.payment}
+					allLabel={t("list.allPayments")}
+					ariaLabel={t("list.paymentFilter")}
+					options={PAYMENT_STATUSES.map((value) => ({
+						value,
+						label: tPayment(value),
+					}))}
+				/>
 				<UrlDateRange
 					from={params.from}
 					to={params.to}
@@ -63,13 +77,14 @@ export default async function ProjectsPage({
 				key={[
 					params.q,
 					params.stage,
+					params.payment,
 					params.from,
 					params.to,
 					params.sort,
 					params.order,
 					params.page,
 				].join("-")}
-				fallback={<ListSkeleton />}
+				fallback={<CardGridSkeleton />}
 			>
 				<ProjectList params={params} />
 			</Suspense>
@@ -84,7 +99,7 @@ async function ProjectList({ params }: { params: ListProjectsParams }) {
 	await advanceShootDays(photographerId);
 	const { items, page, pageCount } = await listProjects(photographerId, params);
 	const filtered = Boolean(
-		params.q || params.stage || params.from || params.to,
+		params.q || params.stage || params.payment || params.from || params.to,
 	);
 
 	if (items.length === 0) {
@@ -99,7 +114,15 @@ async function ProjectList({ params }: { params: ListProjectsParams }) {
 
 	return (
 		<div className="flex flex-col gap-4">
-			<ProjectTable projects={items} />
+			<ProjectCards
+				projects={items}
+				covers={
+					await getProjectCovers(
+						photographerId,
+						items.map((project) => project.id),
+					)
+				}
+			/>
 			<UrlPagination page={page} pageCount={pageCount} />
 		</div>
 	);

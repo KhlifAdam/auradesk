@@ -28,13 +28,13 @@ export const AUTH_PATHS = {
 } as const satisfies Record<AuthAudience, Record<string, string>>;
 
 /**
- * Roles allowed to sign in on each side's page. A photographer can also be a
- * client of another studio, so the client page takes both. Administrators
- * have a page of their own (`ADMIN_PATHS.login`) and are turned away here.
+ * Roles allowed to sign in on each side's page. A photographer is never a
+ * client, so each page takes only its own role. Administrators have a page of
+ * their own (`ADMIN_PATHS.login`) and are turned away here.
  */
 export const AUDIENCE_ROLES: Record<AuthAudience, readonly string[]> = {
 	photographer: [ROLES.photographer],
-	client: [ROLES.client, ROLES.photographer],
+	client: [ROLES.client],
 };
 
 /** Where an account that still has to prove its email address goes. */

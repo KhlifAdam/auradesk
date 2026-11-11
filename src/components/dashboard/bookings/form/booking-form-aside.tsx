@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -18,12 +18,19 @@ import type { BookingValues } from "@/services/bookings/schemas";
 interface BookingFormAsideProps {
 	cancelHref: string;
 	submitLabel: string;
+	/** Step 1 moves on to the quote; step 2 saves the booking with it. */
+	step: 1 | 2;
+	onNext: () => void;
+	onBack: () => void;
 }
 
 /** What is still missing (live, as the form is filled) and the form's buttons. */
 export function BookingFormAside({
 	cancelHref,
 	submitLabel,
+	step,
+	onNext,
+	onBack,
 }: BookingFormAsideProps) {
 	const t = useTranslations("Bookings.checklist");
 	const tForm = useTranslations("Bookings.form");
@@ -100,17 +107,36 @@ export function BookingFormAside({
 				</ul>
 			</section>
 			<div className="flex flex-col gap-2">
-				<Button
-					type="submit"
-					size="sm"
-					disabled={formState.isSubmitting || !canSubmit}
-				>
-					{formState.isSubmitting && (
-						<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-					)}
-					{submitLabel}
-				</Button>
-				{!canSubmit && (
+				{step === 1 ? (
+					<Button type="button" size="sm" className="gap-1.5" onClick={onNext}>
+						{tForm("steps.next")}
+						<ArrowRight className="h-3.5 w-3.5" />
+					</Button>
+				) : (
+					<>
+						<Button
+							type="submit"
+							size="sm"
+							disabled={formState.isSubmitting || !canSubmit}
+						>
+							{formState.isSubmitting && (
+								<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+							)}
+							{submitLabel}
+						</Button>
+						<Button
+							type="button"
+							variant="outline"
+							size="sm"
+							className="gap-1.5"
+							onClick={onBack}
+						>
+							<ArrowLeft className="h-3.5 w-3.5" />
+							{tForm("steps.back")}
+						</Button>
+					</>
+				)}
+				{step === 2 && !canSubmit && (
 					<p className="text-center text-xs text-muted-foreground">
 						{tForm("blockedHint")}
 					</p>

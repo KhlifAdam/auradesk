@@ -61,6 +61,17 @@ export async function InvoiceList({
 									<span className="truncate">
 										{invoice.subject ?? t("untitled")}
 									</span>
+									{/* Says plainly what it bills: a project, a book, or nothing linked. */}
+									<span
+										className={cn(
+											"shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
+											invoice.kind === "custom"
+												? "bg-muted text-muted-foreground"
+												: "bg-primary/10 text-primary",
+										)}
+									>
+										{t(`kind.${invoice.kind}`)}
+									</span>
 									<ChangePill mark={invoice.mark ?? null} />
 								</p>
 								<p className="flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">

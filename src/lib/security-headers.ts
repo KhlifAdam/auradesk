@@ -13,6 +13,8 @@ const publicMedia = process.env.R2_PUBLIC_URL
 const r2Api = "https://*.r2.cloudflarestorage.com";
 /** Live voice dictation streams the microphone to Soniox from the browser. */
 const liveSpeech = "wss://stt-rt.soniox.com";
+/** "Hey Aura": the on-device wake word checks its licence key with Picovoice. */
+const wakeWord = "https://rest.picovoice.ai";
 /** Profile pictures of accounts created with Google or GitHub. */
 const avatars =
 	"https://lh3.googleusercontent.com https://avatars.githubusercontent.com";
@@ -26,12 +28,13 @@ const storage = `${publicMedia} ${r2Api}`.trim();
  */
 const contentSecurityPolicy = [
 	"default-src 'self'",
-	`script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+	// 'wasm-unsafe-eval': the wake word engine runs as WebAssembly.
+	`script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDev ? " 'unsafe-eval'" : ""}`,
 	"style-src 'self' 'unsafe-inline'",
 	`img-src 'self' blob: data: ${storage} ${avatars}`,
 	`media-src 'self' blob: ${storage}`,
 	"font-src 'self' data:",
-	`connect-src 'self' ${storage} ${liveSpeech}${isDev ? " ws: wss:" : ""}`,
+	`connect-src 'self' ${storage} ${liveSpeech} ${wakeWord}${isDev ? " ws: wss:" : ""}`,
 	"worker-src 'self' blob:",
 	// Showreels may embed a YouTube or Vimeo player.
 	`frame-src 'self' ${VIDEO_EMBED_ORIGINS.join(" ")}`,

@@ -131,6 +131,11 @@ export async function convertQuoteToInvoice(
 		if (!quote) return { error: "notFound" } as const;
 		if (!canInvoiceQuote(quote.status, quote.invoiceId))
 			return { error: "quoteNotInvoiceable" } as const;
+		// A booking's quote is billed on its project: confirm the booking first,
+		// or the invoice would float apart from the project it pays for.
+		const projectId = quote.projectId ?? quote.booking?.projectId ?? null;
+		if (quote.bookingId && !projectId)
+			return { error: "quoteBookingNotConfirmed" } as const;
 
 		const today = new Date(new Date().toISOString().slice(0, 10));
 		const due = new Date(today);
@@ -138,7 +143,7 @@ export async function convertQuoteToInvoice(
 		const invoice = await tx.invoice.create({
 			data: {
 				photographerId,
-				projectId: quote.projectId ?? quote.booking?.projectId ?? null,
+				projectId,
 				clientId: quote.clientId,
 				number: await nextInvoiceNumber(
 					tx,

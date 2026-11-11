@@ -141,6 +141,38 @@ export async function getStudioDraft(
 	return row ? toView(row, row.clientId) : null;
 }
 
+/** The client's most recently changed book of a project, for "what's new". */
+export function getLatestClientBook(clientId: string, projectId: string) {
+	return db.photoBook.findFirst({
+		where: { clientId, projectId, ...clientVisible },
+		orderBy: { updatedAt: "desc" },
+		select: { id: true, title: true, status: true, awaitingApprovalAt: true },
+	});
+}
+
+/** The client's book an invoice bills, if any: the invoice links back to it. */
+export function getInvoiceBook(clientId: string, invoiceId: string) {
+	return db.photoBook.findFirst({
+		where: { invoiceId, clientId },
+		select: { id: true, title: true, status: true, awaitingApprovalAt: true },
+	});
+}
+
+/** An order the studio may still redesign: sent or accepted, not yet printing. */
+export async function getEditableOrder(
+	photographerId: string,
+	bookId: string,
+): Promise<BookView | null> {
+	const row = await db.photoBook.findFirst({
+		where: {
+			id: bookId,
+			photographerId,
+			status: { in: ["SUBMITTED", "ACCEPTED"] },
+		},
+	});
+	return row ? toView(row, row.clientId) : null;
+}
+
 async function toView(
 	row: PhotoBook,
 	clientId: string,

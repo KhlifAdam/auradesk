@@ -8,8 +8,10 @@ import { db } from "@/lib/db";
 import { toE164 } from "@/lib/phone";
 import { flagBookingForClient } from "@/services/changes/flag";
 import { sharesProjectWith } from "@/services/clients/queries";
+import { computeTotals } from "@/services/invoices/totals";
 import { CLIENT_SOURCES } from "@/services/portal/booking-queries";
 import { emptyToNull, idSchema, isTooEarly } from "@/services/shared/schemas";
+import { saveBookingQuote } from "./booking-quote";
 import { canSaveBooking } from "./completeness";
 import {
 	type BookingValues,
@@ -44,7 +46,9 @@ async function toData(values: Omit<BookingValues, "clientId">) {
 			: null,
 		location: emptyToNull(values.location),
 		clientBudget: values.clientBudget,
-		proposedPrice: values.proposedPrice,
+		// The quote's total, whatever the browser sent.
+		proposedPrice: computeTotals(values.items, values.discount, values.taxRate)
+			.total,
 		plannedAdvance: values.plannedAdvance,
 		responseDeadline: toDate(values.responseDeadline),
 		internalNotes: emptyToNull(values.internalNotes),
@@ -108,6 +112,13 @@ export async function createBooking(
 		select: { id: true },
 	});
 
+	// The booking's costs are its quote, made with it.
+	const quote = await saveBookingQuote(photographerId, booking.id, values);
+	if (!quote.ok) {
+		await db.booking.delete({ where: { id: booking.id } });
+		return fail(quote.error);
+	}
+
 	revalidateBookings();
 	return ok(booking);
 }
@@ -146,6 +157,9 @@ export async function updateBooking(input: unknown): Promise<ActionResult> {
 		},
 	});
 	if (count === 0) return fail(await whyNotEditable(photographerId, id));
+
+	const quote = await saveBookingQuote(photographerId, id, values);
+	if (!quote.ok) return fail(quote.error);
 
 	await flagBookingForClient(id);
 	revalidateBookings();

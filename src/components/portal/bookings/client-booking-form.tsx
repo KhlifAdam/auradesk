@@ -201,7 +201,7 @@ export function ClientBookingForm({
 					label={t("budget")}
 					description={t("budgetHint")}
 					type="number"
-					step="0.001"
+					step="any"
 					className="sm:max-w-xs"
 				/>
 			</form>

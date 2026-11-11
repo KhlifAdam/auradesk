@@ -114,7 +114,13 @@ export async function withdrawBook(input: unknown): Promise<ActionResult> {
 	if (!book) return fail("notFound");
 	const { count } = await db.photoBook.updateMany({
 		where: { id: parsed.data, clientId, status: "SUBMITTED" },
-		data: { status: "DRAFT", submittedAt: null },
+		data: {
+			status: "DRAFT",
+			submittedAt: null,
+			changeRequest: "",
+			changeRequestedAt: null,
+			awaitingApprovalAt: null,
+		},
 	});
 	if (count === 0) return fail("bookWrongStatus");
 

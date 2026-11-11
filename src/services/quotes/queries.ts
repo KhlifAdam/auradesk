@@ -116,6 +116,7 @@ function toDetail(row: DetailRow): QuoteDetail {
 		notes: row.notes ?? "",
 		sentAt: row.sentAt?.toISOString() ?? null,
 		respondedAt: row.respondedAt?.toISOString() ?? null,
+		clientNote: row.clientNote,
 		invoiceNumber: row.invoice?.number ?? null,
 		totals: totalsOf(row),
 		items: row.items.map((item, index) => {

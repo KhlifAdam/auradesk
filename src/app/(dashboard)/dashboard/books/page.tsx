@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { NewBookDialog } from "@/components/dashboard/books/new-book-dialog";
 import { OrderList } from "@/components/dashboard/books/order-list";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
-import { ListSkeleton } from "@/components/dashboard/shared/list-skeleton";
+import { CardGridSkeleton } from "@/components/dashboard/shared/list-skeleton";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
 import { PageShell } from "@/components/dashboard/shared/page-shell";
 import { UrlPagination } from "@/components/dashboard/shared/url-pagination";
@@ -71,7 +71,7 @@ export default async function BookOrdersPage({
 			</div>
 			<Suspense
 				key={`${params.q}-${params.status}-${params.page}`}
-				fallback={<ListSkeleton />}
+				fallback={<CardGridSkeleton />}
 			>
 				<Orders params={params} />
 			</Suspense>

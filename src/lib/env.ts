@@ -16,6 +16,8 @@ const coreSchema = z.object({
 	WA_GATEWAY_URL: z.url().optional(),
 	/** Shared with the gateway, both ways: its API and its status webhook. */
 	WA_GATEWAY_SECRET: z.string().min(32).optional(),
+	/** Picovoice access key for the "Hey Aura" wake word; unset hides it. */
+	PICOVOICE_ACCESS_KEY: z.string().min(1).optional(),
 });
 
 const r2CredentialsSchema = z.object({

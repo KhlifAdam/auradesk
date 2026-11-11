@@ -11,6 +11,7 @@ import { useAssistant } from "./assistant-provider";
 import { AssistantShell } from "./assistant-shell";
 import { ChatView } from "./chat/chat-view";
 import { HistoryMenu } from "./history-menu";
+import { WakeWordToggle } from "./wake-word-toggle";
 
 /**
  * The studio's assistant: docked beside the page on wide screens (the page
@@ -43,6 +44,7 @@ function PanelHeader() {
 			<h2 className="flex-1 font-display text-sm font-semibold">
 				{t("title")}
 			</h2>
+			<WakeWordToggle />
 			<Button
 				type="button"
 				size="icon"

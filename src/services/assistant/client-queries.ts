@@ -11,6 +11,7 @@ import {
 import { roundMoney } from "@/services/invoices/totals";
 import { getPortalProject } from "@/services/portal/queries";
 import { getProjectEstimate } from "@/services/projects/estimate";
+import { isDeliveredStage } from "@/services/projects/stages";
 
 const studioName = (p: { name: string; studio: { name: string } | null }) =>
 	p.studio?.name ?? p.name;
@@ -52,7 +53,7 @@ export async function getClientProjectStatus(
 	const [invoices, books, estimate] = await Promise.all([
 		listClientProjectInvoices(clientId, projectId),
 		listProjectBooks(clientId, projectId),
-		project.stage === "DELIVERY"
+		isDeliveredStage(project.stage)
 			? null
 			: getProjectEstimate(project.photographerId, projectId),
 	]);

@@ -2,6 +2,7 @@
 
 import { FolderKanban, X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { ClientPicker } from "@/components/dashboard/projects/form/client-picker";
 import { TextField } from "@/components/dashboard/shared/form-fields";
@@ -12,8 +13,11 @@ import type { InvoiceValues } from "@/services/invoices/schemas";
 /** Who is billed: picked from existing clients or typed, plus the linked project. */
 export function InvoiceClientSection({
 	projectTitle,
+	projectField,
 }: {
 	projectTitle: string | null;
+	/** Replaces the plain project chip (the invoice form's project picker). */
+	projectField?: ReactNode;
 }) {
 	const t = useTranslations("Invoices.form.client");
 	const { setValue, control } = useFormContext<InvoiceValues>();
@@ -21,7 +25,8 @@ export function InvoiceClientSection({
 
 	return (
 		<FormSection title={t("title")} description={t("hint")}>
-			{projectId && projectTitle && (
+			{projectField}
+			{!projectField && projectId && projectTitle && (
 				<div className="flex w-fit items-center gap-1.5 rounded-lg border border-border bg-muted/50 py-1 pl-2.5 pr-1 text-xs">
 					<FolderKanban className="h-3.5 w-3.5 text-muted-foreground" />
 					{t("project", { title: projectTitle })}

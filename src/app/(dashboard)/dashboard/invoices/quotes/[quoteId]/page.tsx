@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, MessageSquareText } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations } from "next-intl/server";
@@ -21,6 +21,8 @@ export default async function QuotePage({
 	const quote = await getQuote(photographerId, quoteId);
 	if (!quote) notFound();
 
+	// A booking's quote becomes an invoice on its project, once confirmed.
+	const waitsForBooking = Boolean(quote.bookingId && !quote.projectId);
 	const answered = quote.respondedAt
 		? format.dateTime(new Date(quote.respondedAt), { dateStyle: "medium" })
 		: "";
@@ -29,7 +31,9 @@ export default async function QuotePage({
 		: {
 				DRAFT: t("draftHint"),
 				SENT: t("waitingHint"),
-				ACCEPTED: t("acceptedHint", { date: answered }),
+				ACCEPTED: waitsForBooking
+					? t("acceptedBookingHint", { date: answered })
+					: t("acceptedHint", { date: answered }),
 				DECLINED: t("declinedHint", { date: answered }),
 			}[quote.status];
 
@@ -51,6 +55,7 @@ export default async function QuotePage({
 							quoteId={quote.id}
 							status={quote.status}
 							invoiceId={quote.invoiceId}
+							waitsForBooking={waitsForBooking}
 						/>
 					}
 				/>
@@ -67,6 +72,15 @@ export default async function QuotePage({
 			<p className="max-w-3xl rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-muted-foreground print:hidden">
 				{hint}
 			</p>
+			{quote.clientNote && (
+				<p className="flex max-w-3xl items-start gap-2 whitespace-pre-wrap rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm print:hidden">
+					<MessageSquareText className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+					<span>
+						<span className="font-medium">{t("clientNote")}</span>{" "}
+						{quote.clientNote}
+					</span>
+				</p>
+			)}
 			<QuoteDocument quote={quote} />
 		</PageShell>
 	);

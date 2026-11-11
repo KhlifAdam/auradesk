@@ -11,17 +11,30 @@ import { getQuote } from "@/services/quotes/queries";
 
 export default async function EditQuotePage({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ quoteId: string }>;
+	searchParams: Promise<{ from?: string }>;
 }) {
 	const t = await getTranslations("Quotes.form");
 	const { quoteId } = await params;
+	const { from } = await searchParams;
 	const { photographerId } = await requirePhotographer();
 	const quote = await getQuote(photographerId, quoteId);
 	if (!quote) notFound();
-	const backHref = `/dashboard/invoices/quotes/${quote.id}`;
-	// Answered or invoiced quotes are final.
-	if (quote.invoiceId || (quote.status !== "DRAFT" && quote.status !== "SENT"))
+	// Opened from its booking: saving goes back there.
+	const backHref =
+		from === "booking" && quote.bookingId
+			? `/dashboard/bookings/${quote.bookingId}`
+			: `/dashboard/invoices/quotes/${quote.id}`;
+	// Answered or invoiced quotes are final, except a booking's accepted quote
+	// before the booking is confirmed (it then has no project yet).
+	const openBookingQuote =
+		quote.status === "ACCEPTED" && quote.bookingId && !quote.projectId;
+	if (
+		quote.invoiceId ||
+		(quote.status !== "DRAFT" && quote.status !== "SENT" && !openBookingQuote)
+	)
 		redirect(backHref);
 
 	return (

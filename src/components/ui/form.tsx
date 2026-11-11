@@ -1,5 +1,6 @@
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import { type Messages, useTranslations } from "next-intl";
 import * as React from "react";
 import {
 	Controller,
@@ -11,6 +12,9 @@ import {
 } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+
+type ValidationKey = keyof Messages["Validation"];
+type ErrorKey = keyof Messages["Errors"];
 
 const Form = FormProvider;
 
@@ -147,7 +151,17 @@ const FormMessage = React.forwardRef<
 	React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
 	const { error, formMessageId } = useFormField();
-	const body = error ? String(error?.message ?? "") : children;
+	const tValidation = useTranslations("Validation");
+	const tErrors = useTranslations("Errors");
+	// Schemas return codes ("required", "endBeforeStart"): show their text.
+	const code = error ? String(error.message ?? "") : "";
+	const body = !error
+		? children
+		: tValidation.has(code as ValidationKey)
+			? tValidation(code as ValidationKey)
+			: tErrors.has(code as ErrorKey)
+				? tErrors(code as ErrorKey)
+				: code;
 
 	if (!body) {
 		return null;

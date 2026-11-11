@@ -6,6 +6,7 @@
 
 import { daysBetween } from "@/lib/money/collect";
 import {
+	isDeliveredStage,
 	PROJECT_STAGES,
 	type ProjectStage,
 	stageIndex,
@@ -46,8 +47,8 @@ export const HOURS_PER_DAY = 6;
 const KEEP_RATE = 0.35;
 /** Photos edited an hour: batch editing with presets, not one-by-one retouching. */
 const EDITS_PER_HOUR = 60;
-/** Days the client takes to pick or approve; a small set is answered faster. */
-const WAIT_DAYS = { selection: 2, validation: 1 } as const;
+/** Days the client takes to pick their photos; a small set is answered faster. */
+const WAIT_DAYS = { selection: 2 } as const;
 const SMALL_SET = 50;
 /** Each other project in editing slows this one a little, up to +50%. */
 const WORKLOAD_STEP = 0.1;
@@ -61,7 +62,7 @@ export const TASKS = [
 	"export",
 ] as const;
 export type TaskKey = (typeof TASKS)[number];
-export type WaitKey = "shoot" | "selection" | "validation";
+export type WaitKey = "shoot" | "selection";
 
 /** From which stage each task is still to do (it stays to do until that stage is passed). */
 const TASK_UNTIL: Record<TaskKey, ProjectStage> = {
@@ -174,7 +175,7 @@ export function estimateProject(input: EstimateInput): Estimate {
 		fromFiles: v.fromFiles,
 	};
 	const today = input.today;
-	if (input.stage === "DELIVERY")
+	if (isDeliveredStage(input.stage))
 		return {
 			done: true,
 			hoursLeft: 0,
@@ -205,8 +206,6 @@ export function estimateProject(input: EstimateInput): Estimate {
 	const small = v.photos < SMALL_SET;
 	if (v.photos > 0 && at <= stageIndex("SELECTION"))
 		waits.push({ key: "selection", days: small ? 1 : WAIT_DAYS.selection });
-	if (at <= stageIndex("VALIDATION"))
-		waits.push({ key: "validation", days: WAIT_DAYS.validation });
 
 	const share =
 		1 + Math.min(Math.max(0, input.workload), WORKLOAD_CAP) * WORKLOAD_STEP;
@@ -258,5 +257,5 @@ export function estimateProject(input: EstimateInput): Estimate {
 
 export const EDITING_STAGES: ProjectStage[] = PROJECT_STAGES.slice(
 	stageIndex("IMPORT"),
-	stageIndex("VALIDATION"),
+	stageIndex("DELIVERY"),
 );

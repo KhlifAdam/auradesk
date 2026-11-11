@@ -1,4 +1,10 @@
-import { ArrowLeft, Receipt } from "lucide-react";
+import {
+	ArrowLeft,
+	Lock,
+	MessageSquareText,
+	PencilRuler,
+	Receipt,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -27,11 +33,13 @@ export default async function BookOrderPage({
 	const t = await getTranslations("BookOrders.detail");
 	const { photographerId } = await requirePhotographer();
 	const draft = await getStudioDraft(photographerId, bookId);
-	if (draft) return <BookEditor book={draft} studio />;
+	if (draft) return <BookEditor book={draft} mode="studio" />;
 	const book = await getBookOrder(photographerId, bookId);
 	if (!book) notFound();
 	const { order, design, client } = book;
 	const { invoice } = order;
+	// The studio can still change the design until printing starts.
+	const editable = order.status === "SUBMITTED" || order.status === "ACCEPTED";
 	const locale = await getLocale();
 
 	return (
@@ -64,15 +72,48 @@ export default async function BookOrderPage({
 						</Link>
 					</p>
 				</div>
-				<BookStatusBadge status={order.status} />
+				<div className="flex flex-col items-end gap-1.5">
+					<div className="flex items-center gap-2">
+						<BookStatusBadge
+							status={order.status}
+							awaitingApproval={order.awaitingApproval}
+						/>
+						{editable && (
+							<Button asChild size="sm" className="h-8 gap-1.5 text-xs">
+								<Link href={`/dashboard/books/${book.id}/edit`}>
+									<PencilRuler className="h-3.5 w-3.5" />
+									{t("editDesign")}
+								</Link>
+							</Button>
+						)}
+					</div>
+					{!editable && (
+						<p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+							<Lock className="h-3 w-3" />
+							{t("lockedHint")}
+						</p>
+					)}
+				</div>
 			</header>
 
+			{order.changeRequest && (
+				<p className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm">
+					<MessageSquareText className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+					<span className="whitespace-pre-wrap">
+						{t("changeRequest", {
+							client: client.name,
+							note: order.changeRequest,
+						})}
+					</span>
+				</p>
+			)}
 			<section className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
 				<OrderWorkflow
 					bookId={book.id}
 					status={order.status}
 					calculated={order.quote?.total ?? 0}
 					invoicePaid={invoice?.status === "PAID"}
+					awaitingApproval={order.awaitingApproval}
 					balance={formatMoney(
 						invoice ? Math.max(0, invoice.total - invoice.paid) : 0,
 						locale,

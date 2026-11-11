@@ -1,6 +1,7 @@
 import { Camera, Clock, ListChecks, Package, Star } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { MediaThumb } from "@/components/dashboard/media/media-thumb";
+import { CARD, CARD_MEDIA } from "@/components/dashboard/shared/card-grid";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { PackageItem } from "@/services/packages/types";
@@ -19,10 +20,7 @@ export function PackageCard({ pkg, onSelect }: PackageCardProps) {
 		<button
 			type="button"
 			onClick={onSelect}
-			className={cn(
-				"group flex w-full flex-col overflow-hidden rounded-lg border border-border bg-card text-left transition-all duration-300 hover:border-primary/50 hover:shadow-luminous",
-				!pkg.active && "opacity-60",
-			)}
+			className={cn(CARD, !pkg.active && "opacity-60")}
 		>
 			{pkg.cover ? (
 				<MediaThumb
@@ -31,7 +29,7 @@ export function PackageCard({ pkg, onSelect }: PackageCardProps) {
 					className="aspect-[16/9]"
 				/>
 			) : (
-				<div className="flex aspect-[16/9] items-center justify-center bg-muted">
+				<div className={CARD_MEDIA}>
 					<Package className="h-5 w-5 text-muted-foreground" />
 				</div>
 			)}

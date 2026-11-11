@@ -1,3 +1,4 @@
+import type { BookingQuote } from "./booking-quote";
 import type { BookingValues } from "./schemas";
 import type { BookingDetail } from "./types";
 
@@ -23,13 +24,24 @@ export function emptyBookingValues(
 		plannedAdvance: null,
 		responseDeadline: "",
 		internalNotes: "",
+		items: [{ description: "", quantity: 1, unitPrice: null }],
+		discount: null,
+		taxRate: null,
 		...prefill,
 	};
 }
 
 const day = (iso: string | null) => iso?.slice(0, 10) ?? "";
 
-export function bookingToValues(booking: BookingDetail): BookingValues {
+/**
+ * The booking, with its quote's lines; without one, a single line for the
+ * service sold (`serviceLabel`, e.g. "Wedding") at its price.
+ */
+export function bookingToValues(
+	booking: BookingDetail,
+	quote: BookingQuote | null,
+	serviceLabel: string,
+): BookingValues {
 	return {
 		title: booking.title,
 		source: booking.source,
@@ -51,5 +63,16 @@ export function bookingToValues(booking: BookingDetail): BookingValues {
 		plannedAdvance: booking.plannedAdvance,
 		responseDeadline: day(booking.responseDeadline),
 		internalNotes: booking.internalNotes,
+		items: quote?.lines.length
+			? quote.lines
+			: [
+					{
+						description: serviceLabel,
+						quantity: 1,
+						unitPrice: booking.proposedPrice,
+					},
+				],
+		discount: quote?.discount || null,
+		taxRate: quote?.taxRate || null,
 	};
 }

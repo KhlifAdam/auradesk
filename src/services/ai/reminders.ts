@@ -3,6 +3,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { OPEN_STATUSES } from "@/services/bookings/options";
 import { todayUtc } from "@/services/equipment/options";
+import { DELIVERED_STAGES } from "@/services/projects/stages";
 import { planningReminders } from "./planning-reminders";
 
 export type ReminderKind =
@@ -105,7 +106,7 @@ async function deadlineReminders(photographerId: string, today: Date) {
 	const projects = await db.project.findMany({
 		where: {
 			photographerId,
-			stage: { not: "DELIVERY" },
+			stage: { notIn: [...DELIVERED_STAGES] },
 			deliveryDeadline: { lte: addDays(today, DEADLINE_SOON_DAYS) },
 		},
 		select: { id: true, title: true, deliveryDeadline: true },

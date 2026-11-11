@@ -74,6 +74,7 @@ export async function listProjects(
 		page,
 		q,
 		stage,
+		payment,
 		from,
 		to,
 		sort = DEFAULT_PROJECT_SORT,
@@ -83,6 +84,7 @@ export async function listProjects(
 ): Promise<ProjectPage> {
 	const where: Prisma.ProjectWhereInput = { photographerId };
 	if (stage) where.stage = stage;
+	if (payment) where.paymentStatus = payment;
 	// Event dates are stored as UTC midnights.
 	if (from || to)
 		where.eventDate = {

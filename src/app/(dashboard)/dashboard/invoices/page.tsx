@@ -24,6 +24,7 @@ import {
 	listInvoicesSchema,
 } from "@/services/invoices/schemas";
 import { getInvoiceStats } from "@/services/invoices/stats";
+import { getMoneyOverview } from "@/services/money/queries";
 
 interface InvoicesPageProps {
 	searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -78,7 +79,13 @@ export default async function InvoicesPage({
 
 async function Stats() {
 	const { photographerId } = await requirePhotographer();
-	return <InvoiceStatsCards stats={await getInvoiceStats(photographerId)} />;
+	const [stats, money] = await Promise.all([
+		getInvoiceStats(photographerId),
+		getMoneyOverview(photographerId, 0),
+	]);
+	return (
+		<InvoiceStatsCards stats={{ ...stats, notInvoiced: money.notInvoiced }} />
+	);
 }
 
 async function Invoices({ params }: { params: ListInvoicesParams }) {

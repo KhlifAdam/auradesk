@@ -13,12 +13,17 @@ const TONE: Record<BookStatus, string> = {
 	DELIVERED: "bg-success/15 text-success",
 };
 
-/** Where a book stands, as a small coloured label. */
+/**
+ * Where a book stands, as a small coloured label. A design the studio changed
+ * reads "Awaiting approval" until the client approves it.
+ */
 export function BookStatusBadge({
 	status,
+	awaitingApproval = false,
 	className,
 }: {
 	status: BookStatus;
+	awaitingApproval?: boolean;
 	className?: string;
 }) {
 	const t = useTranslations("PhotoBook.status");
@@ -26,11 +31,13 @@ export function BookStatusBadge({
 		<span
 			className={cn(
 				"inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[11px] font-medium",
-				TONE[status],
+				awaitingApproval
+					? "bg-event-meeting/15 text-event-meeting"
+					: TONE[status],
 				className,
 			)}
 		>
-			{t(status)}
+			{awaitingApproval ? t("awaitingApproval") : t(status)}
 		</span>
 	);
 }

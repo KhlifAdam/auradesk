@@ -89,7 +89,11 @@ export default async function PortalBookingPage({
 						{t("waitingStudioHint")}
 					</p>
 				)}
-			<BookingQuotes clientId={session.user.id} bookingId={booking.id} />
+			<BookingQuotes
+				clientId={session.user.id}
+				bookingId={booking.id}
+				editable={booking.editable}
+			/>
 			<div
 				className={cn(
 					"grid max-w-5xl gap-4",

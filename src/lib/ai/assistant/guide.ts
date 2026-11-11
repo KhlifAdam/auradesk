@@ -18,7 +18,8 @@ private dashboard (this app) and a public website per studio.
 - Projects (/dashboard/projects): the work itself. Only confirming a booking (or
   creating a project by hand) makes a project; a request alone never does.
   Workflow stages, in order: BOOKING, PREP, SHOOTING, IMPORT, SELECTION,
-  ORGANIZATION, POST_PRODUCTION, EXPORT, VALIDATION, DELIVERY. A client is invited
+  ORGANIZATION, POST_PRODUCTION, EXPORT, DELIVERY (the client gets their files,
+  once paid), COMPLETED (closed once the client is happy). A client is invited
   to a project by email or phone and sees it in their portal once they accept.
 - Galleries (inside a project): PROOFS for the client to choose from, FINAL for
   delivery. Sharing a gallery notifies the client; they can pick and comment

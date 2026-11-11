@@ -10,12 +10,20 @@ import { PortalAssistantLauncher } from "./portal-assistant-launcher";
 import { PortalAssistantPanel } from "./portal-assistant-panel";
 
 /** Shared state of the client's assistant; wraps the whole portal layout. */
-export function PortalAssistantProvider({ children }: { children: ReactNode }) {
+export function PortalAssistantProvider({
+	children,
+	wakeWordKey,
+}: {
+	children: ReactNode;
+	/** Picovoice access key for "Hey Aura", read on the server. */
+	wakeWordKey: string | null;
+}) {
 	return (
 		<AssistantProvider
 			initialOpen={false}
 			basePath="/portal/assistant"
 			remembersOpen={false}
+			wakeWordKey={wakeWordKey}
 		>
 			{children}
 		</AssistantProvider>

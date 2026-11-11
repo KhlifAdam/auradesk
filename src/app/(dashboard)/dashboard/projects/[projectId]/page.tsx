@@ -19,6 +19,7 @@ import { ProjectClientCard } from "@/components/dashboard/projects/project-clien
 import { ProjectDeleteButton } from "@/components/dashboard/projects/project-delete-button";
 import { ProjectEstimateCard } from "@/components/dashboard/projects/project-estimate-card";
 import { ProjectFacts } from "@/components/dashboard/projects/project-facts";
+import { ProjectQuoteCallout } from "@/components/dashboard/projects/project-quote-callout";
 import { ProjectStageControl } from "@/components/dashboard/projects/project-stage-control";
 import { EmptyState } from "@/components/dashboard/shared/empty-state";
 import { PageHeader } from "@/components/dashboard/shared/page-header";
@@ -119,6 +120,11 @@ export default async function ProjectPage({
 				invoices={invoices}
 				hrefBase="/dashboard/invoices"
 				newHref={`/dashboard/invoices/new?project=${project.id}`}
+			/>
+			{/* The accepted quote waits under the invoices, to become one. */}
+			<ProjectQuoteCallout
+				photographerId={photographerId}
+				projectId={project.id}
 			/>
 			<section className="flex flex-col gap-3">
 				<div className="flex items-center justify-between">

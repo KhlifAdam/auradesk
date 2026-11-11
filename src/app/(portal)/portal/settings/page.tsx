@@ -7,7 +7,6 @@ import { PasswordCard } from "@/components/account/password-card";
 import { PreferencesCard } from "@/components/account/preferences-card";
 import { SessionsCard } from "@/components/account/sessions-card";
 import { requireClient } from "@/lib/auth/require-client";
-import { ROLES } from "@/lib/auth/roles";
 import { enabledSocialProviders } from "@/lib/auth/social-providers";
 import { getSecurityOverview } from "@/services/account/queries";
 
@@ -49,7 +48,7 @@ export default async function PortalSettingsPage() {
 					sessions={security.sessions}
 					now={new Date().toISOString()}
 				/>
-				<AccountDataCard studio={session.user.role === ROLES.photographer} />
+				<AccountDataCard studio={false} />
 			</div>
 		</>
 	);

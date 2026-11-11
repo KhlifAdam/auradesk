@@ -9,6 +9,7 @@ import {
 import { realEmail, toE164 } from "@/lib/phone";
 import { sendChangeSms } from "@/lib/sms/send-client-sms";
 import { CLIENT_SOURCES } from "@/services/portal/booking-queries";
+import { keepUpdate, type ProjectUpdate } from "./project-updates";
 
 /** Which ways to tell them; some flows already send their own email. */
 export interface Channels {
@@ -119,7 +120,11 @@ export async function flagBookingForClient(id: string, channels = ALL) {
 }
 
 /** The studio changed a project the client has joined. Never throws. */
-export async function flagProjectForClient(id: string, channels = ALL) {
+export async function flagProjectForClient(
+	id: string,
+	channels = ALL,
+	update: ProjectUpdate = "details",
+) {
 	try {
 		const project = await db.project.findUnique({
 			where: { id },
@@ -127,14 +132,22 @@ export async function flagProjectForClient(id: string, channels = ALL) {
 				title: true,
 				clientSeenAt: true,
 				clientChangedAt: true,
+				clientUpdate: true,
 				client: userSelect,
 				photographer: photographerSelect,
 			},
 		});
 		if (!project?.client) return;
+		const unseen = waiting(project.clientSeenAt, project.clientChangedAt);
 		await db.project.update({
 			where: { id },
-			data: { clientChangedAt: new Date() },
+			data: {
+				clientChangedAt: new Date(),
+				// The client is told why when they open it.
+				clientUpdate: unseen
+					? keepUpdate(project.clientUpdate, update)
+					: update,
+			},
 		});
 		if (project.clientSeenAt === null) return;
 		if (waiting(project.clientSeenAt, project.clientChangedAt)) return;

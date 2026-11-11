@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { OPEN_STATUSES } from "@/services/bookings/options";
 import { sharesProjectWith } from "@/services/clients/queries";
 import { countUnread } from "@/services/messages/queries";
+import { getMoneyOverview } from "@/services/money/queries";
 import type { Period } from "./period";
 
 /** A figure for the chosen period and, when there is one, the period before. */
@@ -62,14 +63,10 @@ async function bookedValue(photographerId: string, r: Range) {
 	return sum._sum.price?.toNumber() ?? 0;
 }
 
-/** Still owed on unpaid projects, today. */
+/** Still owed today: unpaid invoices and project prices not invoiced yet. */
 async function outstanding(photographerId: string) {
-	const rows = await db.$queryRaw<{ n: number }[]>(Prisma.sql`
-		SELECT COALESCE(SUM(GREATEST(price - advance, 0)), 0)::float8 AS n
-		FROM projects
-		WHERE photographer_id = ${photographerId}
-		  AND price IS NOT NULL AND payment_status <> 'PAID'`);
-	return rows[0]?.n ?? 0;
+	// The same figure as the "Money to collect" card, never a second formula.
+	return (await getMoneyOverview(photographerId, 0)).toCollect;
 }
 
 /** Photos and videos added to the library and to project galleries. */

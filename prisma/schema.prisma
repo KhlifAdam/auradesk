@@ -311,12 +311,14 @@ enum ProjectStage {
   PREP
   SHOOTING
   IMPORT
-  ORGANIZATION
   SELECTION
+  ORGANIZATION
   POST_PRODUCTION
   EXPORT
-  VALIDATION
+  /// The files are open to the client (once paid); they review them here.
   DELIVERY
+  /// Closed: the client is happy, nothing left to do.
+  COMPLETED
 
   @@map("project_stage")
 }
@@ -398,6 +400,8 @@ model Project {
   clientSeenAt    DateTime?          @map("client_seen_at")
   /// Last change by the studio; unseen while later than `clientSeenAt`.
   clientChangedAt DateTime?          @map("client_changed_at")
+  /// What that change was (stage, proofs, delivered, details, payment), told to the client when they open it.
+  clientUpdate    String?            @map("client_update")
   /// Last change by the client; unseen while later than `studioSeenAt`.
   studioChangedAt DateTime?          @map("studio_changed_at")
   studioSeenAt    DateTime?          @map("studio_seen_at")
@@ -716,8 +720,8 @@ model Message {
   /// Set when the sender deleted it; `body` is then emptied.
   deletedAt      DateTime? @map("deleted_at")
 
-  conversation Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User               @relation(fields: [senderId], references: [id], onDelete: Cascade)
   attachment   MessageAttachment?
 
   @@index([conversationId, createdAt, id])
@@ -1000,6 +1004,8 @@ model Quote {
   sentAt         DateTime?   @map("sent_at")
   /// When the client accepted or declined it.
   respondedAt    DateTime?   @map("responded_at")
+  /// What the client wrote with their answer ("can we drop the drone?").
+  clientNote     String      @default("") @map("client_note")
   /// First time the client opened it; null while it is new to them (nav badge).
   clientSeenAt   DateTime?   @map("client_seen_at")
   /// Set once it has been turned into an invoice.
@@ -1415,33 +1421,38 @@ model AssistantMessage {
 /// JSON, checked on every save against the shape in `lib/books/design.ts`;
 /// the print-ready PDF is built from it on demand.
 model PhotoBook {
-  id              String          @id @default(cuid())
-  projectId       String          @map("project_id")
-  clientId        String          @map("client_id")
+  id                 String          @id @default(cuid())
+  projectId          String          @map("project_id")
+  clientId           String          @map("client_id")
   /// The studio that prints it (the project's photographer); lets every studio query stay scoped.
-  photographerId  String          @map("photographer_id")
+  photographerId     String          @map("photographer_id")
   /// Same as `design.title`, kept here for lists.
-  title           String
-  design          Json
+  title              String
+  design             Json
   /// DRAFT while the client designs it; once sent, the design is locked.
-  status          BookOrderStatus @default(DRAFT)
-  copies          Int             @default(1)
+  status             BookOrderStatus @default(DRAFT)
+  copies             Int             @default(1)
   /// What the client chose: cover, paper and extras, as ids of the studio's price list.
-  options         Json?
+  options            Json?
   /// The client's message to the studio with the order.
-  clientNote      String          @default("") @map("client_note")
+  clientNote         String          @default("") @map("client_note")
   /// The price as calculated when it was sent: lines, per copy and total, so later price changes don't move it.
-  quote           Json?
+  quote              Json?
   /// What the studio finally charges (the quote, unless they adjusted it).
-  total           Decimal?        @db.Decimal(12, 3)
+  total              Decimal?        @db.Decimal(12, 3)
   /// The studio's note when it sends a book back to the client.
-  statusNote      String          @default("") @map("status_note")
-  invoiceId       String?         @unique @map("invoice_id")
-  submittedAt     DateTime?       @map("submitted_at")
+  statusNote         String          @default("") @map("status_note")
+  invoiceId          String?         @unique @map("invoice_id")
+  submittedAt        DateTime?       @map("submitted_at")
+  /// The client's latest request to change the book after sending it; empty when none is open.
+  changeRequest      String          @default("") @map("change_request")
+  changeRequestedAt  DateTime?       @map("change_requested_at")
+  /// The studio changed the design of an order; printing waits until the client approves it.
+  awaitingApprovalAt DateTime?       @map("awaiting_approval_at")
   /// Designed by the studio for the client; while a draft, only the studio sees and edits it.
-  createdByStudio Boolean         @default(false) @map("created_by_studio")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @updatedAt @map("updated_at")
+  createdByStudio    Boolean         @default(false) @map("created_by_studio")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
 
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   client       User     @relation("ClientBooks", fields: [clientId], references: [id], onDelete: Cascade)

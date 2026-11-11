@@ -65,7 +65,13 @@ export function ProjectDetailCard({
 		>
 			<div className="flex flex-col gap-2 px-3 py-2.5 text-xs">
 				<div className="flex flex-wrap items-center gap-1.5">
-					<Pill tone={project.stage === "DELIVERY" ? "success" : "primary"}>
+					<Pill
+						tone={
+							project.stage === "DELIVERY" || project.stage === "COMPLETED"
+								? "success"
+								: "primary"
+						}
+					>
 						{tStage(project.stage)}
 					</Pill>
 					<span className="text-muted-foreground">

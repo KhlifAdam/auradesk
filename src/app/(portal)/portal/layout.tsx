@@ -12,8 +12,8 @@ import { PortalHeader } from "@/components/portal/portal-header";
 import { PortalLiveRefresh } from "@/components/portal/portal-live-refresh";
 import { SpaceBackdrop } from "@/components/shared/space-backdrop";
 import { requireClient } from "@/lib/auth/require-client";
-import { ROLES } from "@/lib/auth/roles";
 import { BRAND_NAME } from "@/lib/brand";
+import { env } from "@/lib/env";
 import { realEmail } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { countUnread } from "@/services/messages/queries";
@@ -37,7 +37,7 @@ export default async function PortalLayout({
 	]);
 
 	return (
-		<PortalAssistantProvider>
+		<PortalAssistantProvider wakeWordKey={env.PICOVOICE_ACCESS_KEY ?? null}>
 			<div
 				data-space="client"
 				className="relative isolate min-h-screen bg-background"
@@ -56,7 +56,6 @@ export default async function PortalLayout({
 						}}
 						unreadMessages={unreadMessages}
 						counts={counts}
-						isPhotographer={session.user.role === ROLES.photographer}
 					/>
 				</div>
 				<PortalAssistantInset>

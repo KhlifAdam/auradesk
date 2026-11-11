@@ -36,6 +36,8 @@ export interface QuoteDetail extends QuoteSummary {
 	notes: string;
 	sentAt: string | null;
 	respondedAt: string | null;
+	/** What the client wrote with their answer. */
+	clientNote: string;
 	invoiceNumber: string | null;
 	totals: InvoiceTotals;
 	items: InvoiceItemDetail[];

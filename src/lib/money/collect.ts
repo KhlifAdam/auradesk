@@ -19,7 +19,10 @@ export type CollectReason = (typeof COLLECT_REASONS)[number];
 export interface CollectItem {
 	kind: CollectKind;
 	id: string;
+	/** What it is: the invoice and its project, the photo book, the project. */
 	label: string;
+	/** Second line: what kind of amount it is, and who owes it. */
+	detail: string;
 	clientName: string;
 	amount: number;
 	reason: CollectReason;
@@ -65,9 +68,9 @@ export function projectReason(
 	eventDate: Date | null,
 	today: Date,
 ): { reason: CollectReason; days: number | null } {
-	if (stage === "DELIVERY") return { reason: "deliveredUnpaid", days: null };
-	if (stage === "VALIDATION" || stage === "EXPORT")
-		return { reason: "deliveringSoon", days: null };
+	if (stage === "DELIVERY" || stage === "COMPLETED")
+		return { reason: "deliveredUnpaid", days: null };
+	if (stage === "EXPORT") return { reason: "deliveringSoon", days: null };
 	if (eventDate) {
 		const left = daysBetween(today, eventDate);
 		if (left >= 0 && left <= SOON_DAYS)
@@ -75,6 +78,34 @@ export function projectReason(
 	}
 	return { reason: "open", days: null };
 }
+
+const round = (value: number) => Math.round(value * 1000) / 1000;
+
+/**
+ * What a project still owes outside its invoices, so every amount is counted
+ * once. Without an issued invoice: its price minus the advance noted on it.
+ * Once invoiced (the advance then lives on the invoice as a payment): the
+ * part of its price not billed yet. A project's price is what the client
+ * pays, tax included, so it is compared with what its invoices bill with tax
+ * and before discount: a discount lowers that invoice's balance, not the
+ * price left to bill.
+ */
+export function projectRemainder(project: {
+	price: number;
+	advance: number;
+	/** What its sent and paid invoices bill, tax included, before discount. */
+	invoicedGross: number;
+	hasIssuedInvoices: boolean;
+}) {
+	const left = project.hasIssuedInvoices
+		? project.price - project.invoicedGross
+		: project.price - project.advance;
+	return Math.max(0, round(left));
+}
+
+/** What an invoice bills, tax included, before its discount. */
+export const invoiceGross = (subtotal: number, taxRate: number) =>
+	round(subtotal * (1 + taxRate / 100));
 
 /** Most pressing first; within a reason, the biggest amount first. */
 export function rankToCollect(items: CollectItem[]) {

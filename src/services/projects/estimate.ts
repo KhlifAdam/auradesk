@@ -7,6 +7,7 @@ import {
 	estimateProject,
 	type ServiceType,
 } from "@/lib/projects/estimate";
+import { DELIVERED_STAGES } from "@/services/projects/stages";
 
 interface MediaRow {
 	project_id: string;
@@ -167,7 +168,7 @@ export async function getProjectEstimate(
 /** Every project not delivered yet, soonest finish first: the studio's forecast. */
 export async function getActiveEstimates(photographerId: string, take = 60) {
 	const projects = await db.project.findMany({
-		where: { photographerId, stage: { not: "DELIVERY" } },
+		where: { photographerId, stage: { notIn: [...DELIVERED_STAGES] } },
 		orderBy: { updatedAt: "desc" },
 		take,
 		select: projectSelect,

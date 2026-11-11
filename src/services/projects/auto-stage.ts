@@ -34,8 +34,9 @@ export function stageForGalleryEvent(
 				? "ORGANIZATION"
 				: current;
 		case "shared":
-			// Proofs go out to choose from; finals go out to approve.
-			return kind === "PROOFS" ? CLIENT_PROOFING_STAGE : "VALIDATION";
+			// Proofs go out to choose from; finals going out means the edit is
+			// exported. Delivery itself stays manual (it needs payment).
+			return kind === "PROOFS" ? CLIENT_PROOFING_STAGE : "EXPORT";
 	}
 }
 

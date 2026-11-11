@@ -105,6 +105,7 @@ export const listProjectsSchema = z.object({
 	page: z.coerce.number().int().min(1).catch(1),
 	q: searchQuerySchema,
 	stage: stageSchema.optional().catch(undefined),
+	payment: paymentStatusSchema.optional().catch(undefined),
 	/** Event date range, `yyyy-MM-dd`, both days included. */
 	from: dayKeySchema.optional().catch(undefined),
 	to: dayKeySchema.optional().catch(undefined),

@@ -44,13 +44,14 @@ export function InvoiceItemsSection() {
 							name={`items.${index}.quantity`}
 							label={index === 0 ? t("quantity") : ""}
 							type="number"
-							step="0.01"
+							// The arrows count whole units; a typed 1.5 still works.
+							step="any"
 						/>
 						<TextField<InvoiceValues>
 							name={`items.${index}.unitPrice`}
 							label={index === 0 ? t("unitPrice") : ""}
 							type="number"
-							step="0.001"
+							step="any"
 						/>
 						<p className="flex h-8 items-center justify-end text-sm font-medium tabular-nums">
 							{money(
@@ -90,13 +91,13 @@ export function InvoiceItemsSection() {
 						name="discount"
 						label={t("discount")}
 						type="number"
-						step="0.001"
+						step="any"
 					/>
 					<TextField<InvoiceValues>
 						name="taxRate"
 						label={t("taxRate")}
 						type="number"
-						step="0.01"
+						step="any"
 					/>
 				</div>
 				<dl className="flex flex-col gap-1 rounded-lg bg-muted/50 p-3 text-sm">

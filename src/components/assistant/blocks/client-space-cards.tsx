@@ -74,7 +74,13 @@ export function ClientProjectsCard({
 								.filter(Boolean)
 								.join(" · ")}
 						>
-							<Pill tone={p.stage === "DELIVERY" ? "success" : "primary"}>
+							<Pill
+								tone={
+									p.stage === "DELIVERY" || p.stage === "COMPLETED"
+										? "success"
+										: "primary"
+								}
+							>
 								{tStages(p.stage)}
 							</Pill>
 						</Row>

@@ -18,8 +18,11 @@ function noticeFor(
 	to: ProjectStage,
 ): ProjectStageNotice | null {
 	if (stageIndex(to) <= stageIndex(from)) return null;
-	// The update only reaches Delivery once paid: the originals are now open.
-	if (to === PAYMENT_GATED_STAGE) return "projectDelivered";
+	// The update only reaches Delivery (or Completed) once paid: the originals
+	// are now open. Completing an already delivered project says nothing new.
+	const gate = stageIndex(PAYMENT_GATED_STAGE);
+	if (stageIndex(from) < gate && stageIndex(to) >= gate)
+		return "projectDelivered";
 	const proofing = stageIndex(CLIENT_PROOFING_STAGE);
 	if (stageIndex(from) < proofing && stageIndex(to) >= proofing)
 		return "galleriesReady";
@@ -38,7 +41,15 @@ export async function notifyStageChange(
 	const kind = noticeFor(from, to);
 	// Any move lights the project up for the client; the special notices below
 	// replace the generic one.
-	await flagProjectForClient(projectId, kind ? {} : undefined);
+	await flagProjectForClient(
+		projectId,
+		kind ? {} : undefined,
+		kind === "projectDelivered"
+			? "delivered"
+			: kind === "galleriesReady"
+				? "proofs"
+				: "stage",
+	);
 	if (!kind) return;
 	const project = await db.project.findUnique({
 		where: { id: projectId },

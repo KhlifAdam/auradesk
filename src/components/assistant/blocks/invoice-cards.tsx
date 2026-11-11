@@ -83,7 +83,8 @@ export function InvoiceListCard({
 					[
 						["invoiced", data.stats.invoiced],
 						["collected", data.stats.collected],
-						["outstanding", data.stats.outstanding],
+						// Sent invoices only, not project prices still to bill.
+						["unpaidInvoices", data.stats.outstanding],
 					] as const
 				).map(([key, value]) => (
 					<div key={key} className="px-2 py-1.5">

@@ -12,6 +12,7 @@ import { SpaceHeader } from "@/components/shared/space-header";
 import { requireTeamUser } from "@/lib/auth/require-team-user";
 import { ROLES } from "@/lib/auth/roles";
 import { BRAND_NAME } from "@/lib/brand";
+import { env } from "@/lib/env";
 import { realEmail } from "@/lib/phone";
 import { getRequestTimeZone } from "@/lib/request-time-zone";
 
@@ -32,7 +33,11 @@ export default async function TeamLayout({
 		(await cookies()).get(ASSISTANT_OPEN_COOKIE)?.value === "1";
 
 	return (
-		<AssistantProvider initialOpen={assistantOpen} basePath="/team/assistant">
+		<AssistantProvider
+			initialOpen={assistantOpen}
+			basePath="/team/assistant"
+			wakeWordKey={env.PICOVOICE_ACCESS_KEY ?? null}
+		>
 			<div className="flex h-screen overflow-hidden bg-background">
 				<div className="min-w-0 flex-1 overflow-y-auto">
 					<TimeZoneSync serverTimeZone={timeZone} />

@@ -39,9 +39,9 @@ export function clientNextStep(
 		);
 		if (toChoose) return { step: "chooseFiles", targetId: toChoose.id };
 	}
-	// Delivery waits for the last payment even without an invoice.
+	// Once exported, delivery waits for the last payment even without an invoice.
 	if (
-		project.stage === "VALIDATION" &&
+		project.stage === "EXPORT" &&
 		project.price !== null &&
 		project.paymentStatus !== "PAID"
 	)
