@@ -14,6 +14,8 @@ export const AUTH_PATHS = {
 		welcome: "/photographers",
 		login: "/login",
 		register: "/register",
+		forgotPassword: "/forgot-password",
+		resetPassword: "/reset-password",
 		home: "/dashboard",
 	},
 	client: {
@@ -23,6 +25,8 @@ export const AUTH_PATHS = {
 		register: "/client/register",
 		/** Sign in or sign up with a phone number and a texted code. */
 		phone: "/client/phone",
+		forgotPassword: "/client/forgot-password",
+		resetPassword: "/client/reset-password",
 		home: "/portal",
 	},
 } as const satisfies Record<AuthAudience, Record<string, string>>;

@@ -18,3 +18,8 @@ export const identityConfirmSchema = z.object({
 	password: z.string().max(200).optional(),
 	code: z.string().regex(/^\d{6}$/, "otpLength"),
 });
+
+/** A first password for an account that signed up without one (phone, Google). */
+export const setPasswordSchema = z.object({
+	newPassword: z.string().min(8, "passwordTooShort").max(128, "invalidInput"),
+});

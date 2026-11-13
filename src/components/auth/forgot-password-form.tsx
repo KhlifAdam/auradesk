@@ -18,11 +18,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/client";
+import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
 import { AuthHeading } from "./auth-heading";
 import { type ForgotPasswordValues, forgotPasswordSchema } from "./schemas";
 import { useAuthError } from "./use-auth-error";
 
-export function ForgotPasswordForm() {
+/** Sends the reset code; `audience` keeps the client or studio side throughout. */
+export function ForgotPasswordForm({
+	audience = "photographer",
+}: {
+	audience?: AuthAudience;
+}) {
+	const paths = AUTH_PATHS[audience];
 	const t = useTranslations("Auth");
 	const router = useRouter();
 	const authError = useAuthError();
@@ -39,7 +46,7 @@ export function ForgotPasswordForm() {
 			});
 			if (error) return void toast.error(authError.message(error));
 			toast.success(t("forgot.sent"));
-			router.push(`/reset-password?email=${encodeURIComponent(email)}`);
+			router.push(`${paths.resetPassword}?email=${encodeURIComponent(email)}`);
 		} catch {
 			toast.error(authError.network);
 		}
@@ -81,7 +88,7 @@ export function ForgotPasswordForm() {
 			</Form>
 
 			<Link
-				href="/login"
+				href={paths.login}
 				className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary"
 			>
 				<ArrowLeft className="h-4 w-4" />

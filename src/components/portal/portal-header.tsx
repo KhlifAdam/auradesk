@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { LanguageSubmenu } from "@/components/dashboard/sidebar/language-submenu";
 import { ThemeSubmenu } from "@/components/dashboard/sidebar/theme-submenu";
+import { BrandMark } from "@/components/landing/brand-mark";
 import { UnreadBadge } from "@/components/messages/unread-badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -62,8 +63,8 @@ export function PortalHeader({
 		<header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-2xl">
 			<div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 md:px-6">
 				<Link href="/portal" className="group flex items-center gap-2.5">
-					<span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-chart-2 text-sm font-bold text-primary-foreground shadow-luminous transition-transform duration-300 group-hover:scale-105">
-						{BRAND_NAME[0]}
+					<span className="transition-transform duration-300 group-hover:scale-105">
+						<BrandMark />
 					</span>
 					<span className="flex flex-col leading-none">
 						<span className="text-sm font-semibold">{BRAND_NAME}</span>

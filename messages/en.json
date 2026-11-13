@@ -251,7 +251,9 @@
 		"bookPricePaid": "Something is already paid on this order, so its price can't change. Keep the same number of pages and format.",
 		"bookAwaitingClient": "The client hasn't approved the new design yet, so printing can't start.",
 		"bookingQuoteNotAccepted": "The client hasn't accepted the quote yet. Send the booking to them, or confirm without them.",
-		"quoteBookingNotConfirmed": "This booking isn't confirmed yet, so the quote can't become an invoice. Confirm the booking first: the invoice is then attached to its project."
+		"quoteBookingNotConfirmed": "This booking isn't confirmed yet, so the quote can't become an invoice. Confirm the booking first: the invoice is then attached to its project.",
+		"sessionNotFresh": "For your security, sign out and sign in again, then set your password.",
+		"passwordAlreadySet": "This account already has a password."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -1342,9 +1344,12 @@
 	},
 	"Home": {
 		"badge": "The platform for photographers and their clients",
-		"titleStart": "One place where photographers and their clients",
-		"titleAccent": "work together",
-		"subtitle": "{brand} runs the photographer's studio from booking to delivery, and gives every client a private space to follow their project and choose their photos.",
+		"titleLine1": "Every moment",
+		"titleLine2": "holds its own story,",
+		"titleLine3": "and every story deserves",
+		"titleLine4": "its",
+		"titleAccent": "Aura.",
+		"subtitle": "Where photographers and clients connect, create, and bring every vision to life — together.",
 		"choose": "Choose your space",
 		"connector": "One platform",
 		"photographer": {
@@ -3738,6 +3743,16 @@
 			"confirmPassword": "Confirm",
 			"submit": "Change password",
 			"changed": "Password changed. Your other devices were signed out."
+		},
+		"setPassword": {
+			"title": "Password",
+			"hint": "Add a password to also sign in with your email, without waiting for a code.",
+			"needsEmail": "To sign in with a password, first add and confirm an email address on your profile.",
+			"addEmail": "Add an email",
+			"newPassword": "New password",
+			"confirmPassword": "Confirm",
+			"submit": "Set password",
+			"done": "Password set. You can now sign in with your email and this password."
 		},
 		"connected": {
 			"title": "Connected accounts",

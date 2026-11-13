@@ -23,6 +23,7 @@ import {
 	InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { authClient } from "@/lib/auth/client";
+import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
 import { AuthHeading } from "./auth-heading";
 import { PasswordInput } from "./password-input";
 import {
@@ -34,7 +35,14 @@ import { useAuthError } from "./use-auth-error";
 
 const OTP_SLOTS = Array.from({ length: OTP_LENGTH }, (_, i) => `slot-${i}`);
 
-export function ResetPasswordForm({ email }: { email: string }) {
+export function ResetPasswordForm({
+	email,
+	audience = "photographer",
+}: {
+	email: string;
+	audience?: AuthAudience;
+}) {
+	const paths = AUTH_PATHS[audience];
 	const t = useTranslations("Auth");
 	const router = useRouter();
 	const authError = useAuthError();
@@ -55,7 +63,7 @@ export function ResetPasswordForm({ email }: { email: string }) {
 			});
 			if (error) return void toast.error(authError.message(error));
 			toast.success(t("reset.success"));
-			router.push("/login");
+			router.push(paths.login);
 		} catch {
 			toast.error(authError.network);
 		}
@@ -170,7 +178,7 @@ export function ResetPasswordForm({ email }: { email: string }) {
 					{isResending ? t("reset.resending") : t("reset.resend")}
 				</button>
 				<Link
-					href="/login"
+					href={paths.login}
 					className="flex items-center gap-2 hover:text-primary"
 				>
 					<ArrowLeft className="h-4 w-4" />

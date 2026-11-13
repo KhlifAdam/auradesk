@@ -121,7 +121,7 @@ export function LoginForm({ audience, providers, oauthError }: LoginFormProps) {
 									<div className="flex items-center justify-between">
 										<FormLabel>{t("login.password")}</FormLabel>
 										<Link
-											href="/forgot-password"
+											href={paths.forgotPassword}
 											className="text-sm font-medium text-primary hover:underline"
 										>
 											{t("login.forgot")}

@@ -251,7 +251,9 @@
 		"bookPricePaid": "Un paiement a déjà été reçu pour cette commande : son prix ne peut plus changer. Gardez le même nombre de pages et le même format.",
 		"bookAwaitingClient": "Le client n'a pas encore approuvé la nouvelle mise en page : l'impression ne peut pas commencer.",
 		"bookingQuoteNotAccepted": "Le client n'a pas encore accepté le devis. Envoyez-lui la réservation, ou confirmez sans lui.",
-		"quoteBookingNotConfirmed": "Cette réservation n'est pas encore confirmée : le devis ne peut pas encore devenir une facture. Confirmez d'abord la réservation, la facture sera alors rattachée à son projet."
+		"quoteBookingNotConfirmed": "Cette réservation n'est pas encore confirmée : le devis ne peut pas encore devenir une facture. Confirmez d'abord la réservation, la facture sera alors rattachée à son projet.",
+		"sessionNotFresh": "Par sécurité, déconnectez-vous puis reconnectez-vous avant de définir votre mot de passe.",
+		"passwordAlreadySet": "Ce compte a déjà un mot de passe."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -1342,9 +1344,12 @@
 	},
 	"Home": {
 		"badge": "La plateforme des photographes et de leurs clients",
-		"titleStart": "Un seul lieu où photographes et clients",
-		"titleAccent": "travaillent ensemble",
-		"subtitle": "{brand} gère le studio du photographe, de la réservation à la livraison, et offre à chaque client un espace privé pour suivre son projet et choisir ses photos.",
+		"titleLine1": "Chaque instant",
+		"titleLine2": "raconte une histoire,",
+		"titleLine3": "et chaque histoire mérite",
+		"titleLine4": "son",
+		"titleAccent": "Aura.",
+		"subtitle": "Là où photographes et clients se rencontrent, créent et donnent vie à chaque vision — ensemble.",
 		"choose": "Choisissez votre espace",
 		"connector": "Une plateforme",
 		"photographer": {
@@ -3738,6 +3743,16 @@
 			"confirmPassword": "Confirmer",
 			"submit": "Changer le mot de passe",
 			"changed": "Mot de passe changé. Vos autres appareils ont été déconnectés."
+		},
+		"setPassword": {
+			"title": "Mot de passe",
+			"hint": "Ajoutez un mot de passe pour vous connecter aussi avec votre email, sans attendre de code.",
+			"needsEmail": "Pour vous connecter avec un mot de passe, ajoutez et confirmez d'abord une adresse email sur votre profil.",
+			"addEmail": "Ajouter un email",
+			"newPassword": "Nouveau mot de passe",
+			"confirmPassword": "Confirmer",
+			"submit": "Définir le mot de passe",
+			"done": "Mot de passe défini. Vous pouvez maintenant vous connecter avec votre email et ce mot de passe."
 		},
 		"connected": {
 			"title": "Comptes connectés",

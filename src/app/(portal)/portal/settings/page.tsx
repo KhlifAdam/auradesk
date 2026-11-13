@@ -6,8 +6,10 @@ import { ConnectedAccountsCard } from "@/components/account/connected-accounts-c
 import { PasswordCard } from "@/components/account/password-card";
 import { PreferencesCard } from "@/components/account/preferences-card";
 import { SessionsCard } from "@/components/account/sessions-card";
+import { SetPasswordCard } from "@/components/account/set-password-card";
 import { requireClient } from "@/lib/auth/require-client";
 import { enabledSocialProviders } from "@/lib/auth/social-providers";
+import { realEmail } from "@/lib/phone";
 import { getSecurityOverview } from "@/services/account/queries";
 
 /** The client's preferences, sign-in, devices, and their data. */
@@ -39,7 +41,17 @@ export default async function PortalSettingsPage() {
 			</div>
 			<div className="flex max-w-2xl flex-col gap-3">
 				<PreferencesCard />
-				{security.hasPassword && <PasswordCard />}
+				{security.hasPassword ? (
+					<PasswordCard />
+				) : (
+					<SetPasswordCard
+						hasEmail={
+							Boolean(realEmail(session.user.email)) &&
+							session.user.emailVerified
+						}
+						profileHref="/portal/account"
+					/>
+				)}
 				<ConnectedAccountsCard
 					providers={enabledSocialProviders}
 					linked={security.linked}
