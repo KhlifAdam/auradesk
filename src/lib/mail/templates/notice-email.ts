@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n/config";
 import type { MailMessage } from "../send-mail";
-import { baseLayout, mailColors as c } from "./base-layout";
+import { baseLayout, mailColors as c, MAIL_DISPLAY_FONT } from "./base-layout";
 
 export interface NoticeCopy {
 	subject: string;
@@ -43,9 +43,9 @@ export function noticeEmail(
 			locale,
 			preheader: fill(copy.preheader, vars, true),
 			content: `
-			<h1 style="margin:0 0 12px;font-size:22px;line-height:30px;font-weight:600;color:${c.text};text-align:center;">${fill(copy.heading, vars, true)}</h1>
-			<p style="margin:0 0 24px;font-size:15px;line-height:24px;color:${c.muted};text-align:center;">${fill(copy.intro, vars, true)}</p>
-			<p style="margin:0;text-align:center;"><a href="${escapeHtml(url)}" style="display:inline-block;padding:12px 22px;border-radius:10px;background:${c.accent};color:${c.accentText};font-size:14px;font-weight:600;text-decoration:none;">${copy.cta}</a></p>`,
+			<h1 style="margin:0 0 12px;font-family:${MAIL_DISPLAY_FONT};font-size:23px;line-height:31px;font-weight:700;letter-spacing:-0.4px;color:${c.text};text-align:center;">${fill(copy.heading, vars, true)}</h1>
+			<p style="margin:0 0 30px;font-size:15px;line-height:24px;color:${c.muted};text-align:center;">${fill(copy.intro, vars, true)}</p>
+			<p style="margin:0;text-align:center;"><a href="${escapeHtml(url)}" style="display:inline-block;padding:13px 26px;border-radius:12px;background:${c.accent};color:${c.accentText};font-family:${MAIL_DISPLAY_FONT};font-size:14px;font-weight:700;text-decoration:none;">${copy.cta}&nbsp;&rarr;</a></p>`,
 		}),
 	};
 }

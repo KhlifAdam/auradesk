@@ -1450,7 +1450,7 @@
 			"text": "{who} updated “{item}”. Open it here: {url}"
 		},
 		"footer": {
-			"reason": "You received this email because a request was made for your AuraDesk account.",
+			"reason": "You received this email because you have an AuraDesk account.",
 			"rights": "All rights reserved."
 		},
 		"passwordReset": {

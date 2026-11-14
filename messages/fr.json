@@ -1450,7 +1450,7 @@
 			"text": "{who} a mis à jour « {item} ». Ouvrez-le ici : {url}"
 		},
 		"footer": {
-			"reason": "Vous recevez cet e-mail suite à une demande concernant votre compte AuraDesk.",
+			"reason": "Vous recevez cet e-mail car vous avez un compte AuraDesk.",
 			"rights": "Tous droits réservés."
 		},
 		"passwordReset": {
