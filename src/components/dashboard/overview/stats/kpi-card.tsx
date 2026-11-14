@@ -36,7 +36,13 @@ interface KpiCardProps {
 	accent?: boolean;
 }
 
-function Delta({ compared, versus }: { compared: Compared; versus?: string }) {
+export function Delta({
+	compared,
+	versus,
+}: {
+	compared: Compared;
+	versus?: string;
+}) {
 	if (compared.previous === null) return null;
 	const { value, previous } = compared;
 	const diff = value - previous;

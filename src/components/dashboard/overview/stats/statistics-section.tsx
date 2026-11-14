@@ -22,6 +22,7 @@ import { formatMoney } from "@/services/projects/money";
 import { isDeliveredStage, PROJECT_STAGES } from "@/services/projects/stages";
 import { ActivityChart } from "./activity-chart";
 import { BreakdownCard } from "./breakdown-card";
+import { InsightsSection } from "./insights-section";
 import { KpiCard } from "./kpi-card";
 import { UpcomingShoots } from "./upcoming-shoots";
 
@@ -187,6 +188,12 @@ export async function StatisticsSection({
 				</section>
 				<UpcomingShoots shoots={stats.upcoming} />
 			</div>
+
+			<InsightsSection
+				photographerId={photographerId}
+				period={period}
+				timeZone={timeZone}
+			/>
 
 			<div className="grid grid-cols-1 gap-3 md:grid-cols-2">
 				<BreakdownCard

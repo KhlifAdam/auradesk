@@ -142,6 +142,24 @@
 					"calendar": "Calendar",
 					"empty": "No shoot planned.",
 					"untitled": "Shoot"
+				},
+				"revenue": {
+					"title": "Revenue",
+					"hint": "Payments received on invoices",
+					"series": "Received",
+					"empty": "No payment received in this period."
+				},
+				"production": {
+					"title": "Production time",
+					"fromShoot": "Shoot → delivery",
+					"fromStart": "Project → delivery",
+					"delivered": "Delivered",
+					"days": "{count, plural, one {# day} other {# days}}",
+					"before": "Previous period: {value} from shoot to delivery."
+				},
+				"services": {
+					"title": "Popular services",
+					"projects": "{count, plural, one {# project} other {# projects}}"
 				}
 			}
 		}
@@ -1638,6 +1656,38 @@
 			"intro": "The email of your AuraDesk account is now {email}. If this was you, nothing else to do. If not, reset your password right away.",
 			"cta": "Secure my account",
 			"text": "The email of your AuraDesk account is now {email}. If this wasn't you, reset your password now: {url}"
+		},
+		"shootReminder": {
+			"subject": "Your shoot with {studio} is tomorrow",
+			"preheader": "A quick reminder before your shoot for “{project}”.",
+			"heading": "See you tomorrow",
+			"intro": "Your shoot with {studio} for “{project}” is tomorrow. Open the project to check the time, the place and any last details.",
+			"cta": "View the project",
+			"text": "Your shoot with {studio} for “{project}” is tomorrow. Check the details here: {url}"
+		},
+		"invoiceDueSoon": {
+			"subject": "Invoice {number} is due on {date}",
+			"preheader": "{amount} to pay to {studio} by {date}.",
+			"heading": "Your invoice is due soon",
+			"intro": "Invoice {number} from {studio} is due on {date}. {amount} is still to pay.",
+			"cta": "View the invoice",
+			"text": "Invoice {number} from {studio} is due on {date}. {amount} is still to pay. See it here: {url}"
+		},
+		"invoiceOverdue": {
+			"subject": "Invoice {number} is past due",
+			"preheader": "{amount} is still owed to {studio}.",
+			"heading": "Your invoice is past due",
+			"intro": "Invoice {number} from {studio} was due on {date} and {amount} is still to pay. If you have already paid, you can ignore this email.",
+			"cta": "View the invoice",
+			"text": "Invoice {number} from {studio} was due on {date} and {amount} is still to pay. See it here: {url}"
+		},
+		"galleryExpiring": {
+			"subject": "Download your photos before {date}",
+			"preheader": "{studio} will remove the galleries of “{project}” on {date}.",
+			"heading": "Save your photos",
+			"intro": "{studio} keeps delivered galleries for a limited time. The photos of “{project}” will be removed on {date}: download them before then.",
+			"cta": "Download my photos",
+			"text": "The photos of “{project}” from {studio} will be removed on {date}. Download them here: {url}"
 		}
 	},
 	"Sms": {
@@ -4704,5 +4754,12 @@
 		"done": "This project is delivered.",
 		"forecast": "Work ahead · {hours} h",
 		"nothingAhead": "No project in progress."
+	},
+	"ErrorPage": {
+		"title": "Something went wrong",
+		"description": "An unexpected error stopped this page from loading. Try again; if it keeps happening, come back in a few minutes.",
+		"retry": "Try again",
+		"back": "Go back",
+		"reference": "Reference: {digest}"
 	}
 }

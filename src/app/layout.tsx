@@ -4,6 +4,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { BRAND_NAME } from "@/lib/brand";
+import { env } from "@/lib/env";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -20,7 +22,17 @@ const manrope = Manrope({
 
 export async function generateMetadata(): Promise<Metadata> {
 	const t = await getTranslations("Metadata");
-	return { title: t("title"), description: t("description") };
+	const title = t("title");
+	const description = t("description");
+	return {
+		// Lets pages give relative URLs (canonical, Open Graph) that resolve
+		// against the app's public address.
+		metadataBase: new URL(env.BETTER_AUTH_URL),
+		title,
+		description,
+		openGraph: { type: "website", siteName: BRAND_NAME, title, description },
+		twitter: { card: "summary", title, description },
+	};
 }
 
 export default async function RootLayout({

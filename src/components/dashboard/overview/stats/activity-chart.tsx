@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
 	type ChartConfig,
@@ -10,6 +10,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useBucketLabel } from "./use-bucket-label";
 
 interface ActivityChartProps {
 	series: { key: string; bookings: number; projects: number }[];
@@ -19,28 +20,11 @@ interface ActivityChartProps {
 /** New bookings and new projects over time, one bar group per day or month. */
 export function ActivityChart({ series, granularity }: ActivityChartProps) {
 	const t = useTranslations("Dashboard.Overview.statistics.chart");
-	const locale = useLocale();
+	const label = useBucketLabel(granularity);
 	const config: ChartConfig = {
 		bookings: { label: t("bookings"), color: "var(--primary)" },
 		projects: { label: t("projects"), color: "var(--event-meeting)" },
 	};
-
-	// Bucket keys are plain dates, so they are formatted as UTC to stay put.
-	const label = (key: string, long = false) =>
-		new Intl.DateTimeFormat(
-			locale,
-			granularity === "day"
-				? long
-					? { dateStyle: "full", timeZone: "UTC" }
-					: { day: "numeric", month: "short", timeZone: "UTC" }
-				: long
-					? { month: "long", year: "numeric", timeZone: "UTC" }
-					: { month: "short", timeZone: "UTC" },
-		).format(
-			new Date(
-				granularity === "day" ? `${key}T12:00:00Z` : `${key}-15T12:00:00Z`,
-			),
-		);
 
 	const empty = series.every((point) => point.bookings + point.projects === 0);
 

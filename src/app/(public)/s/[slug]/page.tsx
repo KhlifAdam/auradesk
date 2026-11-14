@@ -24,10 +24,33 @@ export async function generateMetadata({
 	);
 	if (result.status !== "live") return { robots: { index: false } };
 
-	const { name, tagline } = result.site.studio;
+	const { slug, name, tagline, bio, cover, logo } = result.site.studio;
+	const title = tagline ? `${name} — ${tagline}` : name;
+	// Search results and link previews show at most ~160 characters.
+	const description =
+		tagline || bio.replace(/\s+/g, " ").trim().slice(0, 160) || undefined;
+	const image = cover ?? logo;
+	const images = image
+		? [{ url: image.url, width: image.width, height: image.height }]
+		: undefined;
 	return {
-		title: tagline ? `${name} — ${tagline}` : name,
-		description: tagline || undefined,
+		title,
+		description,
+		alternates: { canonical: `/s/${slug}` },
+		openGraph: {
+			type: "website",
+			url: `/s/${slug}`,
+			siteName: name,
+			title,
+			description,
+			images,
+		},
+		twitter: {
+			card: image ? "summary_large_image" : "summary",
+			title,
+			description,
+			images: images?.map((i) => i.url),
+		},
 	};
 }
 

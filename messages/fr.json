@@ -142,6 +142,24 @@
 					"calendar": "Calendrier",
 					"empty": "Aucun shooting prévu.",
 					"untitled": "Shooting"
+				},
+				"revenue": {
+					"title": "Revenus",
+					"hint": "Paiements reçus sur les factures",
+					"series": "Reçu",
+					"empty": "Aucun paiement reçu sur cette période."
+				},
+				"production": {
+					"title": "Temps de production",
+					"fromShoot": "Shooting → livraison",
+					"fromStart": "Projet → livraison",
+					"delivered": "Livrés",
+					"days": "{count, plural, one {# jour} other {# jours}}",
+					"before": "Période précédente : {value} du shooting à la livraison."
+				},
+				"services": {
+					"title": "Services populaires",
+					"projects": "{count, plural, one {# projet} other {# projets}}"
 				}
 			}
 		}
@@ -1638,6 +1656,38 @@
 			"intro": "L'e-mail de votre compte AuraDesk est maintenant {email}. Si c'était vous, rien d'autre à faire. Sinon, réinitialisez votre mot de passe tout de suite.",
 			"cta": "Sécuriser mon compte",
 			"text": "L'e-mail de votre compte AuraDesk est maintenant {email}. Si ce n'était pas vous, réinitialisez votre mot de passe : {url}"
+		},
+		"shootReminder": {
+			"subject": "Votre shooting avec {studio} a lieu demain",
+			"preheader": "Un petit rappel avant votre shooting pour « {project} ».",
+			"heading": "À demain !",
+			"intro": "Votre shooting avec {studio} pour « {project} » a lieu demain. Ouvrez le projet pour vérifier l’heure, le lieu et les derniers détails.",
+			"cta": "Voir le projet",
+			"text": "Votre shooting avec {studio} pour « {project} » a lieu demain. Les détails ici : {url}"
+		},
+		"invoiceDueSoon": {
+			"subject": "La facture {number} arrive à échéance le {date}",
+			"preheader": "{amount} à régler à {studio} avant le {date}.",
+			"heading": "Votre facture arrive à échéance",
+			"intro": "La facture {number} de {studio} est à régler avant le {date}. Il reste {amount} à payer.",
+			"cta": "Voir la facture",
+			"text": "La facture {number} de {studio} est à régler avant le {date}. Il reste {amount} à payer. La voir ici : {url}"
+		},
+		"invoiceOverdue": {
+			"subject": "La facture {number} est en retard",
+			"preheader": "{amount} reste dû à {studio}.",
+			"heading": "Votre facture est en retard",
+			"intro": "La facture {number} de {studio} était à régler le {date} et il reste {amount} à payer. Si vous avez déjà payé, vous pouvez ignorer cet e-mail.",
+			"cta": "Voir la facture",
+			"text": "La facture {number} de {studio} était à régler le {date} et il reste {amount} à payer. La voir ici : {url}"
+		},
+		"galleryExpiring": {
+			"subject": "Téléchargez vos photos avant le {date}",
+			"preheader": "{studio} supprimera les galeries de « {project} » le {date}.",
+			"heading": "Sauvegardez vos photos",
+			"intro": "{studio} conserve les galeries livrées pendant une durée limitée. Les photos de « {project} » seront supprimées le {date} : téléchargez-les avant.",
+			"cta": "Télécharger mes photos",
+			"text": "Les photos de « {project} » de {studio} seront supprimées le {date}. Téléchargez-les ici : {url}"
 		}
 	},
 	"Sms": {
@@ -4704,5 +4754,12 @@
 		"done": "Ce projet est livré.",
 		"forecast": "Travail à venir · {hours} h",
 		"nothingAhead": "Aucun projet en cours."
+	},
+	"ErrorPage": {
+		"title": "Une erreur est survenue",
+		"description": "Une erreur inattendue a empêché le chargement de cette page. Réessayez ; si cela continue, revenez dans quelques minutes.",
+		"retry": "Réessayer",
+		"back": "Retour",
+		"reference": "Référence : {digest}"
 	}
 }
