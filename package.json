@@ -21,6 +21,7 @@
     "admin:grant": "node scripts/set-admin.mjs grant",
     "admin:revoke": "node scripts/set-admin.mjs revoke",
     "media:shrink": "node scripts/shrink-public-media.mjs",
+    "eval:vision": "node scripts/eval-vision.mjs",
     "wa:install": "pnpm --dir wa-gateway install",
     "wa:dev": "pnpm --dir wa-gateway dev"
   },
