@@ -1,4 +1,5 @@
 import {
+	ArrowLeftRight,
 	Ban,
 	Banknote,
 	History,
@@ -25,6 +26,7 @@ const ICONS = {
 	PAYMENT_RECORDED: Banknote,
 	WHATSAPP_LINK_REQUESTED: QrCode,
 	WHATSAPP_UNLINKED: Unlink,
+	WHATSAPP_ROUTE_CHANGED: ArrowLeftRight,
 	ROLE_CHANGED: UserCog,
 	ACCOUNT_UPDATED: UserPen,
 	ACCOUNT_DELETED: Trash2,

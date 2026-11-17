@@ -1,13 +1,22 @@
 import "server-only";
 
 import { z } from "zod";
+import {
+	cloudConfigured,
+	sendCloudTemplate,
+} from "@/lib/whatsapp/cloud/cloud-client";
 import { markGatewayUnreachable } from "@/lib/whatsapp/connection-status";
 import { sendWhatsappText } from "@/lib/whatsapp/gateway-client";
+import { routeFor } from "@/lib/whatsapp/routing";
+import { type SmsKey, smsText } from "./sms-copy";
 
 export interface SmsMessage {
 	/** E.164, e.g. `+21620123456`. */
 	to: string;
-	body: string;
+	/** Which message: picks the text, and the WhatsApp channel and template. */
+	kind: SmsKey;
+	locale: string | null | undefined;
+	vars: Record<string, string>;
 }
 
 type TextProvider = "console" | "twilio";
@@ -22,9 +31,10 @@ const twilioSchema = z.object({
  * Sends a text message with the provider in `SMS_PROVIDER`:
  * - `console` (default): prints it in the server log;
  * - `twilio`: real SMS (needs the `TWILIO_*` variables);
- * - `whatsapp`: a WhatsApp message from the number the admin linked
- *   (wa-gateway). When WhatsApp can't deliver it, `SMS_FALLBACK_PROVIDER`
- *   (`console` by default) sends it instead, so codes still arrive.
+ * - `whatsapp`: over WhatsApp, through the channel the admin chose for this
+ *   kind of message: the linked number (wa-gateway) or the official Cloud
+ *   API. When it can't deliver, `SMS_FALLBACK_PROVIDER` (`console` by
+ *   default) sends it instead, so codes still arrive.
  */
 export async function sendSms(message: SmsMessage) {
 	const provider = process.env.SMS_PROVIDER ?? "console";
@@ -35,17 +45,35 @@ export async function sendSms(message: SmsMessage) {
 }
 
 async function sendWithWhatsapp(message: SmsMessage) {
+	const sent =
+		(await routeFor(message.kind)) === "CLOUD"
+			? await sendWithCloud(message)
+			: await sendWithGateway(message);
+	if (!sent) return sendWithProvider(fallbackProvider(), message);
+}
+
+async function sendWithCloud({ to, kind, locale, vars }: SmsMessage) {
+	if (!cloudConfigured()) return false;
+	try {
+		return (await sendCloudTemplate(to, kind, locale, vars)) === "sent";
+	} catch (error) {
+		console.error("WhatsApp Cloud API unreachable:", error);
+		return false;
+	}
+}
+
+async function sendWithGateway(message: SmsMessage) {
 	try {
 		// Not connected (the gateway reports that itself) or no WhatsApp account.
-		if ((await sendWhatsappText(message.to, message.body)) === "sent") return;
+		return (await sendWhatsappText(message.to, textOf(message))) === "sent";
 	} catch (error) {
 		// A dead gateway can't report itself: record it here.
 		console.error("WhatsApp gateway unreachable:", error);
 		await markGatewayUnreachable().catch((failure) =>
 			console.error("Failed to record the WhatsApp status:", failure),
 		);
+		return false;
 	}
-	return sendWithProvider(fallbackProvider(), message);
 }
 
 function fallbackProvider(): TextProvider {
@@ -53,11 +81,15 @@ function fallbackProvider(): TextProvider {
 }
 
 function sendWithProvider(provider: TextProvider, message: SmsMessage) {
-	if (provider === "twilio") return sendWithTwilio(message);
-	console.info(`[sms → ${message.to}] ${message.body}`);
+	const body = textOf(message);
+	if (provider === "twilio") return sendWithTwilio(message.to, body);
+	console.info(`[sms → ${message.to}] ${body}`);
 }
 
-async function sendWithTwilio({ to, body }: SmsMessage) {
+const textOf = ({ kind, locale, vars }: SmsMessage) =>
+	smsText(locale, kind, vars);
+
+async function sendWithTwilio(to: string, body: string) {
 	const { TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_FROM } =
 		twilioSchema.parse(process.env);
 	const response = await fetch(

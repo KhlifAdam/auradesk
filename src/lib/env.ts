@@ -16,6 +16,8 @@ const coreSchema = z.object({
 	WA_GATEWAY_URL: z.url().optional(),
 	/** Shared with the gateway, both ways: its API and its status webhook. */
 	WA_GATEWAY_SECRET: z.string().min(32).optional(),
+	// The WhatsApp Cloud API (WHATSAPP_CLOUD_*) is validated when used, in
+	// lib/whatsapp/cloud/cloud-client.ts: unset, its messages go by SMS.
 	/** Picovoice access key for the "Hey Aura" wake word; unset hides it. */
 	PICOVOICE_ACCESS_KEY: z.string().min(1).optional(),
 });

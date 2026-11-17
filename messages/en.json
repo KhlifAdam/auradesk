@@ -271,7 +271,8 @@
 		"bookingQuoteNotAccepted": "The client hasn't accepted the quote yet. Send the booking to them, or confirm without them.",
 		"quoteBookingNotConfirmed": "This booking isn't confirmed yet, so the quote can't become an invoice. Confirm the booking first: the invoice is then attached to its project.",
 		"sessionNotFresh": "For your security, sign out and sign in again, then set your password.",
-		"passwordAlreadySet": "This account already has a password."
+		"passwordAlreadySet": "This account already has a password.",
+		"whatsappCloudRejected": "The official WhatsApp API refused the message."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -2885,7 +2886,8 @@
 				"WHATSAPP_UNLINKED": "{actor} unlinked the WhatsApp number <target>number</target>",
 				"ROLE_CHANGED": "{actor} changed the role of <target>account</target>",
 				"ACCOUNT_UPDATED": "{actor} edited <target>account</target>",
-				"ACCOUNT_DELETED": "{actor} deleted <target>account</target>"
+				"ACCOUNT_DELETED": "{actor} deleted <target>account</target>",
+				"WHATSAPP_ROUTE_CHANGED": "{actor} changed a WhatsApp channel: <target>route</target>"
 			}
 		},
 		"detail": {
@@ -2931,10 +2933,9 @@
 		"mainAdmin": "Main admin",
 		"whatsapp": {
 			"title": "WhatsApp",
-			"description": "The WhatsApp number that sends sign-in codes and client notices. Link it once by scanning a QR code from the phone.",
-			"disabled": "Messages don't go through WhatsApp yet: set SMS_PROVIDER=whatsapp on the server to use the linked number.",
+			"description": "Sign-in codes and client notices go out over WhatsApp: from a number linked by QR code (Baileys) or through Meta's official API. Choose the channel for each kind of message.",
+			"disabled": "Messages don't go through WhatsApp yet: set SMS_PROVIDER=whatsapp on the server to use these channels.",
 			"fallback": "While WhatsApp is not connected, or when a client has no WhatsApp account, messages go out by SMS instead. Administrators get an email when the link drops.",
-			"sender": "Sending number",
 			"states": {
 				"CONNECTED": "Connected",
 				"QR_PENDING": "Waiting for scan",
@@ -2979,6 +2980,42 @@
 				"send": "Send",
 				"sent": "Test message sent",
 				"message": "AuraDesk: this is a test message. WhatsApp delivery works."
+			},
+			"baileys": "Linked number (Baileys)",
+			"cloud": {
+				"title": "Official WhatsApp API",
+				"states": {
+					"live": "Connected",
+					"unconfigured": "Not set up",
+					"unreachable": "Unreachable"
+				},
+				"hints": {
+					"unconfigured": "Set WHATSAPP_CLOUD_TOKEN, WHATSAPP_CLOUD_PHONE_NUMBER_ID and WHATSAPP_CLOUD_WABA_ID on the server to use Meta's official API.",
+					"unreachable": "Meta's API refused the request or didn't answer. Check the access token and the phone number ID."
+				},
+				"number": "Sending from <strong>{number}</strong> ({name}).",
+				"quality": "Quality rating: {rating}",
+				"templates": "Messages use the templates approved in Meta Business Manager. Run pnpm wa:templates to submit them."
+			},
+			"routes": {
+				"title": "Which WhatsApp sends what",
+				"description": "Choose, for each kind of message, the linked number or the official API. Changes apply right away.",
+				"BAILEYS": "Linked number",
+				"CLOUD": "Official API",
+				"notReady": "This channel isn't set up: these messages go out by SMS.",
+				"saved": "Channel updated",
+				"kinds": {
+					"otp": "Sign-in codes",
+					"projectInvitation": "Project invitations",
+					"galleryShared": "Shared galleries",
+					"newMessage": "New messages",
+					"bookingSent": "Booking requests",
+					"projectCreated": "Confirmed bookings",
+					"galleriesReady": "Photos ready to choose",
+					"projectDelivered": "Delivered projects",
+					"changeForClient": "Changes (to clients)",
+					"changeForStudio": "Changes (to studios)"
+				}
 			}
 		},
 		"whatsappBanner": {
@@ -4761,5 +4798,17 @@
 		"retry": "Try again",
 		"back": "Go back",
 		"reference": "Reference: {digest}"
+	},
+	"WhatsappTemplates": {
+		"button": "Open AuraDesk",
+		"projectInvitation": "Hello, {studio} invited you to the project \"{project}\" on AuraDesk. Sign in with this number to accept.",
+		"galleryShared": "Hello, {studio} shared the gallery \"{gallery}\" with you on AuraDesk.",
+		"newMessage": "Hello, {sender} sent you a message on AuraDesk.",
+		"bookingSent": "Hello, {studio} sent you the booking request \"{booking}\" on AuraDesk.",
+		"projectCreated": "Hello, {studio} confirmed your booking \"{project}\". You can follow the project on AuraDesk.",
+		"galleriesReady": "Hello, your photos for \"{project}\" from {studio} are ready to choose from on AuraDesk.",
+		"projectDelivered": "Hello, {studio} delivered \"{project}\". Your files are ready to download on AuraDesk.",
+		"changeForClient": "Hello, {who} updated \"{item}\" on AuraDesk.",
+		"changeForStudio": "Hello, {who} updated \"{item}\" on AuraDesk."
 	}
 }

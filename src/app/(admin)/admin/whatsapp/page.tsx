@@ -1,14 +1,28 @@
 import { getTranslations } from "next-intl/server";
+import { CloudStatusCard } from "@/components/admin/whatsapp/cloud-status-card";
+import { RouteTable } from "@/components/admin/whatsapp/route-table";
 import { WhatsappPanel } from "@/components/admin/whatsapp/whatsapp-panel";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { whatsappEnabled } from "@/lib/whatsapp/connection-status";
-import { loadWhatsappView } from "@/services/whatsapp/queries";
+import { allRoutes } from "@/lib/whatsapp/routing";
+import { loadCloudView, loadWhatsappView } from "@/services/whatsapp/queries";
 
-/** Link the WhatsApp number that sends sign-in codes and client notices. */
+/**
+ * The two WhatsApp senders (the linked number and the official API) and
+ * which one sends each kind of message.
+ */
 export default async function AdminWhatsappPage() {
 	const t = await getTranslations("Admin.whatsapp");
 	await requireAdmin();
-	const initial = await loadWhatsappView();
+	const [initial, cloud, routes] = await Promise.all([
+		loadWhatsappView(),
+		loadCloudView(),
+		allRoutes(),
+	]);
+	const ready = {
+		BAILEYS: initial.kind === "live" && initial.status.state === "CONNECTED",
+		CLOUD: cloud.kind === "live",
+	};
 
 	return (
 		<>
@@ -23,6 +37,8 @@ export default async function AdminWhatsappPage() {
 					{t("disabled")}
 				</p>
 			)}
+			<RouteTable routes={routes} ready={ready} />
+			<CloudStatusCard view={cloud} />
 			<WhatsappPanel initial={initial} />
 			<p className="text-xs text-muted-foreground">{t("fallback")}</p>
 		</>

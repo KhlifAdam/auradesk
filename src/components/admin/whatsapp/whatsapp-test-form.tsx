@@ -15,13 +15,17 @@ import {
 	whatsappTestSchema,
 } from "@/services/whatsapp/schemas";
 
-/** Sends a test message, to check the linked number really delivers. */
-export function WhatsappTestForm() {
+/** Sends a test message, to check this WhatsApp channel really delivers. */
+export function WhatsappTestForm({
+	channel,
+}: {
+	channel: WhatsappTestInput["channel"];
+}) {
 	const t = useTranslations("Admin.whatsapp.test");
 	const errorMessage = useErrorMessage();
 	const form = useForm<WhatsappTestInput>({
 		resolver: zodResolver(whatsappTestSchema),
-		defaultValues: { phone: "" },
+		defaultValues: { phone: "", channel },
 	});
 	const { isSubmitting } = form.formState;
 

@@ -110,7 +110,7 @@ export function WhatsappPanel({ initial }: { initial: WhatsappView }) {
 			)}
 			{state === "CONNECTED" && (
 				<div className="border-t border-border pt-3">
-					<WhatsappTestForm />
+					<WhatsappTestForm channel="BAILEYS" />
 				</div>
 			)}
 		</Shell>
@@ -137,7 +137,7 @@ function Shell({
 	return (
 		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
 			<h2 className="flex items-center gap-2 text-sm font-semibold">
-				{t("sender")}
+				{t("baileys")}
 				<Badge variant="outline" className={cn("h-5 px-1.5 text-[10px]", tone)}>
 					{label}
 				</Badge>

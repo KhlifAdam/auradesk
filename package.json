@@ -23,7 +23,8 @@
     "media:shrink": "node scripts/shrink-public-media.mjs",
     "eval:vision": "node scripts/eval-vision.mjs",
     "wa:install": "pnpm --dir wa-gateway install",
-    "wa:dev": "pnpm --dir wa-gateway dev"
+    "wa:dev": "pnpm --dir wa-gateway dev",
+    "wa:templates": "node scripts/whatsapp-templates.mjs"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.154",

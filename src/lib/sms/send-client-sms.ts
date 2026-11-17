@@ -2,7 +2,6 @@ import "server-only";
 
 import { env } from "@/lib/env";
 import { sendSms } from "./send-sms";
-import { smsText } from "./sms-copy";
 
 const appUrl = (path: string) =>
 	`${env.BETTER_AUTH_URL.replace(/\/$/, "")}${path}`;
@@ -19,10 +18,12 @@ export function sendOtpSms(props: {
 	const { to, locale, code, expiresInMinutes } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "otp", {
+		locale,
+		kind: "otp",
+		vars: {
 			code,
 			minutes: String(expiresInMinutes),
-		}),
+		},
 	});
 }
 
@@ -36,11 +37,13 @@ export function sendProjectInvitationSms(props: {
 	const { to, locale, studio, project } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "projectInvitation", {
+		locale,
+		kind: "projectInvitation",
+		vars: {
 			studio,
 			project,
 			url: appUrl(`/client/phone?phone=${encodeURIComponent(to)}`),
-		}),
+		},
 	});
 }
 
@@ -55,10 +58,12 @@ export function sendGallerySharedSms(props: {
 	const { to, locale, galleryId, ...vars } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "galleryShared", {
+		locale,
+		kind: "galleryShared",
+		vars: {
 			...vars,
 			url: appUrl(`/portal/galleries/${galleryId}`),
-		}),
+		},
 	});
 }
 
@@ -72,7 +77,9 @@ export function sendNewMessageSms(props: {
 	const { to, locale, sender, path } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "newMessage", { sender, url: appUrl(path) }),
+		locale,
+		kind: "newMessage",
+		vars: { sender, url: appUrl(path) },
 	});
 }
 
@@ -87,7 +94,9 @@ export function sendBookingSentSms(props: {
 	const { to, locale, path, ...vars } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "bookingSent", { ...vars, url: appUrl(path) }),
+		locale,
+		kind: "bookingSent",
+		vars: { ...vars, url: appUrl(path) },
 	});
 }
 
@@ -102,7 +111,9 @@ export function sendProjectCreatedSms(props: {
 	const { to, locale, path, ...vars } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, "projectCreated", { ...vars, url: appUrl(path) }),
+		locale,
+		kind: "projectCreated",
+		vars: { ...vars, url: appUrl(path) },
 	});
 }
 
@@ -118,10 +129,12 @@ export function sendProjectStageSms(props: {
 	const { to, locale, kind, projectId, ...vars } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, kind, {
+		locale,
+		kind,
+		vars: {
 			...vars,
 			url: appUrl(`/portal/projects/${projectId}`),
-		}),
+		},
 	});
 }
 
@@ -137,6 +150,8 @@ export function sendChangeSms(props: {
 	const { to, locale, audience, path, ...vars } = props;
 	return sendSms({
 		to,
-		body: smsText(locale, audience, { ...vars, url: appUrl(path) }),
+		locale,
+		kind: audience,
+		vars: { ...vars, url: appUrl(path) },
 	});
 }

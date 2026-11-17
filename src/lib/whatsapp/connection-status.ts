@@ -2,7 +2,9 @@ import "server-only";
 
 import type { WhatsappStatus } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { cloudConfigured } from "./cloud/cloud-client";
 import type { CodeChannel } from "./code-channel";
+import { routeFor } from "./routing";
 import { sendWhatsappAlert } from "./send-admin-alert";
 
 const ROW_ID = "main";
@@ -15,6 +17,8 @@ export function whatsappEnabled() {
 /** How sign-in codes go out right now. */
 export async function codeChannel(): Promise<CodeChannel> {
 	if (!whatsappEnabled()) return "sms";
+	if ((await routeFor("otp")) === "CLOUD")
+		return cloudConfigured() ? "whatsapp" : "sms";
 	const connection = await readConnection();
 	return connection?.status === "CONNECTED" ? "whatsapp" : "sms";
 }

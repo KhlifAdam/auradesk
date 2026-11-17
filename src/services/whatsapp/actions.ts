@@ -5,6 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { type ActionResult, fail, failFromZod, ok } from "@/lib/action-result";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { toE164 } from "@/lib/phone";
+import {
+	cloudConfigured,
+	sendCloudHelloWorld,
+} from "@/lib/whatsapp/cloud/cloud-client";
 import { readConnection, recordStatus } from "@/lib/whatsapp/connection-status";
 import {
 	gatewayConfigured,
@@ -75,21 +79,37 @@ export async function unlinkWhatsapp(): Promise<ActionResult<LinkStatus>> {
 	}
 }
 
-/** Sends a short message over WhatsApp only (no fallback), to check the link. */
+/**
+ * Sends a short message over one WhatsApp channel only (no fallback), to
+ * check it delivers. The official API can only send a template: Meta's sample.
+ */
 export async function sendWhatsappTest(input: unknown): Promise<ActionResult> {
 	await requireAdmin();
 	const parsed = whatsappTestSchema.safeParse(input);
 	if (!parsed.success) return failFromZod(parsed.error);
+	const to = toE164(parsed.data.phone) as string;
+	if (parsed.data.channel === "CLOUD") return sendCloudTest(to);
 	if (!gatewayConfigured()) return fail("whatsappUnreachable");
 
 	const t = await getTranslations("Admin.whatsapp.test");
 	try {
-		const to = toE164(parsed.data.phone) as string;
 		const outcome = await sendWhatsappText(to, t("message"));
 		if (outcome === "not-connected") return fail("whatsappNotConnected");
 		if (outcome === "not-on-whatsapp") return fail("whatsappNotOnWhatsapp");
 		return ok();
 	} catch {
 		return fail("whatsappUnreachable");
+	}
+}
+
+async function sendCloudTest(to: string): Promise<ActionResult> {
+	if (!cloudConfigured()) return fail("whatsappCloudRejected");
+	try {
+		const outcome = await sendCloudHelloWorld(to);
+		if (outcome === "not-on-whatsapp") return fail("whatsappNotOnWhatsapp");
+		if (outcome !== "sent") return fail("whatsappCloudRejected");
+		return ok();
+	} catch {
+		return fail("whatsappCloudRejected");
 	}
 }

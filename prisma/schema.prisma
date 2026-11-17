@@ -1288,6 +1288,7 @@ enum AdminAction {
   PAYMENT_RECORDED
   WHATSAPP_LINK_REQUESTED
   WHATSAPP_UNLINKED
+  WHATSAPP_ROUTE_CHANGED
   ROLE_CHANGED
   ACCOUNT_UPDATED
   ACCOUNT_DELETED
@@ -1323,6 +1324,25 @@ model WhatsappConnection {
   alertedAt   DateTime?      @map("alerted_at")
 
   @@map("whatsapp_connections")
+}
+
+/// Which WhatsApp sends a message: the linked number (Baileys, wa-gateway) or
+/// the official Cloud API (Meta, with approved templates).
+enum WhatsappChannel {
+  BAILEYS
+  CLOUD
+
+  @@map("whatsapp_channel")
+}
+
+/// The channel chosen for one kind of message (`Sms` keys, e.g. "otp").
+/// No row: the default in src/lib/whatsapp/routing.ts applies.
+model WhatsappRoute {
+  kind      String          @id
+  channel   WhatsappChannel
+  updatedAt DateTime        @updatedAt @map("updated_at")
+
+  @@map("whatsapp_routes")
 }
 
 // ─── AuraDesk billing ─────────────────────────────────────────────────────────
