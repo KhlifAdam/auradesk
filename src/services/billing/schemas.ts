@@ -9,3 +9,7 @@ export const choosePlanSchema = z.object({
 });
 
 export const recordPaymentSchema = z.object({ userId: idSchema });
+
+export const fakePaymentSchema = z.object({
+	paymentRef: z.string().regex(/^[a-f0-9]{24}$/),
+});

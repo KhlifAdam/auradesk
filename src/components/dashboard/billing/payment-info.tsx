@@ -1,5 +1,6 @@
 import { Banknote } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { renewalPlan } from "@/services/billing/plan-change";
 import { pricePerPeriod, STORAGE_PACK } from "@/services/billing/plans";
 import type { SubscriptionView } from "@/services/billing/queries";
 
@@ -7,7 +8,10 @@ import type { SubscriptionView } from "@/services/billing/queries";
 export const paymentReference = (photographerId: string) =>
 	`AD-${photographerId.slice(-6).toUpperCase()}`;
 
-/** How to pay: amount, reference, and that the team activates the plan. */
+/**
+ * The other way to pay: by transfer or cash with this reference, which the
+ * team then records. Paying by card is the plan picker's Subscribe button.
+ */
 export async function PaymentInfo({
 	subscription,
 }: {
@@ -17,7 +21,10 @@ export async function PaymentInfo({
 	const tPlans = await getTranslations("Billing.plans");
 	const tCycles = await getTranslations("Billing.cycles");
 	const tPacks = await getTranslations("Billing.packs");
-	const { plan, cycle, storagePacks, photographerId } = subscription;
+	// What the next payment covers: the renewal's plan (a scheduled change
+	// included), or the plan chosen during the free month.
+	const { plan, cycle, storagePacks } = renewalPlan(subscription);
+	const { photographerId } = subscription;
 
 	return (
 		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">

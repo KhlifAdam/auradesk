@@ -71,6 +71,7 @@ services:
         {
           echo "0 3 * * * $$call/purge-galleries"
           echo "0 5 * * * $$call/advance-projects"
+          echo "0 6 * * * $$call/billing"
           echo "0 8 * * * $$call/client-reminders"
         } > /etc/crontabs/root
         exec crond -f -l 8

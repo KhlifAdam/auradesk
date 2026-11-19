@@ -27,6 +27,11 @@ const coreSchema = z.object({
 	AI_BASE_URL: z.url().optional(),
 	/** Overrides the vision model id (an OpenRouter id, or an Ollama tag). */
 	VISION_MODEL: z.string().min(1).optional(),
+	/**
+	 * Who takes subscription payments: the real Konnect gateway (KONNECT_*),
+	 * or `fake`, our own imitation of it, which never charges anyone.
+	 */
+	PAYMENT_GATEWAY: z.enum(["fake", "konnect"]).default("fake"),
 });
 
 const r2CredentialsSchema = z.object({
@@ -75,4 +80,23 @@ export function getR2Credentials() {
 export function getR2PrivateEnv() {
 	r2PrivateEnv ??= r2PrivateSchema.parse(process.env);
 	return r2PrivateEnv;
+}
+
+const konnectSchema = z.object({
+	/** Sandbox: https://api.sandbox.konnect.network/api/v2 */
+	KONNECT_API_URL: z
+		.url()
+		.default("https://api.sandbox.konnect.network/api/v2")
+		.transform((url) => url.replace(/\/+$/, "")),
+	KONNECT_API_KEY: z.string().min(1),
+	/** The AuraDesk wallet that receives the payments. */
+	KONNECT_WALLET_ID: z.string().min(1),
+});
+
+let konnectEnv: z.infer<typeof konnectSchema> | undefined;
+
+/** Konnect env, validated when PAYMENT_GATEWAY=konnect is first used. */
+export function getKonnectEnv() {
+	konnectEnv ??= konnectSchema.parse(process.env);
+	return konnectEnv;
 }

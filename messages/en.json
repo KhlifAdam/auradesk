@@ -275,7 +275,12 @@
 		"whatsappCloudRejected": "The official WhatsApp API refused the message.",
 		"storageFull": "Your storage is full. Delete some files, add extra storage or choose a bigger plan.",
 		"photoQuotaReached": "You've used this month's AI photo checks. They reset on the 1st, or choose a bigger plan.",
-		"teamFull": "Your plan's team is full. Remove someone or choose a bigger plan."
+		"teamFull": "Your plan's team is full. Remove someone or choose a bigger plan.",
+		"paymentUnavailable": "Online payment is unavailable right now. Try again in a moment, or pay by transfer.",
+		"paymentExpired": "This payment is no longer valid: it expired, or another payment replaced it. Nothing was charged.",
+		"nothingToPay": "There's nothing to pay for this choice.",
+		"renewalNotDue": "Your renewal isn't due yet.",
+		"planLocked": "Your plan is paid. Use “Change plan or storage” to change it."
 	},
 	"Validation": {
 		"required": "This field is required.",
@@ -305,7 +310,11 @@
 		"invalidPhone": "Enter a valid phone number.",
 		"invalidPrefix": "Use letters, digits, dashes or underscores only.",
 		"invalidVideoUrl": "Paste a YouTube or Vimeo link.",
-		"invalidDriveLink": "Paste a Google Drive link (https://drive.google.com/…)."
+		"invalidDriveLink": "Paste a Google Drive link (https://drive.google.com/…).",
+		"cardHolder": "Enter the name shown on the card.",
+		"cardNumber": "This card number isn't valid.",
+		"cardExpiry": "Enter a future expiry date (MM/YY).",
+		"cardCvv": "Enter the 3 or 4 digits on the back."
 	},
 	"Media": {
 		"description": "Every photo and video on your public site, stored once and reusable anywhere. You can also upload straight into an album. Client photos go in Projects → Import.",
@@ -1700,6 +1709,22 @@
 			"intro": "{studio} keeps delivered galleries for a limited time. The photos of “{project}” will be removed on {date}: download them before then.",
 			"cta": "Download my photos",
 			"text": "The photos of “{project}” from {studio} will be removed on {date}. Download them here: {url}"
+		},
+		"billingReceipt": {
+			"subject": "Payment received: invoice {number}",
+			"preheader": "{amount} received, thank you",
+			"heading": "Thank you, {name}!",
+			"intro": "We received your payment of {amount} (invoice {number}). Your AuraDesk plan is paid until {date}.",
+			"cta": "View my subscription",
+			"text": "We received your payment of {amount} (invoice {number}). Your AuraDesk plan is paid until {date}. Details: {url}"
+		},
+		"billingRenewal": {
+			"subject": "Your AuraDesk invoice {number} is ready",
+			"preheader": "{amount} due by {date}",
+			"heading": "Your next period is coming up",
+			"intro": "Hi {name}, invoice {number} for {amount} covers your next AuraDesk period. Pay it before {date} so nothing stops.",
+			"cta": "Pay my invoice",
+			"text": "Hi {name}, invoice {number} for {amount} covers your next AuraDesk period. Pay it before {date}: {url}"
 		}
 	},
 	"Sms": {
@@ -4066,21 +4091,36 @@
 		"picker": {
 			"title": "Your plan",
 			"popular": "Popular",
-			"perMonth": "{amount} DT/month",
+			"perMonth": "{amount, number} DT/month",
 			"billed": {
-				"MONTHLY": "{amount} DT billed each month",
-				"YEARLY": "{amount} DT billed once a year"
+				"MONTHLY": "{amount, number} DT billed each month",
+				"YEARLY": "{amount, number} DT billed once a year"
 			},
-			"save": "Save my choice",
-			"saved": "Plan saved."
+			"saved": "Plan saved.",
+			"chooseTitle": "Choose your plan",
+			"changeTitle": "Change plan or storage",
+			"current": "Current",
+			"subscribe": "Subscribe · {amount, number} DT",
+			"trialHint": "You pay {amount, number} DT now. Your first paid {cycle, select, YEARLY {year} other {month}} starts on {date}, when your free month ends, so you don't lose any free days.",
+			"expiredHint": "You pay {amount, number} DT now. Your plan starts today and your dashboard opens again right after the payment.",
+			"tryFree": "Use it free until {date}",
+			"tryFreeHint": "Not ready to pay? Try this plan for the rest of your free month instead.",
+			"upgrade": "Upgrade · {amount, number} DT",
+			"upgradeHint": "+{perMonth, number} DT/month × the {days, plural, one {# paid day} other {# paid days}} left until {date} = {amount, number} DT, to pay now. The new plan applies right after the payment. From {date}, you pay {price, number} DT per {cycle, select, YEARLY {year} other {month}}.",
+			"schedule": "Switch on {date}",
+			"scheduleHint": "Nothing to pay now. You keep your current plan until {date}, then it switches and you pay {price, number} DT per {cycle, select, YEARLY {year} other {month}}.",
+			"currentHint": "This is your current plan. Pick another plan, switch billing or change your extra storage above.",
+			"storageWarning": "You already use {used} GB, more than the {limit} GB this choice includes. New uploads will stop until you free some space.",
+			"close": "Close",
+			"scheduled": "Change saved. It takes effect on {date}."
 		},
 		"payment": {
-			"title": "How to pay",
+			"title": "Prefer to pay by bank transfer or cash?",
 			"plan": "Plan",
-			"amount": "Amount",
+			"amount": "Amount due",
 			"amountValue": "{amount} DT",
 			"reference": "Reference",
-			"how": "Pay by bank transfer or in cash and give this reference, so we know the payment is yours. The AuraDesk team then activates your plan, usually within 24 hours, and it shows here as active."
+			"how": "Send the amount with this reference, so we know the payment is yours. The AuraDesk team then activates your plan, usually within 24 hours."
 		},
 		"banner": {
 			"trial": "Your free month ends in {days, plural, one {# day} other {# days}}.",
@@ -4101,7 +4141,10 @@
 			"photos": "AI photo checks",
 			"team": "Team members",
 			"of": "{used} of {limit}",
-			"full": "Limit reached"
+			"full": "Limit reached",
+			"add": "Add storage",
+			"gb": "GB",
+			"tb": "TB"
 		},
 		"packs": {
 			"title": "Extra storage",
@@ -4111,6 +4154,56 @@
 			"extraPrice": "+{amount} DT/month",
 			"add": "Add 100 GB",
 			"remove": "Remove 100 GB"
+		},
+		"checkout": {
+			"redirecting": "Opening the secure payment page…"
+		},
+		"history": {
+			"title": "Billing history",
+			"empty": "No invoices yet. Your invoices appear here once you pay.",
+			"status": {
+				"OPEN": "To pay",
+				"PAID": "Paid",
+				"CANCELLED": "Cancelled"
+			},
+			"period": "{start} – {end}",
+			"paidVia": {
+				"KONNECT": "paid {date} online",
+				"FAKE": "paid {date} online",
+				"MANUAL": "paid {date} by transfer or cash"
+			},
+			"pay": "Pay",
+			"upgrade": "Upgrade to {plan}"
+		},
+		"result": {
+			"success": {
+				"title": "Payment received, thank you!",
+				"description": "Your plan is active. Your receipt is in the billing history below and in your inbox."
+			},
+			"pending": {
+				"title": "Payment in progress",
+				"description": "The gateway hasn't confirmed your payment yet. Your plan becomes active as soon as it does."
+			},
+			"failed": {
+				"title": "The payment didn't go through",
+				"description": "Nothing was charged. You can try again, or pay by transfer."
+			},
+			"cancelled": {
+				"title": "Payment cancelled",
+				"description": "Nothing was charged. You can pay whenever you're ready."
+			}
+		},
+		"current": {
+			"paidUntil": "Paid until {date}",
+			"price": "{price, number} DT per {cycle, select, YEARLY {year} other {month}}",
+			"extraStorage": "+{gb} GB extra storage",
+			"change": "Change plan or storage",
+			"scheduled": "From {date}: {plan} · {price, number} DT per {cycle, select, YEARLY {year} other {month}}.",
+			"keep": "Keep my current plan",
+			"kept": "Your current plan stays.",
+			"renewDue": "Your renewal is due. Pay before {date} so nothing stops.",
+			"renew": "Renew · {amount, number} DT",
+			"nextPayment": "Next payment: {amount, number} DT on {date}. You can renew from {from}, and we'll email you a reminder."
 		}
 	},
 	"Assistant": {
@@ -4841,5 +4934,38 @@
 		"projectDelivered": "Hello, {studio} delivered \"{project}\". Your files are ready to download on AuraDesk.",
 		"changeForClient": "Hello, {who} updated \"{item}\" on AuraDesk.",
 		"changeForStudio": "Hello, {who} updated \"{item}\" on AuraDesk."
+	},
+	"FakeGateway": {
+		"metaTitle": "Secure payment",
+		"verified": "Verified receiver",
+		"receiver": "Receiver",
+		"youPay": "You will pay",
+		"expiresIn": "This payment expires in",
+		"expired": "This payment has expired.",
+		"paymentMethod": "Payment method",
+		"card": "Card",
+		"contact": "Contact information",
+		"firstName": "First Name",
+		"lastName": "Last Name",
+		"phone": "Phone Number",
+		"email": "Email",
+		"methods": {
+			"bankCard": "Bank Card",
+			"eDinar": "E-Dinar Card"
+		},
+		"secureNote": "Your card details are encrypted and never stored. Your bank may ask you to confirm the payment.",
+		"cardDetails": "Card details",
+		"fields": {
+			"number": "Card Number",
+			"expiry": "MM / YY",
+			"cvv": "CVV",
+			"holder": "Cardholder Name"
+		},
+		"pay": "Pay {amount} TND",
+		"processing": "Processing…",
+		"declinedTitle": "Payment declined",
+		"declined": "Your bank refused this transaction. Try another card.",
+		"secure": "Secure payment",
+		"cancel": "Cancel payment"
 	}
 }

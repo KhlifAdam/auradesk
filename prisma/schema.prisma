@@ -38,6 +38,8 @@ model User {
   /// The photographer's AuraDesk plan (free month, then paid).
   subscription     Subscription?
   usageCounters    UsageCounter[]
+  billingCheckouts BillingCheckout[]
+  billingInvoices  BillingInvoice[]
   /// Conversations with the AI assistant; personal to this user.
   assistantThreads AssistantThread[]
   /// Photo books this person designed from their delivered photos.
@@ -1347,8 +1349,9 @@ model WhatsappRoute {
 }
 
 // ─── AuraDesk billing ─────────────────────────────────────────────────────────
-// Every photographer starts with a free month. Payment is made outside the
-// app (transfer, cash…); an admin records it, which extends `paidUntil`.
+// Every photographer starts with a free month. They then pay online (Konnect,
+// or the fake gateway when PAYMENT_GATEWAY=fake), or outside the app (transfer,
+// cash…) and an admin records it. Either way `paidUntil` is extended.
 
 enum SubscriptionPlan {
   STARTER
@@ -1366,22 +1369,145 @@ enum BillingCycle {
 }
 
 model Subscription {
-  id             String           @id @default(cuid())
-  photographerId String           @unique @map("photographer_id")
+  id                    String            @id @default(cuid())
+  photographerId        String            @unique @map("photographer_id")
   /// The plan the photographer chose; billed once the free month is over.
-  plan           SubscriptionPlan @default(PRO)
-  cycle          BillingCycle     @default(MONTHLY)
+  plan                  SubscriptionPlan  @default(PRO)
+  cycle                 BillingCycle      @default(MONTHLY)
   /// Extra storage bought on top of the plan, in packs (see STORAGE_PACK).
-  storagePacks   Int              @default(0) @map("storage_packs")
-  trialEndsAt    DateTime         @map("trial_ends_at")
+  storagePacks          Int               @default(0) @map("storage_packs")
+  trialEndsAt           DateTime          @map("trial_ends_at")
   /// End of the period already paid; null until the first payment.
-  paidUntil      DateTime?        @map("paid_until")
-  createdAt      DateTime         @default(now()) @map("created_at")
-  updatedAt      DateTime         @updatedAt @map("updated_at")
+  paidUntil             DateTime?         @map("paid_until")
+  /// A cheaper plan or other billing chosen while paid: it takes over at the
+  /// next renewal. All three are set together, or none.
+  scheduledPlan         SubscriptionPlan? @map("scheduled_plan")
+  scheduledCycle        BillingCycle?     @map("scheduled_cycle")
+  scheduledStoragePacks Int?              @map("scheduled_storage_packs")
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
 
   photographer User @relation(fields: [photographerId], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
+}
+
+/// Who took a subscription payment.
+enum PaymentGateway {
+  KONNECT
+  /// The test gateway that imitates Konnect (PAYMENT_GATEWAY=fake).
+  FAKE
+  /// Paid outside the app and recorded by an admin.
+  MANUAL
+
+  @@map("payment_gateway")
+}
+
+enum CheckoutStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  EXPIRED
+
+  @@map("checkout_status")
+}
+
+/// What a subscription payment buys.
+enum BillingKind {
+  /// A month or a year of the plan.
+  PERIOD
+  /// A pricier plan or more storage until the end of the paid period, prorated.
+  UPGRADE
+}
+
+/// One attempt to pay online. Never listed to the photographer: only a paid
+/// attempt becomes a `BillingInvoice`, so starting and cancelling leaves no
+/// trace. A live pending attempt for the same amount is reused.
+model BillingCheckout {
+  id             String           @id @default(cuid())
+  photographerId String           @map("photographer_id")
+  gateway        PaymentGateway
+  /// The gateway's payment id (`fake_…` for the fake gateway).
+  paymentRef     String           @unique @map("payment_ref")
+  payUrl         String           @map("pay_url")
+  plan           SubscriptionPlan
+  cycle          BillingCycle
+  storagePacks   Int              @default(0) @map("storage_packs")
+  kind           BillingKind      @default(PERIOD)
+  amountMillimes Int              @map("amount_millimes")
+  status         CheckoutStatus   @default(PENDING)
+  expiresAt      DateTime         @map("expires_at")
+  /// The open renewal invoice this attempt pays, if any.
+  invoiceId      String?          @map("invoice_id")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  completedAt    DateTime?        @map("completed_at")
+
+  photographer User            @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+  invoice      BillingInvoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull)
+
+  @@index([photographerId, status])
+  @@index([status, expiresAt])
+  @@map("billing_checkouts")
+}
+
+enum BillingInvoiceStatus {
+  OPEN
+  PAID
+  CANCELLED
+
+  @@map("billing_invoice_status")
+}
+
+/// AuraDesk's invoice to a photographer for one subscription period: paid
+/// online, recorded by an admin, or opened ahead of a renewal.
+model BillingInvoice {
+  id             String               @id @default(cuid())
+  photographerId String               @map("photographer_id")
+  /// AD-2026-0001, from `BillingInvoiceCounter`.
+  number         String               @unique
+  status         BillingInvoiceStatus @default(OPEN)
+  plan           SubscriptionPlan
+  cycle          BillingCycle
+  storagePacks   Int                  @default(0) @map("storage_packs")
+  kind           BillingKind          @default(PERIOD)
+  amountMillimes Int                  @map("amount_millimes")
+  periodStart    DateTime             @map("period_start")
+  periodEnd      DateTime             @map("period_end")
+  dueDate        DateTime?            @map("due_date")
+  paidAt         DateTime?            @map("paid_at")
+  gateway        PaymentGateway?
+  paymentRef     String?              @unique @map("payment_ref")
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime             @updatedAt @map("updated_at")
+
+  photographer User              @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+  checkouts    BillingCheckout[]
+
+  @@index([photographerId, createdAt])
+  @@index([status, periodEnd])
+  @@map("billing_invoices")
+}
+
+/// The fake gateway's own ledger (PAYMENT_GATEWAY=fake). It stands in for
+/// Konnect's servers, so it is kept apart from our `BillingCheckout` rows.
+model FakePayment {
+  paymentRef     String    @id @map("payment_ref")
+  amountMillimes Int       @map("amount_millimes")
+  description    String
+  status         String    @default("pending")
+  expiresAt      DateTime  @map("expires_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  completedAt    DateTime? @map("completed_at")
+
+  @@map("fake_payments")
+}
+
+/// Last invoice number used each year, bumped atomically.
+model BillingInvoiceCounter {
+  year    Int @id
+  lastSeq Int @default(0) @map("last_seq")
+
+  @@map("billing_invoice_counters")
 }
 
 /// What a plan's monthly AI quota measures.

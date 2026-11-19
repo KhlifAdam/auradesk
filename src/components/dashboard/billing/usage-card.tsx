@@ -1,4 +1,5 @@
-import { Bot, HardDrive, ScanEye, Users } from "lucide-react";
+import { Bot, HardDrive, Plus, ScanEye, Users } from "lucide-react";
+import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -18,8 +19,8 @@ export async function UsageCard({ usage }: { usage: UsageSummary }) {
 
 	const bytes = (value: number) =>
 		value >= 1e12
-			? `${format.number(value / 1e12, { maximumFractionDigits: 1 })} TB`
-			: `${format.number(value / 1e9, { maximumFractionDigits: 1 })} GB`;
+			? `${format.number(value / 1e12, { maximumFractionDigits: 1 })} ${t("tb")}`
+			: `${format.number(value / 1e9, { maximumFractionDigits: 1 })} ${t("gb")}`;
 
 	return (
 		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
@@ -39,6 +40,15 @@ export async function UsageCard({ usage }: { usage: UsageSummary }) {
 								<span className="flex items-center gap-1.5 font-medium">
 									<Icon className="h-3.5 w-3.5 text-muted-foreground" />
 									{t(key)}
+									{key === "storage" && (
+										<Link
+											href="/dashboard/subscription?change=1#plan"
+											className="inline-flex items-center gap-0.5 text-[11px] font-normal text-primary hover:underline"
+										>
+											<Plus className="h-3 w-3" />
+											{t("add")}
+										</Link>
+									)}
 								</span>
 								<span
 									className={cn(

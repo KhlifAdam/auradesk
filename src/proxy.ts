@@ -30,5 +30,7 @@ export const config = {
 		"/portal/:path*",
 		"/team/:path*",
 		"/admin/:path*",
+		// The fake payment gateway's pay page.
+		"/pay/:path*",
 	],
 };

@@ -275,7 +275,12 @@
 		"whatsappCloudRejected": "L'API WhatsApp officielle a refusé le message.",
 		"storageFull": "Votre stockage est plein. Supprimez des fichiers, ajoutez du stockage ou choisissez une formule supérieure.",
 		"photoQuotaReached": "Vous avez utilisé les vérifications photo IA de ce mois. Elles repartent le 1er, ou choisissez une formule supérieure.",
-		"teamFull": "L’équipe de votre formule est complète. Retirez quelqu’un ou choisissez une formule supérieure."
+		"teamFull": "L’équipe de votre formule est complète. Retirez quelqu’un ou choisissez une formule supérieure.",
+		"paymentUnavailable": "Le paiement en ligne est indisponible pour le moment. Réessayez dans un instant, ou payez par virement.",
+		"paymentExpired": "Ce paiement n’est plus valable : il a expiré, ou un autre paiement l’a remplacé. Rien n’a été débité.",
+		"nothingToPay": "Il n’y a rien à payer pour ce choix.",
+		"renewalNotDue": "Votre renouvellement n’est pas encore dû.",
+		"planLocked": "Votre formule est payée. Utilisez « Changer de formule ou de stockage » pour la modifier."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -305,7 +310,11 @@
 		"invalidPhone": "Saisissez un numéro de téléphone valide.",
 		"invalidPrefix": "Utilisez uniquement des lettres, chiffres, tirets ou tirets bas.",
 		"invalidVideoUrl": "Collez un lien YouTube ou Vimeo.",
-		"invalidDriveLink": "Collez un lien Google Drive (https://drive.google.com/…)."
+		"invalidDriveLink": "Collez un lien Google Drive (https://drive.google.com/…).",
+		"cardHolder": "Indiquez le nom inscrit sur la carte.",
+		"cardNumber": "Ce numéro de carte n’est pas valide.",
+		"cardExpiry": "Indiquez une date d’expiration future (MM/AA).",
+		"cardCvv": "Indiquez les 3 ou 4 chiffres au dos de la carte."
 	},
 	"Media": {
 		"description": "Toutes les photos et vidéos de votre site public, enregistrées une fois et réutilisables partout. Vous pouvez aussi envoyer directement dans un album. Les photos clients vont dans Projets → Import.",
@@ -1700,6 +1709,22 @@
 			"intro": "{studio} conserve les galeries livrées pendant une durée limitée. Les photos de « {project} » seront supprimées le {date} : téléchargez-les avant.",
 			"cta": "Télécharger mes photos",
 			"text": "Les photos de « {project} » de {studio} seront supprimées le {date}. Téléchargez-les ici : {url}"
+		},
+		"billingReceipt": {
+			"subject": "Paiement reçu : facture {number}",
+			"preheader": "{amount} reçus, merci",
+			"heading": "Merci, {name} !",
+			"intro": "Nous avons bien reçu votre paiement de {amount} (facture {number}). Votre formule AuraDesk est payée jusqu’au {date}.",
+			"cta": "Voir mon abonnement",
+			"text": "Nous avons bien reçu votre paiement de {amount} (facture {number}). Votre formule AuraDesk est payée jusqu’au {date}. Détails : {url}"
+		},
+		"billingRenewal": {
+			"subject": "Votre facture AuraDesk {number} est prête",
+			"preheader": "{amount} à régler avant le {date}",
+			"heading": "Votre prochaine période arrive",
+			"intro": "Bonjour {name}, la facture {number} d’un montant de {amount} couvre votre prochaine période AuraDesk. Réglez-la avant le {date} pour que rien ne s’arrête.",
+			"cta": "Payer ma facture",
+			"text": "Bonjour {name}, la facture {number} d’un montant de {amount} couvre votre prochaine période AuraDesk. Réglez-la avant le {date} : {url}"
 		}
 	},
 	"Sms": {
@@ -4066,21 +4091,36 @@
 		"picker": {
 			"title": "Votre formule",
 			"popular": "Populaire",
-			"perMonth": "{amount} DT/mois",
+			"perMonth": "{amount, number} DT/mois",
 			"billed": {
-				"MONTHLY": "{amount} DT facturés chaque mois",
-				"YEARLY": "{amount} DT facturés une fois par an"
+				"MONTHLY": "{amount, number} DT facturés chaque mois",
+				"YEARLY": "{amount, number} DT facturés une fois par an"
 			},
-			"save": "Enregistrer mon choix",
-			"saved": "Formule enregistrée."
+			"saved": "Formule enregistrée.",
+			"chooseTitle": "Choisissez votre formule",
+			"changeTitle": "Changer de formule ou de stockage",
+			"current": "Actuelle",
+			"subscribe": "S’abonner · {amount, number} DT",
+			"trialHint": "Vous payez {amount, number} DT maintenant. Votre premier {cycle, select, YEARLY {an} other {mois}} payé commence le {date}, à la fin de votre mois gratuit : vous ne perdez aucun jour offert.",
+			"expiredHint": "Vous payez {amount, number} DT maintenant. Votre formule démarre aujourd’hui et votre tableau de bord rouvre juste après le paiement.",
+			"tryFree": "L’utiliser gratuitement jusqu’au {date}",
+			"tryFreeHint": "Pas encore prêt à payer ? Essayez cette formule jusqu’à la fin de votre mois gratuit.",
+			"upgrade": "Mettre à niveau · {amount, number} DT",
+			"upgradeHint": "+{perMonth, number} DT/mois × {days, plural, one {le # jour payé restant} other {les # jours payés restants}} jusqu’au {date} = {amount, number} DT, à payer maintenant. La nouvelle formule s’applique juste après le paiement. À partir du {date}, vous payez {price, number} DT par {cycle, select, YEARLY {an} other {mois}}.",
+			"schedule": "Changer le {date}",
+			"scheduleHint": "Rien à payer maintenant. Vous gardez votre formule actuelle jusqu’au {date}, puis elle change et vous payez {price, number} DT par {cycle, select, YEARLY {an} other {mois}}.",
+			"currentHint": "C’est votre formule actuelle. Choisissez une autre formule, une autre facturation ou modifiez votre stockage en plus ci-dessus.",
+			"storageWarning": "Vous utilisez déjà {used} Go, plus que les {limit} Go de ce choix. Les nouveaux envois seront bloqués jusqu’à ce que vous libériez de l’espace.",
+			"close": "Fermer",
+			"scheduled": "Changement enregistré. Il prend effet le {date}."
 		},
 		"payment": {
-			"title": "Comment payer",
+			"title": "Vous préférez payer par virement ou en espèces ?",
 			"plan": "Formule",
-			"amount": "Montant",
+			"amount": "Montant dû",
 			"amountValue": "{amount} DT",
 			"reference": "Référence",
-			"how": "Payez par virement ou en espèces en indiquant cette référence, pour que nous sachions que le paiement est le vôtre. L’équipe AuraDesk active ensuite votre formule, en général sous 24 heures, et elle apparaît ici comme active."
+			"how": "Envoyez le montant avec cette référence, pour que nous sachions que le paiement vient de vous. L’équipe AuraDesk active ensuite votre formule, en général sous 24 heures."
 		},
 		"banner": {
 			"trial": "Votre mois offert se termine dans {days, plural, one {# jour} other {# jours}}.",
@@ -4101,7 +4141,10 @@
 			"photos": "Vérifications photo IA",
 			"team": "Membres d’équipe",
 			"of": "{used} sur {limit}",
-			"full": "Limite atteinte"
+			"full": "Limite atteinte",
+			"add": "Ajouter du stockage",
+			"gb": "Go",
+			"tb": "To"
 		},
 		"packs": {
 			"title": "Stockage supplémentaire",
@@ -4111,6 +4154,56 @@
 			"extraPrice": "+{amount} DT/mois",
 			"add": "Ajouter 100 Go",
 			"remove": "Retirer 100 Go"
+		},
+		"checkout": {
+			"redirecting": "Ouverture de la page de paiement sécurisée…"
+		},
+		"history": {
+			"title": "Historique de facturation",
+			"empty": "Aucune facture pour l’instant. Vos factures apparaissent ici dès votre premier paiement.",
+			"status": {
+				"OPEN": "À payer",
+				"PAID": "Payée",
+				"CANCELLED": "Annulée"
+			},
+			"period": "{start} – {end}",
+			"paidVia": {
+				"KONNECT": "payée le {date} en ligne",
+				"FAKE": "payée le {date} en ligne",
+				"MANUAL": "payée le {date} par virement ou en espèces"
+			},
+			"pay": "Payer",
+			"upgrade": "Passage à {plan}"
+		},
+		"result": {
+			"success": {
+				"title": "Paiement reçu, merci !",
+				"description": "Votre formule est active. Votre reçu se trouve dans l’historique ci-dessous et dans votre boîte mail."
+			},
+			"pending": {
+				"title": "Paiement en cours",
+				"description": "La passerelle n’a pas encore confirmé votre paiement. Votre formule sera active dès qu’elle le fera."
+			},
+			"failed": {
+				"title": "Le paiement n’a pas abouti",
+				"description": "Rien n’a été débité. Vous pouvez réessayer, ou payer par virement."
+			},
+			"cancelled": {
+				"title": "Paiement annulé",
+				"description": "Rien n’a été débité. Vous pouvez payer quand vous le souhaitez."
+			}
+		},
+		"current": {
+			"paidUntil": "Payé jusqu’au {date}",
+			"price": "{price, number} DT par {cycle, select, YEARLY {an} other {mois}}",
+			"extraStorage": "+{gb} Go de stockage en plus",
+			"change": "Changer de formule ou de stockage",
+			"scheduled": "À partir du {date} : {plan} · {price, number} DT par {cycle, select, YEARLY {an} other {mois}}.",
+			"keep": "Garder ma formule actuelle",
+			"kept": "Votre formule actuelle est conservée.",
+			"renewDue": "Votre renouvellement est dû. Payez avant le {date} pour que rien ne s’arrête.",
+			"renew": "Renouveler · {amount, number} DT",
+			"nextPayment": "Prochain paiement : {amount, number} DT le {date}. Vous pourrez renouveler à partir du {from}, et nous vous enverrons un rappel par e-mail."
 		}
 	},
 	"Assistant": {
@@ -4841,5 +4934,38 @@
 		"projectDelivered": "Bonjour, {studio} a livré « {project} ». Vos fichiers sont prêts à télécharger sur AuraDesk.",
 		"changeForClient": "Bonjour, {who} a mis à jour « {item} » sur AuraDesk.",
 		"changeForStudio": "Bonjour, {who} a mis à jour « {item} » sur AuraDesk."
+	},
+	"FakeGateway": {
+		"metaTitle": "Paiement sécurisé",
+		"verified": "Bénéficiaire vérifié",
+		"receiver": "Bénéficiaire",
+		"youPay": "Vous allez payer",
+		"expiresIn": "Ce paiement expire dans",
+		"expired": "Ce paiement a expiré.",
+		"paymentMethod": "Moyen de paiement",
+		"card": "Carte",
+		"contact": "Coordonnées",
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"phone": "Numéro de téléphone",
+		"email": "E-mail",
+		"methods": {
+			"bankCard": "Carte bancaire",
+			"eDinar": "Carte E-Dinar"
+		},
+		"secureNote": "Vos données bancaires sont chiffrées et ne sont jamais conservées. Votre banque peut vous demander de confirmer le paiement.",
+		"cardDetails": "Informations de la carte",
+		"fields": {
+			"number": "Numéro de carte",
+			"expiry": "MM / AA",
+			"cvv": "CVV",
+			"holder": "Nom du titulaire"
+		},
+		"pay": "Payer {amount} TND",
+		"processing": "Traitement…",
+		"declinedTitle": "Paiement refusé",
+		"declined": "Votre banque a refusé cette transaction. Essayez une autre carte.",
+		"secure": "Paiement sécurisé",
+		"cancel": "Annuler le paiement"
 	}
 }

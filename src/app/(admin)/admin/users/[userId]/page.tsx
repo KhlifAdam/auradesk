@@ -5,6 +5,7 @@ import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import { AuditList } from "@/components/admin/audit-list";
 import { SubscriptionCard } from "@/components/admin/subscription-card";
 import { UserHeader } from "@/components/admin/user-header";
+import { BillingHistory } from "@/components/dashboard/billing/billing-history";
 import { StatCards } from "@/components/dashboard/shared/stat-cards";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { ROLES } from "@/lib/auth/roles";
@@ -12,7 +13,9 @@ import { formatBytes } from "@/lib/format";
 import { formatPhone } from "@/lib/phone";
 import { listAdminActions } from "@/services/admin/audit";
 import { getAdminUserDetail } from "@/services/admin/user-detail";
+import { listBillingInvoices } from "@/services/billing/invoice-queries";
 import { getSubscription } from "@/services/billing/queries";
+import { pageParamsSchema } from "@/services/shared/pagination";
 
 /**
  * One account for the admin: identity, activity, studio, and how much it
@@ -20,8 +23,10 @@ import { getSubscription } from "@/services/billing/queries";
  */
 export default async function AdminUserPage({
 	params,
+	searchParams,
 }: {
 	params: Promise<{ userId: string }>;
+	searchParams: Promise<{ page?: string }>;
 }) {
 	const t = await getTranslations("Admin");
 	const format = await getFormatter();
@@ -54,6 +59,12 @@ export default async function AdminUserPage({
 	// A deleted studio takes no more payments.
 	const subscription =
 		isStudio && !user.deleted ? await getSubscription(user.id) : null;
+	const invoices = subscription
+		? await listBillingInvoices(
+				user.id,
+				pageParamsSchema.parse(await searchParams).page,
+			)
+		: null;
 
 	return (
 		<>
@@ -78,6 +89,7 @@ export default async function AdminUserPage({
 			{subscription && (
 				<SubscriptionCard userId={user.id} subscription={subscription} />
 			)}
+			{invoices && <BillingHistory invoices={invoices} />}
 			{isStudio && (
 				<section className="flex flex-col gap-3">
 					<div className="flex flex-wrap items-center justify-between gap-2">
