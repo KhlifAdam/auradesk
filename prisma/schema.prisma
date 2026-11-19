@@ -37,6 +37,7 @@ model User {
   studio           Studio?
   /// The photographer's AuraDesk plan (free month, then paid).
   subscription     Subscription?
+  usageCounters    UsageCounter[]
   /// Conversations with the AI assistant; personal to this user.
   assistantThreads AssistantThread[]
   /// Photo books this person designed from their delivered photos.
@@ -1370,6 +1371,8 @@ model Subscription {
   /// The plan the photographer chose; billed once the free month is over.
   plan           SubscriptionPlan @default(PRO)
   cycle          BillingCycle     @default(MONTHLY)
+  /// Extra storage bought on top of the plan, in packs (see STORAGE_PACK).
+  storagePacks   Int              @default(0) @map("storage_packs")
   trialEndsAt    DateTime         @map("trial_ends_at")
   /// End of the period already paid; null until the first payment.
   paidUntil      DateTime?        @map("paid_until")
@@ -1379,6 +1382,30 @@ model Subscription {
   photographer User @relation(fields: [photographerId], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
+}
+
+/// What a plan's monthly AI quota measures.
+enum UsageKind {
+  ASSISTANT_MESSAGE
+  PHOTO_ANALYSIS
+
+  @@map("usage_kind")
+}
+
+/// How much of a monthly quota a studio used. `period` is the calendar month
+/// ("2026-11"); counting here, not from the rows, means deleting a thread or a
+/// gallery doesn't give the quota back.
+model UsageCounter {
+  photographerId String    @map("photographer_id")
+  period         String
+  kind           UsageKind
+  count          Int       @default(0)
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  photographer User @relation(fields: [photographerId], references: [id], onDelete: Cascade)
+
+  @@id([photographerId, period, kind])
+  @@map("usage_counters")
 }
 
 /// Who did what to whom, and why. Names are copied in, so the log still reads

@@ -124,6 +124,9 @@ export function Pricing() {
 						);
 					})}
 				</div>
+				<p className="mt-10 text-center text-sm text-muted-foreground">
+					{t("storageAddon")}
+				</p>
 			</div>
 		</section>
 	);

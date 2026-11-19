@@ -7,6 +7,7 @@ import { measurePhoto } from "@/lib/ai/photo-metrics";
 import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { readPrivateObject } from "@/lib/storage/r2-private";
+import { recordUsage, remainingThisMonth } from "@/services/billing/usage";
 import { idSchema } from "@/services/shared/schemas";
 import { ANALYSIS_BATCH } from "./options";
 import { markDuplicates, qualityFlags } from "./photo-flags";
@@ -34,12 +35,16 @@ export async function analyzeGalleryBatch(
 	});
 	if (!owned) return fail("notFound");
 
+	// Each photo checked counts toward the plan's monthly culling quota.
+	const quota = await remainingThisMonth(photographerId, "PHOTO_ANALYSIS");
+	if (quota === 0) return fail("photoQuotaReached");
+
 	const pending = { galleryId, type: "IMAGE" as const, analysis: null };
 	const batch = await db.galleryItem.findMany({
 		where: pending,
 		select: { id: true, key: true, previewKey: true },
 		orderBy: [{ position: "asc" }, { id: "asc" }],
-		take: ANALYSIS_BATCH,
+		take: Math.min(ANALYSIS_BATCH, quota),
 	});
 
 	let analysed = 0;
@@ -70,6 +75,7 @@ export async function analyzeGalleryBatch(
 	// Nothing went through: storage or the files are unreadable, so stop
 	// instead of retrying the same photos forever.
 	if (batch.length > 0 && analysed === 0) return fail("analysisFailed");
+	await recordUsage(photographerId, "PHOTO_ANALYSIS", analysed);
 
 	const rows = await db.photoAnalysis.findMany({
 		where: { galleryId },

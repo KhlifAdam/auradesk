@@ -14,6 +14,7 @@ import {
 	signPrivatePart,
 	startPrivateMultipart,
 } from "@/lib/storage/r2-private";
+import { hasStorageFor } from "@/services/billing/usage";
 import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
@@ -90,6 +91,8 @@ export async function startGalleryUpload(input: unknown): Promise<
 	}
 
 	if (!session) {
+		if (!(await hasStorageFor(photographerId, size + (previewSize ?? 0))))
+			return fail("storageFull");
 		const base = `${galleryKeyPrefix(photographerId, galleryId)}${randomUUID()}`;
 		const key = `${base}.${GALLERY_EXTENSION_BY_MIME[mimeType]}`;
 		const uploadId = await startPrivateMultipart(key, mimeType);

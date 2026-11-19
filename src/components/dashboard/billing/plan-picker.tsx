@@ -21,6 +21,7 @@ import {
 	pricePerPeriod,
 } from "@/services/billing/plans";
 import { choosePlanSchema } from "@/services/billing/schemas";
+import { StoragePacksField } from "./storage-packs-field";
 
 type PlanValues = z.infer<typeof choosePlanSchema>;
 
@@ -35,6 +36,8 @@ export function PlanPicker({ defaultValues }: { defaultValues: PlanValues }) {
 	});
 	const { isDirty, isSubmitting } = form.formState;
 	const cycle = form.watch("cycle");
+	const plan = form.watch("plan");
+	const storagePacks = form.watch("storagePacks");
 
 	async function onSubmit(values: PlanValues) {
 		const result = await choosePlan(values);
@@ -117,10 +120,22 @@ export function PlanPicker({ defaultValues }: { defaultValues: PlanValues }) {
 						</FormItem>
 					)}
 				/>
+				<FormField
+					control={form.control}
+					name="storagePacks"
+					render={({ field }) => (
+						<StoragePacksField
+							value={field.value}
+							onChange={field.onChange}
+							plan={plan}
+							cycle={cycle}
+						/>
+					)}
+				/>
 				<div className="flex flex-wrap items-center justify-between gap-2">
 					<p className="text-xs text-muted-foreground">
 						{t(`picker.billed.${cycle}`, {
-							amount: pricePerPeriod(form.watch("plan"), cycle),
+							amount: pricePerPeriod(plan, cycle, storagePacks),
 						})}
 					</p>
 					<Button

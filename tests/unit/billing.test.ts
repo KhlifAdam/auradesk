@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { pricePerMonth, pricePerPeriod } from "@/services/billing/plans";
+import {
+	PLAN_LIMITS,
+	type PlanLimits,
+	pricePerMonth,
+	pricePerPeriod,
+	storageBytesOf,
+	storageGbOf,
+} from "@/services/billing/plans";
 import { addMonths, subscriptionState } from "@/services/billing/status";
 
 const now = new Date("2026-10-23T12:00:00");
@@ -44,9 +51,35 @@ describe("addMonths", () => {
 
 describe("prices", () => {
 	it("charges 20% less per month on yearly billing", () => {
-		expect(pricePerMonth("PRO", "MONTHLY")).toBe(36);
-		expect(pricePerMonth("PRO", "YEARLY")).toBe(29);
-		expect(pricePerPeriod("PRO", "YEARLY")).toBe(348);
-		expect(pricePerPeriod("STARTER", "MONTHLY")).toBe(19);
+		expect(pricePerMonth("PRO", "MONTHLY")).toBe(59);
+		expect(pricePerMonth("PRO", "YEARLY")).toBe(47);
+		expect(pricePerPeriod("PRO", "YEARLY")).toBe(564);
+		expect(pricePerPeriod("STARTER", "MONTHLY")).toBe(29);
+	});
+});
+
+describe("storage packs", () => {
+	it("adds 10 DT a month per 100 GB pack, discounted yearly", () => {
+		expect(pricePerMonth("PRO", "MONTHLY", 2)).toBe(79);
+		expect(pricePerMonth("PRO", "YEARLY", 2)).toBe(63);
+		expect(pricePerPeriod("STARTER", "YEARLY", 1)).toBe(372);
+	});
+
+	it("adds the packs to the plan's storage", () => {
+		expect(storageGbOf("PRO", 3)).toBe(600);
+		expect(storageBytesOf("STARTER", 1)).toBe(150e9);
+	});
+});
+
+describe("plan limits", () => {
+	it("gives more of everything on each higher plan", () => {
+		for (const key of Object.keys(PLAN_LIMITS.STARTER) as (keyof PlanLimits)[]) {
+			expect(PLAN_LIMITS.PRO[key]).toBeGreaterThan(PLAN_LIMITS.STARTER[key]);
+			expect(PLAN_LIMITS.STUDIO[key]).toBeGreaterThan(PLAN_LIMITS.PRO[key]);
+		}
+	});
+
+	it("converts storage to bytes", () => {
+		expect(storageBytesOf("STUDIO")).toBe(1e12);
 	});
 });

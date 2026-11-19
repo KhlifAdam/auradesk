@@ -26,7 +26,7 @@ export function RecordPaymentButton({
 	summary,
 }: {
 	userId: string;
-	/** Plan, billing and amount, e.g. "Pro · Monthly · 36 DT". */
+	/** Plan, billing and amount, e.g. "Pro · Monthly · 59 DT". */
 	summary: string;
 }) {
 	const t = useTranslations("Admin.billing");

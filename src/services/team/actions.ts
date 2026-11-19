@@ -6,6 +6,7 @@ import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { db } from "@/lib/db";
 import { resolveMailLocale } from "@/lib/mail/mail-copy";
 import { sendTeamInvitationEmail } from "@/lib/mail/send-team-email";
+import { countTeamSeats, getPlanLimits } from "@/services/billing/usage";
 import { searchQuerySchema } from "@/services/clients/schemas";
 import type { PickerOption } from "@/services/shared/picker";
 import { emptyToNull, idSchema } from "@/services/shared/schemas";
@@ -37,6 +38,14 @@ export async function inviteTeamMember(
 		select: { status: true },
 	});
 	if (existing?.status === "ACCEPTED") return fail("alreadyInTeam");
+	// A pending invitation already holds its seat; a new or declined one needs a free one.
+	if (existing?.status !== "PENDING") {
+		const [{ limits }, seats] = await Promise.all([
+			getPlanLimits(photographerId),
+			countTeamSeats(photographerId),
+		]);
+		if (seats >= limits.teamMembers) return fail("teamFull");
+	}
 
 	const data = {
 		name: parsed.data.name,

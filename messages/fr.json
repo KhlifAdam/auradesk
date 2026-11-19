@@ -272,7 +272,10 @@
 		"quoteBookingNotConfirmed": "Cette réservation n'est pas encore confirmée : le devis ne peut pas encore devenir une facture. Confirmez d'abord la réservation, la facture sera alors rattachée à son projet.",
 		"sessionNotFresh": "Par sécurité, déconnectez-vous puis reconnectez-vous avant de définir votre mot de passe.",
 		"passwordAlreadySet": "Ce compte a déjà un mot de passe.",
-		"whatsappCloudRejected": "L'API WhatsApp officielle a refusé le message."
+		"whatsappCloudRejected": "L'API WhatsApp officielle a refusé le message.",
+		"storageFull": "Votre stockage est plein. Supprimez des fichiers, ajoutez du stockage ou choisissez une formule supérieure.",
+		"photoQuotaReached": "Vous avez utilisé les vérifications photo IA de ce mois. Elles repartent le 1er, ou choisissez une formule supérieure.",
+		"teamFull": "L’équipe de votre formule est complète. Retirez quelqu’un ou choisissez une formule supérieure."
 	},
 	"Validation": {
 		"required": "Ce champ est obligatoire.",
@@ -1282,32 +1285,40 @@
 				"starter": {
 					"name": "Starter",
 					"features": [
-						"3 projets actifs",
-						"20 Go de stockage de galeries",
-						"Contrats et factures"
+						"Projets et clients illimités",
+						"50 Go de stockage",
+						"Réservations, contrats et factures",
+						"Votre propre site web",
+						"Aura : 100 questions / mois",
+						"Tri IA : 1 000 photos / mois",
+						"1 membre d’équipe"
 					]
 				},
 				"pro": {
 					"name": "Pro",
 					"features": [
-						"Projets illimités",
-						"250 Go de stockage de galeries",
-						"Assistant IA de flux de travail",
-						"Automatisations et statistiques"
+						"Tout Starter",
+						"300 Go de stockage",
+						"Aura : 1 500 questions / mois",
+						"Tri IA : 10 000 photos / mois",
+						"2 membres d’équipe"
 					]
 				},
 				"studio": {
 					"name": "Studio",
 					"features": [
-						"5 membres d'équipe",
-						"1 To de stockage de galeries",
-						"Conciergerie prioritaire",
-						"Image de marque personnalisée"
+						"Tout Pro",
+						"1 To de stockage",
+						"Aura : 5 000 questions / mois",
+						"Tri IA : 30 000 photos / mois",
+						"5 membres d’équipe",
+						"Support prioritaire"
 					]
 				}
 			},
 			"price": "{amount} DT",
-			"trialBanner": "Premier mois offert sur toutes les formules · Sans carte bancaire"
+			"trialBanner": "Premier mois offert sur toutes les formules · Sans carte bancaire",
+			"storageAddon": "Besoin de plus d’espace ? Ajoutez +100 Go pour 10 DT/mois sur n’importe quelle formule."
 		},
 		"faq": {
 			"eyebrow": "Questions, réponses",
@@ -1317,7 +1328,7 @@
 			"items": {
 				"trial": {
 					"q": "Puis-je essayer AuraDesk avant de payer ?",
-					"a": "Oui. Chaque formule commence par un premier mois offert, sans carte bancaire. Ensuite, les formules démarrent à 19 DT par mois."
+					"a": "Oui. Chaque formule commence par un premier mois offert, sans carte bancaire. Ensuite, les formules démarrent à 29 DT par mois."
 				},
 				"migrate": {
 					"q": "Puis-je migrer mes clients existants ?",
@@ -4023,15 +4034,15 @@
 		"plans": {
 			"STARTER": {
 				"name": "Starter",
-				"summary": "3 projets actifs · 20 Go"
+				"summary": "50 Go · 100 questions IA · 1 membre"
 			},
 			"PRO": {
 				"name": "Pro",
-				"summary": "Projets illimités · 250 Go · IA"
+				"summary": "300 Go · 1 500 questions IA · 2 membres"
 			},
 			"STUDIO": {
 				"name": "Studio",
-				"summary": "5 membres d’équipe · 1 To"
+				"summary": "1 To · 5 000 questions IA · 5 membres"
 			}
 		},
 		"cycles": {
@@ -4041,7 +4052,7 @@
 		"status": {
 			"trial": {
 				"title": "Mois offert · {days, plural, one {# jour restant} other {# jours restants}}",
-				"description": "Tout est ouvert jusqu’au {date}. Choisissez votre formule ci-dessous pour que rien ne s’arrête ensuite."
+				"description": "Votre formule {plan} est ouverte jusqu’au {date}, avec ses limites. Choisissez votre formule ci-dessous pour que rien ne s’arrête ensuite."
 			},
 			"active": {
 				"title": "Formule {plan} · active",
@@ -4081,6 +4092,25 @@
 			"description": "Votre site public reste en ligne et vos données sont en sécurité. Choisissez une formule et payez pour rouvrir votre tableau de bord.",
 			"action": "Voir les formules et le paiement",
 			"privacy": "Exporter ou supprimer mes données"
+		},
+		"usage": {
+			"title": "Utilisation ce mois-ci",
+			"resets": "Les quotas IA repartent le 1er de chaque mois.",
+			"storage": "Stockage",
+			"assistant": "Questions à Aura",
+			"photos": "Vérifications photo IA",
+			"team": "Membres d’équipe",
+			"of": "{used} sur {limit}",
+			"full": "Limite atteinte"
+		},
+		"packs": {
+			"title": "Stockage supplémentaire",
+			"description": "+{gb} Go pour {price} DT/mois chacun, en plus de votre formule.",
+			"short": "+{gb} Go",
+			"total": "{gb, number} Go au total",
+			"extraPrice": "+{amount} DT/mois",
+			"add": "Ajouter 100 Go",
+			"remove": "Retirer 100 Go"
 		}
 	},
 	"Assistant": {
@@ -4147,7 +4177,8 @@
 			"tooLong": "Ce message est trop long.",
 			"expired": "Votre abonnement a expiré. Renouvelez-le pour utiliser Aura.",
 			"assistantUnavailable": "Aura n'est pas configurée sur ce serveur.",
-			"retry": "Réessayer"
+			"retry": "Réessayer",
+			"monthlyLimit": "Vous avez utilisé les questions à Aura de ce mois. Elles repartent le 1er, ou choisissez une formule supérieure."
 		},
 		"working": {
 			"generic": "Je m'en occupe…",

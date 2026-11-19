@@ -2,7 +2,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { paymentReference } from "@/components/dashboard/billing/payment-info";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { pricePerPeriod } from "@/services/billing/plans";
+import { pricePerPeriod, STORAGE_PACK } from "@/services/billing/plans";
 import type { SubscriptionView } from "@/services/billing/queries";
 import { RecordPaymentButton } from "./record-payment-button";
 
@@ -17,12 +17,16 @@ export async function SubscriptionCard({
 	const t = await getTranslations("Admin.billing");
 	const tBilling = await getTranslations("Billing");
 	const format = await getFormatter();
-	const { status, plan, cycle, trialEndsAt, paidUntil } = subscription;
+	const { status, plan, cycle, storagePacks, trialEndsAt, paidUntil } =
+		subscription;
 	const date = (value: Date | null) =>
 		value ? format.dateTime(value, { dateStyle: "medium" }) : "—";
-	const planLabel = `${tBilling(`plans.${plan}.name`)} · ${tBilling(`cycles.${cycle}`)}`;
+	const extra = storagePacks
+		? ` · ${tBilling("packs.short", { gb: storagePacks * STORAGE_PACK.gb })}`
+		: "";
+	const planLabel = `${tBilling(`plans.${plan}.name`)} · ${tBilling(`cycles.${cycle}`)}${extra}`;
 	const amount = tBilling("payment.amountValue", {
-		amount: pricePerPeriod(plan, cycle),
+		amount: pricePerPeriod(plan, cycle, storagePacks),
 	});
 	const facts = [
 		{ label: t("plan"), value: planLabel },

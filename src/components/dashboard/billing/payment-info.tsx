@@ -1,6 +1,6 @@
 import { Banknote } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { pricePerPeriod } from "@/services/billing/plans";
+import { pricePerPeriod, STORAGE_PACK } from "@/services/billing/plans";
 import type { SubscriptionView } from "@/services/billing/queries";
 
 /** A short code that ties a payment to this account. */
@@ -16,7 +16,8 @@ export async function PaymentInfo({
 	const t = await getTranslations("Billing.payment");
 	const tPlans = await getTranslations("Billing.plans");
 	const tCycles = await getTranslations("Billing.cycles");
-	const { plan, cycle, photographerId } = subscription;
+	const tPacks = await getTranslations("Billing.packs");
+	const { plan, cycle, storagePacks, photographerId } = subscription;
 
 	return (
 		<section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
@@ -31,6 +32,8 @@ export async function PaymentInfo({
 					</dt>
 					<dd className="text-sm">
 						{tPlans(`${plan}.name`)} · {tCycles(cycle)}
+						{storagePacks > 0 &&
+							` · ${tPacks("short", { gb: storagePacks * STORAGE_PACK.gb })}`}
 					</dd>
 				</div>
 				<div>
@@ -38,7 +41,9 @@ export async function PaymentInfo({
 						{t("amount")}
 					</dt>
 					<dd className="text-sm font-semibold">
-						{t("amountValue", { amount: pricePerPeriod(plan, cycle) })}
+						{t("amountValue", {
+							amount: pricePerPeriod(plan, cycle, storagePacks),
+						})}
 					</dd>
 				</div>
 				<div>

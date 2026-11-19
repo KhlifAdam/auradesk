@@ -14,6 +14,7 @@ import { useAssistantChat } from "./use-assistant-chat";
 
 const ERRORS = [
 	"dailyLimit",
+	"monthlyLimit",
 	"tooLong",
 	"expired",
 	"assistantUnavailable",

@@ -47,7 +47,10 @@ export async function SubscriptionStatus({
 						})}
 					</h2>
 					<p className="text-xs text-muted-foreground">
-						{t(`${status}.description`, { date })}
+						{t(`${status}.description`, {
+							date,
+							plan: tPlans(`${plan}.name`),
+						})}
 					</p>
 				</div>
 				{endsAt && (

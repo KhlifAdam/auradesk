@@ -23,6 +23,7 @@ import { getRequestTimeZone } from "@/lib/request-time-zone";
 import { countRecentQuestions, getThread } from "@/services/assistant/queries";
 import { claimThread, saveThreadMessages } from "@/services/assistant/store";
 import { getSubscription } from "@/services/billing/queries";
+import { recordUsage, remainingThisMonth } from "@/services/billing/usage";
 import { getStudioSummary } from "@/services/studio/queries";
 
 export const maxDuration = 60;
@@ -82,6 +83,15 @@ export async function POST(request: Request) {
 				? ASSISTANT_LIMITS.clientDailyMessages
 				: ASSISTANT_LIMITS.dailyMessages;
 		if (asked >= cap) return deny("dailyLimit", 429);
+		// The studio's monthly quota from its plan; team members and clients
+		// only have the daily cap.
+		if (viewer.kind === "photographer") {
+			const left = await remainingThisMonth(
+				viewer.photographerId,
+				"ASSISTANT_MESSAGE",
+			);
+			if (left === 0) return deny("monthlyLimit", 429);
+		}
 	}
 	const history =
 		known === -1
@@ -90,6 +100,8 @@ export async function POST(request: Request) {
 
 	if (!(await claimThread(viewer.userId, threadId, history, space)))
 		return deny("notFound", 404);
+	if (known === -1 && viewer.kind === "photographer")
+		await recordUsage(viewer.photographerId, "ASSISTANT_MESSAGE");
 
 	const [locale, timeZone, studio] = await Promise.all([
 		getLocale(),

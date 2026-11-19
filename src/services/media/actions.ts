@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { isUniqueViolation } from "@/lib/prisma-errors";
 import { revalidatePublicSites } from "@/lib/public-site/cache";
 import { deleteObjects, getUploadUrl, headObject } from "@/lib/storage/r2";
+import { hasStorageFor } from "@/services/billing/usage";
 import { EXTENSION_BY_MIME, mediaKindOf } from "./constants";
 import { listMedia, toMediaItem } from "./queries";
 import {
@@ -30,6 +31,7 @@ export async function requestUpload(
 	if (!parsed.success) return failFromZod(parsed.error);
 
 	const { mimeType, size } = parsed.data;
+	if (!(await hasStorageFor(photographerId, size))) return fail("storageFull");
 	const key = `${photographerId}/${randomUUID()}.${EXTENSION_BY_MIME[mimeType]}`;
 
 	return ok({ key, uploadUrl: await getUploadUrl(key, mimeType, size) });

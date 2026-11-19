@@ -9,6 +9,7 @@ import {
 	getPrivateUploadUrl,
 	headPrivateObject,
 } from "@/lib/storage/r2-private";
+import { hasStorageFor } from "@/services/billing/usage";
 import { advanceForGallery } from "@/services/projects/auto-stage";
 import { revalidateClientWork } from "@/services/projects/revalidate";
 import { lockGallery } from "@/services/shared/lock-rows";
@@ -53,6 +54,8 @@ export async function startProofUpload(
 	if (gallery._count.items >= GALLERY_ITEMS_LIMIT) return fail("galleryFull");
 	// Null: nothing to send, the photo is already there.
 	if (await alreadyIn(galleryId, filename, originalSize)) return ok(null);
+	if (!(await hasStorageFor(photographerId, proofSize)))
+		return fail("storageFull");
 
 	const key = `${galleryKeyPrefix(photographerId, galleryId)}${randomUUID()}.jpg`;
 	const uploadUrl = await getPrivateUploadUrl(

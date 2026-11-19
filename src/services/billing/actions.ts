@@ -7,7 +7,7 @@ import { requirePhotographer } from "@/lib/auth/require-photographer";
 import { ROLES } from "@/lib/auth/roles";
 import { db } from "@/lib/db";
 import { logAdminAction } from "@/services/admin/audit";
-import { pricePerPeriod } from "./plans";
+import { pricePerPeriod, STORAGE_PACK } from "./plans";
 import { getSubscription } from "./queries";
 import { choosePlanSchema, recordPaymentSchema } from "./schemas";
 import { addMonths } from "./status";
@@ -60,12 +60,13 @@ export async function recordPayment(input: unknown): Promise<ActionResult> {
 		data: { paidUntil: addMonths(start, months) },
 	});
 
-	const amount = pricePerPeriod(current.plan, current.cycle);
+	const { plan, cycle, storagePacks } = current;
+	const amount = pricePerPeriod(plan, cycle, storagePacks);
 	await logAdminAction(
 		session.user,
 		"PAYMENT_RECORDED",
 		userId,
-		`${current.plan} · ${current.cycle} · ${amount} DT`,
+		`${plan} · ${cycle} · +${storagePacks * STORAGE_PACK.gb} GB · ${amount} DT`,
 	);
 	revalidatePath("/admin", "layout");
 	return ok();
