@@ -4,8 +4,9 @@ import { timingSafeEqual } from "node:crypto";
 import { env } from "@/lib/env";
 
 /**
- * True when the request comes from the scheduler (vercel.json crons), which
- * sends `Authorization: Bearer $CRON_SECRET`.
+ * True when the request comes from the scheduler (the `scheduler` service of
+ * docker-compose.prod.yml, or vercel.json crons), which sends
+ * `Authorization: Bearer $CRON_SECRET`.
  */
 export function isScheduler(request: Request) {
 	const header = request.headers.get("authorization");

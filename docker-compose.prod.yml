@@ -56,6 +56,28 @@ services:
       - auradesk_wa_auth:/data
     restart: unless-stopped
 
+  # Calls the daily /api/cron/* routes (UTC, the schedule vercel.json declares).
+  # The secret is baked into the crontab at start: crond doesn't pass env to jobs.
+  scheduler:
+    image: alpine:3.20
+    environment:
+      CRON_SECRET: ${CRON_SECRET}
+    command:
+      - sh
+      - -c
+      - |
+        auth="Authorization: Bearer $$CRON_SECRET"
+        call="wget -qO- --header '$$auth' http://app:3000/api/cron"
+        {
+          echo "0 3 * * * $$call/purge-galleries"
+          echo "0 5 * * * $$call/advance-projects"
+          echo "0 8 * * * $$call/client-reminders"
+        } > /etc/crontabs/root
+        exec crond -f -l 8
+    depends_on:
+      - app
+    restart: unless-stopped
+
 volumes:
   auradesk_db_data:
   auradesk_wa_auth:
