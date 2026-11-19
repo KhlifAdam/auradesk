@@ -4,9 +4,15 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import OpenAI from "openai";
 import { z } from "zod";
 import { BRAND_NAME } from "@/lib/brand";
+import { env } from "@/lib/env";
 
-/** The model the assistants use for vision checks: cheap while testing. */
-export const VISION_MODEL = "google/gemma-3-12b-it";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1";
+
+/**
+ * The vision checks' model. Gemma 4 won the evaluation (pnpm eval:vision) among
+ * open-weight models: fast, cheap, and light enough to self-host with Ollama.
+ */
+export const VISION_MODEL = env.VISION_MODEL ?? "google/gemma-4-26b-a4b-it";
 
 /** The chat assistant's model: cheap, but reliable at calling tools. */
 const ASSISTANT_MODEL =
@@ -31,16 +37,21 @@ export function getAssistantModel() {
 
 let client: OpenAI | null | undefined;
 
-/** The OpenRouter client, or null when no API key is configured (vision checks are skipped). */
+/**
+ * The vision client: OpenRouter, or the OpenAI-compatible server in AI_BASE_URL
+ * (Ollama needs no key). Null when neither is configured: checks are skipped.
+ */
 export function getOpenRouter() {
 	const apiKey = process.env.OPENROUTER_API_KEY;
-	client ??= apiKey
-		? new OpenAI({
-				apiKey,
-				baseURL: "https://openrouter.ai/api/v1",
-				defaultHeaders: { "X-Title": BRAND_NAME },
-			})
-		: null;
+	const baseURL = env.AI_BASE_URL;
+	client ??=
+		apiKey || baseURL
+			? new OpenAI({
+					apiKey: apiKey ?? "ollama",
+					baseURL: baseURL ?? OPENROUTER_URL,
+					defaultHeaders: { "X-Title": BRAND_NAME },
+				})
+			: null;
 	return client;
 }
 

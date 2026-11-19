@@ -14,12 +14,17 @@ export type ClipLabel = z.infer<typeof ClipLabel>;
 
 const LANGUAGES = { en: "English", fr: "French" } as const;
 
+/**
+ * The categories are listed in the prompt on purpose: most open-model providers
+ * enforce the schema without showing it to the model, which then guessed blind.
+ */
 function prompt(language: keyof typeof LANGUAGES) {
 	return `These are stills taken at the start, middle and end of one video clip
 filmed by a professional photographer/videographer (weddings, events, products,
 portraits, corporate work). Pick the category that best describes the clip so
 the editor can find it quickly, and write one short sentence (under 20 words,
-in ${LANGUAGES[language]}) saying what happens in it.`;
+in ${LANGUAGES[language]}) saying what happens in it.
+The category must be one of: ${VIDEO_CATEGORIES.join(", ")}.`;
 }
 
 /**

@@ -20,6 +20,13 @@ const coreSchema = z.object({
 	// lib/whatsapp/cloud/cloud-client.ts: unset, its messages go by SMS.
 	/** Picovoice access key for the "Hey Aura" wake word; unset hides it. */
 	PICOVOICE_ACCESS_KEY: z.string().min(1).optional(),
+	/**
+	 * OpenAI-compatible server for the vision checks; unset means OpenRouter.
+	 * Point it at Ollama (e.g. http://ollama:11434/v1) to keep photos in-house.
+	 */
+	AI_BASE_URL: z.url().optional(),
+	/** Overrides the vision model id (an OpenRouter id, or an Ollama tag). */
+	VISION_MODEL: z.string().min(1).optional(),
 });
 
 const r2CredentialsSchema = z.object({

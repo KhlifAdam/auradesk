@@ -4,8 +4,11 @@ import sharp from "sharp";
 import { z } from "zod";
 import { askVision, getOpenRouter, jpegPart } from "./openrouter";
 
-/** Faces are judged on a small copy: enough to see eyes, cheap to send. */
-const VISION_EDGE = 768;
+/**
+ * Faces are judged on a reduced copy. At 768 px, eyes in group shots shrank to
+ * a few pixels and most blinks were missed; 1536 px fixed that (pnpm eval:vision).
+ */
+const VISION_EDGE = 1536;
 
 const FaceCheck = z.object({
 	faces: z.number().int().min(0),
@@ -28,7 +31,10 @@ export async function checkEyesClosed(image: Buffer): Promise<boolean | null> {
 	try {
 		const small = await sharp(image)
 			.rotate()
-			.resize(VISION_EDGE, VISION_EDGE, { fit: "inside" })
+			.resize(VISION_EDGE, VISION_EDGE, {
+				fit: "inside",
+				withoutEnlargement: true,
+			})
 			.jpeg({ quality: 80 })
 			.toBuffer();
 		const result = await askVision("face_check", FaceCheck, [
