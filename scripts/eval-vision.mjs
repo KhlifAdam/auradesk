@@ -1,19 +1,31 @@
 // Compares vision models on the two tasks the assistants rely on, with the
 // same prompts, image sizes and output schemas as the app.
 //   pnpm eval:vision <dataset-dir> [runs]
-// <dataset-dir>/photos/yeux-fermes/*.jpg   photos where someone blinked
-// <dataset-dir>/photos/yeux-ouverts/*.jpg  photos where nobody did
-// <dataset-dir>/clips/<CATEGORY>/*.mp4     clips sorted by expected category
+// <dataset-dir>/photos/yeux-fermes/**.jpg   photos where someone blinked
+// <dataset-dir>/photos/yeux-ouverts/**.jpg  photos where nobody did
+// <dataset-dir>/clips/<CATEGORY>/**.mp4     clips sorted by expected category
 // Writes <dataset-dir>/results.json and prints the tables for the report.
+// Env: EVAL_LIMIT=n caps files per folder (a cheap trial run); EVAL_MODELS=a,b picks models;
+// EVAL_EDGE=px sets the photo size; EVAL_ONLY=eyes skips clips; EVAL_OUT=file names the output;
+// EVAL_BASE_URL / EVAL_API_KEY point it at another OpenAI-compatible server (e.g. Ollama).
 
 import { execFile } from "node:child_process";
 import { readdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { promisify } from "node:util";
 import OpenAI from "openai";
 import sharp from "sharp";
 
-const MODELS = ["google/gemma-3-12b-it", "google/gemini-2.5-flash-lite", "openai/gpt-4.1-mini"];
+// Open-weight models in two sizes per family, plus one closed model as a reference.
+const MODELS = process.env.EVAL_MODELS?.split(",") ?? [
+	"google/gemma-3-12b-it",
+	"google/gemma-4-26b-a4b-it",
+	"mistralai/ministral-8b-2512",
+	"mistralai/mistral-small-3.2-24b-instruct",
+	"qwen/qwen3-vl-8b-instruct",
+	"qwen/qwen3-vl-30b-a3b-instruct",
+	"google/gemini-2.5-flash-lite",
+];
 const CATEGORIES = ["CEREMONY", "SPEECH", "DANCE", "PORTRAIT", "GROUP", "DETAILS", "LANDSCAPE", "PRODUCT", "BEHIND_THE_SCENES", "OTHER"];
 const PARALLEL = 4;
 
@@ -27,6 +39,9 @@ filmed by a professional photographer/videographer (weddings, events, products,
 portraits, corporate work). Pick the category that best describes the clip so
 the editor can find it quickly, and write one short sentence (under 20 words,
 in French) saying what happens in it.`;
+// The same prompt with the allowed categories spelled out. Many open-model hosts enforce the
+// JSON schema without showing it to the model, so the enum alone leaves it guessing.
+const CLIP_PROMPT_LISTED = `${CLIP_PROMPT}\nThe category must be one of: ${CATEGORIES.join(", ")}.`;
 const EYES_SCHEMA = {
 	type: "object",
 	properties: { faces: { type: "integer", minimum: 0 }, eyesClosed: { type: "boolean" } },
@@ -42,12 +57,17 @@ const CLIP_SCHEMA = {
 
 process.loadEnvFile(".env");
 const dir = process.argv[2];
-const runs = Number(process.argv[3] ?? 3);
-if (!dir || !process.env.OPENROUTER_API_KEY) {
+const runs = Number(process.argv[3] ?? 1);
+const limit = Number(process.env.EVAL_LIMIT ?? Infinity);
+// Longest photo edge sent to the model; 768 matches VISION_EDGE in src/lib/ai/eyes-check.ts.
+const edge = Number(process.env.EVAL_EDGE ?? 768);
+const eyesOnly = process.env.EVAL_ONLY === "eyes";
+const apiKey = process.env.EVAL_API_KEY ?? process.env.OPENROUTER_API_KEY;
+if (!dir || !apiKey) {
 	console.error("Usage: pnpm eval:vision <dataset-dir> [runs]  (needs OPENROUTER_API_KEY)");
 	process.exit(1);
 }
-const client = new OpenAI({ apiKey: process.env.OPENROUTER_API_KEY, baseURL: "https://openrouter.ai/api/v1" });
+const client = new OpenAI({ apiKey, baseURL: process.env.EVAL_BASE_URL ?? "https://openrouter.ai/api/v1" });
 const run = promisify(execFile);
 const jpeg = (buffer) => ({ type: "image_url", image_url: { url: `data:image/jpeg;base64,${buffer.toString("base64")}` } });
 
@@ -62,6 +82,8 @@ async function ask(model, name, schema, content, valid) {
 			messages: [{ role: "user", content }],
 			response_format: { type: "json_schema", json_schema: { name, strict: true, schema } },
 			usage: { include: true },
+			// OpenRouter: only providers that honour the JSON schema and don't keep the data.
+			provider: { require_parameters: true, data_collection: "deny" },
 		});
 		const ms = performance.now() - started;
 		const cost = response.usage?.cost ?? 0;
@@ -77,7 +99,12 @@ async function ask(model, name, schema, content, valid) {
 }
 
 async function files(path) {
-	return (await readdir(path, { withFileTypes: true }).catch(() => [])).filter((f) => f.isFile()).map((f) => join(path, f.name));
+	// Recursive, so downloaded/ subfolders count alongside the photographer's own files.
+	return (await readdir(path, { withFileTypes: true, recursive: true }).catch(() => []))
+		.filter((f) => f.isFile() && /\.(jpe?g|png|webp|mp4|mov|webm)$/i.test(f.name))
+		.map((f) => join(f.parentPath, f.name))
+		.sort()
+		.slice(0, limit);
 }
 
 /** Runs the jobs a few at a time. */
@@ -107,7 +134,7 @@ async function evalEyes(model) {
 	const valid = (r) => Number.isInteger(r?.faces) && typeof r?.eyesClosed === "boolean";
 	const jobs = [];
 	for (const photo of photos) {
-		const small = await sharp(photo.path).rotate().resize(768, 768, { fit: "inside" }).jpeg({ quality: 80 }).toBuffer();
+		const small = await sharp(photo.path).rotate().resize(edge, edge, { fit: "inside" }).jpeg({ quality: 80 }).toBuffer();
 		for (let r = 0; r < runs; r++)
 			jobs.push(async () => ({ photo, ...(await ask(model, "face_check", EYES_SCHEMA, [jpeg(small), { type: "text", text: EYES_PROMPT }], valid)) }));
 	}
@@ -127,14 +154,28 @@ async function evalEyes(model) {
 		const own = calls.filter((c) => c.photo === p).map((c) => (c.reply ? c.reply.faces > 0 && c.reply.eyesClosed : "x"));
 		return own.every((v) => v === own[0]);
 	}).length;
+	const said = (c) => (c.reply ? c.reply.faces > 0 && c.reply.eyesClosed : null);
+	const right = (c) => said(c) === c.photo.closed;
+	// The photographer's own photos vs the downloaded stock ones, to spot a bias between them.
+	const share = (xs) => (xs.length ? xs.filter(right).length / xs.length : null);
+	const mine = calls.filter((c) => !c.photo.path.includes("downloaded"));
 	return {
 		photos: photos.length, calls: calls.length, tp, fp, fn, tn,
+		accuracy: (tp + tn) / calls.length,
+		accuracyOwnPhotos: share(mine),
+		accuracyDownloaded: share(calls.filter((c) => !mine.includes(c))),
 		precision, recall, f1: precision + recall ? (2 * precision * recall) / (precision + recall) : 0,
 		schemaValid: calls.filter((c) => c.reply).length / calls.length,
 		consistency: agree / photos.length,
 		medianSeconds: median(calls.map((c) => c.ms)) / 1000,
 		costPer1000: (1000 * calls.reduce((s, c) => s + c.cost, 0)) / calls.length,
+		totalCost: calls.reduce((s, c) => s + c.cost, 0),
 		errors: calls.filter((c) => c.error).map((c) => c.error).slice(0, 3),
+		mistakes: calls.filter((c) => !right(c)).map((c) => ({
+			file: relative(dir, c.photo.path),
+			expected: c.photo.closed ? "closed" : "open",
+			got: c.reply ? `${said(c) ? "closed" : "open"} (${c.reply.faces} faces)` : "invalid reply",
+		})),
 	};
 }
 
@@ -148,14 +189,22 @@ async function frames(path) {
 	}));
 }
 
-async function evalClips(model) {
-	const clips = [];
+let clipCache;
+/** The clips and their 3 stills, extracted once and shared by every model. */
+async function loadClips() {
+	if (clipCache) return clipCache;
+	clipCache = [];
 	for (const category of CATEGORIES)
-		for (const path of await files(join(dir, "clips", category))) clips.push({ path, category, stills: await frames(path) });
+		for (const path of await files(join(dir, "clips", category))) clipCache.push({ path, category, stills: await frames(path) });
+	return clipCache;
+}
+
+async function evalClips(model, prompt) {
+	const clips = await loadClips();
 	if (!clips.length) return null;
 	const valid = (r) => CATEGORIES.includes(r?.category) && typeof r?.summary === "string";
 	const jobs = clips.flatMap((clip) => Array.from({ length: runs }, () => async () =>
-		({ clip, ...(await ask(model, "clip_label", CLIP_SCHEMA, [...clip.stills.map(jpeg), { type: "text", text: CLIP_PROMPT }], valid)) })));
+		({ clip, ...(await ask(model, "clip_label", CLIP_SCHEMA, [...clip.stills.map(jpeg), { type: "text", text: prompt }], valid)) })));
 	const calls = await pool(jobs);
 	const used = CATEGORIES.filter((c) => clips.some((k) => k.category === c));
 	const f1s = used.map((cat) => {
@@ -173,24 +222,38 @@ async function evalClips(model) {
 		schemaValid: calls.filter((c) => c.reply).length / calls.length,
 		medianSeconds: median(calls.map((c) => c.ms)) / 1000,
 		costPer1000: (1000 * calls.reduce((s, c) => s + c.cost, 0)) / calls.length,
-		summaries: clips.map((clip) => ({ clip: clip.path, summary: calls.find((c) => c.clip === clip && c.reply)?.reply.summary ?? null })),
+		totalCost: calls.reduce((s, c) => s + c.cost, 0),
+		errors: calls.filter((c) => c.error).map((c) => c.error).slice(0, 3),
+		mistakes: calls.filter((c) => c.reply?.category !== c.clip.category)
+			.map((c) => ({ file: relative(dir, c.clip.path), expected: c.clip.category, got: c.reply?.category ?? "invalid reply" })),
+		summaries: clips.map((clip) => ({ clip: relative(dir, clip.path), summary: calls.find((c) => c.clip === clip && c.reply)?.reply.summary ?? null })),
 	};
 }
 
-const results = { date: new Date().toISOString(), runs, models: {} };
+const results = { date: new Date().toISOString(), runs, photoEdge: edge, models: {} };
 for (const model of MODELS) {
 	console.log(`… ${model}`);
-	results.models[model] = { eyes: await evalEyes(model), clips: await evalClips(model) };
+	const eyes = await evalEyes(model);
+	results.models[model] = eyesOnly
+		? { eyes }
+		: { eyes, clips: await evalClips(model, CLIP_PROMPT), clipsListed: await evalClips(model, CLIP_PROMPT_LISTED) };
 }
-await writeFile(join(dir, "results.json"), JSON.stringify(results, null, 2));
+await writeFile(join(dir, process.env.EVAL_OUT ?? "results.json"), JSON.stringify(results, null, 2));
 
-console.log("\nYeux fermés : modèle | précision | rappel | F1 | schéma valide | constance | latence médiane (s) | coût / 1000 (USD)");
+// Consistency only means something when each photo was sent more than once.
+const constancy = runs > 1 ? " | constance" : "";
+console.log(`\nYeux fermés : modèle | exactitude | précision | rappel | F1 | schéma valide${constancy} | latence médiane (s) | coût / 1000 (USD)`);
 for (const [m, r] of Object.entries(results.models)) {
 	const e = r.eyes;
-	console.log(`${m} | ${pct(e.precision)} | ${pct(e.recall)} | ${pct(e.f1)} | ${pct(e.schemaValid)} | ${pct(e.consistency)} | ${e.medianSeconds.toFixed(2)} | ${e.costPer1000.toFixed(3)}`);
+	const c = runs > 1 ? ` | ${pct(e.consistency)}` : "";
+	console.log(`${m} | ${pct(e.accuracy)} | ${pct(e.precision)} | ${pct(e.recall)} | ${pct(e.f1)} | ${pct(e.schemaValid)}${c} | ${e.medianSeconds.toFixed(2)} | ${e.costPer1000.toFixed(3)}`);
 }
-console.log("\nClips : modèle | exactitude | F1 macro | schéma valide | latence médiane (s) | coût / 1000 (USD)");
-for (const [m, r] of Object.entries(results.models)) {
-	const c = r.clips;
-	if (c) console.log(`${m} | ${pct(c.accuracy)} | ${pct(c.macroF1)} | ${pct(c.schemaValid)} | ${c.medianSeconds.toFixed(2)} | ${c.costPer1000.toFixed(3)}`);
+for (const [key, title] of [["clips", "prompt de l'app"], ["clipsListed", "catégories listées"]]) {
+	console.log(`\nClips (${title}) : modèle | exactitude | F1 macro | schéma valide | latence médiane (s) | coût / 1000 (USD)`);
+	for (const [m, r] of Object.entries(results.models)) {
+		const c = r[key];
+		if (c) console.log(`${m} | ${pct(c.accuracy)} | ${pct(c.macroF1)} | ${pct(c.schemaValid)} | ${c.medianSeconds.toFixed(2)} | ${c.costPer1000.toFixed(3)}`);
+	}
 }
+const spent = Object.values(results.models).reduce((s, r) => s + r.eyes.totalCost + (r.clips?.totalCost ?? 0) + (r.clipsListed?.totalCost ?? 0), 0);
+console.log(`\nCoût total : $${spent.toFixed(4)}`);
