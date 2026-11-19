@@ -1,20 +1,18 @@
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import { VerifyEmailForm } from "@/components/auth/verify-email-form";
+import { VerifyEmailScreen } from "@/components/auth/verify-email-screen";
 import { AUTH_PATHS } from "@/lib/auth/client-intent";
-
-const paramsSchema = z.object({
-	email: z.email(),
-	audience: z.enum(["photographer", "client"]).catch("photographer"),
-});
 
 export default async function VerifyEmailPage({
 	searchParams,
 }: {
 	searchParams: Promise<{ email?: string; audience?: string }>;
 }) {
-	const parsed = paramsSchema.safeParse(await searchParams);
-	if (!parsed.success) redirect(AUTH_PATHS.photographer.login);
-
-	return <VerifyEmailForm {...parsed.data} />;
+	const { email, audience } = await searchParams;
+	// Older links carried ?audience=client: send them to the client screen.
+	if (audience === "client" && email) {
+		redirect(
+			`${AUTH_PATHS.client.verifyEmail}?${new URLSearchParams({ email })}`,
+		);
+	}
+	return <VerifyEmailScreen email={email} audience="photographer" />;
 }

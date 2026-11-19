@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { AUTH_PATHS, type AuthAudience } from "@/lib/auth/client-intent";
+import { type AuthAudience, audienceFromPath } from "@/lib/auth/client-intent";
 
 const IMAGES: Record<AuthAudience, string> = {
 	photographer: "/images/auradesk-portrait.jpg",
@@ -12,9 +12,7 @@ const IMAGES: Record<AuthAudience, string> = {
 
 /** Client auth screens live under /client; everything else is the studio side. */
 export function useAuthAudience(): AuthAudience {
-	const pathname = usePathname();
-	const clientRoot = AUTH_PATHS.client.login.split("/")[1];
-	return pathname.split("/")[1] === clientRoot ? "client" : "photographer";
+	return audienceFromPath(usePathname());
 }
 
 /** Left panel of the auth screens: photo matching the audience. */
