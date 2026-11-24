@@ -65,7 +65,14 @@ export function Composer({
 	};
 
 	// The keyboard shortcut starts and stops dictation (see AssistantProvider).
-	const { dictationTick, consumeDictationOnOpen } = useAssistant();
+	const { dictationTick, consumeDictationOnOpen, setDictating } =
+		useAssistant();
+	// "Hey Aura" stops listening while the microphone takes the question.
+	const busy = voice.state !== "idle";
+	useEffect(() => {
+		setDictating(busy);
+		return () => setDictating(false);
+	}, [busy, setDictating]);
 	const toggleRef = useRef(toggleVoice);
 	toggleRef.current = toggleVoice;
 	const seenTick = useRef(dictationTick);

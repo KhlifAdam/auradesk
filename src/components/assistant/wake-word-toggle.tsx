@@ -8,7 +8,7 @@ import { useAssistant } from "./assistant-provider";
 
 /**
  * Turns "Hey Aura" on or off for this browser, and shows whether it is
- * listening. Hidden where the server has no wake word key.
+ * listening. Hidden in browsers that can't listen for it (Firefox).
  */
 export function WakeWordToggle() {
 	const t = useTranslations("Assistant.wakeWord");

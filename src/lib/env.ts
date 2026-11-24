@@ -18,7 +18,7 @@ const coreSchema = z.object({
 	WA_GATEWAY_SECRET: z.string().min(32).optional(),
 	// The WhatsApp Cloud API (WHATSAPP_CLOUD_*) is validated when used, in
 	// lib/whatsapp/cloud/cloud-client.ts: unset, its messages go by SMS.
-	/** Picovoice access key for the "Hey Aura" wake word; unset hides it. */
+	/** Picovoice key: "Hey Aura" on-device; unset, the browser listens instead. */
 	PICOVOICE_ACCESS_KEY: z.string().min(1).optional(),
 	/**
 	 * OpenAI-compatible server for the vision checks; unset means OpenRouter.

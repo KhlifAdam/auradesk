@@ -4491,8 +4491,8 @@
 		"wakeWord": {
 			"off": "\"Hey Aura\" is off: click to let Aura answer when you say it",
 			"starting": "Starting \"Hey Aura\"…",
-			"listening": "Listening for \"Hey Aura\" on this device. Click to turn it off",
-			"error": "\"Hey Aura\" couldn't start (microphone refused, or not set up on this server). Click to turn it off"
+			"listening": "Listening for \"Hey Aura\" with your browser's speech recognition. Click to turn it off",
+			"error": "\"Hey Aura\" couldn't start (microphone refused, or speech recognition unavailable). Click to turn it off"
 		}
 	},
 	"PhotoBook": {

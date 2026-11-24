@@ -2,6 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 
+/*
+ * Picovoice Porcupine: used only when PICOVOICE_ACCESS_KEY is set; otherwise
+ * the browser's speech recognition listens (use-browser-wake-word.ts). We may
+ * go back to this engine later, since it keeps the audio on the device.
+ */
+
 /** Picovoice's English model and the trained "Hey Aura" keyword, in public/wake/. */
 const MODEL_PATH = "/wake/porcupine_params.pv";
 const KEYWORD_PATH = "/wake/hey-aura.ppn";

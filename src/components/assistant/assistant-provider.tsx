@@ -14,10 +14,10 @@ import {
 } from "react";
 import type { AssistantUIMessage } from "@/lib/ai/assistant/tools";
 import { ASSISTANT_OPEN_COOKIE } from "./open-cookie";
-import { useWakeWord, type WakeWordState } from "./use-wake-word";
-
-/** "Hey Aura" is a choice made per browser, off by default. */
-const WAKE_WORD_STORAGE = "aura-wake-word";
+import {
+	useAssistantWakeWord,
+	type WakeWordControl,
+} from "./use-assistant-wake-word";
 
 /** The conversation shown in the panel; messages are unknown until loaded. */
 export interface ActiveThread {
@@ -44,13 +44,10 @@ interface AssistantContextValue {
 	 * next starts dictating, since it missed the key press itself.
 	 */
 	consumeDictationOnOpen: () => boolean;
+	/** The question box reports dictation, so "Hey Aura" steps aside. */
+	setDictating: (dictating: boolean) => void;
 	/** "Hey Aura": can it run here, is it on, and is it listening. */
-	wakeWord: {
-		available: boolean;
-		enabled: boolean;
-		setEnabled: (enabled: boolean) => void;
-		state: WakeWordState;
-	};
+	wakeWord: WakeWordControl;
 }
 
 const AssistantContext = createContext<AssistantContextValue | null>(null);
@@ -74,7 +71,7 @@ export function AssistantProvider({
 	children: ReactNode;
 	initialOpen: boolean;
 	basePath: string;
-	/** Picovoice access key; without one, "Hey Aura" isn't offered. */
+	/** Picovoice access key; without one, the browser hears "Hey Aura". */
 	wakeWordKey?: string | null;
 	/** Keeps the panel open across pages (the dashboard); the portal starts closed. */
 	remembersOpen?: boolean;
@@ -137,36 +134,12 @@ export function AssistantProvider({
 	}, [onPage, open, setOpen, talk]);
 
 	// "Hey Aura" does what the dictation shortcut does.
-	const [wakeEnabled, setWakeEnabledState] = useState(false);
-	useEffect(() => {
-		try {
-			setWakeEnabledState(localStorage.getItem(WAKE_WORD_STORAGE) === "1");
-		} catch {
-			// Storage blocked: it simply starts off.
-		}
-	}, []);
-	const setWakeEnabled = useCallback((next: boolean) => {
-		setWakeEnabledState(next);
-		try {
-			localStorage.setItem(WAKE_WORD_STORAGE, next ? "1" : "0");
-		} catch {
-			// Storage blocked: the choice lasts for this visit only.
-		}
-	}, []);
-	const wakeState = useWakeWord({
-		accessKey: wakeWordKey,
-		enabled: wakeEnabled,
+	const [dictating, setDictating] = useState(false);
+	const wakeWord = useAssistantWakeWord({
+		picovoiceKey: wakeWordKey,
+		paused: dictating,
 		onWake: talk,
 	});
-	const wakeWord = useMemo(
-		() => ({
-			available: Boolean(wakeWordKey),
-			enabled: wakeEnabled,
-			setEnabled: setWakeEnabled,
-			state: wakeState,
-		}),
-		[wakeWordKey, wakeEnabled, setWakeEnabled, wakeState],
-	);
 
 	const value = useMemo(
 		() => ({
@@ -180,6 +153,7 @@ export function AssistantProvider({
 			startNewThread,
 			dictationTick,
 			consumeDictationOnOpen,
+			setDictating,
 			wakeWord,
 		}),
 		[

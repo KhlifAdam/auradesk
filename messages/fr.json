@@ -4491,8 +4491,8 @@
 		"wakeWord": {
 			"off": "« Hey Aura » est désactivé : cliquez pour qu'Aura réponde quand vous le dites",
 			"starting": "Démarrage de « Hey Aura »…",
-			"listening": "À l'écoute de « Hey Aura » sur cet appareil. Cliquez pour désactiver",
-			"error": "« Hey Aura » n'a pas pu démarrer (micro refusé, ou non configuré sur ce serveur). Cliquez pour désactiver"
+			"listening": "À l'écoute de « Hey Aura » via la reconnaissance vocale du navigateur. Cliquez pour désactiver",
+			"error": "« Hey Aura » n'a pas pu démarrer (micro refusé, ou reconnaissance vocale indisponible). Cliquez pour désactiver"
 		}
 	},
 	"PhotoBook": {
