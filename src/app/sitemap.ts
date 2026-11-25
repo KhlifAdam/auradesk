@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { env } from "@/lib/env";
-
-const base = env.BETTER_AUTH_URL.replace(/\/$/, "");
 
 /** Marketing pages that search engines may list. */
 const STATIC_PAGES = [
@@ -14,8 +13,13 @@ const STATIC_PAGES = [
 	{ path: "/terms", priority: 0.2 },
 ];
 
-/** Every published studio site, in each of the languages it is offered in. */
+/**
+ * Every published studio site, in each of the languages it is offered in.
+ * Built per request: the build has neither the database nor the site URL.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+	await connection();
+	const base = env.BETTER_AUTH_URL.replace(/\/$/, "");
 	const studios = await db.studio.findMany({
 		where: { published: true, photographer: { banned: { not: true } } },
 		select: { slug: true, locales: true, updatedAt: true },
